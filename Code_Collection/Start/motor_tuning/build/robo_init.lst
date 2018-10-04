@@ -1,0 +1,224 @@
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_init.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wheel_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	wheel_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	wheel_init:
+  26              	.LFB126:
+  27              		.file 1 "Core/Src/robo_init.c"
+   1:Core/Src/robo_init.c **** /*
+   2:Core/Src/robo_init.c ****  * robo_init.c
+   3:Core/Src/robo_init.c ****  *
+   4:Core/Src/robo_init.c ****  * Created : 10/1/2018
+   5:Core/Src/robo_init.c ****  */
+   6:Core/Src/robo_init.c **** 
+   7:Core/Src/robo_init.c **** #include "robo_init.h"
+   8:Core/Src/robo_init.c **** 
+   9:Core/Src/robo_init.c **** struct Wheel Wheel_arr[4];
+  10:Core/Src/robo_init.c **** 
+  11:Core/Src/robo_init.c **** void wheel_init(void)
+  12:Core/Src/robo_init.c **** {
+  28              		.loc 1 12 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  13:Core/Src/robo_init.c ****         int i;
+  14:Core/Src/robo_init.c ****         for (i = 0; i < 4; i++)
+  34              		.loc 1 14 0
+  35 0000 0023     		movs	r3, #0
+  36 0002 0DE0     		b	.L2
+  37              	.LVL1:
+  38              	.L3:
+  15:Core/Src/robo_init.c ****         {
+  16:Core/Src/robo_init.c ****                 Wheel_arr[i].id = i;
+  39              		.loc 1 16 0 discriminator 3
+  40 0004 2048     		ldr	r0, .L4
+  41 0006 9A00     		lsls	r2, r3, #2
+  42 0008 1A44     		add	r2, r2, r3
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s 			page 2
+
+
+  43 000a D100     		lsls	r1, r2, #3
+  44 000c 4218     		adds	r2, r0, r1
+  45 000e 4354     		strb	r3, [r0, r1]
+  17:Core/Src/robo_init.c ****                 Wheel_arr[i].radius = 0.067;
+  46              		.loc 1 17 0 discriminator 3
+  47 0010 1E49     		ldr	r1, .L4+4
+  48 0012 5160     		str	r1, [r2, #4]	@ float
+  18:Core/Src/robo_init.c ****                 // All motors are connected to same timer : TIM8
+  19:Core/Src/robo_init.c ****                 Wheel_arr[i].htim = &htim8;
+  49              		.loc 1 19 0 discriminator 3
+  50 0014 1E49     		ldr	r1, .L4+8
+  51 0016 1162     		str	r1, [r2, #32]
+  20:Core/Src/robo_init.c ****                 // Initialize velocity and omega to 0 at the first epoch
+  21:Core/Src/robo_init.c ****                 Wheel_arr[i].velcoity = 0;
+  52              		.loc 1 21 0 discriminator 3
+  53 0018 0021     		movs	r1, #0
+  54 001a 9160     		str	r1, [r2, #8]	@ float
+  22:Core/Src/robo_init.c ****                 Wheel_arr[i].omega = 0;
+  55              		.loc 1 22 0 discriminator 3
+  56 001c D160     		str	r1, [r2, #12]	@ float
+  14:Core/Src/robo_init.c ****         {
+  57              		.loc 1 14 0 discriminator 3
+  58 001e 0133     		adds	r3, r3, #1
+  59              	.LVL2:
+  60              	.L2:
+  14:Core/Src/robo_init.c ****         {
+  61              		.loc 1 14 0 is_stmt 0 discriminator 1
+  62 0020 032B     		cmp	r3, #3
+  63 0022 EFDD     		ble	.L3
+  23:Core/Src/robo_init.c ****         }
+  24:Core/Src/robo_init.c ****         Wheel_arr[0].in1_port = GPIOD;
+  64              		.loc 1 24 0 is_stmt 1
+  65 0024 184B     		ldr	r3, .L4
+  66              	.LVL3:
+  67 0026 1B4A     		ldr	r2, .L4+12
+  68 0028 1A61     		str	r2, [r3, #16]
+  25:Core/Src/robo_init.c ****         Wheel_arr[0].in1_pin = GPIO_PIN_1;
+  69              		.loc 1 25 0
+  70 002a 0221     		movs	r1, #2
+  71 002c 9982     		strh	r1, [r3, #20]	@ movhi
+  26:Core/Src/robo_init.c ****         Wheel_arr[0].in2_port = GPIOD;
+  72              		.loc 1 26 0
+  73 002e 9A61     		str	r2, [r3, #24]
+  27:Core/Src/robo_init.c ****         Wheel_arr[0].in2_pin = GPIO_PIN_3;
+  74              		.loc 1 27 0
+  75 0030 0821     		movs	r1, #8
+  76 0032 9983     		strh	r1, [r3, #28]	@ movhi
+  28:Core/Src/robo_init.c ****         Wheel_arr[0].channel = TIM_CHANNEL_1;
+  77              		.loc 1 28 0
+  78 0034 0020     		movs	r0, #0
+  79 0036 5862     		str	r0, [r3, #36]
+  29:Core/Src/robo_init.c **** 
+  30:Core/Src/robo_init.c ****         Wheel_arr[1].in1_port = GPIOD;
+  80              		.loc 1 30 0
+  81 0038 9A63     		str	r2, [r3, #56]
+  31:Core/Src/robo_init.c ****         Wheel_arr[1].in1_pin = GPIO_PIN_5;
+  82              		.loc 1 31 0
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s 			page 3
+
+
+  83 003a 2020     		movs	r0, #32
+  84 003c 9887     		strh	r0, [r3, #60]	@ movhi
+  32:Core/Src/robo_init.c ****         Wheel_arr[1].in2_port = GPIOD;
+  85              		.loc 1 32 0
+  86 003e 1A64     		str	r2, [r3, #64]
+  33:Core/Src/robo_init.c ****         Wheel_arr[1].in2_pin = GPIO_PIN_14;
+  87              		.loc 1 33 0
+  88 0040 4FF48040 		mov	r0, #16384
+  89 0044 A3F84400 		strh	r0, [r3, #68]	@ movhi
+  34:Core/Src/robo_init.c ****         Wheel_arr[1].channel = TIM_CHANNEL_2;
+  90              		.loc 1 34 0
+  91 0048 0420     		movs	r0, #4
+  92 004a D864     		str	r0, [r3, #76]
+  35:Core/Src/robo_init.c ****         
+  36:Core/Src/robo_init.c ****         Wheel_arr[2].in1_port = GPIOD;
+  93              		.loc 1 36 0
+  94 004c 1A66     		str	r2, [r3, #96]
+  37:Core/Src/robo_init.c ****         Wheel_arr[2].in1_pin = GPIO_PIN_7;
+  95              		.loc 1 37 0
+  96 004e 8020     		movs	r0, #128
+  97 0050 A3F86400 		strh	r0, [r3, #100]	@ movhi
+  38:Core/Src/robo_init.c ****         Wheel_arr[2].in2_port = GPIOD;
+  98              		.loc 1 38 0
+  99 0054 9A66     		str	r2, [r3, #104]
+  39:Core/Src/robo_init.c ****         Wheel_arr[2].in2_pin = GPIO_PIN_15;
+ 100              		.loc 1 39 0
+ 101 0056 4FF40042 		mov	r2, #32768
+ 102 005a A3F86C20 		strh	r2, [r3, #108]	@ movhi
+  40:Core/Src/robo_init.c ****         Wheel_arr[2].channel = TIM_CHANNEL_3;
+ 103              		.loc 1 40 0
+ 104 005e 5967     		str	r1, [r3, #116]
+  41:Core/Src/robo_init.c **** 
+  42:Core/Src/robo_init.c ****         Wheel_arr[3].in1_port = GPIOC;
+ 105              		.loc 1 42 0
+ 106 0060 02F18042 		add	r2, r2, #1073741824
+ 107 0064 02F5C432 		add	r2, r2, #100352
+ 108 0068 C3F88820 		str	r2, [r3, #136]
+  43:Core/Src/robo_init.c ****         Wheel_arr[3].in1_pin = GPIO_PIN_12;
+ 109              		.loc 1 43 0
+ 110 006c 4FF48051 		mov	r1, #4096
+ 111 0070 A3F88C10 		strh	r1, [r3, #140]	@ movhi
+  44:Core/Src/robo_init.c ****         Wheel_arr[3].in2_port = GPIOC;
+ 112              		.loc 1 44 0
+ 113 0074 C3F89020 		str	r2, [r3, #144]
+  45:Core/Src/robo_init.c ****         Wheel_arr[3].in2_pin = GPIO_PIN_10;
+ 114              		.loc 1 45 0
+ 115 0078 4FF48062 		mov	r2, #1024
+ 116 007c A3F89420 		strh	r2, [r3, #148]	@ movhi
+  46:Core/Src/robo_init.c ****         Wheel_arr[3].channel = TIM_CHANNEL_4;
+ 117              		.loc 1 46 0
+ 118 0080 0C22     		movs	r2, #12
+ 119 0082 C3F89C20 		str	r2, [r3, #156]
+  47:Core/Src/robo_init.c **** }
+ 120              		.loc 1 47 0
+ 121 0086 7047     		bx	lr
+ 122              	.L5:
+ 123              		.align	2
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s 			page 4
+
+
+ 124              	.L4:
+ 125 0088 00000000 		.word	Wheel_arr
+ 126 008c 4C37893D 		.word	1032402764
+ 127 0090 00000000 		.word	htim8
+ 128 0094 000C0240 		.word	1073875968
+ 129              		.cfi_endproc
+ 130              	.LFE126:
+ 132              		.comm	Wheel_arr,160,4
+ 133              		.text
+ 134              	.Letext0:
+ 135              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 136              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 137              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 138              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 139              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 140              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 141              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 142              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eab
+ 143              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\includ
+ 144              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 145              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 146              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 147              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 148              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 149              		.file 16 "Core/Inc/tim.h"
+ 150              		.file 17 "Core/Inc/usart.h"
+ 151              		.file 18 "Core/Inc/adc.h"
+ 152              		.file 19 "Core/Inc/wheel.h"
+ 153              		.file 20 "Core/Inc/robo_init.h"
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_init.c
+C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s:18     .text.wheel_init:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s:25     .text.wheel_init:00000000 wheel_init
+C:\Users\n-is\AppData\Local\Temp\cc4lMUEX.s:125    .text.wheel_init:00000088 $d
+                            *COM*:000000a0 Wheel_arr
+
+UNDEFINED SYMBOLS
+htim8

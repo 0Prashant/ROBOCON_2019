@@ -1,0 +1,888 @@
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robot.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.brake,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	brake:
+  25              	.LFB127:
+  26              		.file 1 "Core/Src/robot.c"
+   1:Core/Src/robot.c **** /*
+   2:Core/Src/robot.c ****  * robot.c
+   3:Core/Src/robot.c ****  *
+   4:Core/Src/robot.c ****  * Created : 10/1/2018
+   5:Core/Src/robot.c ****  */
+   6:Core/Src/robot.c **** 
+   7:Core/Src/robot.c **** #include "robo_init.h"
+   8:Core/Src/robot.c **** 
+   9:Core/Src/robot.c **** #define HUMAN_RESPONSE          (0.07)
+  10:Core/Src/robot.c **** 
+  11:Core/Src/robot.c **** // Constants that need to be modified according to robot's config
+  12:Core/Src/robot.c **** const uint8_t Speed_Multiplier = 1.5;
+  13:Core/Src/robot.c **** const float time = 1;
+  14:Core/Src/robot.c **** 
+  15:Core/Src/robot.c **** const int Coupling_Matrix[4][3] = {{-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1}};
+  16:Core/Src/robot.c **** 
+  17:Core/Src/robot.c **** // Latest delta_x and delta_y as received
+  18:Core/Src/robot.c **** static float final_delta_x, final_delta_y;
+  19:Core/Src/robot.c **** static float curr_delta_x, curr_delta_y;\
+  20:Core/Src/robot.c **** 
+  21:Core/Src/robot.c **** static uint8_t isBraking;
+  22:Core/Src/robot.c **** 
+  23:Core/Src/robot.c **** static float try_Reach_Value(float curr_value, float final_value, float response)
+  24:Core/Src/robot.c **** {
+  25:Core/Src/robot.c **** 
+  26:Core/Src/robot.c ****         if (float_abs(curr_value - final_value) > response) {
+  27:Core/Src/robot.c ****                 if (curr_value < final_value) {
+  28:Core/Src/robot.c ****                         curr_value += response;
+  29:Core/Src/robot.c ****                 }
+  30:Core/Src/robot.c ****                 else if (curr_value > final_value) {
+  31:Core/Src/robot.c ****                         curr_value -= response;
+  32:Core/Src/robot.c ****                 }
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 2
+
+
+  33:Core/Src/robot.c ****         }
+  34:Core/Src/robot.c ****         else {
+  35:Core/Src/robot.c ****                 curr_value = final_value;
+  36:Core/Src/robot.c ****         }
+  37:Core/Src/robot.c ****         return curr_value;
+  38:Core/Src/robot.c **** }
+  39:Core/Src/robot.c **** 
+  40:Core/Src/robot.c **** static void brake()
+  41:Core/Src/robot.c **** {
+  27              		.loc 1 41 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  42:Core/Src/robot.c ****         final_delta_x = 0;
+  32              		.loc 1 42 0
+  33 0000 0023     		movs	r3, #0
+  34 0002 024A     		ldr	r2, .L2
+  35 0004 1360     		str	r3, [r2]	@ float
+  43:Core/Src/robot.c ****         final_delta_y = 0;
+  36              		.loc 1 43 0
+  37 0006 024A     		ldr	r2, .L2+4
+  38 0008 1360     		str	r3, [r2]	@ float
+  44:Core/Src/robot.c ****         
+  45:Core/Src/robot.c **** }
+  39              		.loc 1 45 0
+  40 000a 7047     		bx	lr
+  41              	.L3:
+  42              		.align	2
+  43              	.L2:
+  44 000c 00000000 		.word	.LANCHOR0
+  45 0010 00000000 		.word	.LANCHOR1
+  46              		.cfi_endproc
+  47              	.LFE127:
+  49              		.global	__aeabi_i2d
+  50              		.global	__aeabi_ddiv
+  51              		.global	__aeabi_dsub
+  52              		.global	__aeabi_d2f
+  53              		.section	.text.get_UARTData,"ax",%progbits
+  54              		.align	1
+  55              		.syntax unified
+  56              		.thumb
+  57              		.thumb_func
+  58              		.fpu fpv4-sp-d16
+  60              	get_UARTData:
+  61              	.LFB128:
+  46:Core/Src/robot.c **** 
+  47:Core/Src/robot.c **** static void get_UARTData()
+  48:Core/Src/robot.c **** {
+  62              		.loc 1 48 0
+  63              		.cfi_startproc
+  64              		@ args = 0, pretend = 0, frame = 16
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66 0000 10B5     		push	{r4, lr}
+  67              	.LCFI0:
+  68              		.cfi_def_cfa_offset 8
+  69              		.cfi_offset 4, -8
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 3
+
+
+  70              		.cfi_offset 14, -4
+  71 0002 84B0     		sub	sp, sp, #16
+  72              	.LCFI1:
+  73              		.cfi_def_cfa_offset 24
+  74              	.LVL0:
+  75              	.LBB2:
+  49:Core/Src/robot.c ****         uint8_t buffer[9];
+  50:Core/Src/robot.c ****         for(uint8_t i = 0; i < 9; ++i) {
+  76              		.loc 1 50 0
+  77 0004 0024     		movs	r4, #0
+  78              	.LVL1:
+  79              	.L5:
+  80              		.loc 1 50 0 is_stmt 0 discriminator 1
+  81 0006 082C     		cmp	r4, #8
+  82 0008 0DD8     		bhi	.L4
+  51:Core/Src/robot.c ****                 if (HAL_UART_Receive(&huart1, buffer, 1, 2) == HAL_OK) {
+  83              		.loc 1 51 0 is_stmt 1
+  84 000a 0223     		movs	r3, #2
+  85 000c 0122     		movs	r2, #1
+  86 000e 01A9     		add	r1, sp, #4
+  87 0010 2048     		ldr	r0, .L13
+  88 0012 FFF7FEFF 		bl	HAL_UART_Receive
+  89              	.LVL2:
+  90 0016 10B1     		cbz	r0, .L11
+  50:Core/Src/robot.c ****                 if (HAL_UART_Receive(&huart1, buffer, 1, 2) == HAL_OK) {
+  91              		.loc 1 50 0 discriminator 2
+  92 0018 0134     		adds	r4, r4, #1
+  93              	.LVL3:
+  94 001a E4B2     		uxtb	r4, r4
+  95              	.LVL4:
+  96 001c F3E7     		b	.L5
+  97              	.L11:
+  52:Core/Src/robot.c ****                         if (buffer[0] == 's') {         // Start Byte Received
+  98              		.loc 1 52 0
+  99 001e 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 100 0022 732B     		cmp	r3, #115
+ 101 0024 01D0     		beq	.L12
+ 102              	.L4:
+ 103              	.LBE2:
+  53:Core/Src/robot.c ****                                 if (HAL_UART_Receive(&huart1, buffer, 9, 10) == HAL_OK) {
+  54:Core/Src/robot.c ****                                         final_delta_x = ((buffer[7] - 1) / 50.0) - 1;
+  55:Core/Src/robot.c ****                                         final_delta_y = ((buffer[8] - 1) / 50.0) - 1;
+  56:Core/Src/robot.c ****                                         if (buffer[3]) {
+  57:Core/Src/robot.c ****                                                 brake();
+  58:Core/Src/robot.c ****                                                 isBraking = 1;
+  59:Core/Src/robot.c ****                                         }
+  60:Core/Src/robot.c ****                                         else {
+  61:Core/Src/robot.c ****                                                 isBraking = 0;
+  62:Core/Src/robot.c ****                                         }
+  63:Core/Src/robot.c ****                                 }
+  64:Core/Src/robot.c ****                                 else {
+  65:Core/Src/robot.c ****                                         printf("Only Start Byte was Received\n");
+  66:Core/Src/robot.c ****                                 }
+  67:Core/Src/robot.c ****                         }
+  68:Core/Src/robot.c ****                         break;
+  69:Core/Src/robot.c ****                 }
+  70:Core/Src/robot.c ****         }
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 4
+
+
+  71:Core/Src/robot.c **** }
+ 104              		.loc 1 71 0
+ 105 0026 04B0     		add	sp, sp, #16
+ 106              	.LCFI2:
+ 107              		.cfi_remember_state
+ 108              		.cfi_def_cfa_offset 8
+ 109              		@ sp needed
+ 110 0028 10BD     		pop	{r4, pc}
+ 111              	.LVL5:
+ 112              	.L12:
+ 113              	.LCFI3:
+ 114              		.cfi_restore_state
+ 115              	.LBB3:
+  53:Core/Src/robot.c ****                                 if (HAL_UART_Receive(&huart1, buffer, 9, 10) == HAL_OK) {
+ 116              		.loc 1 53 0
+ 117 002a 0A23     		movs	r3, #10
+ 118 002c 0922     		movs	r2, #9
+ 119 002e 01A9     		add	r1, sp, #4
+ 120 0030 1848     		ldr	r0, .L13
+ 121 0032 FFF7FEFF 		bl	HAL_UART_Receive
+ 122              	.LVL6:
+ 123 0036 40BB     		cbnz	r0, .L8
+  54:Core/Src/robot.c ****                                         final_delta_y = ((buffer[8] - 1) / 50.0) - 1;
+ 124              		.loc 1 54 0
+ 125 0038 9DF80B00 		ldrb	r0, [sp, #11]	@ zero_extendqisi2
+ 126 003c 0138     		subs	r0, r0, #1
+ 127 003e FFF7FEFF 		bl	__aeabi_i2d
+ 128              	.LVL7:
+ 129 0042 0022     		movs	r2, #0
+ 130 0044 144B     		ldr	r3, .L13+4
+ 131 0046 FFF7FEFF 		bl	__aeabi_ddiv
+ 132              	.LVL8:
+ 133 004a 0022     		movs	r2, #0
+ 134 004c 134B     		ldr	r3, .L13+8
+ 135 004e FFF7FEFF 		bl	__aeabi_dsub
+ 136              	.LVL9:
+ 137 0052 FFF7FEFF 		bl	__aeabi_d2f
+ 138              	.LVL10:
+ 139 0056 124B     		ldr	r3, .L13+12
+ 140 0058 1860     		str	r0, [r3]	@ float
+  55:Core/Src/robot.c ****                                         if (buffer[3]) {
+ 141              		.loc 1 55 0
+ 142 005a 9DF80C00 		ldrb	r0, [sp, #12]	@ zero_extendqisi2
+ 143 005e 0138     		subs	r0, r0, #1
+ 144 0060 FFF7FEFF 		bl	__aeabi_i2d
+ 145              	.LVL11:
+ 146 0064 0022     		movs	r2, #0
+ 147 0066 0C4B     		ldr	r3, .L13+4
+ 148 0068 FFF7FEFF 		bl	__aeabi_ddiv
+ 149              	.LVL12:
+ 150 006c 0022     		movs	r2, #0
+ 151 006e 0B4B     		ldr	r3, .L13+8
+ 152 0070 FFF7FEFF 		bl	__aeabi_dsub
+ 153              	.LVL13:
+ 154 0074 FFF7FEFF 		bl	__aeabi_d2f
+ 155              	.LVL14:
+ 156 0078 0A4B     		ldr	r3, .L13+16
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 5
+
+
+ 157 007a 1860     		str	r0, [r3]	@ float
+  56:Core/Src/robot.c ****                                                 brake();
+ 158              		.loc 1 56 0
+ 159 007c 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 160 0080 002B     		cmp	r3, #0
+ 161 0082 D0D0     		beq	.L4
+  57:Core/Src/robot.c ****                                                 isBraking = 1;
+ 162              		.loc 1 57 0
+ 163 0084 FFF7FEFF 		bl	brake
+ 164              	.LVL15:
+ 165 0088 CDE7     		b	.L4
+ 166              	.L8:
+  65:Core/Src/robot.c ****                                 }
+ 167              		.loc 1 65 0
+ 168 008a 0748     		ldr	r0, .L13+20
+ 169 008c FFF7FEFF 		bl	puts
+ 170              	.LVL16:
+ 171 0090 C9E7     		b	.L4
+ 172              	.L14:
+ 173 0092 00BF     		.align	2
+ 174              	.L13:
+ 175 0094 00000000 		.word	huart1
+ 176 0098 00004940 		.word	1078525952
+ 177 009c 0000F03F 		.word	1072693248
+ 178 00a0 00000000 		.word	.LANCHOR0
+ 179 00a4 00000000 		.word	.LANCHOR1
+ 180 00a8 00000000 		.word	.LC0
+ 181              	.LBE3:
+ 182              		.cfi_endproc
+ 183              	.LFE128:
+ 185              		.section	.text.try_Reach_Value,"ax",%progbits
+ 186              		.align	1
+ 187              		.syntax unified
+ 188              		.thumb
+ 189              		.thumb_func
+ 190              		.fpu fpv4-sp-d16
+ 192              	try_Reach_Value:
+ 193              	.LFB126:
+  24:Core/Src/robot.c **** 
+ 194              		.loc 1 24 0
+ 195              		.cfi_startproc
+ 196              		@ args = 0, pretend = 0, frame = 0
+ 197              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198              	.LVL17:
+ 199 0000 08B5     		push	{r3, lr}
+ 200              	.LCFI4:
+ 201              		.cfi_def_cfa_offset 8
+ 202              		.cfi_offset 3, -8
+ 203              		.cfi_offset 14, -4
+ 204 0002 2DED048B 		vpush.64	{d8, d9}
+ 205              	.LCFI5:
+ 206              		.cfi_def_cfa_offset 24
+ 207              		.cfi_offset 80, -24
+ 208              		.cfi_offset 81, -20
+ 209              		.cfi_offset 82, -16
+ 210              		.cfi_offset 83, -12
+ 211 0006 F0EE408A 		vmov.f32	s17, s0
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 6
+
+
+ 212 000a B0EE608A 		vmov.f32	s16, s1
+ 213 000e B0EE419A 		vmov.f32	s18, s2
+  26:Core/Src/robot.c ****                 if (curr_value < final_value) {
+ 214              		.loc 1 26 0
+ 215 0012 30EE600A 		vsub.f32	s0, s0, s1
+ 216              	.LVL18:
+ 217 0016 FFF7FEFF 		bl	float_abs
+ 218              	.LVL19:
+ 219 001a B4EEC90A 		vcmpe.f32	s0, s18
+ 220 001e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 221 0022 0FDD     		ble	.L26
+  27:Core/Src/robot.c ****                         curr_value += response;
+ 222              		.loc 1 27 0
+ 223 0024 F4EEC88A 		vcmpe.f32	s17, s16
+ 224 0028 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 225 002c 07D4     		bmi	.L30
+  30:Core/Src/robot.c ****                         curr_value -= response;
+ 226              		.loc 1 30 0
+ 227 002e F4EEC88A 		vcmpe.f32	s17, s16
+ 228 0032 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 229 0036 0ADD     		ble	.L28
+  31:Core/Src/robot.c ****                 }
+ 230              		.loc 1 31 0
+ 231 0038 38EEC90A 		vsub.f32	s0, s17, s18
+ 232              	.LVL20:
+ 233 003c 04E0     		b	.L15
+ 234              	.LVL21:
+ 235              	.L30:
+  28:Core/Src/robot.c ****                 }
+ 236              		.loc 1 28 0
+ 237 003e 38EE890A 		vadd.f32	s0, s17, s18
+ 238              	.LVL22:
+ 239 0042 01E0     		b	.L15
+ 240              	.LVL23:
+ 241              	.L26:
+  35:Core/Src/robot.c ****         }
+ 242              		.loc 1 35 0
+ 243 0044 B0EE480A 		vmov.f32	s0, s16
+ 244              	.LVL24:
+ 245              	.L15:
+  38:Core/Src/robot.c **** 
+ 246              		.loc 1 38 0
+ 247 0048 BDEC048B 		vldm	sp!, {d8-d9}
+ 248              	.LCFI6:
+ 249              		.cfi_remember_state
+ 250              		.cfi_restore 82
+ 251              		.cfi_restore 83
+ 252              		.cfi_restore 80
+ 253              		.cfi_restore 81
+ 254              		.cfi_def_cfa_offset 8
+ 255              	.LVL25:
+ 256 004c 08BD     		pop	{r3, pc}
+ 257              	.LVL26:
+ 258              	.L28:
+ 259              	.LCFI7:
+ 260              		.cfi_restore_state
+ 261 004e B0EE680A 		vmov.f32	s0, s17
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 7
+
+
+ 262              	.LVL27:
+  37:Core/Src/robot.c **** }
+ 263              		.loc 1 37 0
+ 264 0052 F9E7     		b	.L15
+ 265              		.cfi_endproc
+ 266              	.LFE126:
+ 268              		.section	.text.HAL_TIM_PeriodElapsedCallback,"ax",%progbits
+ 269              		.align	1
+ 270              		.global	HAL_TIM_PeriodElapsedCallback
+ 271              		.syntax unified
+ 272              		.thumb
+ 273              		.thumb_func
+ 274              		.fpu fpv4-sp-d16
+ 276              	HAL_TIM_PeriodElapsedCallback:
+ 277              	.LFB129:
+  72:Core/Src/robot.c **** 
+  73:Core/Src/robot.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
+  74:Core/Src/robot.c **** {
+ 278              		.loc 1 74 0
+ 279              		.cfi_startproc
+ 280              		@ args = 0, pretend = 0, frame = 0
+ 281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 282              		@ link register save eliminated.
+ 283              	.LVL28:
+  75:Core/Src/robot.c **** }
+ 284              		.loc 1 75 0
+ 285 0000 7047     		bx	lr
+ 286              		.cfi_endproc
+ 287              	.LFE129:
+ 289              		.section	.text.calculate_robot_velocity,"ax",%progbits
+ 290              		.align	1
+ 291              		.global	calculate_robot_velocity
+ 292              		.syntax unified
+ 293              		.thumb
+ 294              		.thumb_func
+ 295              		.fpu fpv4-sp-d16
+ 297              	calculate_robot_velocity:
+ 298              	.LFB130:
+  76:Core/Src/robot.c **** 
+  77:Core/Src/robot.c **** void calculate_robot_velocity(float dx, float dy)
+  78:Core/Src/robot.c **** {
+ 299              		.loc 1 78 0
+ 300              		.cfi_startproc
+ 301              		@ args = 0, pretend = 0, frame = 16
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              	.LVL29:
+ 304 0000 10B5     		push	{r4, lr}
+ 305              	.LCFI8:
+ 306              		.cfi_def_cfa_offset 8
+ 307              		.cfi_offset 4, -8
+ 308              		.cfi_offset 14, -4
+ 309 0002 84B0     		sub	sp, sp, #16
+ 310              	.LCFI9:
+ 311              		.cfi_def_cfa_offset 24
+ 312              	.LVL30:
+  79:Core/Src/robot.c ****         float x,y;
+  80:Core/Src/robot.c ****         x = dx * Speed_Multiplier;
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 8
+
+
+  81:Core/Src/robot.c ****         y = dy * Speed_Multiplier;
+  82:Core/Src/robot.c ****         float velocity[3] = {x / time, y / time, 0};
+ 313              		.loc 1 82 0
+ 314 0004 8DED010A 		vstr.32	s0, [sp, #4]
+ 315 0008 CDED020A 		vstr.32	s1, [sp, #8]
+ 316 000c 0023     		movs	r3, #0
+ 317 000e 0393     		str	r3, [sp, #12]	@ float
+ 318              	.LVL31:
+ 319              	.LBB4:
+  83:Core/Src/robot.c **** 
+  84:Core/Src/robot.c ****         for (int i = 0; i < 4; i++)
+ 320              		.loc 1 84 0
+ 321 0010 0024     		movs	r4, #0
+ 322 0012 26E0     		b	.L33
+ 323              	.LVL32:
+ 324              	.L35:
+ 325              	.LBB5:
+  85:Core/Src/robot.c ****         {
+  86:Core/Src/robot.c ****                 Wheel_arr[i].velcoity = 0;
+  87:Core/Src/robot.c ****                 for (int j = 0; j < 3; j++)
+  88:Core/Src/robot.c ****                 {
+  89:Core/Src/robot.c ****                         Wheel_arr[i].velcoity += velocity[j] * Coupling_Matrix[i][j];
+ 326              		.loc 1 89 0 discriminator 3
+ 327 0014 04AA     		add	r2, sp, #16
+ 328 0016 02EB8302 		add	r2, r2, r3, lsl #2
+ 329 001a 12ED037A 		vldr.32	s14, [r2, #-12]
+ 330 001e 04EB4402 		add	r2, r4, r4, lsl #1
+ 331 0022 1A44     		add	r2, r2, r3
+ 332 0024 1549     		ldr	r1, .L39
+ 333 0026 51F82220 		ldr	r2, [r1, r2, lsl #2]
+ 334 002a 07EE902A 		vmov	s15, r2	@ int
+ 335 002e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 336 0032 67EE877A 		vmul.f32	s15, s15, s14
+ 337 0036 A100     		lsls	r1, r4, #2
+ 338 0038 2144     		add	r1, r1, r4
+ 339 003a C800     		lsls	r0, r1, #3
+ 340 003c 104A     		ldr	r2, .L39+4
+ 341 003e 0244     		add	r2, r2, r0
+ 342 0040 92ED027A 		vldr.32	s14, [r2, #8]
+ 343 0044 77EE277A 		vadd.f32	s15, s14, s15
+ 344 0048 C2ED027A 		vstr.32	s15, [r2, #8]
+  87:Core/Src/robot.c ****                 {
+ 345              		.loc 1 87 0 discriminator 3
+ 346 004c 0133     		adds	r3, r3, #1
+ 347              	.LVL33:
+ 348              	.L34:
+  87:Core/Src/robot.c ****                 {
+ 349              		.loc 1 87 0 is_stmt 0 discriminator 1
+ 350 004e 022B     		cmp	r3, #2
+ 351 0050 E0DD     		ble	.L35
+ 352              	.LBE5:
+  90:Core/Src/robot.c ****                 }
+  91:Core/Src/robot.c ****                 calculate_omega(&Wheel_arr[i]);
+ 353              		.loc 1 91 0 is_stmt 1 discriminator 2
+ 354 0052 04EB8402 		add	r2, r4, r4, lsl #2
+ 355 0056 D300     		lsls	r3, r2, #3
+ 356              	.LVL34:
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 9
+
+
+ 357 0058 0948     		ldr	r0, .L39+4
+ 358 005a 1844     		add	r0, r0, r3
+ 359 005c FFF7FEFF 		bl	calculate_omega
+ 360              	.LVL35:
+  84:Core/Src/robot.c ****         {
+ 361              		.loc 1 84 0 discriminator 2
+ 362 0060 0134     		adds	r4, r4, #1
+ 363              	.LVL36:
+ 364              	.L33:
+  84:Core/Src/robot.c ****         {
+ 365              		.loc 1 84 0 is_stmt 0 discriminator 1
+ 366 0062 032C     		cmp	r4, #3
+ 367 0064 08DC     		bgt	.L38
+  86:Core/Src/robot.c ****                 for (int j = 0; j < 3; j++)
+ 368              		.loc 1 86 0 is_stmt 1
+ 369 0066 04EB8403 		add	r3, r4, r4, lsl #2
+ 370 006a DA00     		lsls	r2, r3, #3
+ 371 006c 044B     		ldr	r3, .L39+4
+ 372 006e 1344     		add	r3, r3, r2
+ 373 0070 0022     		movs	r2, #0
+ 374 0072 9A60     		str	r2, [r3, #8]	@ float
+ 375              	.LVL37:
+ 376              	.LBB6:
+  87:Core/Src/robot.c ****                 {
+ 377              		.loc 1 87 0
+ 378 0074 0023     		movs	r3, #0
+ 379 0076 EAE7     		b	.L34
+ 380              	.LVL38:
+ 381              	.L38:
+ 382              	.LBE6:
+ 383              	.LBE4:
+  92:Core/Src/robot.c ****         }
+  93:Core/Src/robot.c **** }
+ 384              		.loc 1 93 0
+ 385 0078 04B0     		add	sp, sp, #16
+ 386              	.LCFI10:
+ 387              		.cfi_def_cfa_offset 8
+ 388              		@ sp needed
+ 389 007a 10BD     		pop	{r4, pc}
+ 390              	.LVL39:
+ 391              	.L40:
+ 392              		.align	2
+ 393              	.L39:
+ 394 007c 00000000 		.word	.LANCHOR2
+ 395 0080 00000000 		.word	Wheel_arr
+ 396              		.cfi_endproc
+ 397              	.LFE130:
+ 399              		.section	.text.run_CurrentConfig,"ax",%progbits
+ 400              		.align	1
+ 401              		.global	run_CurrentConfig
+ 402              		.syntax unified
+ 403              		.thumb
+ 404              		.thumb_func
+ 405              		.fpu fpv4-sp-d16
+ 407              	run_CurrentConfig:
+ 408              	.LFB131:
+  94:Core/Src/robot.c **** 
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 10
+
+
+  95:Core/Src/robot.c **** void run_CurrentConfig(void)
+  96:Core/Src/robot.c **** {
+ 409              		.loc 1 96 0
+ 410              		.cfi_startproc
+ 411              		@ args = 0, pretend = 0, frame = 0
+ 412              		@ frame_needed = 0, uses_anonymous_args = 0
+ 413 0000 10B5     		push	{r4, lr}
+ 414              	.LCFI11:
+ 415              		.cfi_def_cfa_offset 8
+ 416              		.cfi_offset 4, -8
+ 417              		.cfi_offset 14, -4
+ 418              	.LVL40:
+ 419              	.LBB7:
+  97:Core/Src/robot.c ****         for (uint8_t i = 0; i < 4; ++i) {
+ 420              		.loc 1 97 0
+ 421 0002 0024     		movs	r4, #0
+ 422 0004 0BE0     		b	.L42
+ 423              	.LVL41:
+ 424              	.L43:
+  98:Core/Src/robot.c ****                 set_Omega(&Wheel_arr[i], Wheel_arr[i].omega);
+ 425              		.loc 1 98 0 discriminator 3
+ 426 0006 0748     		ldr	r0, .L45
+ 427 0008 A300     		lsls	r3, r4, #2
+ 428 000a 1919     		adds	r1, r3, r4
+ 429 000c CA00     		lsls	r2, r1, #3
+ 430 000e 0244     		add	r2, r2, r0
+ 431 0010 92ED030A 		vldr.32	s0, [r2, #12]
+ 432 0014 1046     		mov	r0, r2
+ 433 0016 FFF7FEFF 		bl	set_Omega
+ 434              	.LVL42:
+  97:Core/Src/robot.c ****         for (uint8_t i = 0; i < 4; ++i) {
+ 435              		.loc 1 97 0 discriminator 3
+ 436 001a 0134     		adds	r4, r4, #1
+ 437              	.LVL43:
+ 438 001c E4B2     		uxtb	r4, r4
+ 439              	.LVL44:
+ 440              	.L42:
+  97:Core/Src/robot.c ****         for (uint8_t i = 0; i < 4; ++i) {
+ 441              		.loc 1 97 0 is_stmt 0 discriminator 1
+ 442 001e 032C     		cmp	r4, #3
+ 443 0020 F1D9     		bls	.L43
+ 444              	.LBE7:
+  99:Core/Src/robot.c ****         }
+ 100:Core/Src/robot.c **** }
+ 445              		.loc 1 100 0 is_stmt 1
+ 446 0022 10BD     		pop	{r4, pc}
+ 447              	.LVL45:
+ 448              	.L46:
+ 449              		.align	2
+ 450              	.L45:
+ 451 0024 00000000 		.word	Wheel_arr
+ 452              		.cfi_endproc
+ 453              	.LFE131:
+ 455              		.section	.text.play,"ax",%progbits
+ 456              		.align	1
+ 457              		.global	play
+ 458              		.syntax unified
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 11
+
+
+ 459              		.thumb
+ 460              		.thumb_func
+ 461              		.fpu fpv4-sp-d16
+ 463              	play:
+ 464              	.LFB132:
+ 101:Core/Src/robot.c **** 
+ 102:Core/Src/robot.c **** void play(void)
+ 103:Core/Src/robot.c **** {
+ 465              		.loc 1 103 0
+ 466              		.cfi_startproc
+ 467              		@ args = 0, pretend = 0, frame = 0
+ 468              		@ frame_needed = 0, uses_anonymous_args = 0
+ 469 0000 70B5     		push	{r4, r5, r6, lr}
+ 470              	.LCFI12:
+ 471              		.cfi_def_cfa_offset 16
+ 472              		.cfi_offset 4, -16
+ 473              		.cfi_offset 5, -12
+ 474              		.cfi_offset 6, -8
+ 475              		.cfi_offset 14, -4
+ 476 0002 2DED028B 		vpush.64	{d8}
+ 477              	.LCFI13:
+ 478              		.cfi_def_cfa_offset 24
+ 479              		.cfi_offset 80, -24
+ 480              		.cfi_offset 81, -20
+ 104:Core/Src/robot.c ****         uint32_t tick_start = HAL_GetTick();
+ 481              		.loc 1 104 0
+ 482 0006 FFF7FEFF 		bl	HAL_GetTick
+ 483              	.LVL46:
+ 484 000a 0646     		mov	r6, r0
+ 485              	.LVL47:
+ 486 000c 29E0     		b	.L50
+ 487              	.LVL48:
+ 488              	.L48:
+ 105:Core/Src/robot.c ****         
+ 106:Core/Src/robot.c ****         while (1) {
+ 107:Core/Src/robot.c **** 
+ 108:Core/Src/robot.c ****                 if (HAL_GetTick() < tick_start) {
+ 109:Core/Src/robot.c ****                         if ((HAL_GetTick() + (65535 - tick_start)) > 100L) {
+ 110:Core/Src/robot.c ****                                 tick_start = HAL_GetTick();
+ 111:Core/Src/robot.c ****                                 get_UARTData();
+ 112:Core/Src/robot.c ****                         }
+ 113:Core/Src/robot.c ****                 }
+ 114:Core/Src/robot.c ****                 else {
+ 115:Core/Src/robot.c ****                         if (HAL_GetTick() - tick_start > 100L) {
+ 489              		.loc 1 115 0
+ 490 000e FFF7FEFF 		bl	HAL_GetTick
+ 491              	.LVL49:
+ 492 0012 801B     		subs	r0, r0, r6
+ 493 0014 6428     		cmp	r0, #100
+ 494 0016 36D8     		bhi	.L52
+ 495              	.L49:
+ 116:Core/Src/robot.c ****                                 tick_start = HAL_GetTick();
+ 117:Core/Src/robot.c ****                                 get_UARTData();
+ 118:Core/Src/robot.c ****                         }
+ 119:Core/Src/robot.c ****                 }
+ 120:Core/Src/robot.c **** 
+ 121:Core/Src/robot.c **** 
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 12
+
+
+ 122:Core/Src/robot.c ****                 curr_delta_x = try_Reach_Value(curr_delta_x, final_delta_x, HUMAN_RESPONSE);
+ 496              		.loc 1 122 0
+ 497 0018 9FED1E8A 		vldr.32	s16, .L53
+ 498 001c 1E4C     		ldr	r4, .L53+4
+ 499 001e B0EE481A 		vmov.f32	s2, s16
+ 500 0022 1E4B     		ldr	r3, .L53+8
+ 501 0024 D3ED000A 		vldr.32	s1, [r3]
+ 502 0028 94ED000A 		vldr.32	s0, [r4]
+ 503 002c FFF7FEFF 		bl	try_Reach_Value
+ 504              	.LVL50:
+ 505 0030 84ED000A 		vstr.32	s0, [r4]
+ 123:Core/Src/robot.c **** 
+ 124:Core/Src/robot.c ****                 curr_delta_y = try_Reach_Value(curr_delta_y, final_delta_y, HUMAN_RESPONSE);
+ 506              		.loc 1 124 0
+ 507 0034 1A4D     		ldr	r5, .L53+12
+ 508 0036 B0EE481A 		vmov.f32	s2, s16
+ 509 003a 1A4B     		ldr	r3, .L53+16
+ 510 003c D3ED000A 		vldr.32	s1, [r3]
+ 511 0040 95ED000A 		vldr.32	s0, [r5]
+ 512 0044 FFF7FEFF 		bl	try_Reach_Value
+ 513              	.LVL51:
+ 514 0048 F0EE400A 		vmov.f32	s1, s0
+ 515 004c 85ED000A 		vstr.32	s0, [r5]
+ 125:Core/Src/robot.c ****                 
+ 126:Core/Src/robot.c ****                 
+ 127:Core/Src/robot.c ****                 calculate_robot_velocity(curr_delta_x, curr_delta_y);
+ 516              		.loc 1 127 0
+ 517 0050 94ED000A 		vldr.32	s0, [r4]
+ 518 0054 FFF7FEFF 		bl	calculate_robot_velocity
+ 519              	.LVL52:
+ 128:Core/Src/robot.c ****                 run_CurrentConfig();
+ 520              		.loc 1 128 0
+ 521 0058 FFF7FEFF 		bl	run_CurrentConfig
+ 522              	.LVL53:
+ 129:Core/Src/robot.c **** 
+ 130:Core/Src/robot.c ****                 HAL_Delay(5);
+ 523              		.loc 1 130 0
+ 524 005c 0520     		movs	r0, #5
+ 525 005e FFF7FEFF 		bl	HAL_Delay
+ 526              	.LVL54:
+ 527              	.L50:
+ 108:Core/Src/robot.c ****                         if ((HAL_GetTick() + (65535 - tick_start)) > 100L) {
+ 528              		.loc 1 108 0
+ 529 0062 FFF7FEFF 		bl	HAL_GetTick
+ 530              	.LVL55:
+ 531 0066 B042     		cmp	r0, r6
+ 532 0068 D1D2     		bcs	.L48
+ 109:Core/Src/robot.c ****                                 tick_start = HAL_GetTick();
+ 533              		.loc 1 109 0
+ 534 006a FFF7FEFF 		bl	HAL_GetTick
+ 535              	.LVL56:
+ 536 006e 801B     		subs	r0, r0, r6
+ 537 0070 00F57F40 		add	r0, r0, #65280
+ 538 0074 FF30     		adds	r0, r0, #255
+ 539 0076 6428     		cmp	r0, #100
+ 540 0078 CED9     		bls	.L49
+ 110:Core/Src/robot.c ****                                 get_UARTData();
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 13
+
+
+ 541              		.loc 1 110 0
+ 542 007a FFF7FEFF 		bl	HAL_GetTick
+ 543              	.LVL57:
+ 544 007e 0646     		mov	r6, r0
+ 545              	.LVL58:
+ 111:Core/Src/robot.c ****                         }
+ 546              		.loc 1 111 0
+ 547 0080 FFF7FEFF 		bl	get_UARTData
+ 548              	.LVL59:
+ 549 0084 C8E7     		b	.L49
+ 550              	.L52:
+ 116:Core/Src/robot.c ****                                 get_UARTData();
+ 551              		.loc 1 116 0
+ 552 0086 FFF7FEFF 		bl	HAL_GetTick
+ 553              	.LVL60:
+ 554 008a 0646     		mov	r6, r0
+ 555              	.LVL61:
+ 117:Core/Src/robot.c ****                         }
+ 556              		.loc 1 117 0
+ 557 008c FFF7FEFF 		bl	get_UARTData
+ 558              	.LVL62:
+ 559 0090 C2E7     		b	.L49
+ 560              	.L54:
+ 561 0092 00BF     		.align	2
+ 562              	.L53:
+ 563 0094 295C8F3D 		.word	1032805417
+ 564 0098 00000000 		.word	.LANCHOR3
+ 565 009c 00000000 		.word	.LANCHOR0
+ 566 00a0 00000000 		.word	.LANCHOR4
+ 567 00a4 00000000 		.word	.LANCHOR1
+ 568              		.cfi_endproc
+ 569              	.LFE132:
+ 571              		.global	Coupling_Matrix
+ 572              		.global	time
+ 573              		.global	Speed_Multiplier
+ 574              		.section	.bss.curr_delta_x,"aw",%nobits
+ 575              		.align	2
+ 576              		.set	.LANCHOR3,. + 0
+ 579              	curr_delta_x:
+ 580 0000 00000000 		.space	4
+ 581              		.section	.bss.curr_delta_y,"aw",%nobits
+ 582              		.align	2
+ 583              		.set	.LANCHOR4,. + 0
+ 586              	curr_delta_y:
+ 587 0000 00000000 		.space	4
+ 588              		.section	.bss.final_delta_x,"aw",%nobits
+ 589              		.align	2
+ 590              		.set	.LANCHOR0,. + 0
+ 593              	final_delta_x:
+ 594 0000 00000000 		.space	4
+ 595              		.section	.bss.final_delta_y,"aw",%nobits
+ 596              		.align	2
+ 597              		.set	.LANCHOR1,. + 0
+ 600              	final_delta_y:
+ 601 0000 00000000 		.space	4
+ 602              		.section	.rodata.Coupling_Matrix,"a",%progbits
+ 603              		.align	2
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 14
+
+
+ 604              		.set	.LANCHOR2,. + 0
+ 607              	Coupling_Matrix:
+ 608 0000 FFFFFFFF 		.word	-1
+ 609 0004 01000000 		.word	1
+ 610 0008 01000000 		.word	1
+ 611 000c 01000000 		.word	1
+ 612 0010 01000000 		.word	1
+ 613 0014 01000000 		.word	1
+ 614 0018 FFFFFFFF 		.word	-1
+ 615 001c 01000000 		.word	1
+ 616 0020 FFFFFFFF 		.word	-1
+ 617 0024 01000000 		.word	1
+ 618 0028 01000000 		.word	1
+ 619 002c FFFFFFFF 		.word	-1
+ 620              		.section	.rodata.Speed_Multiplier,"a",%progbits
+ 623              	Speed_Multiplier:
+ 624 0000 01       		.byte	1
+ 625              		.section	.rodata.get_UARTData.str1.4,"aMS",%progbits,1
+ 626              		.align	2
+ 627              	.LC0:
+ 628 0000 4F6E6C79 		.ascii	"Only Start Byte was Received\000"
+ 628      20537461 
+ 628      72742042 
+ 628      79746520 
+ 628      77617320 
+ 629              		.section	.rodata.time,"a",%progbits
+ 630              		.align	2
+ 633              	time:
+ 634 0000 0000803F 		.word	1065353216
+ 635              		.text
+ 636              	.Letext0:
+ 637              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 638              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 639              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 640              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 641              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 642              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 643              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 644              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eab
+ 645              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\includ
+ 646              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 647              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 648              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 649              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 650              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 651              		.file 16 "Core/Inc/tim.h"
+ 652              		.file 17 "Core/Inc/usart.h"
+ 653              		.file 18 "Core/Inc/adc.h"
+ 654              		.file 19 "Core/Inc/wheel.h"
+ 655              		.file 20 "Core/Inc/robo_init.h"
+ 656              		.file 21 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 657              		.file 22 "<built-in>"
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robot.c
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:18     .text.brake:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:24     .text.brake:00000000 brake
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:44     .text.brake:0000000c $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:54     .text.get_UARTData:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:60     .text.get_UARTData:00000000 get_UARTData
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:175    .text.get_UARTData:00000094 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:186    .text.try_Reach_Value:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:192    .text.try_Reach_Value:00000000 try_Reach_Value
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:269    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:276    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:290    .text.calculate_robot_velocity:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:297    .text.calculate_robot_velocity:00000000 calculate_robot_velocity
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:394    .text.calculate_robot_velocity:0000007c $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:400    .text.run_CurrentConfig:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:407    .text.run_CurrentConfig:00000000 run_CurrentConfig
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:451    .text.run_CurrentConfig:00000024 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:456    .text.play:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:463    .text.play:00000000 play
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:563    .text.play:00000094 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:607    .rodata.Coupling_Matrix:00000000 Coupling_Matrix
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:633    .rodata.time:00000000 time
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:623    .rodata.Speed_Multiplier:00000000 Speed_Multiplier
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:575    .bss.curr_delta_x:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:579    .bss.curr_delta_x:00000000 curr_delta_x
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:582    .bss.curr_delta_y:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:586    .bss.curr_delta_y:00000000 curr_delta_y
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:589    .bss.final_delta_x:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:593    .bss.final_delta_x:00000000 final_delta_x
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:596    .bss.final_delta_y:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:600    .bss.final_delta_y:00000000 final_delta_y
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:603    .rodata.Coupling_Matrix:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:626    .rodata.get_UARTData.str1.4:00000000 $d
+C:\Users\n-is\AppData\Local\Temp\cc5gYTKX.s:630    .rodata.time:00000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_dsub
+__aeabi_d2f
+HAL_UART_Receive
+puts
+huart1
+float_abs
+calculate_omega
+Wheel_arr
+set_Omega
+HAL_GetTick
+HAL_Delay

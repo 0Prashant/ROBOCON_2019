@@ -1,0 +1,565 @@
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wheel.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.time_period,"ax",%progbits
+  18              		.align	1
+  19              		.global	time_period
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	time_period:
+  26              	.LFB126:
+  27              		.file 1 "Core/Src/wheel.c"
+   1:Core/Src/wheel.c **** /*
+   2:Core/Src/wheel.c ****  * wheel.c
+   3:Core/Src/wheel.c ****  *
+   4:Core/Src/wheel.c ****  * Created : 10/1/2018
+   5:Core/Src/wheel.c ****  */
+   6:Core/Src/wheel.c **** 
+   7:Core/Src/wheel.c **** #include "wheel.h"
+   8:Core/Src/wheel.c **** 
+   9:Core/Src/wheel.c **** 
+  10:Core/Src/wheel.c **** uint16_t time_period(uint16_t PWM_frequency)
+  11:Core/Src/wheel.c **** {
+  28              		.loc 1 11 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0446     		mov	r4, r0
+  12:Core/Src/wheel.c ****         if (PWM_frequency < 2000) { //MIN PWM_FREQUENCY = 1281.738 for time period to be 16 bit
+  39              		.loc 1 12 0
+  40 0004 B0F5FA6F 		cmp	r0, #2000
+  41 0008 05D3     		bcc	.L4
+  42              	.LVL1:
+  43              	.L2:
+  13:Core/Src/wheel.c ****                 _Error_Handler(__FILE__, __LINE__);
+  14:Core/Src/wheel.c ****         }
+  15:Core/Src/wheel.c ****         return ((PWM_TIMER_FREQUENCY / 2) / PWM_frequency) - 1; // In Center aligned mode period do
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 2
+
+
+  44              		.loc 1 15 0
+  45 000a 0548     		ldr	r0, .L5
+  46 000c 90FBF4F0 		sdiv	r0, r0, r4
+  47 0010 0138     		subs	r0, r0, #1
+  16:Core/Src/wheel.c **** }
+  48              		.loc 1 16 0
+  49 0012 80B2     		uxth	r0, r0
+  50 0014 10BD     		pop	{r4, pc}
+  51              	.LVL2:
+  52              	.L4:
+  13:Core/Src/wheel.c ****                 _Error_Handler(__FILE__, __LINE__);
+  53              		.loc 1 13 0
+  54 0016 0D21     		movs	r1, #13
+  55 0018 0248     		ldr	r0, .L5+4
+  56              	.LVL3:
+  57 001a FFF7FEFF 		bl	_Error_Handler
+  58              	.LVL4:
+  59 001e F4E7     		b	.L2
+  60              	.L6:
+  61              		.align	2
+  62              	.L5:
+  63 0020 00BD0105 		.word	84000000
+  64 0024 00000000 		.word	.LC0
+  65              		.cfi_endproc
+  66              	.LFE126:
+  68              		.section	.text.set_DutyCycle_Primary,"ax",%progbits
+  69              		.align	1
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  73              		.fpu fpv4-sp-d16
+  75              	set_DutyCycle_Primary:
+  76              	.LFB127:
+  17:Core/Src/wheel.c **** 
+  18:Core/Src/wheel.c **** /* SET DUTYCYCLE primary function */
+  19:Core/Src/wheel.c **** static void set_DutyCycle_Primary(TIM_HandleTypeDef *htim, uint32_t Channel, uint16_t dutyCycle)
+  20:Core/Src/wheel.c **** {
+  77              		.loc 1 20 0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              	.LVL5:
+  82 0000 70B5     		push	{r4, r5, r6, lr}
+  83              	.LCFI1:
+  84              		.cfi_def_cfa_offset 16
+  85              		.cfi_offset 4, -16
+  86              		.cfi_offset 5, -12
+  87              		.cfi_offset 6, -8
+  88              		.cfi_offset 14, -4
+  89 0002 0646     		mov	r6, r0
+  90 0004 0D46     		mov	r5, r1
+  91 0006 1446     		mov	r4, r2
+  21:Core/Src/wheel.c ****         uint16_t mapped_value;
+  22:Core/Src/wheel.c ****         mapped_value = (time_period(MOTOR_DRIVER_FREQUENCY) * dutyCycle) / 65535;
+  92              		.loc 1 22 0
+  93 0008 4FF4FA50 		mov	r0, #8000
+  94              	.LVL6:
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 3
+
+
+  95 000c FFF7FEFF 		bl	time_period
+  96              	.LVL7:
+  97 0010 00FB04F0 		mul	r0, r0, r4
+  98 0014 064B     		ldr	r3, .L9
+  99 0016 83FB0023 		smull	r2, r3, r3, r0
+ 100 001a 0344     		add	r3, r3, r0
+ 101 001c C017     		asrs	r0, r0, #31
+ 102 001e C0EBE330 		rsb	r0, r0, r3, asr #15
+ 103              	.LVL8:
+  23:Core/Src/wheel.c ****         __HAL_TIM_SET_COMPARE(htim, Channel, mapped_value);
+ 104              		.loc 1 23 0
+ 105 0022 3368     		ldr	r3, [r6]
+ 106 0024 3433     		adds	r3, r3, #52
+ 107 0026 AD08     		lsrs	r5, r5, #2
+ 108              	.LVL9:
+ 109 0028 80B2     		uxth	r0, r0
+ 110 002a 43F82500 		str	r0, [r3, r5, lsl #2]
+  24:Core/Src/wheel.c **** }
+ 111              		.loc 1 24 0
+ 112 002e 70BD     		pop	{r4, r5, r6, pc}
+ 113              	.LVL10:
+ 114              	.L10:
+ 115              		.align	2
+ 116              	.L9:
+ 117 0030 01800080 		.word	-2147450879
+ 118              		.cfi_endproc
+ 119              	.LFE127:
+ 121              		.section	.text.float_abs,"ax",%progbits
+ 122              		.align	1
+ 123              		.global	float_abs
+ 124              		.syntax unified
+ 125              		.thumb
+ 126              		.thumb_func
+ 127              		.fpu fpv4-sp-d16
+ 129              	float_abs:
+ 130              	.LFB128:
+  25:Core/Src/wheel.c **** 
+  26:Core/Src/wheel.c **** 
+  27:Core/Src/wheel.c **** float float_abs(float x)
+  28:Core/Src/wheel.c **** {
+ 131              		.loc 1 28 0
+ 132              		.cfi_startproc
+ 133              		@ args = 0, pretend = 0, frame = 0
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135              		@ link register save eliminated.
+ 136              	.LVL11:
+  29:Core/Src/wheel.c ****         if (x < 0)
+ 137              		.loc 1 29 0
+ 138 0000 B5EEC00A 		vcmpe.f32	s0, #0
+ 139 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 140 0008 00D4     		bmi	.L15
+ 141              	.LVL12:
+ 142              	.L12:
+  30:Core/Src/wheel.c ****         {
+  31:Core/Src/wheel.c ****                 return (-1 * x);
+  32:Core/Src/wheel.c ****         }
+  33:Core/Src/wheel.c ****         return x;
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 4
+
+
+  34:Core/Src/wheel.c **** }
+ 143              		.loc 1 34 0
+ 144 000a 7047     		bx	lr
+ 145              	.LVL13:
+ 146              	.L15:
+  31:Core/Src/wheel.c ****         }
+ 147              		.loc 1 31 0
+ 148 000c B1EE400A 		vneg.f32	s0, s0
+ 149              	.LVL14:
+ 150 0010 FBE7     		b	.L12
+ 151              		.cfi_endproc
+ 152              	.LFE128:
+ 154              		.section	.text.calculate_omega,"ax",%progbits
+ 155              		.align	1
+ 156              		.global	calculate_omega
+ 157              		.syntax unified
+ 158              		.thumb
+ 159              		.thumb_func
+ 160              		.fpu fpv4-sp-d16
+ 162              	calculate_omega:
+ 163              	.LFB129:
+  35:Core/Src/wheel.c **** 
+  36:Core/Src/wheel.c **** void calculate_omega(struct Wheel *w)
+  37:Core/Src/wheel.c **** {
+ 164              		.loc 1 37 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 0
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              		@ link register save eliminated.
+ 169              	.LVL15:
+  38:Core/Src/wheel.c ****         // v = wr
+  39:Core/Src/wheel.c ****         w->omega = w->velcoity / w->radius;
+ 170              		.loc 1 39 0
+ 171 0000 D0ED026A 		vldr.32	s13, [r0, #8]
+ 172 0004 90ED017A 		vldr.32	s14, [r0, #4]
+ 173 0008 C6EE877A 		vdiv.f32	s15, s13, s14
+ 174 000c C0ED037A 		vstr.32	s15, [r0, #12]
+  40:Core/Src/wheel.c **** }
+ 175              		.loc 1 40 0
+ 176 0010 7047     		bx	lr
+ 177              		.cfi_endproc
+ 178              	.LFE129:
+ 180              		.section	.text.set_Direction,"ax",%progbits
+ 181              		.align	1
+ 182              		.global	set_Direction
+ 183              		.syntax unified
+ 184              		.thumb
+ 185              		.thumb_func
+ 186              		.fpu fpv4-sp-d16
+ 188              	set_Direction:
+ 189              	.LFB130:
+  41:Core/Src/wheel.c **** 
+  42:Core/Src/wheel.c **** void set_Direction(struct Wheel *w, enum Direction d)
+  43:Core/Src/wheel.c **** {
+ 190              		.loc 1 43 0
+ 191              		.cfi_startproc
+ 192              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 5
+
+
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194              	.LVL16:
+ 195 0000 10B5     		push	{r4, lr}
+ 196              	.LCFI2:
+ 197              		.cfi_def_cfa_offset 8
+ 198              		.cfi_offset 4, -8
+ 199              		.cfi_offset 14, -4
+ 200 0002 0446     		mov	r4, r0
+  44:Core/Src/wheel.c ****         if (d == DIR_AHEAD)       // AHEAD
+ 201              		.loc 1 44 0
+ 202 0004 61B1     		cbz	r1, .L22
+  45:Core/Src/wheel.c ****         {
+  46:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, SET);
+  47:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, RESET);
+  48:Core/Src/wheel.c ****         }
+  49:Core/Src/wheel.c ****         else if (d == DIR_BACK)  // BACK
+ 203              		.loc 1 49 0
+ 204 0006 0129     		cmp	r1, #1
+ 205 0008 15D0     		beq	.L23
+  50:Core/Src/wheel.c ****         {
+  51:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, RESET);
+  52:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, SET);
+  53:Core/Src/wheel.c ****         }
+  54:Core/Src/wheel.c ****         else                    // HALT
+  55:Core/Src/wheel.c ****         {
+  56:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, RESET);
+ 206              		.loc 1 56 0
+ 207 000a 0022     		movs	r2, #0
+ 208 000c 818A     		ldrh	r1, [r0, #20]
+ 209              	.LVL17:
+ 210 000e 0069     		ldr	r0, [r0, #16]
+ 211              	.LVL18:
+ 212 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 213              	.LVL19:
+  57:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, RESET);
+ 214              		.loc 1 57 0
+ 215 0014 0022     		movs	r2, #0
+ 216 0016 A18B     		ldrh	r1, [r4, #28]
+ 217 0018 A069     		ldr	r0, [r4, #24]
+ 218 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 219              	.LVL20:
+ 220              	.L17:
+  58:Core/Src/wheel.c ****         }
+  59:Core/Src/wheel.c **** }
+ 221              		.loc 1 59 0
+ 222 001e 10BD     		pop	{r4, pc}
+ 223              	.LVL21:
+ 224              	.L22:
+  46:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, RESET);
+ 225              		.loc 1 46 0
+ 226 0020 0122     		movs	r2, #1
+ 227 0022 818A     		ldrh	r1, [r0, #20]
+ 228              	.LVL22:
+ 229 0024 0069     		ldr	r0, [r0, #16]
+ 230              	.LVL23:
+ 231 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 232              	.LVL24:
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 6
+
+
+  47:Core/Src/wheel.c ****         }
+ 233              		.loc 1 47 0
+ 234 002a 0022     		movs	r2, #0
+ 235 002c A18B     		ldrh	r1, [r4, #28]
+ 236 002e A069     		ldr	r0, [r4, #24]
+ 237 0030 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 238              	.LVL25:
+ 239 0034 F3E7     		b	.L17
+ 240              	.LVL26:
+ 241              	.L23:
+  51:Core/Src/wheel.c ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, SET);
+ 242              		.loc 1 51 0
+ 243 0036 0022     		movs	r2, #0
+ 244 0038 818A     		ldrh	r1, [r0, #20]
+ 245              	.LVL27:
+ 246 003a 0069     		ldr	r0, [r0, #16]
+ 247              	.LVL28:
+ 248 003c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 249              	.LVL29:
+  52:Core/Src/wheel.c ****         }
+ 250              		.loc 1 52 0
+ 251 0040 0122     		movs	r2, #1
+ 252 0042 A18B     		ldrh	r1, [r4, #28]
+ 253 0044 A069     		ldr	r0, [r4, #24]
+ 254 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 255              	.LVL30:
+ 256 004a E8E7     		b	.L17
+ 257              		.cfi_endproc
+ 258              	.LFE130:
+ 260              		.section	.text.set_DutyCycle,"ax",%progbits
+ 261              		.align	1
+ 262              		.global	set_DutyCycle
+ 263              		.syntax unified
+ 264              		.thumb
+ 265              		.thumb_func
+ 266              		.fpu fpv4-sp-d16
+ 268              	set_DutyCycle:
+ 269              	.LFB131:
+  60:Core/Src/wheel.c **** 
+  61:Core/Src/wheel.c **** void set_DutyCycle(struct Wheel *w, uint16_t dutyCycle)
+  62:Core/Src/wheel.c **** {
+ 270              		.loc 1 62 0
+ 271              		.cfi_startproc
+ 272              		@ args = 0, pretend = 0, frame = 0
+ 273              		@ frame_needed = 0, uses_anonymous_args = 0
+ 274              	.LVL31:
+ 275 0000 08B5     		push	{r3, lr}
+ 276              	.LCFI3:
+ 277              		.cfi_def_cfa_offset 8
+ 278              		.cfi_offset 3, -8
+ 279              		.cfi_offset 14, -4
+  63:Core/Src/wheel.c ****         set_DutyCycle_Primary(w->htim, w->channel, dutyCycle);
+ 280              		.loc 1 63 0
+ 281 0002 0A46     		mov	r2, r1
+ 282 0004 416A     		ldr	r1, [r0, #36]
+ 283              	.LVL32:
+ 284 0006 006A     		ldr	r0, [r0, #32]
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 7
+
+
+ 285              	.LVL33:
+ 286 0008 FFF7FEFF 		bl	set_DutyCycle_Primary
+ 287              	.LVL34:
+  64:Core/Src/wheel.c **** }
+ 288              		.loc 1 64 0
+ 289 000c 08BD     		pop	{r3, pc}
+ 290              		.cfi_endproc
+ 291              	.LFE131:
+ 293              		.global	__aeabi_f2d
+ 294              		.global	__aeabi_dmul
+ 295              		.global	__aeabi_d2uiz
+ 296              		.section	.text.set_Omega,"ax",%progbits
+ 297              		.align	1
+ 298              		.global	set_Omega
+ 299              		.syntax unified
+ 300              		.thumb
+ 301              		.thumb_func
+ 302              		.fpu fpv4-sp-d16
+ 304              	set_Omega:
+ 305              	.LFB132:
+  65:Core/Src/wheel.c **** 
+  66:Core/Src/wheel.c **** void set_Omega(struct Wheel *w, float omega)
+  67:Core/Src/wheel.c **** {
+ 306              		.loc 1 67 0
+ 307              		.cfi_startproc
+ 308              		@ args = 0, pretend = 0, frame = 0
+ 309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 310              	.LVL35:
+ 311 0000 38B5     		push	{r3, r4, r5, lr}
+ 312              	.LCFI4:
+ 313              		.cfi_def_cfa_offset 16
+ 314              		.cfi_offset 3, -16
+ 315              		.cfi_offset 4, -12
+ 316              		.cfi_offset 5, -8
+ 317              		.cfi_offset 14, -4
+ 318 0002 2DED028B 		vpush.64	{d8}
+ 319              	.LCFI5:
+ 320              		.cfi_def_cfa_offset 24
+ 321              		.cfi_offset 80, -24
+ 322              		.cfi_offset 81, -20
+ 323 0006 0446     		mov	r4, r0
+ 324 0008 B0EE408A 		vmov.f32	s16, s0
+  68:Core/Src/wheel.c ****         uint16_t new_omega = (65535.0 / MAX_OMEGA) * float_abs(omega);
+ 325              		.loc 1 68 0
+ 326 000c FFF7FEFF 		bl	float_abs
+ 327              	.LVL36:
+ 328 0010 10EE100A 		vmov	r0, s0
+ 329 0014 FFF7FEFF 		bl	__aeabi_f2d
+ 330              	.LVL37:
+ 331 0018 19A3     		adr	r3, .L39
+ 332 001a D3E90023 		ldrd	r2, [r3]
+ 333 001e FFF7FEFF 		bl	__aeabi_dmul
+ 334              	.LVL38:
+ 335 0022 FFF7FEFF 		bl	__aeabi_d2uiz
+ 336              	.LVL39:
+ 337 0026 85B2     		uxth	r5, r0
+ 338              	.LVL40:
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 8
+
+
+  69:Core/Src/wheel.c ****         if (omega > 0) {
+ 339              		.loc 1 69 0
+ 340 0028 B5EEC08A 		vcmpe.f32	s16, #0
+ 341 002c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 342 0030 0DDC     		bgt	.L37
+  70:Core/Src/wheel.c ****                 set_Direction(w, DIR_AHEAD);
+  71:Core/Src/wheel.c ****                 set_DutyCycle(w, new_omega);
+  72:Core/Src/wheel.c ****         }
+  73:Core/Src/wheel.c ****         else if (omega < 0) {
+ 343              		.loc 1 73 0
+ 344 0032 B5EEC08A 		vcmpe.f32	s16, #0
+ 345 0036 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 346 003a 15D4     		bmi	.L38
+  74:Core/Src/wheel.c ****                 set_Direction(w, DIR_BACK);
+  75:Core/Src/wheel.c ****                 set_DutyCycle(w, new_omega);
+  76:Core/Src/wheel.c ****         }
+  77:Core/Src/wheel.c ****         else {
+  78:Core/Src/wheel.c ****                 set_Direction(w, DIR_HALT);
+ 347              		.loc 1 78 0
+ 348 003c 0221     		movs	r1, #2
+ 349 003e 2046     		mov	r0, r4
+ 350 0040 FFF7FEFF 		bl	set_Direction
+ 351              	.LVL41:
+  79:Core/Src/wheel.c ****                 set_DutyCycle(w, 0);
+ 352              		.loc 1 79 0
+ 353 0044 0021     		movs	r1, #0
+ 354 0046 2046     		mov	r0, r4
+ 355 0048 FFF7FEFF 		bl	set_DutyCycle
+ 356              	.LVL42:
+ 357 004c 07E0     		b	.L29
+ 358              	.L37:
+  70:Core/Src/wheel.c ****                 set_Direction(w, DIR_AHEAD);
+ 359              		.loc 1 70 0
+ 360 004e 0021     		movs	r1, #0
+ 361 0050 2046     		mov	r0, r4
+ 362 0052 FFF7FEFF 		bl	set_Direction
+ 363              	.LVL43:
+  71:Core/Src/wheel.c ****         }
+ 364              		.loc 1 71 0
+ 365 0056 2946     		mov	r1, r5
+ 366 0058 2046     		mov	r0, r4
+ 367 005a FFF7FEFF 		bl	set_DutyCycle
+ 368              	.LVL44:
+ 369              	.L29:
+  80:Core/Src/wheel.c ****         }
+  81:Core/Src/wheel.c ****         w->omega = omega;
+ 370              		.loc 1 81 0
+ 371 005e 84ED038A 		vstr.32	s16, [r4, #12]
+  82:Core/Src/wheel.c **** }
+ 372              		.loc 1 82 0
+ 373 0062 BDEC028B 		vldm	sp!, {d8}
+ 374              	.LCFI6:
+ 375              		.cfi_remember_state
+ 376              		.cfi_restore 80
+ 377              		.cfi_restore 81
+ 378              		.cfi_def_cfa_offset 16
+ 379              	.LVL45:
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 9
+
+
+ 380 0066 38BD     		pop	{r3, r4, r5, pc}
+ 381              	.LVL46:
+ 382              	.L38:
+ 383              	.LCFI7:
+ 384              		.cfi_restore_state
+  74:Core/Src/wheel.c ****                 set_DutyCycle(w, new_omega);
+ 385              		.loc 1 74 0
+ 386 0068 0121     		movs	r1, #1
+ 387 006a 2046     		mov	r0, r4
+ 388 006c FFF7FEFF 		bl	set_Direction
+ 389              	.LVL47:
+  75:Core/Src/wheel.c ****         }
+ 390              		.loc 1 75 0
+ 391 0070 2946     		mov	r1, r5
+ 392 0072 2046     		mov	r0, r4
+ 393 0074 FFF7FEFF 		bl	set_DutyCycle
+ 394              	.LVL48:
+ 395 0078 F1E7     		b	.L29
+ 396              	.L40:
+ 397 007a 00BFAFF3 		.align	3
+ 397      0080
+ 398              	.L39:
+ 399 0080 DB8D8094 		.word	-1803514405
+ 400 0084 76299B40 		.word	1083910518
+ 401              		.cfi_endproc
+ 402              	.LFE132:
+ 404              		.section	.rodata.time_period.str1.4,"aMS",%progbits,1
+ 405              		.align	2
+ 406              	.LC0:
+ 407 0000 436F7265 		.ascii	"Core/Src/wheel.c\000"
+ 407      2F537263 
+ 407      2F776865 
+ 407      656C2E63 
+ 407      00
+ 408              		.text
+ 409              	.Letext0:
+ 410              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 411              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 412              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 413              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 414              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 415              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 416              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 417              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eab
+ 418              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\includ
+ 419              		.file 11 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 420              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 421              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 422              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 423              		.file 15 "Core/Inc/tim.h"
+ 424              		.file 16 "Core/Inc/wheel.h"
+ 425              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 wheel.c
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:18     .text.time_period:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:25     .text.time_period:00000000 time_period
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:63     .text.time_period:00000020 $d
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:69     .text.set_DutyCycle_Primary:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:75     .text.set_DutyCycle_Primary:00000000 set_DutyCycle_Primary
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:117    .text.set_DutyCycle_Primary:00000030 $d
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:122    .text.float_abs:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:129    .text.float_abs:00000000 float_abs
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:155    .text.calculate_omega:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:162    .text.calculate_omega:00000000 calculate_omega
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:181    .text.set_Direction:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:188    .text.set_Direction:00000000 set_Direction
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:261    .text.set_DutyCycle:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:268    .text.set_DutyCycle:00000000 set_DutyCycle
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:297    .text.set_Omega:00000000 $t
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:304    .text.set_Omega:00000000 set_Omega
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:399    .text.set_Omega:00000080 $d
+C:\Users\n-is\AppData\Local\Temp\ccFQG36R.s:405    .rodata.time_period.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+_Error_Handler
+HAL_GPIO_WritePin
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2uiz
