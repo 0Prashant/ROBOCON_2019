@@ -1,4 +1,5 @@
 motor_tuning\robot.o: ..\Core\Src\robot.c
+motor_tuning\robot.o: ../Core/Inc/robot.h
 motor_tuning\robot.o: ../Core/Inc/robo_init.h
 motor_tuning\robot.o: ../Core/Inc/tim.h
 motor_tuning\robot.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
