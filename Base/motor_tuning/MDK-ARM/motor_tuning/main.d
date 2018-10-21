@@ -36,7 +36,6 @@ motor_tuning\main.o: ../Core/Inc/adc.h
 motor_tuning\main.o: ../Core/Inc/tim.h
 motor_tuning\main.o: ../Core/Inc/usart.h
 motor_tuning\main.o: ../Core/Inc/gpio.h
-motor_tuning\main.o: ../Core/Inc/pid.h
 motor_tuning\main.o: ../Core/Inc/robo_init.h
 motor_tuning\main.o: ../Core/Inc/encoder.h
 motor_tuning\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h

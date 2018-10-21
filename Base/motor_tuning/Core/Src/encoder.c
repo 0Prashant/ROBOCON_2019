@@ -15,7 +15,25 @@ void init_encoder()
 
 void calculate_encoder_distance(struct encoder *e)
 {
+	//Assuming that encoder count increases in anticlockwise direction
 	if(e->id==0)
+	{
+		e->distance = -(e->count)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+	}
+	else if(e->id==1)
+	{
+		e->distance = -(e->count)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+	}
+	else if(e->id==2)
+	{
+		e->distance = (e->count)*(CIRCUMFERENCE_OF_WHEEL/PPR);	
+	}
+	else if(e->id==3)
+	{
+		e->distance = (e->count)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+	}
+	else{}
+	/*if(e->id==0)
 	{
 		e->distancex = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
@@ -36,11 +54,23 @@ void calculate_encoder_distance(struct encoder *e)
 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
 	}
 	else{}
-	
+	*/
 }
 void calculate_robot_distance()
 {
+	float d13, d24;
+	static float theta =0;
+	for(int i=0;i<4;i++)
+	{
+		calculate_encoder_distance(&e[i]);
+	}
+	d13 = (e[1].distance + e[3].distance)/2;
+	d24 = (e[2].distance + e[4].distance)/2;
+	robotx += d24 * sin(theta + PI/4) - d13 * sin(theta - PI/4);	//this is to be modified according to robot motor direction
+	roboty += d13 * sin(theta+PI/4) + d24 * sin(theta-PI/4);
+	theta += ((e[3].distance - e[1].distance + e[4].distance - e[2].distance)/WIDTH);//*(180/3.14159265359) //here the theta is in radian
 	
+	/*
 	for(int i=0;i<4;i++)
 	{
 		calculate_encoder_distance(&e[i]);
@@ -48,18 +78,10 @@ void calculate_robot_distance()
 		roboty += e[i].distancey;
 	}
 	robotx /= 4;
-	roboty /= 4;
+	roboty /= 4;*/
+
 }
 
-/*void encoder_set1()
-{	
-}
-
-void encoder_set2()
-{
-}
-
-*/
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {

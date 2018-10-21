@@ -43,7 +43,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "pid.h"
 
 
 /* USER CODE BEGIN Includes */
@@ -58,7 +57,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-#define PI 3.14159
 /* USER CODE BEGIN PV */
 
 extern struct encoder e[4];
@@ -158,6 +156,7 @@ int main(void)
         /* USER CODE BEGIN WHILE */
         
 	ok=goto_distance(2000,0);
+	ok+=1;
 	while (1)
         {
 	
