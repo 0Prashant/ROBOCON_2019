@@ -22,7 +22,7 @@ void play(void)
         while (1) 
 	{
                 if (HAL_UART_Receive(&huart1, buffer, 1, 2) == HAL_OK)
-			printf("%c",buffer[0]);
+		printf("%c",buffer[0]);
 		/*if(speed<58000)
 			speed += 500;
 		//robot_speed(speed);
@@ -115,32 +115,40 @@ void play(void)
 
 int goto_distance(float dx, float dy)
 {
-	float time
-	ramp_counter = HAL_GetTick();
-	while(1)
+	//HAL_Delay(300);
+	float time;
+//	ramp_counter = HAL_GetTick();
+
+
+	double distance;
+	double temp_velocity;
+	distance = pow((dx*dx+dy*dy),0.5);
+	time = distance/ROBOT_VELOCITY;			
+	velocity[0] = dx / time;
+	velocity[1] = dy / time;
+	velocity[2] = 0;
+	temp_velocity = float_abs(velocity[0] + velocity[1]);
+	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
+	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
+	
+	reset_robot_distance();
+		
+	while(((pow((robotx*robotx + roboty*roboty),0.5))<distance))
 	{	
-		double distance;
-		distance = pow((dx*dx+dy*dy),0.5);
-		time = distance/ROBOT_VELOCITY;			
-		velocity[0] = dx / time;
-		velocity[1] = dy / time;
-		velocity[2] = 0;
+		
 		calculate_robot_velocity();
 		calculate_robot_distance();
-	//	printf("%d \t%d \t%d \t%d \t%f \t%f \t%f \t%f \t%f \t%f\n", e[0].count, e[1].count, e[2].count, e[3].count,e[0].distancex, e[1].distancex, e[2].distancex, e[3].distancex, robotx, roboty);
-		
-		if(((float_abs(robotx)-float_abs(dx))>=0)&&((float_abs(roboty)-float_abs(dy))>=0))
-		{
-			velocity[0]=0;
-			velocity[1]=0;
-			velocity[2]=0;
-			calculate_robot_velocity();
-			return 1;
-			
-		}
-		
+		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty,Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity);
+		//printf("%d \t%d \t%d \t%d \t%f \t%f\n", e[0].count, e[1].count, e[2].count, e[3].count, robotx, roboty);
+		//if(((float_abs(robotx)-float_abs(dx))>=0)&&((float_abs(roboty)-float_abs(dy))>=0))
 			
 	}
-
-	//++index;		
+	velocity[0]=0;
+	velocity[1]=0;
+	velocity[2]=0;
+	calculate_robot_velocity();
+	printf("Finished \n");
+	printf("Finished \n");
+	//HAL_Delay(1000);
+	return 1;
 }

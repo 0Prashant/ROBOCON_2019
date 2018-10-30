@@ -18,29 +18,31 @@ void calculate_robot_velocity()
                 {
                         Wheel_arr[i].next_velocity += velocity[j] * coupling_matrix[i][j];
                 }
+//		Wheel_arr[i].next_velocity *= 1.4142135623 ;
+		if(Wheel_arr[i].next_velocity >MAX_VELOCITY)
+			Wheel_arr[i].next_velocity = MAX_VELOCITY;
 		ramp(Wheel_arr[i].id);
 		//set_ocr(&Wheel_arr[i], Wheel_arr[i].velocity);
+		//printf("%f\t%f\n",Wheel_arr[i].next_velocity,Wheel_arr[i].velocity );
         }
 }
 
-void ramp(int wheel_no)
-{	
+void ramp(uint8_t wheel_no)
+{
 	if(Wheel_arr[wheel_no].velocity != Wheel_arr[wheel_no].next_velocity)
 	{
-		if((HAL_GetTick()-ramp_counter >= RAMPING_TIME) || ((HAL_GetTick() + (65535 - ramp_counter)) >= RAMPING_TIME))
+		if( (Wheel_arr[wheel_no].velocity + RAMPING_FACTOR) < Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity += RAMPING_FACTOR;
+		else if( (Wheel_arr[wheel_no].velocity - RAMPING_FACTOR) > Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity -= RAMPING_FACTOR;
+		else
 		{
-			if( (Wheel_arr[wheel_no].velocity + RAMPING_FACTOR) < Wheel_arr[wheel_no].next_velocity)
-				Wheel_arr[wheel_no].velocity += RAMPING_FACTOR;
-			else if( (Wheel_arr[wheel_no].velocity - RAMPING_FACTOR) > Wheel_arr[wheel_no].next_velocity)
-				Wheel_arr[wheel_no].velocity -= RAMPING_FACTOR;
-			else
-			{
-				Wheel_arr[wheel_no].velocity= Wheel_arr[wheel_no].next_velocity;
-			}		
-			ramp_counter = HAL_GetTick(); //resetting counter
+			Wheel_arr[wheel_no].velocity= Wheel_arr[wheel_no].next_velocity;
 		}
-	}
-	set_ocr(&Wheel_arr[wheel_no], Wheel_arr[wheel_no].velocity);	
+	
+		set_ocr(&Wheel_arr[wheel_no], Wheel_arr[wheel_no].velocity);
+	}	
+		//printf("%f\t%f\n",Wheel_arr[wheel_no].next_velocity,Wheel_arr[wheel_no].velocity );
 }
 
 

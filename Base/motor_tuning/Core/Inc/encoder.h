@@ -20,6 +20,6 @@ struct encoder
 void init_encoder(void);
 void calculate_encoder_distance(struct encoder *e);
 void calculate_robot_distance(void);
-
+void reset_robot_distance(void);
 
 #endif  //_ENCODER_H_
