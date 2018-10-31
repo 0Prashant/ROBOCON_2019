@@ -61,6 +61,13 @@
 
 extern struct encoder e[4];
 extern float robotx, roboty;
+float go[5][2] = {	{300,300},
+			{-300,300},
+			{-300,-300},
+			{300,-300},
+			{300,300}};
+
+
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -107,11 +114,8 @@ int fputc(int ch, FILE *f)
 int main(void)
   {
         /* USER CODE BEGIN 1 */
-	/*			uint32_t update_tick = HAL_GetTick();
-				uint32_t sample_time = 10L;
-				struct Str_pid pid[3]; 
-	      float p,i,d;
-	  */    
+	
+	      
         /* USER CODE END 1 */
 
         /* MCU Configuration----------------------------------------------------------*/
@@ -147,30 +151,23 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_4);
 				
-	//robot_speed(40000);
-	int ok=1;
+	
 	
         /* USER CODE END 2 */
 
         /* Infinite loop */
         /* USER CODE BEGIN WHILE */
-        
-	//ok=goto_distance(-200,-200);
-	//ok=goto_distance(-200,0);
-	//ok=goto_distance(500,500);
-	//ok=goto_distance(500,500);
-	//ok=goto_distance(-500,500);
-	//ok=goto_distance(-500,-500); 
-	//ok=goto_distance(500,-500);
-	//ok+=1;
+        int ok;
+	
+	for(int i=0; i<5; i++)
+	{
+		ok = goto_distance(go[i][0], go[i][1]);
+		printf("\n\n\n OK = %d \n\n\n",ok);
+	}
 	while (1)
         {
-		HAL_UART_Transmit(&huart1,(uint8_t*)buffer,spri 
-		//HAL_UART_Receive(&huart1, buffer, 1, 2)
-		//calculate_robot_distance();
-		//printf("FINISHED \n");
-		//calculate_robot_distance();
-		//printf("%d \t%d \t%d \t%d \t%f \t%f \t%f \t%f \t%f \t%f\n", e[0].count, e[1].count, e[2].count, e[3].count,e[0].distancex, e[1].distancex, e[2].distancex, e[3].distancex, robotx, roboty);
+		//HAL_UART_Transmit(&huart1,(uint8_t *)&ch,16,2);
+		
 
 		/* USER CODE END WHILE */
                 /* USER CODE BEGIN 3 */

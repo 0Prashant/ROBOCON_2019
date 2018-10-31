@@ -18,19 +18,26 @@ void play(void)
 {
 	//uint16_t speed=0;
 	//int downcount=0;
-        uint8_t buffer[1];
+        uint8_t buffer[2];
+	buffer[0] = 'a';
         while (1) 
 	{
+		
                 if (HAL_UART_Receive(&huart1, buffer, 1, 2) == HAL_OK)
 		printf("%c",buffer[0]);
-		/*if(speed<58000)
-			speed += 500;
-		//robot_speed(speed);
-		if(buffer[0]!='S')
-			downcount=20;*/
+		
+		/*if(HAL_OK==HAL_UART_Transmit(&huart1,buffer,1,0xFFFF))
+			printf("OK");
+		else
+			printf("NOT");*/
+		//HAL_UART_Transmit(&huart1,buffer,1,0xFFFF)
+		//printf("%c",(HAL_UART_Transmit(&huart1,buffer,1,0xFFFF)));
+		//HAL_Delay(500);
+		//HAL_UART_Transmit(&huart1,(uint8_t *)&buffer,2,2);
+		//HAL_UART_Transmit(&huart1,(uint8_t *)&buffer,1,2);
+		
 		switch (buffer[0])
 		{
-			
 			case 'F':
 			{
 				velocity[0] = 0;
@@ -115,11 +122,7 @@ void play(void)
 
 int goto_distance(float dx, float dy)
 {
-	//HAL_Delay(300);
 	float time;
-//	ramp_counter = HAL_GetTick();
-
-
 	double distance;
 	double temp_velocity;
 	distance = pow((dx*dx+dy*dy),0.5);
@@ -135,20 +138,51 @@ int goto_distance(float dx, float dy)
 		
 	while(((pow((robotx*robotx + roboty*roboty),0.5))<distance))
 	{	
-		
 		calculate_robot_velocity();
 		calculate_robot_distance();
-		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty,Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity);
-		//printf("%d \t%d \t%d \t%d \t%f \t%f\n", e[0].count, e[1].count, e[2].count, e[3].count, robotx, roboty);
-		//if(((float_abs(robotx)-float_abs(dx))>=0)&&((float_abs(roboty)-float_abs(dy))>=0))
-			
+		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty,Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity);			
 	}
+	printf("Finished \n");
+	//HAL_Delay(1000);
+	reset_robot_distance();
 	velocity[0]=0;
 	velocity[1]=0;
 	velocity[2]=0;
 	calculate_robot_velocity();
 	printf("Finished \n");
-	printf("Finished \n");
 	//HAL_Delay(1000);
 	return 1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
