@@ -5,13 +5,14 @@
  */
 
 #include "robot.h"
+#include "pid.h"
+
 
 extern struct encoder e[4];
 extern float robotx, roboty;
 extern float velocity[3];
 extern uint32_t ramp_counter;
 // Constants that need to be modified according to robot's config
-
 
 
 void play(void)
@@ -97,12 +98,6 @@ void play(void)
 			case 'S':
 			{
 				
-				/*if(downcount>0)
-				{
-					speed -=2000;
-					downcount--;
-					break;
-				}*/
 				velocity[0] = 0;
 				velocity[1] = 0;
 				velocity[2] = 0;;
@@ -122,33 +117,32 @@ void play(void)
 
 int goto_distance(float dx, float dy)
 {
+	
 	float time;
 	double distance;
+	
 	double temp_velocity;
 	distance = pow((dx*dx+dy*dy),0.5);
 	time = distance/ROBOT_VELOCITY;			
 	velocity[0] = dx / time;
 	velocity[1] = dy / time;
 	velocity[2] = 0;
-	temp_velocity = float_abs(velocity[0] + velocity[1]);
+	temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]);
 	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
 	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
 	
 	reset_robot_distance();
 		
-	while(((pow((robotx*robotx + roboty*roboty),0.5))<distance))
+	while(((pow((robotx*robotx + roboty*roboty),0.5)) <= distance))
 	{	
-		calculate_robot_velocity();
+		calculate_velocity_with_pid();
+		//calculate_robot_velocity();
 		calculate_robot_distance();
-		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty,Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity);			
+		//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty, Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity, Wheel_arr[2].next_velocity, Wheel_arr[3].next_velocity);			
 	}
 	printf("Finished \n");
 	//HAL_Delay(1000);
 	reset_robot_distance();
-	velocity[0]=0;
-	velocity[1]=0;
-	velocity[2]=0;
-	calculate_robot_velocity();
 	printf("Finished \n");
 	//HAL_Delay(1000);
 	return 1;

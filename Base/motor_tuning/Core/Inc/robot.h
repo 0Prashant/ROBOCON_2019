@@ -10,6 +10,7 @@
 #include "robo_init.h"
 #include "drive.h"
 #include "encoder.h"
+#include <stdlib.h>
 
 
 void run_CurrentConfig(void);
@@ -17,5 +18,6 @@ void run_CurrentConfig(void);
 // This function contains an infinite loop
 void play(void);
 int goto_distance(float dx, float dy);
+
 
 #endif // _ROBOT_H_

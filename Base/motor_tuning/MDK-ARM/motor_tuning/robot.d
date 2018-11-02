@@ -44,3 +44,5 @@ motor_tuning\robot.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 motor_tuning\robot.o: ../Core/Inc/defines.h
 motor_tuning\robot.o: ../Core/Inc/wheel.h
 motor_tuning\robot.o: ../Core/Inc/drive.h
+motor_tuning\robot.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+motor_tuning\robot.o: ../Core/Inc/pid.h

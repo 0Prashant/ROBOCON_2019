@@ -5,7 +5,7 @@ float robotx = 0, roboty = 0;
 //float false_robotx = 0, false_roboty = 0;
 float distance[2][3];		//set1, set2 (distancex, distancey, yaw)
 //int16_t counts[4] =  {0,0,0,0};
-
+extern int counts[4];
 void init_encoder()
 {
 	for(int i=0; i<4; i++)
@@ -110,10 +110,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
                         {
                                 ++e[0].count;
+				++counts[0];
                         }
                         else
                         {
                                 --e[0].count;
+				--counts[0];
                         }
                 } break;
 
@@ -121,10 +123,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6))
                         {
                                 ++e[1].count;
+				++counts[1];
                         }
                         else
                         {
                                 --e[1].count;
+				--counts[1];
                         }
                 } break;
 
@@ -132,10 +136,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9))
                         {
                                 ++e[2].count;
+				++counts[2];
                         }
                         else 
                         {
                                 --e[2].count;
+				--counts[2];
                         }
                 } break;
 
@@ -143,10 +149,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                         if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_12))
                         {
                                 ++e[3].count; 
+				++counts[3];
                         }
                         else
                         {
                                 --e[3].count;
+				--counts[3];
                         }
                 } break;
 

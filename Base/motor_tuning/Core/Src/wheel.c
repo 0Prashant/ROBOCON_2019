@@ -59,8 +59,9 @@ void set_DutyCycle(struct Wheel *w, uint16_t dutyCycle)
         set_DutyCycle_Primary(w->htim, w->channel, dutyCycle);
 }
 
-void set_ocr(struct Wheel *w, double velocity)
+void set_Omega(struct Wheel *w, double omega)
 {
+	float velocity = (omega*MAX_VELOCITY)/MAX_OMEGA;
 	float max_velocity = MAX_VELOCITY * 0.99999999999;
         uint16_t ocr = (uint16_t)((65535.0*float_abs(velocity)) / max_velocity)  ;
         if (velocity > 0) {
