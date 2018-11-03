@@ -1,7 +1,10 @@
 #include "encoder.h"
 
+
 struct encoder e[4];
 float robotx = 0, roboty = 0;
+float actual_robotx = 0, actual_roboty = 0;
+float theta =0;
 //float false_robotx = 0, false_roboty = 0;
 float distance[2][3];		//set1, set2 (distancex, distancey, yaw)
 //int16_t counts[4] =  {0,0,0,0};
@@ -59,14 +62,15 @@ void calculate_encoder_distance(struct encoder *e)
 }
 void reset_robot_distance()
 {
+	actual_robotx += robotx;
+	actual_roboty += roboty;
 	robotx = 0;
 	roboty = 0;
 }
 void calculate_robot_distance()
 {
 	float d13, d24;
-	static float theta =0;
-	int temp_count[4];
+	int temp_count[4]; 
 	for(int i=0;i<4;i++)
 	{
 		calculate_encoder_distance(&e[i]);

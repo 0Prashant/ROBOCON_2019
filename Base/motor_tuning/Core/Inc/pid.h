@@ -29,7 +29,7 @@ struct Str_pid
 
 void set_OutputLimit(struct Str_pid* spid, float max_output, float min_output);
 void set_Gains(struct Str_pid* spid, double kp, double ki, double kd);
-float pid_Compute(struct Str_pid* spid,float set_point, float process_value, uint16_t dt);
+double pid_Compute(struct Str_pid* spid,float set_point, float process_value, uint16_t dt);
 void calculate_velocity_with_pid(void);
 
 #endif

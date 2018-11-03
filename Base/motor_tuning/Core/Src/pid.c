@@ -13,7 +13,7 @@ uint16_t dt = 15;
 uint32_t break_tick ;
 
 float omega[4] = {0,0,0,0};
-float new_omega[4] = {0,0,0,0};
+double new_omega[4] = {0,0,0,0};
 int counts[4] = {0,0,0,0};			
 uint32_t update_tick;
 float req_omega[4];
@@ -36,7 +36,7 @@ void set_OutputLimit(struct Str_pid* spid, float max_output, float min_output)
 	spid->min_output  = min_output;
 }
 
-float pid_Compute(struct Str_pid* spid,float set_point, float input, uint16_t dt)
+double pid_Compute(struct Str_pid* spid,float set_point, float input, uint16_t dt)
 { 
 	
 	float alpha = (1 - (spid->ki*dt/spid->kp)/1000);
@@ -56,7 +56,7 @@ float pid_Compute(struct Str_pid* spid,float set_point, float input, uint16_t dt
 		spid->output = (spid->min_output);
 	}
 		
-	return (12*spid->output)/MAX_OMEGA;
+	return (double)((12*spid->output)/MAX_OMEGA);
 		
 }
 
