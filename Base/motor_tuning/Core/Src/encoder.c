@@ -62,10 +62,8 @@ void calculate_encoder_distance(struct encoder *e)
 }
 void reset_robot_distance()
 {
-	actual_robotx += robotx;
-	actual_roboty += roboty;
-	robotx = 0;
-	roboty = 0;
+	actual_robotx = robotx;
+	actual_roboty = roboty;
 }
 void calculate_robot_distance()
 {
@@ -84,7 +82,7 @@ void calculate_robot_distance()
 	temp_count[3] = e[3].count;
 	robotx += (-d24) * cos(theta + PI/4) - d13 * sin(theta + PI/4);	//this is to be modified according to robot motor direction
 	roboty += (-d13) * cos(theta + PI/4) + d24 * sin(theta+PI/4);
-	theta += ((e[2].distance - e[0].distance + e[3].distance - e[1].distance)/WIDTH)/4;//*(180/3.14159265359) //here the theta is in radian
+	theta += (((e[2].distance - e[0].distance + e[3].distance - e[1].distance)/WIDTH)/2);//*(180/3.14159265359) //here the theta is in radian
 	e[0].count -= temp_count[0];
 	e[1].count -= temp_count[1];
 	e[2].count -= temp_count[2];

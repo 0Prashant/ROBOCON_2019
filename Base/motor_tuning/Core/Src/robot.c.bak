@@ -127,30 +127,43 @@ int goto_distance(float dx, float dy)
 	float time;
 	double distance;
 	double temp_velocity;
-	dx -= robotx-previous_dx;
-	dy -= robotx-previous_dy;
+	dx = dx - (previous_robotx-previous_dx);
+	dy = dy - (previous_roboty-previous_dy);
 	distance = pow((dx*dx+dy*dy),0.5);
 	time = distance/ROBOT_VELOCITY;			
-	velocity[0] = dx / time;
-	velocity[1] = dy / time;
-	velocity[2] = theta / time;
+	//velocity[2] = 0;
+	velocity[2] = -(theta  ) / time;
 	temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]) + float_abs(velocity[2]);
-	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
+	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy+vw = robot_velocity so that any motor donot exceed it
 	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-	velocity[2] = velocity[2] * (ROBOT_VELOCITY / temp_velocity);	
-	reset_robot_distance();
-		
+
+	calculate_robot_distance();	
 	while(((pow((robotx*robotx + roboty*roboty),0.5)) <= distance))
 	{	
-		//calculate_velocity_with_pid();
-		calculate_robot_velocity();
+		velocity[0] = dx / time;
+		velocity[1] = dy / time;
+		velocity[2] = -(theta * (WIDTH/2) ) / time;
+		temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]) + float_abs(velocity[2]);
+		velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy+vw = robot_velocity so that any motor donot exceed it
+		velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
+		velocity[2] = velocity[2] * (ROBOT_VELOCITY / temp_velocity);	
+		calculate_velocity_with_pid();
+		//calculate_robot_velocity();
 		calculate_robot_distance();
-		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], actual_robotx, actual_roboty, theta, dx, dy, robotx, roboty);			
+		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], velocity[2], actual_roboty, theta, Wheel_arr[0].velocity, Wheel_arr[1].velocity, Wheel_arr[2].velocity, Wheel_arr[3].velocity );			 
+		//HAL_Delay(10);
 	}
+	
 	printf("Finished \n");
 	//HAL_Delay(1000);
 	reset_robot_distance();
+	previous_dx = dx;
+	previous_dy = dy;
+	previous_robotx = robotx;
+	previous_roboty = roboty;
 	printf("Finished \n");
+	robotx = 0;
+	roboty = 0;
 	//HAL_Delay(1000);
 	return 1;
 }
@@ -159,7 +172,7 @@ int goto_absolute_distance(float dx, float dy)
 {
 	float time;
 	double distance;
-	//double temp_velocity;
+	double temp_velocity;
 	double temp_distance = 0;
 	dx -= previous_robotx;
 	dy -= previous_roboty;
@@ -168,32 +181,26 @@ int goto_absolute_distance(float dx, float dy)
 	velocity[0] = dx / time;
 	velocity[1] = dy / time;
 	velocity[2] = 0;
-	//temp_velocity = float_abs(velocity[0]) + float_abs(velocity[1]);
-	//velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
-	//velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-	
-	//reset_robot_distance();
-		 
+	temp_velocity = float_abs(velocity[0]) + float_abs(velocity[1]);
+	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
+	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
+	//reset_robot_distance();	 
 	while( temp_distance < distance)
 	{	
 		temp_distance = pow((pow((previous_robotx-robotx),2)+pow((previous_roboty-roboty),2)) , 0.5);
 		calculate_velocity_with_pid();
-		HAL_Delay(10);
-		//calculate_robot_velocity();
 		calculate_robot_distance();
 		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], robotx, roboty, dx, dy, previous_robotx, previous_roboty);			
 	}
 	printf("Finished \n");
-	velocity[0]=0;
+	 velocity[0]=0;
 	velocity[1]=0;
 	velocity[2]=0;
 	calculate_robot_velocity();
-	//HAL_Delay(1000);
 	previous_distance = distance;
 	previous_robotx = robotx;
 	previous_roboty = roboty;	
 	printf("Finished \n");
-	//HAL_Delay(1000);
 	return 1;
 }
 

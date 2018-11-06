@@ -43,7 +43,7 @@ Section Cross References
     main.o(i.main) refers to stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start) for HAL_TIM_Base_Start
     main.o(i.main) refers to stm32f4xx_hal_tim.o(i.HAL_TIM_PWM_Start) for HAL_TIM_PWM_Start
     main.o(i.main) refers to robot.o(i.goto_distance) for goto_distance
-    main.o(i.main) refers to drive.o(i.calculate_robot_velocity) for calculate_robot_velocity
+    main.o(i.main) refers to pid.o(i.calculate_velocity_with_pid) for calculate_velocity_with_pid
     main.o(i.main) refers to pid.o(.data) for update_tick
     main.o(i.main) refers to pid.o(.bss) for pid_1
     main.o(i.main) refers to tim.o(.bss) for htim8
@@ -96,9 +96,10 @@ Section Cross References
     robot.o(i.goto_absolute_distance) refers to pow.o(i.__hardfp_pow) for __hardfp_pow
     robot.o(i.goto_absolute_distance) refers to ddiv.o(.text) for __aeabi_ddiv
     robot.o(i.goto_absolute_distance) refers to d2f.o(.text) for __aeabi_d2f
+    robot.o(i.goto_absolute_distance) refers to wheel.o(i.float_abs) for float_abs
     robot.o(i.goto_absolute_distance) refers to dadd.o(.text) for __aeabi_dadd
+    robot.o(i.goto_absolute_distance) refers to dmul.o(.text) for __aeabi_dmul
     robot.o(i.goto_absolute_distance) refers to pid.o(i.calculate_velocity_with_pid) for calculate_velocity_with_pid
-    robot.o(i.goto_absolute_distance) refers to stm32f4xx_hal.o(i.HAL_Delay) for HAL_Delay
     robot.o(i.goto_absolute_distance) refers to encoder.o(i.calculate_robot_distance) for calculate_robot_distance
     robot.o(i.goto_absolute_distance) refers to printfa.o(i.__0printf) for __2printf
     robot.o(i.goto_absolute_distance) refers to cdcmple.o(.text) for __aeabi_cdcmple
@@ -113,14 +114,15 @@ Section Cross References
     robot.o(i.goto_distance) refers to wheel.o(i.float_abs) for float_abs
     robot.o(i.goto_distance) refers to dadd.o(.text) for __aeabi_dadd
     robot.o(i.goto_distance) refers to dmul.o(.text) for __aeabi_dmul
-    robot.o(i.goto_distance) refers to encoder.o(i.reset_robot_distance) for reset_robot_distance
-    robot.o(i.goto_distance) refers to drive.o(i.calculate_robot_velocity) for calculate_robot_velocity
     robot.o(i.goto_distance) refers to encoder.o(i.calculate_robot_distance) for calculate_robot_distance
+    robot.o(i.goto_distance) refers to pid.o(i.calculate_velocity_with_pid) for calculate_velocity_with_pid
     robot.o(i.goto_distance) refers to printfa.o(i.__0printf) for __2printf
     robot.o(i.goto_distance) refers to cdcmple.o(.text) for __aeabi_cdcmple
-    robot.o(i.goto_distance) refers to encoder.o(.data) for robotx
-    robot.o(i.goto_distance) refers to robot.o(.data) for .data
+    robot.o(i.goto_distance) refers to encoder.o(i.reset_robot_distance) for reset_robot_distance
+    robot.o(i.goto_distance) refers to encoder.o(.data) for theta
     robot.o(i.goto_distance) refers to drive.o(.bss) for velocity
+    robot.o(i.goto_distance) refers to robo_init.o(.bss) for Wheel_arr
+    robot.o(i.goto_distance) refers to robot.o(.data) for .data
     robot.o(i.play) refers to stm32f4xx_hal_uart.o(i.HAL_UART_Receive) for HAL_UART_Receive
     robot.o(i.play) refers to printfa.o(i.__0printf) for __2printf
     robot.o(i.play) refers to drive.o(i.calculate_robot_velocity) for calculate_robot_velocity
@@ -181,7 +183,6 @@ Section Cross References
     drive.o(i.ramp) refers to dmul.o(.text) for __aeabi_dmul
     drive.o(i.ramp) refers to ddiv.o(.text) for __aeabi_ddiv
     drive.o(i.ramp) refers to d2f.o(.text) for __aeabi_d2f
-    drive.o(i.ramp) refers to wheel.o(i.set_ocr) for set_ocr
     drive.o(i.ramp) refers to robo_init.o(.bss) for Wheel_arr
     drive.o(i.ramp) refers to pid.o(.bss) for req_omega
     pid.o(i.calculate_velocity_with_pid) refers to drive.o(i.calculate_robot_velocity) for calculate_robot_velocity
@@ -1194,12 +1195,12 @@ Removing Unused input sections from the image.
     Removing robot.o(.rev16_text), (4 bytes).
     Removing robot.o(.revsh_text), (4 bytes).
     Removing robot.o(.rrx_text), (6 bytes).
-    Removing robot.o(i.goto_absolute_distance), (592 bytes).
+    Removing robot.o(i.goto_absolute_distance), (704 bytes).
     Removing robot.o(i.play), (372 bytes).
     Removing wheel.o(.rev16_text), (4 bytes).
     Removing wheel.o(.revsh_text), (4 bytes).
     Removing wheel.o(.rrx_text), (6 bytes).
-    Removing wheel.o(i.set_Omega), (176 bytes).
+    Removing wheel.o(i.set_ocr), (152 bytes).
     Removing encoder.o(.rev16_text), (4 bytes).
     Removing encoder.o(.revsh_text), (4 bytes).
     Removing encoder.o(.rrx_text), (6 bytes).
@@ -1211,8 +1212,6 @@ Removing Unused input sections from the image.
     Removing pid.o(.rev16_text), (4 bytes).
     Removing pid.o(.revsh_text), (4 bytes).
     Removing pid.o(.rrx_text), (6 bytes).
-    Removing pid.o(i.calculate_velocity_with_pid), (504 bytes).
-    Removing pid.o(i.pid_Compute), (244 bytes).
     Removing pid.o(i.set_Gains), (6 bytes).
     Removing pid.o(.data), (4 bytes).
     Removing stm32f4xx_hal_adc.o(.rev16_text), (4 bytes).
@@ -1612,7 +1611,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(i.SystemCoreClockUpdate), (120 bytes).
     Removing dneg.o(.text), (6 bytes).
 
-453 unused section(s) (total 56564 bytes) removed from the image.
+451 unused section(s) (total 55904 bytes) removed from the image.
 
 ==============================================================================
 
@@ -1651,33 +1650,33 @@ Image Symbol Table
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
     ../clib/microlib/errno.c                 0x00000000   Number         0  errno.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf4.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf8.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
     ../clib/microlib/printf/stubs.s          0x00000000   Number         0  stubs.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
     ../fplib/microlib/d2f.c                  0x00000000   Number         0  d2f.o ABSOLUTE
@@ -1686,8 +1685,8 @@ Image Symbol Table
     ../fplib/microlib/fpdiv.c                0x00000000   Number         0  ddiv.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  depilogue.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  fepilogue.o ABSOLUTE
-    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixul.o ABSOLUTE
     ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixui.o ABSOLUTE
+    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixul.o ABSOLUTE
     ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixi.o ABSOLUTE
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  dflti.o ABSOLUTE
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  dfltui.o ABSOLUTE
@@ -1708,10 +1707,10 @@ Image Symbol Table
     ../mathlib/rred.c                        0x00000000   Number         0  rred.o ABSOLUTE
     ../mathlib/sin.c                         0x00000000   Number         0  sin_x.o ABSOLUTE
     ../mathlib/sin.c                         0x00000000   Number         0  sin.o ABSOLUTE
-    ../mathlib/sin_i.c                       0x00000000   Number         0  sin_i_x.o ABSOLUTE
     ../mathlib/sin_i.c                       0x00000000   Number         0  sin_i.o ABSOLUTE
-    ../mathlib/sqrt.c                        0x00000000   Number         0  sqrt.o ABSOLUTE
+    ../mathlib/sin_i.c                       0x00000000   Number         0  sin_i_x.o ABSOLUTE
     ../mathlib/sqrt.c                        0x00000000   Number         0  sqrt_x.o ABSOLUTE
+    ../mathlib/sqrt.c                        0x00000000   Number         0  sqrt.o ABSOLUTE
     ..\Core\Src\adc.c                        0x00000000   Number         0  adc.o ABSOLUTE
     ..\Core\Src\drive.c                      0x00000000   Number         0  drive.o ABSOLUTE
     ..\Core\Src\encoder.c                    0x00000000   Number         0  encoder.o ABSOLUTE
@@ -1893,40 +1892,42 @@ Image Symbol Table
     i.assert_failed                          0x0800559e   Section        0  main.o(i.assert_failed)
     i.calculate_encoder_distance             0x080055a0   Section        0  encoder.o(i.calculate_encoder_distance)
     i.calculate_robot_distance               0x080055ec   Section        0  encoder.o(i.calculate_robot_distance)
-    i.calculate_robot_velocity               0x080057b0   Section        0  drive.o(i.calculate_robot_velocity)
-    i.fabs                                   0x08005868   Section        0  fabs.o(i.fabs)
-    i.float_abs                              0x08005880   Section        0  wheel.o(i.float_abs)
-    i.fputc                                  0x080058c4   Section        0  main.o(i.fputc)
-    i.goto_distance                          0x080058ec   Section        0  robot.o(i.goto_distance)
-    i.init_encoder                           0x08005b88   Section        0  encoder.o(i.init_encoder)
-    i.main                                   0x08005b9c   Section        0  main.o(i.main)
-    i.ramp                                   0x08005c9c   Section        0  drive.o(i.ramp)
-    i.reset_robot_distance                   0x08005d90   Section        0  encoder.o(i.reset_robot_distance)
-    i.set_Direction                          0x08005dc8   Section        0  wheel.o(i.set_Direction)
-    i.set_DutyCycle                          0x08005e00   Section        0  wheel.o(i.set_DutyCycle)
-    i.set_DutyCycle_Primary                  0x08005e0c   Section        0  wheel.o(i.set_DutyCycle_Primary)
-    i.set_OutputLimit                        0x08005e34   Section        0  pid.o(i.set_OutputLimit)
-    i.set_ocr                                0x08005e40   Section        0  wheel.o(i.set_ocr)
-    i.sqrt                                   0x08005ed8   Section        0  sqrt.o(i.sqrt)
-    i.time_period                            0x08005f48   Section        0  wheel.o(i.time_period)
-    i.wheel_init                             0x08005f80   Section        0  robo_init.o(i.wheel_init)
-    .constdata                               0x0800601c   Section       48  drive.o(.constdata)
-    .constdata                               0x0800604c   Section       16  system_stm32f4xx.o(.constdata)
-    .constdata                               0x0800605c   Section        8  system_stm32f4xx.o(.constdata)
-    .constdata                               0x08006068   Section      136  pow.o(.constdata)
-    bp                                       0x08006068   Data          16  pow.o(.constdata)
-    dp_h                                     0x08006078   Data          16  pow.o(.constdata)
-    dp_l                                     0x08006088   Data          16  pow.o(.constdata)
-    L                                        0x08006098   Data          48  pow.o(.constdata)
-    P                                        0x080060c8   Data          40  pow.o(.constdata)
-    .constdata                               0x080060f0   Section       48  cos_i.o(.constdata)
-    C                                        0x080060f0   Data          48  cos_i.o(.constdata)
-    .constdata                               0x08006120   Section        8  qnan.o(.constdata)
-    .constdata                               0x08006128   Section      200  rred.o(.constdata)
-    pio2s                                    0x08006128   Data          48  rred.o(.constdata)
-    twooverpi                                0x08006158   Data         152  rred.o(.constdata)
-    .constdata                               0x080061f0   Section       40  sin_i.o(.constdata)
-    S                                        0x080061f0   Data          40  sin_i.o(.constdata)
+    i.calculate_robot_velocity               0x080057ac   Section        0  drive.o(i.calculate_robot_velocity)
+    i.calculate_velocity_with_pid            0x08005864   Section        0  pid.o(i.calculate_velocity_with_pid)
+    i.fabs                                   0x08005a5c   Section        0  fabs.o(i.fabs)
+    i.float_abs                              0x08005a74   Section        0  wheel.o(i.float_abs)
+    i.fputc                                  0x08005ab8   Section        0  main.o(i.fputc)
+    i.goto_distance                          0x08005ae0   Section        0  robot.o(i.goto_distance)
+    i.init_encoder                           0x08005e1c   Section        0  encoder.o(i.init_encoder)
+    i.main                                   0x08005e30   Section        0  main.o(i.main)
+    i.pid_Compute                            0x08005f30   Section        0  pid.o(i.pid_Compute)
+    i.ramp                                   0x08006024   Section        0  drive.o(i.ramp)
+    i.reset_robot_distance                   0x08006100   Section        0  encoder.o(i.reset_robot_distance)
+    i.set_Direction                          0x08006118   Section        0  wheel.o(i.set_Direction)
+    i.set_DutyCycle                          0x08006150   Section        0  wheel.o(i.set_DutyCycle)
+    i.set_DutyCycle_Primary                  0x0800615c   Section        0  wheel.o(i.set_DutyCycle_Primary)
+    i.set_Omega                              0x08006184   Section        0  wheel.o(i.set_Omega)
+    i.set_OutputLimit                        0x08006234   Section        0  pid.o(i.set_OutputLimit)
+    i.sqrt                                   0x0800623e   Section        0  sqrt.o(i.sqrt)
+    i.time_period                            0x080062ac   Section        0  wheel.o(i.time_period)
+    i.wheel_init                             0x080062e4   Section        0  robo_init.o(i.wheel_init)
+    .constdata                               0x08006380   Section       48  drive.o(.constdata)
+    .constdata                               0x080063b0   Section       16  system_stm32f4xx.o(.constdata)
+    .constdata                               0x080063c0   Section        8  system_stm32f4xx.o(.constdata)
+    .constdata                               0x080063c8   Section      136  pow.o(.constdata)
+    bp                                       0x080063c8   Data          16  pow.o(.constdata)
+    dp_h                                     0x080063d8   Data          16  pow.o(.constdata)
+    dp_l                                     0x080063e8   Data          16  pow.o(.constdata)
+    L                                        0x080063f8   Data          48  pow.o(.constdata)
+    P                                        0x08006428   Data          40  pow.o(.constdata)
+    .constdata                               0x08006450   Section       48  cos_i.o(.constdata)
+    C                                        0x08006450   Data          48  cos_i.o(.constdata)
+    .constdata                               0x08006480   Section        8  qnan.o(.constdata)
+    .constdata                               0x08006488   Section      200  rred.o(.constdata)
+    pio2s                                    0x08006488   Data          48  rred.o(.constdata)
+    twooverpi                                0x080064b8   Data         152  rred.o(.constdata)
+    .constdata                               0x08006550   Section       40  sin_i.o(.constdata)
+    S                                        0x08006550   Data          40  sin_i.o(.constdata)
     .data                                    0x20000000   Section     5576  main.o(.data)
     .data                                    0x200015c8   Section        4  main.o(.data)
     .data                                    0x200015d0   Section       24  robot.o(.data)
@@ -2207,30 +2208,32 @@ Image Symbol Table
     __set_errno                              0x08004ce1   Thumb Code     6  errno.o(i.__set_errno)
     assert_failed                            0x0800559f   Thumb Code     2  main.o(i.assert_failed)
     calculate_encoder_distance               0x080055a1   Thumb Code    66  encoder.o(i.calculate_encoder_distance)
-    calculate_robot_distance                 0x080055ed   Thumb Code   432  encoder.o(i.calculate_robot_distance)
-    calculate_robot_velocity                 0x080057b1   Thumb Code   156  drive.o(i.calculate_robot_velocity)
-    fabs                                     0x08005869   Thumb Code    24  fabs.o(i.fabs)
-    float_abs                                0x08005881   Thumb Code    60  wheel.o(i.float_abs)
-    fputc                                    0x080058c5   Thumb Code    36  main.o(i.fputc)
-    goto_distance                            0x080058ed   Thumb Code   570  robot.o(i.goto_distance)
-    init_encoder                             0x08005b89   Thumb Code    16  encoder.o(i.init_encoder)
-    main                                     0x08005b9d   Thumb Code   206  main.o(i.main)
-    ramp                                     0x08005c9d   Thumb Code   210  drive.o(i.ramp)
-    reset_robot_distance                     0x08005d91   Thumb Code    48  encoder.o(i.reset_robot_distance)
-    set_Direction                            0x08005dc9   Thumb Code    56  wheel.o(i.set_Direction)
-    set_DutyCycle                            0x08005e01   Thumb Code    12  wheel.o(i.set_DutyCycle)
-    set_DutyCycle_Primary                    0x08005e0d   Thumb Code    40  wheel.o(i.set_DutyCycle_Primary)
-    set_OutputLimit                          0x08005e35   Thumb Code    10  pid.o(i.set_OutputLimit)
-    set_ocr                                  0x08005e41   Thumb Code   126  wheel.o(i.set_ocr)
-    sqrt                                     0x08005ed9   Thumb Code   110  sqrt.o(i.sqrt)
-    time_period                              0x08005f49   Thumb Code    30  wheel.o(i.time_period)
-    wheel_init                               0x08005f81   Thumb Code   126  robo_init.o(i.wheel_init)
-    coupling_matrix                          0x0800601c   Data          48  drive.o(.constdata)
-    AHBPrescTable                            0x0800604c   Data          16  system_stm32f4xx.o(.constdata)
-    APBPrescTable                            0x0800605c   Data           8  system_stm32f4xx.o(.constdata)
-    __mathlib_zero                           0x08006120   Data           8  qnan.o(.constdata)
-    Region$$Table$$Base                      0x08006218   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08006238   Number         0  anon$$obj.o(Region$$Table)
+    calculate_robot_distance                 0x080055ed   Thumb Code   428  encoder.o(i.calculate_robot_distance)
+    calculate_robot_velocity                 0x080057ad   Thumb Code   156  drive.o(i.calculate_robot_velocity)
+    calculate_velocity_with_pid              0x08005865   Thumb Code   466  pid.o(i.calculate_velocity_with_pid)
+    fabs                                     0x08005a5d   Thumb Code    24  fabs.o(i.fabs)
+    float_abs                                0x08005a75   Thumb Code    60  wheel.o(i.float_abs)
+    fputc                                    0x08005ab9   Thumb Code    36  main.o(i.fputc)
+    goto_distance                            0x08005ae1   Thumb Code   724  robot.o(i.goto_distance)
+    init_encoder                             0x08005e1d   Thumb Code    16  encoder.o(i.init_encoder)
+    main                                     0x08005e31   Thumb Code   206  main.o(i.main)
+    pid_Compute                              0x08005f31   Thumb Code   218  pid.o(i.pid_Compute)
+    ramp                                     0x08006025   Thumb Code   188  drive.o(i.ramp)
+    reset_robot_distance                     0x08006101   Thumb Code    20  encoder.o(i.reset_robot_distance)
+    set_Direction                            0x08006119   Thumb Code    56  wheel.o(i.set_Direction)
+    set_DutyCycle                            0x08006151   Thumb Code    12  wheel.o(i.set_DutyCycle)
+    set_DutyCycle_Primary                    0x0800615d   Thumb Code    40  wheel.o(i.set_DutyCycle_Primary)
+    set_Omega                                0x08006185   Thumb Code   150  wheel.o(i.set_Omega)
+    set_OutputLimit                          0x08006235   Thumb Code    10  pid.o(i.set_OutputLimit)
+    sqrt                                     0x0800623f   Thumb Code   110  sqrt.o(i.sqrt)
+    time_period                              0x080062ad   Thumb Code    30  wheel.o(i.time_period)
+    wheel_init                               0x080062e5   Thumb Code   126  robo_init.o(i.wheel_init)
+    coupling_matrix                          0x08006380   Data          48  drive.o(.constdata)
+    AHBPrescTable                            0x080063b0   Data          16  system_stm32f4xx.o(.constdata)
+    APBPrescTable                            0x080063c0   Data           8  system_stm32f4xx.o(.constdata)
+    __mathlib_zero                           0x08006480   Data           8  qnan.o(.constdata)
+    Region$$Table$$Base                      0x08006578   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08006598   Number         0  anon$$obj.o(Region$$Table)
     go                                       0x20000000   Data        5576  main.o(.data)
     __stdout                                 0x200015c8   Data           4  main.o(.data)
     previous_robotx                          0x200015d0   Data           4  robot.o(.data)
@@ -2277,9 +2280,9 @@ Memory Map of the image
 
   Image Entry point : 0x08000189
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00007854, Max: 0x00100000, ABSOLUTE, COMPRESSED[0x00006814])
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00007bb4, Max: 0x00100000, ABSOLUTE, COMPRESSED[0x00006b74])
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00006238, Max: 0x00100000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00006598, Max: 0x00100000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2416,39 +2419,38 @@ Memory Map of the image
     0x08005570   0x08005570   0x0000002e   Code   RO         3646    i._printf_pre_padding  mc_w.l(printfa.o)
     0x0800559e   0x0800559e   0x00000002   Code   RO           15    i.assert_failed     main.o
     0x080055a0   0x080055a0   0x0000004c   Code   RO          658    i.calculate_encoder_distance  encoder.o
-    0x080055ec   0x080055ec   0x000001c4   Code   RO          659    i.calculate_robot_distance  encoder.o
-    0x080057b0   0x080057b0   0x000000b8   Code   RO          711    i.calculate_robot_velocity  drive.o
-    0x08005868   0x08005868   0x00000018   Code   RO         3705    i.fabs              m_wm.l(fabs.o)
-    0x08005880   0x08005880   0x00000044   Code   RO          600    i.float_abs         wheel.o
-    0x080058c4   0x080058c4   0x00000028   Code   RO           16    i.fputc             main.o
-    0x080058ec   0x080058ec   0x0000029c   Code   RO          558    i.goto_distance     robot.o
-    0x08005b88   0x08005b88   0x00000014   Code   RO          660    i.init_encoder      encoder.o
-    0x08005b9c   0x08005b9c   0x00000100   Code   RO           18    i.main              main.o
-    0x08005c9c   0x08005c9c   0x000000f4   Code   RO          712    i.ramp              drive.o
-    0x08005d90   0x08005d90   0x00000038   Code   RO          661    i.reset_robot_distance  encoder.o
-    0x08005dc8   0x08005dc8   0x00000038   Code   RO          601    i.set_Direction     wheel.o
-    0x08005e00   0x08005e00   0x0000000c   Code   RO          602    i.set_DutyCycle     wheel.o
-    0x08005e0c   0x08005e0c   0x00000028   Code   RO          603    i.set_DutyCycle_Primary  wheel.o
-    0x08005e34   0x08005e34   0x0000000a   Code   RO          750    i.set_OutputLimit   pid.o
-    0x08005e3e   0x08005e3e   0x00000002   PAD
-    0x08005e40   0x08005e40   0x00000098   Code   RO          605    i.set_ocr           wheel.o
-    0x08005ed8   0x08005ed8   0x0000006e   Code   RO         3727    i.sqrt              m_wm.l(sqrt.o)
-    0x08005f46   0x08005f46   0x00000002   PAD
-    0x08005f48   0x08005f48   0x00000038   Code   RO          606    i.time_period       wheel.o
-    0x08005f80   0x08005f80   0x0000009c   Code   RO          524    i.wheel_init        robo_init.o
-    0x0800601c   0x0800601c   0x00000030   Data   RO          714    .constdata          drive.o
-    0x0800604c   0x0800604c   0x00000010   Data   RO         3327    .constdata          system_stm32f4xx.o
-    0x0800605c   0x0800605c   0x00000008   Data   RO         3328    .constdata          system_stm32f4xx.o
-    0x08006064   0x08006064   0x00000004   PAD
-    0x08006068   0x08006068   0x00000088   Data   RO         3375    .constdata          m_wm.l(pow.o)
-    0x080060f0   0x080060f0   0x00000030   Data   RO         3687    .constdata          m_wm.l(cos_i.o)
-    0x08006120   0x08006120   0x00000008   Data   RO         3713    .constdata          m_wm.l(qnan.o)
-    0x08006128   0x08006128   0x000000c8   Data   RO         3716    .constdata          m_wm.l(rred.o)
-    0x080061f0   0x080061f0   0x00000028   Data   RO         3720    .constdata          m_wm.l(sin_i.o)
-    0x08006218   0x08006218   0x00000020   Data   RO         3781    Region$$Table       anon$$obj.o
+    0x080055ec   0x080055ec   0x000001c0   Code   RO          659    i.calculate_robot_distance  encoder.o
+    0x080057ac   0x080057ac   0x000000b8   Code   RO          711    i.calculate_robot_velocity  drive.o
+    0x08005864   0x08005864   0x000001f8   Code   RO          747    i.calculate_velocity_with_pid  pid.o
+    0x08005a5c   0x08005a5c   0x00000018   Code   RO         3705    i.fabs              m_wm.l(fabs.o)
+    0x08005a74   0x08005a74   0x00000044   Code   RO          600    i.float_abs         wheel.o
+    0x08005ab8   0x08005ab8   0x00000028   Code   RO           16    i.fputc             main.o
+    0x08005ae0   0x08005ae0   0x0000033c   Code   RO          558    i.goto_distance     robot.o
+    0x08005e1c   0x08005e1c   0x00000014   Code   RO          660    i.init_encoder      encoder.o
+    0x08005e30   0x08005e30   0x00000100   Code   RO           18    i.main              main.o
+    0x08005f30   0x08005f30   0x000000f4   Code   RO          748    i.pid_Compute       pid.o
+    0x08006024   0x08006024   0x000000dc   Code   RO          712    i.ramp              drive.o
+    0x08006100   0x08006100   0x00000018   Code   RO          661    i.reset_robot_distance  encoder.o
+    0x08006118   0x08006118   0x00000038   Code   RO          601    i.set_Direction     wheel.o
+    0x08006150   0x08006150   0x0000000c   Code   RO          602    i.set_DutyCycle     wheel.o
+    0x0800615c   0x0800615c   0x00000028   Code   RO          603    i.set_DutyCycle_Primary  wheel.o
+    0x08006184   0x08006184   0x000000b0   Code   RO          604    i.set_Omega         wheel.o
+    0x08006234   0x08006234   0x0000000a   Code   RO          750    i.set_OutputLimit   pid.o
+    0x0800623e   0x0800623e   0x0000006e   Code   RO         3727    i.sqrt              m_wm.l(sqrt.o)
+    0x080062ac   0x080062ac   0x00000038   Code   RO          606    i.time_period       wheel.o
+    0x080062e4   0x080062e4   0x0000009c   Code   RO          524    i.wheel_init        robo_init.o
+    0x08006380   0x08006380   0x00000030   Data   RO          714    .constdata          drive.o
+    0x080063b0   0x080063b0   0x00000010   Data   RO         3327    .constdata          system_stm32f4xx.o
+    0x080063c0   0x080063c0   0x00000008   Data   RO         3328    .constdata          system_stm32f4xx.o
+    0x080063c8   0x080063c8   0x00000088   Data   RO         3375    .constdata          m_wm.l(pow.o)
+    0x08006450   0x08006450   0x00000030   Data   RO         3687    .constdata          m_wm.l(cos_i.o)
+    0x08006480   0x08006480   0x00000008   Data   RO         3713    .constdata          m_wm.l(qnan.o)
+    0x08006488   0x08006488   0x000000c8   Data   RO         3716    .constdata          m_wm.l(rred.o)
+    0x08006550   0x08006550   0x00000028   Data   RO         3720    .constdata          m_wm.l(sin_i.o)
+    0x08006578   0x08006578   0x00000020   Data   RO         3781    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08006238, Size: 0x00001d70, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x000005dc])
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08006598, Size: 0x00001d70, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x000005dc])
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2481,13 +2483,13 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
        184         46          0          0         72       1725   adc.o
-       428         62         48          0         12       2170   drive.o
-       796         62          0         20         32       4097   encoder.o
+       404         60         48          0         12       2122   drive.o
+       760         58          0         20         32       4081   encoder.o
        468         28          0          0          0       1235   gpio.o
        460         62          0       5580          0     726501   main.o
-        10          0          0         12        288       1681   pid.o
+       758         64          0         12        288       3513   pid.o
        156         30          0          0        192       1133   robo_init.o
-       668         98          0         24          0       1276   robot.o
+       828        104          0         24          0       1400   robot.o
         36          8        392          0       1024        856   startup_stm32f407xx.o
        144         24          0         12          0       4069   stm32f4xx_hal.o
       1380        214          0          0          0       3147   stm32f4xx_hal_adc.o
@@ -2502,12 +2504,12 @@ Image component sizes
         84         18         24          4          0       1247   system_stm32f4xx.o
        352         46          0          0        120       2558   tim.o
        276         76          0          0        128       2435   usart.o
-       384         60          0          0          0       4214   wheel.o
+       408         60          0          0          0       4260   wheel.o
 
     ----------------------------------------------------------------------
-     13898       2640        500       5656       1876     821663   Object Totals
+     14768       2704        496       5656       1876     823601   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        12          0          4          4          8          0   (incl. Padding)
+        10          0          0          4          8          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -2562,8 +2564,8 @@ Image component sizes
        110          0          0          0          0        168   fepilogue.o
 
     ----------------------------------------------------------------------
-     10314        704        432          4          0       5068   Library Totals
-         8          0          0          0          0          0   (incl. Padding)
+     10312        704        432          4          0       5068   Library Totals
+         6          0          0          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -2574,7 +2576,7 @@ Image component sizes
       1698          0          0          0          0       1536   mf_w.l
 
     ----------------------------------------------------------------------
-     10314        704        432          4          0       5068   Library Totals
+     10312        704        432          4          0       5068   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -2583,15 +2585,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     24212       3344        932       5660       1876     816715   Grand Totals
-     24212       3344        932       1500       1876     816715   ELF Image Totals (compressed)
-     24212       3344        932       1500          0          0   ROM Totals
+     25080       3408        928       5660       1876     818453   Grand Totals
+     25080       3408        928       1500       1876     818453   ELF Image Totals (compressed)
+     25080       3408        928       1500          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                25144 (  24.55kB)
+    Total RO  Size (Code + RO Data)                26008 (  25.40kB)
     Total RW  Size (RW Data + ZI Data)              7536 (   7.36kB)
-    Total ROM Size (Code + RO Data + RW Data)      26644 (  26.02kB)
+    Total ROM Size (Code + RO Data + RW Data)      27508 (  26.86kB)
 
 ==============================================================================
 

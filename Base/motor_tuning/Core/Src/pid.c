@@ -65,13 +65,12 @@ void calculate_velocity_with_pid(void)
 	calculate_robot_velocity();
 	if ((HAL_GetTick()- update_tick)> sample_time)
 	{  
-		
 		update_tick = HAL_GetTick();
 		
-		set_Gains(&pid_1,0.4,0,0 );
-		set_Gains(&pid_2,0.4,0,0 );	
-		set_Gains(&pid_3,0.4,0,0 );	
-		set_Gains(&pid_4,0.4,0,0 );
+		set_Gains(&pid_1,0.35,0,0 );
+		set_Gains(&pid_2,0.35,0,0 );	
+		set_Gains(&pid_3,0.35,0,0 );	
+		set_Gains(&pid_4,0.35,0,0 );
 
 		
 		//printf(" %d\t %d \t %d \t %d  \n",counts[0],counts[1],counts[2],counts[3]);

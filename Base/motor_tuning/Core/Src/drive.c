@@ -43,7 +43,7 @@ void ramp(uint8_t wheel_no)
 		req_omega[wheel_no] = (Wheel_arr[wheel_no].velocity*MAX_OMEGA)/MAX_VELOCITY;
 	
 		//set_Omega(&Wheel_arr[wheel_no], req_omega[wheel_no]);
-		set_ocr(&Wheel_arr[wheel_no], Wheel_arr[wheel_no].velocity);
+		//set_ocr(&Wheel_arr[wheel_no], Wheel_arr[wheel_no].velocity);
 	}	
 		//printf("%f\t%f\n",Wheel_arr[wheel_no].next_velocity,Wheel_arr[wheel_no].velocity );
 }

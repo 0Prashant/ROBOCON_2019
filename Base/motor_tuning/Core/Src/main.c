@@ -806,8 +806,8 @@ float func(int x)
   * @retval None
   */
 int main(void)
-{
-        /* USER CODE BEGIN 1 */
+ {
+        /* USER CODE BEGIN 1 */ 
         update_tick = HAL_GetTick();
 
 				
@@ -865,14 +865,23 @@ int main(void)
 			ok=goto_distance(i,(func(i)-func(i-10)));
 		}*/
 		//ok = goto_distance()
-		for(int i=0; i<697; i++)
+		/*for(int i=0; i<117; i++)
+		{
+			ok = goto_distance(5,5);
+		}*/
+		
+		//ok = goto_distance(5,5);
+		//ok = goto_distance(5,5);
+		//ok = goto_distance(5,5);
+		//ok = goto_distance(5,5);
+		
+		//ok = goto_distance(-1200,1469);
+		
+		for(int i=0;i<697;i++)
 		{
 			ok = goto_distance(go[i][0],go[i][1]);
 		}
-		
-		
-		//ok = goto_distance(0,500);
-		
+		//ok = goto_distance(0,3000);
 		//play();
 		ok++;
 	
@@ -881,7 +890,7 @@ int main(void)
 		velocity[0]=0;
 		velocity[1]=0;
 		velocity[2]=0;
-		calculate_robot_velocity();
+		calculate_velocity_with_pid();
         
 	/* USER CODE BEGIN WHILE */
 	    	  
