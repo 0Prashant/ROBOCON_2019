@@ -43,13 +43,13 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "pid.h"
-#include <stdlib.h>
+
 
 /* USER CODE BEGIN Includes */
 #include "robo_init.h"
 #include "robot.h"
-
+#include "pid.h"
+#include <stdlib.h>
 #include "drive.h"
 
 /* USER CODE END Includes */
@@ -59,11 +59,15 @@
 
 /* USER CODE BEGIN PV */
 extern double velocity[3];
+extern float robotx, roboty, theta;
 extern int32_t counts[4] ;
 extern struct Str_pid pid_1;
 extern struct Str_pid pid_2;
 extern struct Str_pid pid_3;
 extern struct Str_pid pid_4;
+extern struct Str_pid_distance pid_dis_1;
+extern struct Str_pid_distance pid_dis_2;
+extern struct Str_pid_distance pid_dis_3;
 extern uint16_t   update_tick;
 float go[697][2] = {{-10 , 12.2449},
 			{-10 , 12.2449},
@@ -793,10 +797,7 @@ int fputc(int ch, FILE *f)
 	return(ch);
 }
 
-float func(int x)
-{
-	return pow((250000-((x-500)*(x-500))),0.5);
-}
+
 
 /* USER CODE END 0 */
 
@@ -806,10 +807,12 @@ float func(int x)
   * @retval None
   */
 int main(void)
- {
+  {
         /* USER CODE BEGIN 1 */ 
         update_tick = HAL_GetTick();
-
+        set_Gains_distance(&pid_dis_1, 13.55,0.025,300);	// 13.55,0.025,300
+		set_Gains_distance(&pid_dis_2, 7.465,0.011,200);    // 7.465,0.011,200
+		set_Gains_distance(&pid_dis_3, 300,0,0);
 				
         /* USER CODE END 1 */
 
@@ -846,7 +849,6 @@ int main(void)
 	set_OutputLimit(&pid_3,120,-120);
 	set_OutputLimit(&pid_4,120,-120);
 	
-
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
@@ -856,41 +858,22 @@ int main(void)
         /* USER CODE END 2 */
 
         /* Infinite loop */
-			       
-	MX_USART1_UART_Init();
 	int ok;
-		/*for(int i=0;i<1000;)
-		{ 
-			i += 10;
-			ok=goto_distance(i,(func(i)-func(i-10)));
-		}*/
-		//ok = goto_distance()
-		/*for(int i=0; i<117; i++)
-		{
-			ok = goto_distance(5,5);
-		}*/
 		
-		//ok = goto_distance(5,5);
-		//ok = goto_distance(5,5);
-		//ok = goto_distance(5,5);
-		//ok = goto_distance(5,5);
-		
-		//ok = goto_distance(-1200,1469);
-		
-		for(int i=0;i<697;i++)
-		{
-			ok = goto_distance(go[i][0],go[i][1]);
-		}
-		//ok = goto_distance(0,3000);
+		ok = goto_distance(1000, 0, 0.001);
+
 		//play();
 		ok++;
 	
 	while (1)
 	{
+		printf("Hell0\n");	
 		velocity[0]=0;
 		velocity[1]=0;
 		velocity[2]=0;
 		calculate_velocity_with_pid();
+		calculate_robot_distance();
+		//printf("\n%f ", robotx);
         
 	/* USER CODE BEGIN WHILE */
 	    	  
