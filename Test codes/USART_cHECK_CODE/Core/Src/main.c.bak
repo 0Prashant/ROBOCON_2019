@@ -46,15 +46,21 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_rx;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+uint8_t buffer[32];
+uint8_t start_byte_received;
+uint8_t data1;
+uint8_t tail =0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
@@ -63,6 +69,7 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+
 struct __FILE{
 	
 int handle;
@@ -107,33 +114,53 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 //    int a = 1;
-	char a[] = 'a';
-	char data[] = {"hite"};
+	//char a[] = {"a"};
+	uint8_t data[20] ;
+	uint8_t start_byte;
+	uint8_t stop_byte;
+
+	int value[4];
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
-	//  printf("%d",a);
-	  //HAL_Delay(100);
-	// HAL_UART_Transmit(&huart3,(uint8_t*) &a[0],1,10);
-	 HAL_Delay(1);
-	 HAL_UART_Transmit(&huart3,(uint8_t*) &data[0],4,10);	
-	 // HAL_Delay(5);
-      
+	  HAL_Delay(250);
+		  HAL_UART_Receive_DMA(&huart3,(uint8_t*)data,1);
+	  value[0] = (data[0]<<8) + data[1];
+	  printf("%c %c \t*d \t%d \t%d\n",data[0], data[1], data[0], data[1], value[0]);
+	 /* if(!start_byte){
+	  printf("%c", buffer);
+	  }*/
 	  
-  }
+	  
+	/*HAL_Delay(1);
+	HAL_UART_Receive_DMA(&huart3,&start_byte,1);
+	printf("okok\n");	  
+	 while(start_byte != 0xA5 )
+	  {
+		  HAL_UART_Receive_DMA(&huart3,&start_byte,1);
+		  printf("Hello \n");	  
+	  }
+	    HAL_UART_Receive_DMA(&huart3,(uint8_t*) &data[0],16);	
+		value[0] = (data[0]-'0')*1000 + (data[1]-'0') *100 + (data[2]-'0') *10 + (data[3]-'0') ;
+	  	value[1] = (data[4]-'0')*1000 + (data[5]-'0') *100 + (data[6]-'0') *10 + (data[7]-'0') ;
+	  	value[2] = (data[8]-'0')*1000 + (data[9]-'0') *100 + (data[10]-'0') *10 + (data[11]-'0') ;
+	  	value[3] = (data[12]-'0')*1000 + (data[13]-'0') *100 + (data[14]-'0') *10 + (data[15]-'0') ;
+	// HAL_UART_Receive_DMA(&huart3,&stop_byte,1);
+	  //if (stop_byte == 0x5A)
+		printf("%d \t%d \t%d \t%d \t.%s. \n", value[0], value[1], value[2], value[3], data);   
+  }*/
   /* USER CODE END 3 */
-
+}
 }
 
 /**
@@ -198,7 +225,7 @@ static void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 19200;
+  huart3.Init.BaudRate = 115200;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -209,6 +236,24 @@ static void MX_USART3_UART_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+  /* DMA1_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
 
 }
 
@@ -231,6 +276,26 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
+/*void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == USART3)
+	{
+		if (!start_byte_received)
+		{
+			if (data1 == 0xA5)
+				start_byte_received = 1;
+		}
+		else
+		{
+			buffer[tail] = data1;
+			tail = (tail+1)%32;
+			if (tail == 8)
+				start_byte_received = 0;
+		}
+	}	
+}
+*/
 /* USER CODE END 4 */
 
 /**
