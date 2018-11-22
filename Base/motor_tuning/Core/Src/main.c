@@ -814,7 +814,7 @@ int main(void)
 		set_Gains_distance(&pid_dis_2, 7.465,0.011,200);    // 7.465,0.011,200
 		set_Gains_distance(&pid_dis_3, 2500,0.1,800);
 				
-        /* USER CODE END 1 */
+        /*  USER CODE END 1 */
 
         /* MCU Configuration----------------------------------------------------------*/
 
