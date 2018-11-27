@@ -126,26 +126,19 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   wheel_init();
+  int ok;
+  ok = goto_distance(1000,1000,0);
+  play();
   /* USER CODE END 2 */
-
+	
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   
-	play();
-				/*Wheel_arr[0].next_velocity = 1000;
-				Wheel_arr[1].next_velocity = 1000;
-				Wheel_arr[2].next_velocity = 1000;
-				Wheel_arr[3].next_velocity = 1000;*/
+//play();
+
   while (1)
   {
-	 /* ramp(0);
-	  ramp(1);
-	  ramp(2);
-	  ramp(3);*/
-	 // calculate_robot_velocity();
-	  //send_velocity_to_u3();
-	
-	//HAL_Delay(50);
+	  
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

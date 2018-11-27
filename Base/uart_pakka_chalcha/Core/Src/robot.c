@@ -31,17 +31,14 @@ uint32_t receive_data_time, send_data_time;
 
 void play(void)
 {
-	//uint16_t speed=0;
-	//int downcount=0;
-      uint8_t buffer[2];
+    uint8_t buffer[2];
 	buffer[0] = 'a';
 	while (1) 
 	{	buffer[0] = 'F';
-		if (HAL_UART_Receive(&huart2, buffer, 1, 2) == HAL_OK) {
+		if (HAL_UART_Receive(&huart2, buffer, 1, 2) == HAL_OK) 
+		{
 				//printf("%c",buffer[0]);
 		}
-
-		
 		switch (buffer[0])
 		{
 			case 'F':
@@ -114,65 +111,16 @@ void play(void)
 			}
 				
 		}
-
-		
-	calculate_robot_velocity();
-	if((HAL_GetTick()-send_data_time) >= 40)
-	{
-		send_velocity_to_u3();
-		send_data_time = HAL_GetTick();
-	}
-	//calculate_robot_distance();
-	//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], robotx, roboty, Wheel_arr[0].next_velocity, Wheel_arr[1].next_velocity, Wheel_arr[2].next_velocity, Wheel_arr[3].next_velocity);
-
+		calculate_robot_velocity();
+		if((HAL_GetTick()-send_data_time) >= 40)
+		{
+			send_velocity_to_u3();
+			send_data_time = HAL_GetTick();
+		}
+		calculate_robot_distance();
       }
 }
 
-	/*	if (HAL_UART_Receive(&huart1, buffer, 1, 2) == HAL_OK)
-		{	
-			switch (buffer[0])
-			{
-				case 'F':
-				{
-					(pid_dis_1.kpp)+=0.1;
-					break;
-				}
-				case 'B':
-				{
-					(pid_dis_1.kpp)-=0.1;
-					break;
-				}
-				case 'L':
-				{
-					(pid_dis_1.kii)-=0.0001;
-					break;
-				}
-				case 'R':
-				{
-					(pid_dis_1.kii)+=0.0001;
-					break;
-				}
-				case 'G':
-				{	
-					(pid_dis_1.kdd)-=0.001;
-					break;
-				}
-				case 'I':
-				{
-					(pid_dis_1.kdd)+=0.001;
-					break;
-				}
-				case 'S':
-				{
-					break;
-				}
-				default:
-				{
-				}
-					
-			}
-			
-		}*/
 
 int goto_distance(float dx, float dy, float dth)
 {
@@ -182,18 +130,6 @@ int goto_distance(float dx, float dy, float dth)
 	required_dx = dx;
     required_dy = dy;
 	required_theta = dth;
-	//uint8_t buffer[2];
-	//buffer[0] = 'a';
-	/*//dx = dx - (previous_robotx-previous_dx);
-	//dy = dy - (previous_roboty-previous_dy);
-	distance = pow((dx*dx+dy*dy),0.5);
-	time = distance/ROBOT_VELOCITY;
-	//velocity[2] = 0;
-	velocity[2] = -(theta  ) / time;
-	temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]) + float_abs(velocity[2]);
-	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy+vw = robot_velocity so that any motor donot exceed it
-	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-*/
 	distance = pow((dx*dx + dy*dy + ((dth*WIDTH)/2)*((dth*WIDTH)/2)),0.5);
 	time = distance/ROBOT_VELOCITY;
 	calculate_robot_distance();	

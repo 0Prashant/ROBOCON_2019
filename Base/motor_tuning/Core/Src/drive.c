@@ -24,7 +24,7 @@ void calculate_robot_velocity()
 		if(Wheel_arr[i].next_velocity >ROBOT_VELOCITY)
 			Wheel_arr[i].next_velocity = ROBOT_VELOCITY;
 		if(Wheel_arr[i].next_velocity < -ROBOT_VELOCITY)
-			Wheel_arr[i].next_velocity = -	ROBOT_VELOCITY;																																																																	ROBOT_VELOCITY;
+			Wheel_arr[i].next_velocity = -(ROBOT_VELOCITY);																																																																	ROBOT_VELOCITY;
 		ramp(Wheel_arr[i].id);
 
         }

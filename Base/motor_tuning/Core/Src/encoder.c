@@ -67,7 +67,7 @@ void reset_robot_distance()
 }
 void calculate_robot_distance()
 {
-	float d13, d24;
+	static float d13 = 0, d24 = 0;
 	int temp_count[4]; 
 	for(int i=0;i<4;i++)
 	{

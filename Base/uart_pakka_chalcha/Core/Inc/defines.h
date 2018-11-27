@@ -14,7 +14,7 @@
 #define WIDTH 845
 #define PI 3.14159265359
 #define RAMPING_TIME 5 			// ms
-#define RAMPING_FACTOR 10		//mm/s per loop
+#define RAMPING_FACTOR 80		//mm/s per loop
 #endif  // _DEFINES_H_
 
 

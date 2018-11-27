@@ -23,6 +23,7 @@ struct Str_pid pid_2;
 struct Str_pid pid_3;
 struct Str_pid pid_4;
 
+extern double required_distance;
 extern float time;
 extern float velocity[3];
 extern float required_dx,required_dy,required_theta;
@@ -83,13 +84,10 @@ void calculate_velocity_with_pid(void)
 		set_Gains(&pid_3,0.35,0,0 );	
 		set_Gains(&pid_4,0.35,0,0 );
 
-		
-		//printf(" %d\t %d \t %d \t %d  \n",counts[0],counts[1],counts[2],counts[3]);
-	      
+		  
 		counts_per_st[0] = (counts[0]); 
 		counts[0] = 0;
-		
-		
+				
 		counts_per_st[1] = (counts[1]); 
 		counts[1] = 0;
 		
@@ -100,7 +98,7 @@ void calculate_velocity_with_pid(void)
 		counts[3] = 0;
 	
 	
-		omega[0] = 25.173 * counts_per_st[0]/dt;	//				
+		omega[0] = 25.173 * counts_per_st[0]/dt;				
 		new_omega[0] = pid_Compute(&pid_1,req_omega[0],omega[0],dt);
 		
 		omega[1] = 25.173 * counts_per_st[1]/dt;					
@@ -111,11 +109,7 @@ void calculate_velocity_with_pid(void)
 		
 		omega[3] = 25.173 * counts_per_st[3]/dt;					
 		new_omega[3] = pid_Compute(&pid_4,req_omega[3],omega[3],dt);
-		 
-		//printf(" %f\t %f \t %f \t %f  \n", req_omega[0], req_omega[1], req_omega[2], req_omega[3]);
-		
-		//printf(" %f\t %f \t %f \t %f  \n", omega[0], omega[1], omega[2], omega[3]);
-		
+	
 		
 		set_Omega(&Wheel_arr[0],new_omega[0]);
 		set_Omega(&Wheel_arr[1],new_omega[1]);
@@ -153,27 +147,12 @@ void pid_distance()
 	Previous_distance_pid[0] = distance_pid[0];
 	Previous_distance_pid[1] = distance_pid[1];
 	Previous_distance_pid[2] = distance_pid[2];
-	//float distance = pow((distance_pid[0]*distance_pid[0]+distance_pid[1]*distance_pid[1]),0.5);
-	//time = distance/ROBOT_VELOCITY;	
+	
 	velocity[0] = distance_pid[0] / time;
 	velocity[1] = distance_pid[1] / time;
-	velocity[2] = distance_pid[2] / time;
+	velocity[2] = (distance_pid[2] * 2 )/ time;
 	
-	/*if(velocity[0]>ROBOT_VELOCITY)
-		velocity[0] = ROBOT_VELOCITY ;
-	if(velocity[1]>ROBOT_VELOCITY)
-		velocity[1] = ROBOT_VELOCITY ;
-	if(velocity[2]>ROBOT_VELOCITY)
-		velocity[2] = ROBOT_VELOCITY ;*/
-	//velocity[2] = -(theta * (WIDTH/2) ) / time;
-	/*if((velocity[0] + velocity[1] + velocity[2]) >= ROBOT_VELOCITY)
-	{	
-		float temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]) + float_abs(velocity[2]);
-		velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy+vw = robot_velocity so that any motor donot exceed it
-		velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-		velocity[2] = velocity[2] * (ROBOT_VELOCITY / temp_velocity);
-	}*/
-	printf("%f\t %f\t %f\t %f\t %f \t%f \t%f \t%f \t%f\n", required_dx,robotx,distance_pid[0],required_dy,roboty,distance_pid[1],required_theta, theta,distance_pid[2] );
+	//printf("%f\t %f\t %f\t %f\t %f \t%f \t%f \t%f \t%f\n", required_dx,robotx,distance_pid[0],required_dy,roboty,distance_pid[1],required_theta, theta,distance_pid[2] );
 }
 
 

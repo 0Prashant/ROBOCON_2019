@@ -13,11 +13,12 @@ extern struct encoder e[4];
 extern float robotx, roboty, theta;
 extern float actual_robotx, actual_roboty;
 float required_dx, required_dy,required_theta;
-float previous_robotx = 0, previous_roboty = 0;
-float previous_dx, previous_dy;
+float previous_robotx = 0, previous_roboty = 0, previous_theta = 0;
+float previous_dx = 0, previous_dy = 0, previous_dth = 0;
 double previous_distance = 0;
 extern float velocity[3];
 float time;
+double required_distance;
 extern float distance_pid[3];
 extern uint32_t ramp_counter;
 extern float del_distance_pid[3];
@@ -176,51 +177,45 @@ void play(void)
 		}*/
 
 int goto_distance(float dx, float dy, float dth)
-{
-	
+{	
 	double distance;
-//	double temp_velocity;
+	required_distan
+	//float temp_velocity;
+	calculate_robot_distance();
+	previous_robotx = robotx;
+	previous_roboty = roboty;
+	previous_theta = theta;
+	robotx = 0;
+	roboty = 0;
+	//dx = dx - (previous_robotx - previous_dx);
+	//dy = dy - (previous_roboty - previous_dy);
+	//dth = dth - (previous_theta - previous_dth);
 	required_dx = dx;
     required_dy = dy;
 	required_theta = dth;
-	//uint8_t buffer[2];
-	//buffer[0] = 'a';
-	/*//dx = dx - (previous_robotx-previous_dx);
-	//dy = dy - (previous_roboty-previous_dy);
-	distance = pow((dx*dx+dy*dy),0.5);
-	time = distance/ROBOT_VELOCITY;
-	//velocity[2] = 0;
-	velocity[2] = -(theta  ) / time;
-	temp_velocity = float_abs(velocity[0])	+ float_abs(velocity[1]) + float_abs(velocity[2]);
-	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy+vw = robot_velocity so that any motor donot exceed it
-	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-*/
 	distance = pow((dx*dx + dy*dy + ((dth*WIDTH)/2)*((dth*WIDTH)/2)),0.5);
 	time = distance/ROBOT_VELOCITY;
-	calculate_robot_distance();	
-	//while((float_abs(del_distance_pid[0])>10) || (float_abs(del_distance_pid[1])>10) ||  (float_abs(distance_pid[0])>50) || (float_abs(distance_pid[1])>50))
-	while (float_abs(pow((pow((previous_robotx-robotx),2)+pow((previous_roboty-roboty),2)) , 0.5) - distance)> 10)
+	velocity[0] = dx / time;
+	velocity[1] = dy / time;
+	velocity[2] = dth/ time;
+	calculate_robot_velocity();
+	//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, distance, pow((pow((dx-robotx),2)+pow((dy-roboty),2)) , 0.5));
+	calculate_robot_distance();
+	//while((fabs(del_distance_pid[0])>10) || (fabs(del_distance_pid[1])>10) ||  (fabs(dx-robotx)>10) || (fabs(dy-roboty)>10))
+	while ((pow((pow((robotx),2)+pow((roboty),2)) , 0.5) - distance) <= 0 )
 	{
+		calculate_robot_distance();
+		velocity[2] = -((theta)*distance*2 ) / time;	
+		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, previous_robotx, previous_roboty);
 		pid_distance();
 		//calculate_velocity_with_pid();
-		calculate_robot_velocity();
-		calculate_robot_distance();
-		//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n",distance, velocity[0], velocity[1], velocity[2], actual_roboty, theta, Wheel_arr[0].velocity, Wheel_arr[1].velocity, Wheel_arr[2].velocity, Wheel_arr[3].velocity );			 
-		//HAL_Delay(10);
-		
-	}
-	
+		calculate_robot_velocity();	
+	}	
 	printf("Finished \n");
-	//HAL_Delay(1000);
-	reset_robot_distance();
+	//reset_robot_distance();
 	previous_dx = dx;
-	previous_dy = dy;
-	previous_robotx = robotx;
-	previous_roboty = roboty;
-	printf("Finished \n");
-	robotx = 0;
-	roboty = 0;
-	//HAL_Delay(1000);
+	previous_dy = dy; 
+	previous_dth = dth;
 	return 1;
 }
 
