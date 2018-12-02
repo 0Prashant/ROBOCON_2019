@@ -1,0 +1,1954 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_actions.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	_Z41__static_initialization_and_destruction_0ii:
+  25              	.LFB498:
+  26              		.file 1 "Core/Src/robot/robo_actions.cpp"
+   1:Core/Src/robot/robo_actions.cpp **** /*
+   2:Core/Src/robot/robo_actions.cpp ****  * robo_actions.cpp
+   3:Core/Src/robot/robo_actions.cpp ****  * 
+   4:Core/Src/robot/robo_actions.cpp ****  * Created : 11/26/2018
+   5:Core/Src/robot/robo_actions.cpp ****  *  Author : n-is
+   6:Core/Src/robot/robo_actions.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/robot/robo_actions.cpp ****  */
+   8:Core/Src/robot/robo_actions.cpp **** 
+   9:Core/Src/robot/robo_actions.cpp **** #include "robot/robo_init.h"
+  10:Core/Src/robot/robo_actions.cpp **** #include "utils/smoothie.h"
+  11:Core/Src/robot/robo_actions.cpp **** 
+  12:Core/Src/robot/robo_actions.cpp **** extern Vec3<float> gOmega_Bias;
+  13:Core/Src/robot/robo_actions.cpp **** 
+  14:Core/Src/robot/robo_actions.cpp **** static Vec3<float> calc_Orientation(Vec3<float> accel, Vec3<float> gyro, Vec3<float> mag, uint32_t 
+  15:Core/Src/robot/robo_actions.cpp **** static Vec3<float> calc_Position(Vec3<float> lidar, Vec3<float> enc, uint32_t dt_millis);
+  16:Core/Src/robot/robo_actions.cpp **** 
+  17:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gAccelAlpha35(0.35);
+  18:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gGyroAlpha35(0.35);
+  19:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gMagAlpha35(0.35);
+  20:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gLidarAlpha35(0.35);
+  21:Core/Src/robot/robo_actions.cpp **** static Smoothie gFirst_Pass;
+  22:Core/Src/robot/robo_actions.cpp **** 
+  23:Core/Src/robot/robo_actions.cpp **** uint32_t gLast_Lidar_Data = 0;
+  24:Core/Src/robot/robo_actions.cpp **** 
+  25:Core/Src/robot/robo_actions.cpp **** 
+  26:Core/Src/robot/robo_actions.cpp **** void read_State(Vec3<float> &euler_angles, Vec3<float> &position, uint32_t dt_millis)
+  27:Core/Src/robot/robo_actions.cpp **** {
+  28:Core/Src/robot/robo_actions.cpp ****         Vec3<float> accel;
+  29:Core/Src/robot/robo_actions.cpp ****         Vec3<float> gyro;
+  30:Core/Src/robot/robo_actions.cpp ****         Vec3<float> mag;
+  31:Core/Src/robot/robo_actions.cpp ****         
+  32:Core/Src/robot/robo_actions.cpp ****         Vec3<float> lidar;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 2
+
+
+  33:Core/Src/robot/robo_actions.cpp ****         Vec3<float> enc;
+  34:Core/Src/robot/robo_actions.cpp **** 
+  35:Core/Src/robot/robo_actions.cpp ****         // Read Data from all sensors at once
+  36:Core/Src/robot/robo_actions.cpp ****         MPU6050_Read_NormAxes(&Body_IMU);
+  37:Core/Src/robot/robo_actions.cpp ****         HMC5883_Read(&Body_HMC);
+  38:Core/Src/robot/robo_actions.cpp **** 
+  39:Core/Src/robot/robo_actions.cpp ****         uint32_t dist = 0;
+  40:Core/Src/robot/robo_actions.cpp ****         if (!LIDAR_IsEmpty()) {
+  41:Core/Src/robot/robo_actions.cpp ****                 dist = LIDAR_Read();
+  42:Core/Src/robot/robo_actions.cpp ****                 // printf("%ld\n", dist);
+  43:Core/Src/robot/robo_actions.cpp ****         }
+  44:Core/Src/robot/robo_actions.cpp ****         // Lidar is 220 mm behind robot boundary so we will consider any
+  45:Core/Src/robot/robo_actions.cpp ****         // data less than 150 mm to be error;
+  46:Core/Src/robot/robo_actions.cpp ****         if (dist > 150) {
+  47:Core/Src/robot/robo_actions.cpp ****                 gLast_Lidar_Data = dist;
+  48:Core/Src/robot/robo_actions.cpp ****         }
+  49:Core/Src/robot/robo_actions.cpp ****         lidar.setX((float)gLast_Lidar_Data);
+  50:Core/Src/robot/robo_actions.cpp **** 
+  51:Core/Src/robot/robo_actions.cpp ****         int32_t count = Encoder_get_DeltaCount(&gXEncoder);
+  52:Core/Src/robot/robo_actions.cpp ****         // We will not filter encoder data
+  53:Core/Src/robot/robo_actions.cpp ****         enc.setX((float)count);
+  54:Core/Src/robot/robo_actions.cpp ****         // printf("%ld\n", count);
+  55:Core/Src/robot/robo_actions.cpp ****         
+  56:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gAccelAlpha35);
+  57:Core/Src/robot/robo_actions.cpp ****         accel = gFirst_Pass.smooth(Body_IMU.norm_a_axis);
+  58:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gGyroAlpha35);
+  59:Core/Src/robot/robo_actions.cpp ****         gyro = gFirst_Pass.smooth(Body_IMU.norm_g_axis - gOmega_Bias);
+  60:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gMagAlpha35);
+  61:Core/Src/robot/robo_actions.cpp ****         mag = gFirst_Pass.smooth(Body_HMC.raw_axis);
+  62:Core/Src/robot/robo_actions.cpp ****         
+  63:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gLidarAlpha35);
+  64:Core/Src/robot/robo_actions.cpp ****         lidar = gFirst_Pass.smooth(lidar);
+  65:Core/Src/robot/robo_actions.cpp **** 
+  66:Core/Src/robot/robo_actions.cpp ****         euler_angles = calc_Orientation(accel, gyro, mag, dt_millis);
+  67:Core/Src/robot/robo_actions.cpp ****         position = calc_Position(lidar, enc, dt_millis).mult_EW(0.1);
+  68:Core/Src/robot/robo_actions.cpp **** }
+  69:Core/Src/robot/robo_actions.cpp **** 
+  70:Core/Src/robot/robo_actions.cpp **** static Vec3<float> calc_Orientation(Vec3<float> accel, Vec3<float> gyro, Vec3<float> mag, uint32_t 
+  71:Core/Src/robot/robo_actions.cpp **** {
+  72:Core/Src/robot/robo_actions.cpp ****         // We will consider the rotation in order: psi-theta-phi
+  73:Core/Src/robot/robo_actions.cpp ****         float ax = accel.getX();
+  74:Core/Src/robot/robo_actions.cpp ****         float ay = accel.getY();
+  75:Core/Src/robot/robo_actions.cpp ****         float az = accel.getZ();
+  76:Core/Src/robot/robo_actions.cpp ****         
+  77:Core/Src/robot/robo_actions.cpp ****         float gx = gyro.getX();
+  78:Core/Src/robot/robo_actions.cpp ****         float gy = gyro.getY();
+  79:Core/Src/robot/robo_actions.cpp ****         float gz = gyro.getZ();
+  80:Core/Src/robot/robo_actions.cpp **** 
+  81:Core/Src/robot/robo_actions.cpp ****         float bx = mag.getX();
+  82:Core/Src/robot/robo_actions.cpp ****         float by = mag.getY();
+  83:Core/Src/robot/robo_actions.cpp ****         float bz = mag.getZ();
+  84:Core/Src/robot/robo_actions.cpp ****         
+  85:Core/Src/robot/robo_actions.cpp ****         float roll = atan2f(ay, az) * 57.3;
+  86:Core/Src/robot/robo_actions.cpp **** 
+  87:Core/Src/robot/robo_actions.cpp ****         Second_Pass.set_Algorithm(&gRoll_Filter);
+  88:Core/Src/robot/robo_actions.cpp ****         roll = Second_Pass.filter(roll, gx, dt_millis);
+  89:Core/Src/robot/robo_actions.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 3
+
+
+  90:Core/Src/robot/robo_actions.cpp ****         float sin_roll = sin(roll / 57.3);
+  91:Core/Src/robot/robo_actions.cpp ****         float cos_roll = cos(roll / 57.3);
+  92:Core/Src/robot/robo_actions.cpp ****         float pitch = atan2f((-ax), ay*sin_roll + az*cos_roll) * 57.3;
+  93:Core/Src/robot/robo_actions.cpp **** 
+  94:Core/Src/robot/robo_actions.cpp ****         Second_Pass.set_Algorithm(&gPitch_Filter);
+  95:Core/Src/robot/robo_actions.cpp ****         pitch = Second_Pass.filter(pitch, gy, dt_millis);
+  96:Core/Src/robot/robo_actions.cpp **** 
+  97:Core/Src/robot/robo_actions.cpp ****         float sin_pitch = sin(pitch / 57.3);
+  98:Core/Src/robot/robo_actions.cpp ****         float cos_pitch = cos(pitch / 57.3);
+  99:Core/Src/robot/robo_actions.cpp **** 
+ 100:Core/Src/robot/robo_actions.cpp ****         // Tilt Compensated Yaw
+ 101:Core/Src/robot/robo_actions.cpp ****         float yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*
+ 102:Core/Src/robot/robo_actions.cpp **** 
+ 103:Core/Src/robot/robo_actions.cpp ****         Second_Pass.set_Algorithm(&gYaw_Filter);
+ 104:Core/Src/robot/robo_actions.cpp ****         yaw = Second_Pass.filter(yaw, gz, dt_millis);
+ 105:Core/Src/robot/robo_actions.cpp **** 
+ 106:Core/Src/robot/robo_actions.cpp ****         Vec3<float> angles(roll, pitch, yaw);
+ 107:Core/Src/robot/robo_actions.cpp **** 
+ 108:Core/Src/robot/robo_actions.cpp ****         return angles;
+ 109:Core/Src/robot/robo_actions.cpp **** }
+ 110:Core/Src/robot/robo_actions.cpp **** 
+ 111:Core/Src/robot/robo_actions.cpp **** static Vec3<float> calc_Position(Vec3<float> lidar, Vec3<float> enc, uint32_t dt_millis)
+ 112:Core/Src/robot/robo_actions.cpp **** {
+ 113:Core/Src/robot/robo_actions.cpp ****         float lx = lidar.getX();
+ 114:Core/Src/robot/robo_actions.cpp ****         float ex = enc.getX();
+ 115:Core/Src/robot/robo_actions.cpp **** 
+ 116:Core/Src/robot/robo_actions.cpp ****         Vec3<float> dist;
+ 117:Core/Src/robot/robo_actions.cpp **** 
+ 118:Core/Src/robot/robo_actions.cpp ****         Second_Pass.set_Algorithm(&gXDist_Filter);
+ 119:Core/Src/robot/robo_actions.cpp ****         float x_dist = Second_Pass.filter(lx, ex, dt_millis);
+ 120:Core/Src/robot/robo_actions.cpp **** 
+ 121:Core/Src/robot/robo_actions.cpp ****         dist.setX(x_dist);
+ 122:Core/Src/robot/robo_actions.cpp **** 
+ 123:Core/Src/robot/robo_actions.cpp ****         return dist;
+ 124:Core/Src/robot/robo_actions.cpp **** }
+  27              		.loc 1 124 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 0128     		cmp	r0, #1
+  33 0002 00D0     		beq	.L7
+  34              	.L4:
+  35 0004 7047     		bx	lr
+  36              	.L7:
+  37              		.loc 1 124 0 is_stmt 0 discriminator 1
+  38 0006 4FF6FF73 		movw	r3, #65535
+  39 000a 9942     		cmp	r1, r3
+  40 000c FAD1     		bne	.L4
+  41              		.loc 1 124 0
+  42 000e 70B5     		push	{r4, r5, r6, lr}
+  43              	.LCFI0:
+  44              		.cfi_def_cfa_offset 16
+  45              		.cfi_offset 4, -16
+  46              		.cfi_offset 5, -12
+  47              		.cfi_offset 6, -8
+  48              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 4
+
+
+  49 0010 2DED028B 		vpush.64	{d8}
+  50              	.LCFI1:
+  51              		.cfi_def_cfa_offset 24
+  52              		.cfi_offset 80, -24
+  53              		.cfi_offset 81, -20
+  17:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gGyroAlpha35(0.35);
+  54              		.loc 1 17 0 is_stmt 1
+  55 0014 9FED1C8A 		vldr.32	s16, .L8
+  56 0018 1C4E     		ldr	r6, .L8+4
+  57 001a B0EE480A 		vmov.f32	s0, s16
+  58 001e 3046     		mov	r0, r6
+  59              	.LVL1:
+  60 0020 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+  61              	.LVL2:
+  62 0024 1A4C     		ldr	r4, .L8+8
+  63 0026 1B4D     		ldr	r5, .L8+12
+  64 0028 2246     		mov	r2, r4
+  65 002a 2946     		mov	r1, r5
+  66 002c 3046     		mov	r0, r6
+  67 002e FFF7FEFF 		bl	__aeabi_atexit
+  68              	.LVL3:
+  18:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gMagAlpha35(0.35);
+  69              		.loc 1 18 0
+  70 0032 194E     		ldr	r6, .L8+16
+  71 0034 B0EE480A 		vmov.f32	s0, s16
+  72 0038 3046     		mov	r0, r6
+  73 003a FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+  74              	.LVL4:
+  75 003e 2246     		mov	r2, r4
+  76 0040 2946     		mov	r1, r5
+  77 0042 3046     		mov	r0, r6
+  78 0044 FFF7FEFF 		bl	__aeabi_atexit
+  79              	.LVL5:
+  19:Core/Src/robot/robo_actions.cpp **** static Exp_Smooth gLidarAlpha35(0.35);
+  80              		.loc 1 19 0
+  81 0048 144E     		ldr	r6, .L8+20
+  82 004a B0EE480A 		vmov.f32	s0, s16
+  83 004e 3046     		mov	r0, r6
+  84 0050 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+  85              	.LVL6:
+  86 0054 2246     		mov	r2, r4
+  87 0056 2946     		mov	r1, r5
+  88 0058 3046     		mov	r0, r6
+  89 005a FFF7FEFF 		bl	__aeabi_atexit
+  90              	.LVL7:
+  20:Core/Src/robot/robo_actions.cpp **** static Smoothie gFirst_Pass;
+  91              		.loc 1 20 0
+  92 005e 104E     		ldr	r6, .L8+24
+  93 0060 B0EE480A 		vmov.f32	s0, s16
+  94 0064 3046     		mov	r0, r6
+  95 0066 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+  96              	.LVL8:
+  97 006a 2246     		mov	r2, r4
+  98 006c 2946     		mov	r1, r5
+  99 006e 3046     		mov	r0, r6
+ 100 0070 FFF7FEFF 		bl	__aeabi_atexit
+ 101              	.LVL9:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 5
+
+
+ 102              	.LBB106:
+ 103              	.LBB107:
+ 104              	.LBB108:
+ 105              		.file 2 "Core/Inc/utils/smoothie.h"
+   1:Core/Inc/utils/smoothie.h **** /*
+   2:Core/Inc/utils/smoothie.h ****  * smoothie.h
+   3:Core/Inc/utils/smoothie.h ****  * 
+   4:Core/Inc/utils/smoothie.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/smoothie.h ****  *  Author : n-is
+   6:Core/Inc/utils/smoothie.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/smoothie.h ****  */
+   8:Core/Inc/utils/smoothie.h **** 
+   9:Core/Inc/utils/smoothie.h **** #ifndef _SMOOTHIE_H_
+  10:Core/Inc/utils/smoothie.h **** #define _SMOOTHIE_H_
+  11:Core/Inc/utils/smoothie.h **** 
+  12:Core/Inc/utils/smoothie.h **** #include "smoothing_algorithm.h"
+  13:Core/Inc/utils/smoothie.h **** 
+  14:Core/Inc/utils/smoothie.h **** class Smoothie
+  15:Core/Inc/utils/smoothie.h **** {
+  16:Core/Inc/utils/smoothie.h **** public:
+  17:Core/Inc/utils/smoothie.h ****         Smoothie() { algo_ = 0; }
+ 106              		.loc 2 17 0
+ 107 0074 0B48     		ldr	r0, .L8+28
+ 108 0076 0023     		movs	r3, #0
+ 109 0078 0360     		str	r3, [r0]
+ 110              	.LVL10:
+ 111              	.LBE108:
+ 112              	.LBE107:
+ 113              	.LBE106:
+  21:Core/Src/robot/robo_actions.cpp **** 
+ 114              		.loc 1 21 0
+ 115 007a 2246     		mov	r2, r4
+ 116 007c 0A49     		ldr	r1, .L8+32
+ 117 007e FFF7FEFF 		bl	__aeabi_atexit
+ 118              	.LVL11:
+ 119              		.loc 1 124 0
+ 120 0082 BDEC028B 		vldm	sp!, {d8}
+ 121              	.LCFI2:
+ 122              		.cfi_restore 80
+ 123              		.cfi_restore 81
+ 124              		.cfi_def_cfa_offset 16
+ 125 0086 70BD     		pop	{r4, r5, r6, pc}
+ 126              	.L9:
+ 127              		.align	2
+ 128              	.L8:
+ 129 0088 3333B33E 		.word	1051931443
+ 130 008c 00000000 		.word	.LANCHOR0
+ 131 0090 00000000 		.word	__dso_handle
+ 132 0094 00000000 		.word	_ZN10Exp_SmoothD1Ev
+ 133 0098 00000000 		.word	.LANCHOR1
+ 134 009c 00000000 		.word	.LANCHOR2
+ 135 00a0 00000000 		.word	.LANCHOR3
+ 136 00a4 00000000 		.word	.LANCHOR4
+ 137 00a8 00000000 		.word	_ZN8SmoothieD1Ev
+ 138              		.cfi_endproc
+ 139              	.LFE498:
+ 141              		.section	.text._ZN4Vec3IfED2Ev,"axG",%progbits,_ZN4Vec3IfED5Ev,comdat
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 6
+
+
+ 142              		.align	1
+ 143              		.weak	_ZN4Vec3IfED2Ev
+ 144              		.syntax unified
+ 145              		.thumb
+ 146              		.thumb_func
+ 147              		.fpu fpv4-sp-d16
+ 149              	_ZN4Vec3IfED2Ev:
+ 150              	.LFB479:
+ 151              		.file 3 "Core/Inc\\utils/vec3.h"
+   1:Core/Inc/utils/vec3.h **** /*
+   2:Core/Inc/utils/vec3.h ****  * vec3.h
+   3:Core/Inc/utils/vec3.h ****  * 
+   4:Core/Inc/utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc/utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/vec3.h ****  */
+   8:Core/Inc/utils/vec3.h **** 
+   9:Core/Inc/utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc/utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc/utils/vec3.h **** 
+  12:Core/Inc/utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/vec3.h **** 
+  14:Core/Inc/utils/vec3.h **** template <typename T>
+  15:Core/Inc/utils/vec3.h **** void swap_Element(T &first, T &second)
+  16:Core/Inc/utils/vec3.h **** {
+  17:Core/Inc/utils/vec3.h ****         T temp = first;
+  18:Core/Inc/utils/vec3.h ****         first = second;
+  19:Core/Inc/utils/vec3.h ****         second = temp;
+  20:Core/Inc/utils/vec3.h **** }
+  21:Core/Inc/utils/vec3.h **** 
+  22:Core/Inc/utils/vec3.h **** template <class T>
+  23:Core/Inc/utils/vec3.h **** class Vec3
+  24:Core/Inc/utils/vec3.h **** {
+  25:Core/Inc/utils/vec3.h **** public:
+  26:Core/Inc/utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  27:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  28:Core/Inc/utils/vec3.h ****         Vec3(Vec3 &&) = default;
+  29:Core/Inc/utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  30:Core/Inc/utils/vec3.h ****         ~Vec3();
+  31:Core/Inc/utils/vec3.h **** 
+  32:Core/Inc/utils/vec3.h ****         void set_Values(T x, T y, T z);
+  33:Core/Inc/utils/vec3.h ****         T getX() const;
+  34:Core/Inc/utils/vec3.h ****         T getY() const;
+  35:Core/Inc/utils/vec3.h ****         T getZ() const;
+  36:Core/Inc/utils/vec3.h ****         void setX(T x) { x_ = x; }
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+  39:Core/Inc/utils/vec3.h **** 
+  40:Core/Inc/utils/vec3.h ****         template <typename T1, typename T2>
+  41:Core/Inc/utils/vec3.h ****         void divide(const Vec3<T1> &v, T2 num) {
+  42:Core/Inc/utils/vec3.h ****                 x_ = v.getX() / num;
+  43:Core/Inc/utils/vec3.h ****                 y_ = v.getY() / num;
+  44:Core/Inc/utils/vec3.h ****                 z_ = v.getZ() / num;
+  45:Core/Inc/utils/vec3.h ****         }
+  46:Core/Inc/utils/vec3.h **** 
+  47:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(float num) {
+  48:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 7
+
+
+  49:Core/Inc/utils/vec3.h ****                 temp.x_ *= num;
+  50:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+  51:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+  52:Core/Inc/utils/vec3.h **** 
+  53:Core/Inc/utils/vec3.h ****                 return temp;
+  54:Core/Inc/utils/vec3.h ****         }
+  55:Core/Inc/utils/vec3.h **** 
+  56:Core/Inc/utils/vec3.h ****         Vec3 add_EW(float num) {
+  57:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  58:Core/Inc/utils/vec3.h ****                 temp.x_ += num;
+  59:Core/Inc/utils/vec3.h ****                 temp.y_ += num;
+  60:Core/Inc/utils/vec3.h ****                 temp.z_ += num;
+  61:Core/Inc/utils/vec3.h **** 
+  62:Core/Inc/utils/vec3.h ****                 return temp;
+  63:Core/Inc/utils/vec3.h ****         }
+  64:Core/Inc/utils/vec3.h **** 
+  65:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(float num) {
+  66:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  67:Core/Inc/utils/vec3.h ****                 temp.x_ -= num;
+  68:Core/Inc/utils/vec3.h ****                 temp.y_ -= num;
+  69:Core/Inc/utils/vec3.h ****                 temp.z_ -= num;
+  70:Core/Inc/utils/vec3.h **** 
+  71:Core/Inc/utils/vec3.h ****                 return temp;
+  72:Core/Inc/utils/vec3.h ****         }
+  73:Core/Inc/utils/vec3.h **** 
+  74:Core/Inc/utils/vec3.h ****         template <typename T1>
+  75:Core/Inc/utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+  76:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  77:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+  78:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+  79:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+  80:Core/Inc/utils/vec3.h **** 
+  81:Core/Inc/utils/vec3.h ****                 return temp;
+  82:Core/Inc/utils/vec3.h ****         }
+  83:Core/Inc/utils/vec3.h **** 
+  84:Core/Inc/utils/vec3.h ****         template <typename T1>
+  85:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  86:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  87:Core/Inc/utils/vec3.h ****                 temp.x_ *= x_;
+  88:Core/Inc/utils/vec3.h ****                 temp.y_ *= y_;
+  89:Core/Inc/utils/vec3.h ****                 temp.z_ *= z_;
+  90:Core/Inc/utils/vec3.h **** 
+  91:Core/Inc/utils/vec3.h ****                 return temp;
+  92:Core/Inc/utils/vec3.h ****         }
+  93:Core/Inc/utils/vec3.h **** 
+  94:Core/Inc/utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+  95:Core/Inc/utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+  96:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+  97:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+  98:Core/Inc/utils/vec3.h ****         }
+  99:Core/Inc/utils/vec3.h ****         
+ 100:Core/Inc/utils/vec3.h ****         Vec3(const Vec3 &v) {
+ 101:Core/Inc/utils/vec3.h ****                 x_ = v.x_;
+ 102:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 103:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 104:Core/Inc/utils/vec3.h ****         }
+ 105:Core/Inc/utils/vec3.h ****         
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 8
+
+
+ 106:Core/Inc/utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 107:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 108:Core/Inc/utils/vec3.h ****                 swap(*this, temp);
+ 109:Core/Inc/utils/vec3.h **** 
+ 110:Core/Inc/utils/vec3.h ****                 return *this;
+ 111:Core/Inc/utils/vec3.h ****         }
+ 112:Core/Inc/utils/vec3.h **** 
+ 113:Core/Inc/utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 114:Core/Inc/utils/vec3.h ****                 x_ += rhs.x_;
+ 115:Core/Inc/utils/vec3.h ****                 y_ += rhs.y_;
+ 116:Core/Inc/utils/vec3.h ****                 z_ += rhs.z_;
+ 117:Core/Inc/utils/vec3.h **** 
+ 118:Core/Inc/utils/vec3.h ****                 return *this;
+ 119:Core/Inc/utils/vec3.h ****         }
+ 120:Core/Inc/utils/vec3.h ****         
+ 121:Core/Inc/utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 122:Core/Inc/utils/vec3.h ****                 x_ -= rhs.x_;
+ 123:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 124:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 125:Core/Inc/utils/vec3.h **** 
+ 126:Core/Inc/utils/vec3.h ****                 return *this;
+ 127:Core/Inc/utils/vec3.h ****         }
+ 128:Core/Inc/utils/vec3.h **** 
+ 129:Core/Inc/utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 130:Core/Inc/utils/vec3.h ****                 lhs += rhs;
+ 131:Core/Inc/utils/vec3.h ****                 return lhs;
+ 132:Core/Inc/utils/vec3.h ****         }
+ 133:Core/Inc/utils/vec3.h **** 
+ 134:Core/Inc/utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 135:Core/Inc/utils/vec3.h ****                 lhs -= rhs;
+ 136:Core/Inc/utils/vec3.h ****                 return lhs;
+ 137:Core/Inc/utils/vec3.h ****         }
+ 138:Core/Inc/utils/vec3.h **** 
+ 139:Core/Inc/utils/vec3.h ****         void print() const {
+ 140:Core/Inc/utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 141:Core/Inc/utils/vec3.h ****         }
+ 142:Core/Inc/utils/vec3.h **** 
+ 143:Core/Inc/utils/vec3.h **** private:
+ 144:Core/Inc/utils/vec3.h ****         T x_,y_,z_;
+ 145:Core/Inc/utils/vec3.h **** };
+ 146:Core/Inc/utils/vec3.h **** 
+ 147:Core/Inc/utils/vec3.h **** template <class T>
+ 148:Core/Inc/utils/vec3.h **** Vec3<T>::~Vec3()
+ 152              		.loc 3 148 0
+ 153              		.cfi_startproc
+ 154              		@ args = 0, pretend = 0, frame = 0
+ 155              		@ frame_needed = 0, uses_anonymous_args = 0
+ 156              		@ link register save eliminated.
+ 157              	.LVL12:
+ 149:Core/Inc/utils/vec3.h **** {
+ 150:Core/Inc/utils/vec3.h **** }
+ 158              		.loc 3 150 0
+ 159 0000 7047     		bx	lr
+ 160              		.cfi_endproc
+ 161              	.LFE479:
+ 163              		.weak	_ZN4Vec3IfED1Ev
+ 164              		.thumb_set _ZN4Vec3IfED1Ev,_ZN4Vec3IfED2Ev
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 9
+
+
+ 165              		.section	.text._ZN10Exp_SmoothD2Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+ 166              		.align	1
+ 167              		.weak	_ZN10Exp_SmoothD2Ev
+ 168              		.syntax unified
+ 169              		.thumb
+ 170              		.thumb_func
+ 171              		.fpu fpv4-sp-d16
+ 173              	_ZN10Exp_SmoothD2Ev:
+ 174              	.LFB464:
+ 175              		.file 4 "Core/Inc/utils/smoothing_algorithm.h"
+   1:Core/Inc/utils/smoothing_algorithm.h **** 
+   2:Core/Inc/utils/smoothing_algorithm.h **** #ifndef _SMOOTHING_ALGORITHM_H_
+   3:Core/Inc/utils/smoothing_algorithm.h **** #define _SMOOTHING_ALGORITHM_H_
+   4:Core/Inc/utils/smoothing_algorithm.h **** 
+   5:Core/Inc/utils/smoothing_algorithm.h **** #include "vec3.h"
+   6:Core/Inc/utils/smoothing_algorithm.h **** 
+   7:Core/Inc/utils/smoothing_algorithm.h **** class Smoothing_Algorithm
+   8:Core/Inc/utils/smoothing_algorithm.h **** {
+   9:Core/Inc/utils/smoothing_algorithm.h **** public:
+  10:Core/Inc/utils/smoothing_algorithm.h ****         virtual Vec3<float> smooth(const Vec3<float> &input) = 0;
+  11:Core/Inc/utils/smoothing_algorithm.h ****         virtual ~Smoothing_Algorithm() { }
+  12:Core/Inc/utils/smoothing_algorithm.h **** };
+  13:Core/Inc/utils/smoothing_algorithm.h **** 
+  14:Core/Inc/utils/smoothing_algorithm.h **** class Exp_Smooth : public Smoothing_Algorithm
+  15:Core/Inc/utils/smoothing_algorithm.h **** {
+  16:Core/Inc/utils/smoothing_algorithm.h **** public:
+  17:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth();
+  18:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(float alpha);
+  19:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(Exp_Smooth &&) = default;
+  20:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(const Exp_Smooth &) = default;
+  21:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(Exp_Smooth &&) = default;
+  22:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(const Exp_Smooth &) = default;
+  23:Core/Inc/utils/smoothing_algorithm.h ****         ~Exp_Smooth() { }
+ 176              		.loc 4 23 0
+ 177              		.cfi_startproc
+ 178              		@ args = 0, pretend = 0, frame = 0
+ 179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 180              		@ link register save eliminated.
+ 181              	.LVL13:
+ 182              	.LBB109:
+ 183              		.loc 4 23 0
+ 184 0000 014B     		ldr	r3, .L12
+ 185 0002 0360     		str	r3, [r0]
+ 186              	.LBE109:
+ 187 0004 7047     		bx	lr
+ 188              	.L13:
+ 189 0006 00BF     		.align	2
+ 190              	.L12:
+ 191 0008 08000000 		.word	_ZTV10Exp_Smooth+8
+ 192              		.cfi_endproc
+ 193              	.LFE464:
+ 195              		.weak	_ZN10Exp_SmoothD1Ev
+ 196              		.thumb_set _ZN10Exp_SmoothD1Ev,_ZN10Exp_SmoothD2Ev
+ 197              		.section	.text._ZN10Exp_SmoothD0Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+ 198              		.align	1
+ 199              		.weak	_ZN10Exp_SmoothD0Ev
+ 200              		.syntax unified
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 10
+
+
+ 201              		.thumb
+ 202              		.thumb_func
+ 203              		.fpu fpv4-sp-d16
+ 205              	_ZN10Exp_SmoothD0Ev:
+ 206              	.LFB466:
+ 207              		.loc 4 23 0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 0
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211              	.LVL14:
+ 212 0000 10B5     		push	{r4, lr}
+ 213              	.LCFI3:
+ 214              		.cfi_def_cfa_offset 8
+ 215              		.cfi_offset 4, -8
+ 216              		.cfi_offset 14, -4
+ 217 0002 0446     		mov	r4, r0
+ 218              	.LVL15:
+ 219              	.LBB110:
+ 220              	.LBB111:
+ 221              		.loc 4 23 0
+ 222 0004 034B     		ldr	r3, .L16
+ 223 0006 0360     		str	r3, [r0]
+ 224              	.LVL16:
+ 225              	.LBE111:
+ 226              	.LBE110:
+ 227 0008 1821     		movs	r1, #24
+ 228 000a FFF7FEFF 		bl	_ZdlPvj
+ 229              	.LVL17:
+ 230 000e 2046     		mov	r0, r4
+ 231 0010 10BD     		pop	{r4, pc}
+ 232              	.LVL18:
+ 233              	.L17:
+ 234 0012 00BF     		.align	2
+ 235              	.L16:
+ 236 0014 08000000 		.word	_ZTV10Exp_Smooth+8
+ 237              		.cfi_endproc
+ 238              	.LFE466:
+ 240              		.section	.text._ZNK4Vec3IfE4getXEv,"axG",%progbits,_ZNK4Vec3IfE4getXEv,comdat
+ 241              		.align	1
+ 242              		.weak	_ZNK4Vec3IfE4getXEv
+ 243              		.syntax unified
+ 244              		.thumb
+ 245              		.thumb_func
+ 246              		.fpu fpv4-sp-d16
+ 248              	_ZNK4Vec3IfE4getXEv:
+ 249              	.LFB490:
+ 151:Core/Inc/utils/vec3.h **** 
+ 152:Core/Inc/utils/vec3.h **** template <class T>
+ 153:Core/Inc/utils/vec3.h **** void Vec3<T>::set_Values(T x, T y, T z)
+ 154:Core/Inc/utils/vec3.h **** {
+ 155:Core/Inc/utils/vec3.h ****         x_ = x;
+ 156:Core/Inc/utils/vec3.h ****         y_ = y;
+ 157:Core/Inc/utils/vec3.h ****         z_ = z;
+ 158:Core/Inc/utils/vec3.h **** }
+ 159:Core/Inc/utils/vec3.h **** 
+ 160:Core/Inc/utils/vec3.h **** template <class T>
+ 161:Core/Inc/utils/vec3.h **** T Vec3<T>::getX() const { return x_;}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 11
+
+
+ 250              		.loc 3 161 0
+ 251              		.cfi_startproc
+ 252              		@ args = 0, pretend = 0, frame = 0
+ 253              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254              		@ link register save eliminated.
+ 255              	.LVL19:
+ 256              		.loc 3 161 0
+ 257 0000 90ED000A 		vldr.32	s0, [r0]
+ 258 0004 7047     		bx	lr
+ 259              		.cfi_endproc
+ 260              	.LFE490:
+ 262              		.section	.text._ZNK4Vec3IfE4getYEv,"axG",%progbits,_ZNK4Vec3IfE4getYEv,comdat
+ 263              		.align	1
+ 264              		.weak	_ZNK4Vec3IfE4getYEv
+ 265              		.syntax unified
+ 266              		.thumb
+ 267              		.thumb_func
+ 268              		.fpu fpv4-sp-d16
+ 270              	_ZNK4Vec3IfE4getYEv:
+ 271              	.LFB491:
+ 162:Core/Inc/utils/vec3.h **** 
+ 163:Core/Inc/utils/vec3.h **** template <class T>
+ 164:Core/Inc/utils/vec3.h **** T Vec3<T>::getY() const { return y_;}
+ 272              		.loc 3 164 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              		@ link register save eliminated.
+ 277              	.LVL20:
+ 278              		.loc 3 164 0
+ 279 0000 90ED010A 		vldr.32	s0, [r0, #4]
+ 280 0004 7047     		bx	lr
+ 281              		.cfi_endproc
+ 282              	.LFE491:
+ 284              		.section	.text._ZNK4Vec3IfE4getZEv,"axG",%progbits,_ZNK4Vec3IfE4getZEv,comdat
+ 285              		.align	1
+ 286              		.weak	_ZNK4Vec3IfE4getZEv
+ 287              		.syntax unified
+ 288              		.thumb
+ 289              		.thumb_func
+ 290              		.fpu fpv4-sp-d16
+ 292              	_ZNK4Vec3IfE4getZEv:
+ 293              	.LFB492:
+ 165:Core/Inc/utils/vec3.h **** 
+ 166:Core/Inc/utils/vec3.h **** template <class T>
+ 167:Core/Inc/utils/vec3.h **** T Vec3<T>::getZ() const { return z_;}
+ 294              		.loc 3 167 0
+ 295              		.cfi_startproc
+ 296              		@ args = 0, pretend = 0, frame = 0
+ 297              		@ frame_needed = 0, uses_anonymous_args = 0
+ 298              		@ link register save eliminated.
+ 299              	.LVL21:
+ 300              		.loc 3 167 0
+ 301 0000 90ED020A 		vldr.32	s0, [r0, #8]
+ 302 0004 7047     		bx	lr
+ 303              		.cfi_endproc
+ 304              	.LFE492:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 12
+
+
+ 306              		.section	.text._ZN4Vec3IfE10set_ValuesEfff,"axG",%progbits,_ZN4Vec3IfE10set_ValuesEfff,comdat
+ 307              		.align	1
+ 308              		.weak	_ZN4Vec3IfE10set_ValuesEfff
+ 309              		.syntax unified
+ 310              		.thumb
+ 311              		.thumb_func
+ 312              		.fpu fpv4-sp-d16
+ 314              	_ZN4Vec3IfE10set_ValuesEfff:
+ 315              	.LFB496:
+ 153:Core/Inc/utils/vec3.h **** {
+ 316              		.loc 3 153 0
+ 317              		.cfi_startproc
+ 318              		@ args = 0, pretend = 0, frame = 0
+ 319              		@ frame_needed = 0, uses_anonymous_args = 0
+ 320              		@ link register save eliminated.
+ 321              	.LVL22:
+ 155:Core/Inc/utils/vec3.h ****         y_ = y;
+ 322              		.loc 3 155 0
+ 323 0000 80ED000A 		vstr.32	s0, [r0]
+ 156:Core/Inc/utils/vec3.h ****         z_ = z;
+ 324              		.loc 3 156 0
+ 325 0004 C0ED010A 		vstr.32	s1, [r0, #4]
+ 157:Core/Inc/utils/vec3.h **** }
+ 326              		.loc 3 157 0
+ 327 0008 80ED021A 		vstr.32	s2, [r0, #8]
+ 158:Core/Inc/utils/vec3.h **** 
+ 328              		.loc 3 158 0
+ 329 000c 7047     		bx	lr
+ 330              		.cfi_endproc
+ 331              	.LFE496:
+ 333              		.section	.text._ZL13calc_Position4Vec3IfES0_m,"ax",%progbits
+ 334              		.align	1
+ 335              		.syntax unified
+ 336              		.thumb
+ 337              		.thumb_func
+ 338              		.fpu fpv4-sp-d16
+ 340              	_ZL13calc_Position4Vec3IfES0_m:
+ 341              	.LFB475:
+ 112:Core/Src/robot/robo_actions.cpp ****         float lx = lidar.getX();
+ 342              		.loc 1 112 0
+ 343              		.cfi_startproc
+ 344              		@ args = 0, pretend = 0, frame = 0
+ 345              		@ frame_needed = 0, uses_anonymous_args = 0
+ 346              	.LVL23:
+ 347 0000 70B5     		push	{r4, r5, r6, lr}
+ 348              	.LCFI4:
+ 349              		.cfi_def_cfa_offset 16
+ 350              		.cfi_offset 4, -16
+ 351              		.cfi_offset 5, -12
+ 352              		.cfi_offset 6, -8
+ 353              		.cfi_offset 14, -4
+ 354 0002 2DED028B 		vpush.64	{d8}
+ 355              	.LCFI5:
+ 356              		.cfi_def_cfa_offset 24
+ 357              		.cfi_offset 80, -24
+ 358              		.cfi_offset 81, -20
+ 359 0006 0446     		mov	r4, r0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 13
+
+
+ 360 0008 1646     		mov	r6, r2
+ 361 000a 1D46     		mov	r5, r3
+ 113:Core/Src/robot/robo_actions.cpp ****         float ex = enc.getX();
+ 362              		.loc 1 113 0
+ 363 000c 0846     		mov	r0, r1
+ 364              	.LVL24:
+ 365 000e FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 366              	.LVL25:
+ 367 0012 B0EE408A 		vmov.f32	s16, s0
+ 368              	.LVL26:
+ 114:Core/Src/robot/robo_actions.cpp **** 
+ 369              		.loc 1 114 0
+ 370 0016 3046     		mov	r0, r6
+ 371 0018 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 372              	.LVL27:
+ 373 001c F0EE408A 		vmov.f32	s17, s0
+ 374              	.LVL28:
+ 375              	.LBB112:
+ 376              	.LBB113:
+  26:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+ 377              		.loc 3 26 0
+ 378 0020 9FED0C0A 		vldr.32	s0, .L24
+ 379              	.LVL29:
+ 380 0024 B0EE401A 		vmov.f32	s2, s0
+ 381 0028 F0EE400A 		vmov.f32	s1, s0
+ 382 002c 2046     		mov	r0, r4
+ 383 002e FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 384              	.LVL30:
+ 385              	.LBE113:
+ 386              	.LBE112:
+ 387              	.LBB114:
+ 388              	.LBB115:
+ 389              		.file 5 "Core/Inc/utils/filter.h"
+   1:Core/Inc/utils/filter.h **** /*
+   2:Core/Inc/utils/filter.h ****  * filter.h
+   3:Core/Inc/utils/filter.h ****  * 
+   4:Core/Inc/utils/filter.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/filter.h ****  *  Author : n-is
+   6:Core/Inc/utils/filter.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/filter.h ****  */
+   8:Core/Inc/utils/filter.h **** 
+   9:Core/Inc/utils/filter.h **** #ifndef _FILTER_H_
+  10:Core/Inc/utils/filter.h **** #define _FILTER_H_
+  11:Core/Inc/utils/filter.h **** 
+  12:Core/Inc/utils/filter.h **** #include "filter_algorithm.h"
+  13:Core/Inc/utils/filter.h **** 
+  14:Core/Inc/utils/filter.h **** class Filter
+  15:Core/Inc/utils/filter.h **** {
+  16:Core/Inc/utils/filter.h **** public:
+  17:Core/Inc/utils/filter.h ****         Filter() { algo_ = 0; }
+  18:Core/Inc/utils/filter.h **** 
+  19:Core/Inc/utils/filter.h ****         Filter(Filter_Algorithm *filt_algo) { set_Algorithm(filt_algo); }
+  20:Core/Inc/utils/filter.h **** 
+  21:Core/Inc/utils/filter.h ****         Filter(Filter &&) = default;
+  22:Core/Inc/utils/filter.h ****         Filter(const Filter &) = default;
+  23:Core/Inc/utils/filter.h ****         Filter &operator=(Filter &&) = default;
+  24:Core/Inc/utils/filter.h ****         Filter &operator=(const Filter &) = default;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 14
+
+
+  25:Core/Inc/utils/filter.h ****         ~Filter() { }
+  26:Core/Inc/utils/filter.h **** 
+  27:Core/Inc/utils/filter.h ****         void set_Algorithm(Filter_Algorithm *filt_algo) { algo_ = filt_algo; }
+ 390              		.loc 5 27 0
+ 391 0032 0948     		ldr	r0, .L24+4
+ 392 0034 094B     		ldr	r3, .L24+8
+ 393 0036 1860     		str	r0, [r3]
+ 394              	.LVL31:
+ 395              	.LBE115:
+ 396              	.LBE114:
+ 397              	.LBB116:
+ 398              	.LBB117:
+  28:Core/Inc/utils/filter.h ****         float filter(float low_pass, float rate, uint32_t dt_millis) {
+  29:Core/Inc/utils/filter.h ****                 return algo_->filter(low_pass, rate, dt_millis);
+ 399              		.loc 5 29 0
+ 400 0038 0368     		ldr	r3, [r0]
+ 401 003a 1B68     		ldr	r3, [r3]
+ 402 003c 2946     		mov	r1, r5
+ 403 003e F0EE680A 		vmov.f32	s1, s17
+ 404 0042 B0EE480A 		vmov.f32	s0, s16
+ 405 0046 9847     		blx	r3
+ 406              	.LVL32:
+ 407              	.LBE117:
+ 408              	.LBE116:
+ 409              	.LBB118:
+ 410              	.LBB119:
+  36:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 411              		.loc 3 36 0
+ 412 0048 84ED000A 		vstr.32	s0, [r4]
+ 413              	.LVL33:
+ 414              	.LBE119:
+ 415              	.LBE118:
+ 416              		.loc 1 124 0
+ 417 004c 2046     		mov	r0, r4
+ 418 004e BDEC028B 		vldm	sp!, {d8}
+ 419              	.LCFI6:
+ 420              		.cfi_restore 80
+ 421              		.cfi_restore 81
+ 422              		.cfi_def_cfa_offset 16
+ 423              	.LVL34:
+ 424 0052 70BD     		pop	{r4, r5, r6, pc}
+ 425              	.LVL35:
+ 426              	.L25:
+ 427              		.align	2
+ 428              	.L24:
+ 429 0054 00000000 		.word	0
+ 430 0058 00000000 		.word	gXDist_Filter
+ 431 005c 00000000 		.word	Second_Pass
+ 432              		.cfi_endproc
+ 433              	.LFE475:
+ 435              		.global	__aeabi_f2d
+ 436              		.global	__aeabi_dmul
+ 437              		.global	__aeabi_d2f
+ 438              		.global	__aeabi_ddiv
+ 439              		.section	.text._ZL16calc_Orientation4Vec3IfES0_S0_m,"ax",%progbits
+ 440              		.align	1
+ 441              		.syntax unified
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 15
+
+
+ 442              		.thumb
+ 443              		.thumb_func
+ 444              		.fpu fpv4-sp-d16
+ 446              	_ZL16calc_Orientation4Vec3IfES0_S0_m:
+ 447              	.LFB474:
+  71:Core/Src/robot/robo_actions.cpp ****         // We will consider the rotation in order: psi-theta-phi
+ 448              		.loc 1 71 0
+ 449              		.cfi_startproc
+ 450              		@ args = 4, pretend = 0, frame = 0
+ 451              		@ frame_needed = 0, uses_anonymous_args = 0
+ 452              	.LVL36:
+ 453 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 454              	.LCFI7:
+ 455              		.cfi_def_cfa_offset 24
+ 456              		.cfi_offset 3, -24
+ 457              		.cfi_offset 4, -20
+ 458              		.cfi_offset 5, -16
+ 459              		.cfi_offset 6, -12
+ 460              		.cfi_offset 7, -8
+ 461              		.cfi_offset 14, -4
+ 462 0002 2DED0E8B 		vpush.64	{d8, d9, d10, d11, d12, d13, d14}
+ 463              	.LCFI8:
+ 464              		.cfi_def_cfa_offset 80
+ 465              		.cfi_offset 80, -80
+ 466              		.cfi_offset 81, -76
+ 467              		.cfi_offset 82, -72
+ 468              		.cfi_offset 83, -68
+ 469              		.cfi_offset 84, -64
+ 470              		.cfi_offset 85, -60
+ 471              		.cfi_offset 86, -56
+ 472              		.cfi_offset 87, -52
+ 473              		.cfi_offset 88, -48
+ 474              		.cfi_offset 89, -44
+ 475              		.cfi_offset 90, -40
+ 476              		.cfi_offset 91, -36
+ 477              		.cfi_offset 92, -32
+ 478              		.cfi_offset 93, -28
+ 479 0006 0746     		mov	r7, r0
+ 480 0008 0E46     		mov	r6, r1
+ 481 000a 1546     		mov	r5, r2
+ 482 000c 1C46     		mov	r4, r3
+  73:Core/Src/robot/robo_actions.cpp ****         float ay = accel.getY();
+ 483              		.loc 1 73 0
+ 484 000e 0846     		mov	r0, r1
+ 485              	.LVL37:
+ 486 0010 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 487              	.LVL38:
+ 488 0014 B0EE40EA 		vmov.f32	s28, s0
+ 489              	.LVL39:
+  74:Core/Src/robot/robo_actions.cpp ****         float az = accel.getZ();
+ 490              		.loc 1 74 0
+ 491 0018 3046     		mov	r0, r6
+ 492 001a FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 493              	.LVL40:
+ 494 001e B0EE40CA 		vmov.f32	s24, s0
+ 495              	.LVL41:
+  75:Core/Src/robot/robo_actions.cpp ****         
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 16
+
+
+ 496              		.loc 1 75 0
+ 497 0022 3046     		mov	r0, r6
+ 498 0024 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 499              	.LVL42:
+ 500 0028 F0EE409A 		vmov.f32	s19, s0
+ 501              	.LVL43:
+  77:Core/Src/robot/robo_actions.cpp ****         float gy = gyro.getY();
+ 502              		.loc 1 77 0
+ 503 002c 2846     		mov	r0, r5
+ 504 002e FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 505              	.LVL44:
+ 506 0032 B0EE40AA 		vmov.f32	s20, s0
+ 507              	.LVL45:
+  78:Core/Src/robot/robo_actions.cpp ****         float gz = gyro.getZ();
+ 508              		.loc 1 78 0
+ 509 0036 2846     		mov	r0, r5
+ 510 0038 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 511              	.LVL46:
+ 512 003c F0EE40DA 		vmov.f32	s27, s0
+ 513              	.LVL47:
+  79:Core/Src/robot/robo_actions.cpp **** 
+ 514              		.loc 1 79 0
+ 515 0040 2846     		mov	r0, r5
+ 516 0042 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 517              	.LVL48:
+ 518 0046 F0EE40BA 		vmov.f32	s23, s0
+ 519              	.LVL49:
+  81:Core/Src/robot/robo_actions.cpp ****         float by = mag.getY();
+ 520              		.loc 1 81 0
+ 521 004a 2046     		mov	r0, r4
+ 522 004c FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 523              	.LVL50:
+ 524 0050 B0EE409A 		vmov.f32	s18, s0
+ 525              	.LVL51:
+  82:Core/Src/robot/robo_actions.cpp ****         float bz = mag.getZ();
+ 526              		.loc 1 82 0
+ 527 0054 2046     		mov	r0, r4
+ 528 0056 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 529              	.LVL52:
+ 530 005a F0EE408A 		vmov.f32	s17, s0
+ 531              	.LVL53:
+  83:Core/Src/robot/robo_actions.cpp ****         
+ 532              		.loc 1 83 0
+ 533 005e 2046     		mov	r0, r4
+ 534 0060 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 535              	.LVL54:
+ 536 0064 B0EE408A 		vmov.f32	s16, s0
+ 537              	.LVL55:
+  85:Core/Src/robot/robo_actions.cpp **** 
+ 538              		.loc 1 85 0
+ 539 0068 F0EE690A 		vmov.f32	s1, s19
+ 540 006c B0EE4C0A 		vmov.f32	s0, s24
+ 541              	.LVL56:
+ 542 0070 FFF7FEFF 		bl	atan2f
+ 543              	.LVL57:
+ 544 0074 10EE100A 		vmov	r0, s0
+ 545 0078 FFF7FEFF 		bl	__aeabi_f2d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 17
+
+
+ 546              	.LVL58:
+ 547 007c 58A3     		adr	r3, .L28
+ 548 007e D3E90023 		ldrd	r2, [r3]
+ 549 0082 FFF7FEFF 		bl	__aeabi_dmul
+ 550              	.LVL59:
+ 551 0086 FFF7FEFF 		bl	__aeabi_d2f
+ 552              	.LVL60:
+ 553              	.LBB120:
+ 554              	.LBB121:
+  27:Core/Inc/utils/filter.h ****         float filter(float low_pass, float rate, uint32_t dt_millis) {
+ 555              		.loc 5 27 0
+ 556 008a 574C     		ldr	r4, .L28+8
+ 557              	.LVL61:
+ 558 008c 574B     		ldr	r3, .L28+12
+ 559 008e 2360     		str	r3, [r4]
+ 560              	.LVL62:
+ 561              	.LBE121:
+ 562              	.LBE120:
+ 563              	.LBB122:
+ 564              	.LBB123:
+ 565              		.loc 5 29 0
+ 566 0090 1A68     		ldr	r2, [r3]
+ 567 0092 1268     		ldr	r2, [r2]
+ 568 0094 1499     		ldr	r1, [sp, #80]
+ 569 0096 F0EE4A0A 		vmov.f32	s1, s20
+ 570 009a 00EE100A 		vmov	s0, r0
+ 571 009e 1846     		mov	r0, r3
+ 572              	.LVL63:
+ 573 00a0 9047     		blx	r2
+ 574              	.LVL64:
+ 575 00a2 B0EE40BA 		vmov.f32	s22, s0
+ 576              	.LVL65:
+ 577              	.LBE123:
+ 578              	.LBE122:
+  90:Core/Src/robot/robo_actions.cpp ****         float cos_roll = cos(roll / 57.3);
+ 579              		.loc 1 90 0
+ 580 00a6 10EE100A 		vmov	r0, s0
+ 581 00aa FFF7FEFF 		bl	__aeabi_f2d
+ 582              	.LVL66:
+ 583 00ae 4CA3     		adr	r3, .L28
+ 584 00b0 D3E90023 		ldrd	r2, [r3]
+ 585 00b4 FFF7FEFF 		bl	__aeabi_ddiv
+ 586              	.LVL67:
+ 587 00b8 41EC1A0B 		vmov	d10, r0, r1
+ 588              	.LVL68:
+ 589 00bc 41EC100B 		vmov	d0, r0, r1
+ 590 00c0 FFF7FEFF 		bl	sin
+ 591              	.LVL69:
+ 592 00c4 51EC100B 		vmov	r0, r1, d0
+ 593 00c8 FFF7FEFF 		bl	__aeabi_d2f
+ 594              	.LVL70:
+ 595 00cc 0DEE100A 		vmov	s26, r0
+ 596              	.LVL71:
+  91:Core/Src/robot/robo_actions.cpp ****         float pitch = atan2f((-ax), ay*sin_roll + az*cos_roll) * 57.3;
+ 597              		.loc 1 91 0
+ 598 00d0 B0EE4A0A 		vmov.f32	s0, s20
+ 599 00d4 F0EE6A0A 		vmov.f32	s1, s21
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 18
+
+
+ 600 00d8 FFF7FEFF 		bl	cos
+ 601              	.LVL72:
+ 602 00dc 51EC100B 		vmov	r0, r1, d0
+ 603 00e0 FFF7FEFF 		bl	__aeabi_d2f
+ 604              	.LVL73:
+ 605 00e4 0CEE900A 		vmov	s25, r0
+ 606              	.LVL74:
+  92:Core/Src/robot/robo_actions.cpp **** 
+ 607              		.loc 1 92 0
+ 608 00e8 6CEE0D0A 		vmul.f32	s1, s24, s26
+ 609 00ec 69EEAC9A 		vmul.f32	s19, s19, s25
+ 610              	.LVL75:
+ 611 00f0 70EEA90A 		vadd.f32	s1, s1, s19
+ 612 00f4 B1EE4E0A 		vneg.f32	s0, s28
+ 613 00f8 FFF7FEFF 		bl	atan2f
+ 614              	.LVL76:
+ 615 00fc 10EE100A 		vmov	r0, s0
+ 616 0100 FFF7FEFF 		bl	__aeabi_f2d
+ 617              	.LVL77:
+ 618 0104 36A3     		adr	r3, .L28
+ 619 0106 D3E90023 		ldrd	r2, [r3]
+ 620 010a FFF7FEFF 		bl	__aeabi_dmul
+ 621              	.LVL78:
+ 622 010e FFF7FEFF 		bl	__aeabi_d2f
+ 623              	.LVL79:
+ 624              	.LBB124:
+ 625              	.LBB125:
+  27:Core/Inc/utils/filter.h ****         float filter(float low_pass, float rate, uint32_t dt_millis) {
+ 626              		.loc 5 27 0
+ 627 0112 374B     		ldr	r3, .L28+16
+ 628 0114 2360     		str	r3, [r4]
+ 629              	.LVL80:
+ 630              	.LBE125:
+ 631              	.LBE124:
+ 632              	.LBB126:
+ 633              	.LBB127:
+ 634              		.loc 5 29 0
+ 635 0116 1A68     		ldr	r2, [r3]
+ 636 0118 1268     		ldr	r2, [r2]
+ 637 011a 1499     		ldr	r1, [sp, #80]
+ 638 011c F0EE6D0A 		vmov.f32	s1, s27
+ 639 0120 00EE100A 		vmov	s0, r0
+ 640 0124 1846     		mov	r0, r3
+ 641              	.LVL81:
+ 642 0126 9047     		blx	r2
+ 643              	.LVL82:
+ 644 0128 F0EE409A 		vmov.f32	s19, s0
+ 645              	.LVL83:
+ 646              	.LBE127:
+ 647              	.LBE126:
+  97:Core/Src/robot/robo_actions.cpp ****         float cos_pitch = cos(pitch / 57.3);
+ 648              		.loc 1 97 0
+ 649 012c 10EE100A 		vmov	r0, s0
+ 650 0130 FFF7FEFF 		bl	__aeabi_f2d
+ 651              	.LVL84:
+ 652 0134 2AA3     		adr	r3, .L28
+ 653 0136 D3E90023 		ldrd	r2, [r3]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 19
+
+
+ 654 013a FFF7FEFF 		bl	__aeabi_ddiv
+ 655              	.LVL85:
+ 656 013e 41EC1A0B 		vmov	d10, r0, r1
+ 657 0142 41EC100B 		vmov	d0, r0, r1
+ 658 0146 FFF7FEFF 		bl	sin
+ 659              	.LVL86:
+ 660 014a 51EC100B 		vmov	r0, r1, d0
+ 661 014e FFF7FEFF 		bl	__aeabi_d2f
+ 662              	.LVL87:
+ 663 0152 0CEE100A 		vmov	s24, r0
+ 664              	.LVL88:
+  98:Core/Src/robot/robo_actions.cpp **** 
+ 665              		.loc 1 98 0
+ 666 0156 B0EE4A0A 		vmov.f32	s0, s20
+ 667 015a F0EE6A0A 		vmov.f32	s1, s21
+ 668 015e FFF7FEFF 		bl	cos
+ 669              	.LVL89:
+ 670 0162 51EC100B 		vmov	r0, r1, d0
+ 671 0166 FFF7FEFF 		bl	__aeabi_d2f
+ 672              	.LVL90:
+ 101:Core/Src/robot/robo_actions.cpp **** 
+ 673              		.loc 1 101 0
+ 674 016a 28EE0D0A 		vmul.f32	s0, s16, s26
+ 675 016e 68EEAC7A 		vmul.f32	s15, s17, s25
+ 676 0172 07EE100A 		vmov	s14, r0
+ 677 0176 29EE079A 		vmul.f32	s18, s18, s14
+ 678              	.LVL91:
+ 679 017a 68EE8D8A 		vmul.f32	s17, s17, s26
+ 680              	.LVL92:
+ 681 017e 68EE8C8A 		vmul.f32	s17, s17, s24
+ 682 0182 79EE288A 		vadd.f32	s17, s18, s17
+ 683 0186 28EE2C8A 		vmul.f32	s16, s16, s25
+ 684              	.LVL93:
+ 685 018a 28EE0C8A 		vmul.f32	s16, s16, s24
+ 686 018e 78EE880A 		vadd.f32	s1, s17, s16
+ 687 0192 30EE670A 		vsub.f32	s0, s0, s15
+ 688 0196 FFF7FEFF 		bl	atan2f
+ 689              	.LVL94:
+ 690 019a 10EE100A 		vmov	r0, s0
+ 691 019e FFF7FEFF 		bl	__aeabi_f2d
+ 692              	.LVL95:
+ 693 01a2 0FA3     		adr	r3, .L28
+ 694 01a4 D3E90023 		ldrd	r2, [r3]
+ 695 01a8 FFF7FEFF 		bl	__aeabi_dmul
+ 696              	.LVL96:
+ 697 01ac FFF7FEFF 		bl	__aeabi_d2f
+ 698              	.LVL97:
+ 699              	.LBB128:
+ 700              	.LBB129:
+  27:Core/Inc/utils/filter.h ****         float filter(float low_pass, float rate, uint32_t dt_millis) {
+ 701              		.loc 5 27 0
+ 702 01b0 104B     		ldr	r3, .L28+20
+ 703 01b2 2360     		str	r3, [r4]
+ 704              	.LVL98:
+ 705              	.LBE129:
+ 706              	.LBE128:
+ 707              	.LBB130:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 20
+
+
+ 708              	.LBB131:
+ 709              		.loc 5 29 0
+ 710 01b4 1A68     		ldr	r2, [r3]
+ 711 01b6 1268     		ldr	r2, [r2]
+ 712 01b8 1499     		ldr	r1, [sp, #80]
+ 713 01ba F0EE6B0A 		vmov.f32	s1, s23
+ 714 01be 00EE100A 		vmov	s0, r0
+ 715 01c2 1846     		mov	r0, r3
+ 716              	.LVL99:
+ 717 01c4 9047     		blx	r2
+ 718              	.LVL100:
+ 719              	.LBE131:
+ 720              	.LBE130:
+ 721              	.LBB132:
+ 722              	.LBB133:
+  27:Core/Inc/utils/vec3.h ****         Vec3(Vec3 &&) = default;
+ 723              		.loc 3 27 0
+ 724 01c6 B0EE401A 		vmov.f32	s2, s0
+ 725 01ca F0EE690A 		vmov.f32	s1, s19
+ 726 01ce B0EE4B0A 		vmov.f32	s0, s22
+ 727 01d2 3846     		mov	r0, r7
+ 728 01d4 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 729              	.LVL101:
+ 730              	.LBE133:
+ 731              	.LBE132:
+ 109:Core/Src/robot/robo_actions.cpp **** 
+ 732              		.loc 1 109 0
+ 733 01d8 3846     		mov	r0, r7
+ 734 01da BDEC0E8B 		vldm	sp!, {d8-d14}
+ 735              	.LCFI9:
+ 736              		.cfi_restore 92
+ 737              		.cfi_restore 93
+ 738              		.cfi_restore 90
+ 739              		.cfi_restore 91
+ 740              		.cfi_restore 88
+ 741              		.cfi_restore 89
+ 742              		.cfi_restore 86
+ 743              		.cfi_restore 87
+ 744              		.cfi_restore 84
+ 745              		.cfi_restore 85
+ 746              		.cfi_restore 82
+ 747              		.cfi_restore 83
+ 748              		.cfi_restore 80
+ 749              		.cfi_restore 81
+ 750              		.cfi_def_cfa_offset 24
+ 751              	.LVL102:
+ 752 01de F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 753              	.LVL103:
+ 754              	.L29:
+ 755              		.align	3
+ 756              	.L28:
+ 757 01e0 66666666 		.word	1717986918
+ 758 01e4 66A64C40 		.word	1078765158
+ 759 01e8 00000000 		.word	Second_Pass
+ 760 01ec 00000000 		.word	gRoll_Filter
+ 761 01f0 00000000 		.word	gPitch_Filter
+ 762 01f4 00000000 		.word	gYaw_Filter
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 21
+
+
+ 763              		.cfi_endproc
+ 764              	.LFE474:
+ 766              		.section	.text._Z10read_StateR4Vec3IfES1_m,"ax",%progbits
+ 767              		.align	1
+ 768              		.global	_Z10read_StateR4Vec3IfES1_m
+ 769              		.syntax unified
+ 770              		.thumb
+ 771              		.thumb_func
+ 772              		.fpu fpv4-sp-d16
+ 774              	_Z10read_StateR4Vec3IfES1_m:
+ 775              	.LFB473:
+  27:Core/Src/robot/robo_actions.cpp ****         Vec3<float> accel;
+ 776              		.loc 1 27 0
+ 777              		.cfi_startproc
+ 778              		@ args = 0, pretend = 0, frame = 232
+ 779              		@ frame_needed = 0, uses_anonymous_args = 0
+ 780              	.LVL104:
+ 781 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 782              	.LCFI10:
+ 783              		.cfi_def_cfa_offset 28
+ 784              		.cfi_offset 4, -28
+ 785              		.cfi_offset 5, -24
+ 786              		.cfi_offset 6, -20
+ 787              		.cfi_offset 7, -16
+ 788              		.cfi_offset 8, -12
+ 789              		.cfi_offset 9, -8
+ 790              		.cfi_offset 14, -4
+ 791 0004 2DED028B 		vpush.64	{d8}
+ 792              	.LCFI11:
+ 793              		.cfi_def_cfa_offset 36
+ 794              		.cfi_offset 80, -36
+ 795              		.cfi_offset 81, -32
+ 796 0008 BDB0     		sub	sp, sp, #244
+ 797              	.LCFI12:
+ 798              		.cfi_def_cfa_offset 280
+ 799 000a 0746     		mov	r7, r0
+ 800 000c 0E46     		mov	r6, r1
+ 801 000e 9046     		mov	r8, r2
+ 802              	.LVL105:
+ 803              	.LBB134:
+ 804              	.LBB135:
+ 805              	.LBB136:
+  26:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+ 806              		.loc 3 26 0
+ 807 0010 9FED7D8A 		vldr.32	s16, .L34
+ 808 0014 B0EE481A 		vmov.f32	s2, s16
+ 809 0018 F0EE480A 		vmov.f32	s1, s16
+ 810 001c B0EE480A 		vmov.f32	s0, s16
+ 811 0020 0FA8     		add	r0, sp, #60
+ 812              	.LVL106:
+ 813 0022 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 814              	.LVL107:
+ 815              	.LBE136:
+ 816              	.LBE135:
+ 817              	.LBE134:
+ 818              	.LBB137:
+ 819              	.LBB138:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 22
+
+
+ 820              	.LBB139:
+ 821 0026 B0EE481A 		vmov.f32	s2, s16
+ 822 002a F0EE480A 		vmov.f32	s1, s16
+ 823 002e B0EE480A 		vmov.f32	s0, s16
+ 824 0032 0CA8     		add	r0, sp, #48
+ 825              	.LVL108:
+ 826 0034 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 827              	.LVL109:
+ 828              	.LBE139:
+ 829              	.LBE138:
+ 830              	.LBE137:
+ 831              	.LBB140:
+ 832              	.LBB141:
+ 833              	.LBB142:
+ 834 0038 B0EE481A 		vmov.f32	s2, s16
+ 835 003c F0EE480A 		vmov.f32	s1, s16
+ 836 0040 B0EE480A 		vmov.f32	s0, s16
+ 837 0044 09A8     		add	r0, sp, #36
+ 838              	.LVL110:
+ 839 0046 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 840              	.LVL111:
+ 841              	.LBE142:
+ 842              	.LBE141:
+ 843              	.LBE140:
+ 844              	.LBB143:
+ 845              	.LBB144:
+ 846              	.LBB145:
+ 847 004a B0EE481A 		vmov.f32	s2, s16
+ 848 004e F0EE480A 		vmov.f32	s1, s16
+ 849 0052 B0EE480A 		vmov.f32	s0, s16
+ 850 0056 06A8     		add	r0, sp, #24
+ 851              	.LVL112:
+ 852 0058 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 853              	.LVL113:
+ 854              	.LBE145:
+ 855              	.LBE144:
+ 856              	.LBE143:
+ 857              	.LBB146:
+ 858              	.LBB147:
+ 859              	.LBB148:
+ 860 005c B0EE481A 		vmov.f32	s2, s16
+ 861 0060 F0EE480A 		vmov.f32	s1, s16
+ 862 0064 B0EE480A 		vmov.f32	s0, s16
+ 863 0068 03A8     		add	r0, sp, #12
+ 864              	.LVL114:
+ 865 006a FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 866              	.LVL115:
+ 867              	.LBE148:
+ 868              	.LBE147:
+ 869              	.LBE146:
+  36:Core/Src/robot/robo_actions.cpp ****         HMC5883_Read(&Body_HMC);
+ 870              		.loc 1 36 0
+ 871 006e 6748     		ldr	r0, .L34+4
+ 872 0070 FFF7FEFF 		bl	_Z21MPU6050_Read_NormAxesP7MPU6050
+ 873              	.LVL116:
+  37:Core/Src/robot/robo_actions.cpp **** 
+ 874              		.loc 1 37 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 23
+
+
+ 875 0074 6648     		ldr	r0, .L34+8
+ 876 0076 FFF7FEFF 		bl	_Z12HMC5883_ReadP7HMC5883
+ 877              	.LVL117:
+  40:Core/Src/robot/robo_actions.cpp ****                 dist = LIDAR_Read();
+ 878              		.loc 1 40 0
+ 879 007a FFF7FEFF 		bl	_Z13LIDAR_IsEmptyv
+ 880              	.LVL118:
+ 881 007e 0028     		cmp	r0, #0
+ 882 0080 00F0B980 		beq	.L33
+ 883              	.LVL119:
+ 884              	.L31:
+  49:Core/Src/robot/robo_actions.cpp **** 
+ 885              		.loc 1 49 0
+ 886 0084 634B     		ldr	r3, .L34+12
+ 887 0086 D3ED007A 		vldr.32	s15, [r3]	@ int
+ 888 008a F8EE677A 		vcvt.f32.u32	s15, s15
+ 889              	.LVL120:
+ 890              	.LBB149:
+ 891              	.LBB150:
+  36:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 892              		.loc 3 36 0
+ 893 008e CDED067A 		vstr.32	s15, [sp, #24]
+ 894              	.LVL121:
+ 895              	.LBE150:
+ 896              	.LBE149:
+  51:Core/Src/robot/robo_actions.cpp ****         // We will not filter encoder data
+ 897              		.loc 1 51 0
+ 898 0092 6148     		ldr	r0, .L34+16
+ 899 0094 FFF7FEFF 		bl	_Z22Encoder_get_DeltaCountP7Encoder
+ 900              	.LVL122:
+  53:Core/Src/robot/robo_actions.cpp ****         // printf("%ld\n", count);
+ 901              		.loc 1 53 0
+ 902 0098 07EE900A 		vmov	s15, r0	@ int
+ 903 009c F8EEE77A 		vcvt.f32.s32	s15, s15
+ 904              	.LVL123:
+ 905              	.LBB151:
+ 906              	.LBB152:
+  36:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 907              		.loc 3 36 0
+ 908 00a0 CDED037A 		vstr.32	s15, [sp, #12]
+ 909              	.LVL124:
+ 910              	.LBE152:
+ 911              	.LBE151:
+ 912              	.LBB153:
+ 913              	.LBB154:
+  18:Core/Inc/utils/smoothie.h ****         Smoothie(Smoothing_Algorithm *sm_algo);
+  19:Core/Inc/utils/smoothie.h ****         Smoothie(Smoothie &&) = default;
+  20:Core/Inc/utils/smoothie.h ****         Smoothie(const Smoothie &) = default;
+  21:Core/Inc/utils/smoothie.h ****         Smoothie &operator=(Smoothie &&) = default;
+  22:Core/Inc/utils/smoothie.h ****         Smoothie &operator=(const Smoothie &) = default;
+  23:Core/Inc/utils/smoothie.h ****         ~Smoothie();
+  24:Core/Inc/utils/smoothie.h **** 
+  25:Core/Inc/utils/smoothie.h ****         void set_Algorithm(Smoothing_Algorithm *sm_algo) { algo_ = sm_algo; }
+ 914              		.loc 2 25 0
+ 915 00a4 5D4D     		ldr	r5, .L34+20
+ 916 00a6 5E49     		ldr	r1, .L34+24
+ 917 00a8 2960     		str	r1, [r5]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 24
+
+
+ 918              	.LVL125:
+ 919              	.LBE154:
+ 920              	.LBE153:
+ 921              	.LBB155:
+ 922              	.LBB156:
+  26:Core/Inc/utils/smoothie.h ****         Vec3<float> smooth(const Vec3<float> &input) {
+  27:Core/Inc/utils/smoothie.h ****                 return algo_->smooth(input);
+ 923              		.loc 2 27 0
+ 924 00aa 0DF14809 		add	r9, sp, #72
+ 925 00ae 5D4C     		ldr	r4, .L34+28
+ 926              	.LVL126:
+ 927 00b0 0B68     		ldr	r3, [r1]
+ 928 00b2 1B68     		ldr	r3, [r3]
+ 929 00b4 2246     		mov	r2, r4
+ 930 00b6 4846     		mov	r0, r9
+ 931              	.LVL127:
+ 932 00b8 9847     		blx	r3
+ 933              	.LVL128:
+ 934              	.LBE156:
+ 935              	.LBE155:
+  57:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gGyroAlpha35);
+ 936              		.loc 1 57 0
+ 937 00ba 0FAB     		add	r3, sp, #60
+ 938 00bc 99E80700 		ldm	r9, {r0, r1, r2}
+ 939 00c0 83E80700 		stm	r3, {r0, r1, r2}
+ 940              	.LVL129:
+ 941              	.LBB157:
+ 942              	.LBB158:
+  25:Core/Inc/utils/smoothie.h ****         Vec3<float> smooth(const Vec3<float> &input) {
+ 943              		.loc 2 25 0
+ 944 00c4 DFF874C1 		ldr	ip, .L34+52
+ 945 00c8 C5F800C0 		str	ip, [r5]
+ 946              	.LVL130:
+ 947              	.LBE158:
+ 948              	.LBE157:
+ 949              	.LBB159:
+ 950              	.LBB160:
+ 951              	.LBB161:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 952              		.loc 3 101 0
+ 953 00cc 54ED036A 		vldr.32	s13, [r4, #-12]
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 954              		.loc 3 102 0
+ 955 00d0 14ED027A 		vldr.32	s14, [r4, #-8]
+ 103:Core/Inc/utils/vec3.h ****         }
+ 956              		.loc 3 103 0
+ 957 00d4 54ED017A 		vldr.32	s15, [r4, #-4]
+ 958              	.LVL131:
+ 959              	.LBE161:
+ 960              	.LBE160:
+ 961              	.LBE159:
+ 962              	.LBB162:
+ 963              	.LBB163:
+ 964              	.LBB164:
+ 965              	.LBB165:
+ 122:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 966              		.loc 3 122 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 25
+
+
+ 967 00d8 534B     		ldr	r3, .L34+32
+ 968 00da 93ED006A 		vldr.32	s12, [r3]
+ 969 00de 76EEC66A 		vsub.f32	s13, s13, s12
+ 970 00e2 CDED1B6A 		vstr.32	s13, [sp, #108]
+ 123:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 971              		.loc 3 123 0
+ 972 00e6 D3ED016A 		vldr.32	s13, [r3, #4]
+ 973 00ea 37EE667A 		vsub.f32	s14, s14, s13
+ 974 00ee 8DED1C7A 		vstr.32	s14, [sp, #112]
+ 124:Core/Inc/utils/vec3.h **** 
+ 975              		.loc 3 124 0
+ 976 00f2 93ED027A 		vldr.32	s14, [r3, #8]
+ 977 00f6 77EEC77A 		vsub.f32	s15, s15, s14
+ 978 00fa CDED1D7A 		vstr.32	s15, [sp, #116]
+ 979              	.LVL132:
+ 980              	.LBE165:
+ 981              	.LBE164:
+ 136:Core/Inc/utils/vec3.h ****         }
+ 982              		.loc 3 136 0
+ 983 00fe 18AB     		add	r3, sp, #96
+ 984 0100 1BAA     		add	r2, sp, #108
+ 985              	.LVL133:
+ 986 0102 07CA     		ldm	r2, {r0, r1, r2}
+ 987              	.LVL134:
+ 988 0104 83E80700 		stm	r3, {r0, r1, r2}
+ 989              	.LVL135:
+ 990              	.LBE163:
+ 991              	.LBE162:
+ 992              	.LBB166:
+ 993              	.LBB167:
+ 994              		.loc 2 27 0
+ 995 0108 15AC     		add	r4, sp, #84
+ 996 010a DCF80020 		ldr	r2, [ip]
+ 997 010e D2F80090 		ldr	r9, [r2]
+ 998 0112 1A46     		mov	r2, r3
+ 999 0114 6146     		mov	r1, ip
+ 1000 0116 2046     		mov	r0, r4
+ 1001 0118 C847     		blx	r9
+ 1002              	.LVL136:
+ 1003              	.LBE167:
+ 1004              	.LBE166:
+  59:Core/Src/robot/robo_actions.cpp ****         gFirst_Pass.set_Algorithm(&gMagAlpha35);
+ 1005              		.loc 1 59 0
+ 1006 011a 0CAB     		add	r3, sp, #48
+ 1007 011c 94E80700 		ldm	r4, {r0, r1, r2}
+ 1008 0120 83E80700 		stm	r3, {r0, r1, r2}
+ 1009              	.LVL137:
+ 1010              	.LBB168:
+ 1011              	.LBB169:
+  25:Core/Inc/utils/smoothie.h ****         Vec3<float> smooth(const Vec3<float> &input) {
+ 1012              		.loc 2 25 0
+ 1013 0124 4149     		ldr	r1, .L34+36
+ 1014 0126 2960     		str	r1, [r5]
+ 1015              	.LVL138:
+ 1016              	.LBE169:
+ 1017              	.LBE168:
+ 1018              	.LBB170:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 26
+
+
+ 1019              	.LBB171:
+ 1020              		.loc 2 27 0
+ 1021 0128 1EAC     		add	r4, sp, #120
+ 1022 012a 0B68     		ldr	r3, [r1]
+ 1023 012c 1B68     		ldr	r3, [r3]
+ 1024 012e 404A     		ldr	r2, .L34+40
+ 1025              	.LVL139:
+ 1026 0130 2046     		mov	r0, r4
+ 1027 0132 9847     		blx	r3
+ 1028              	.LVL140:
+ 1029              	.LBE171:
+ 1030              	.LBE170:
+  61:Core/Src/robot/robo_actions.cpp ****         
+ 1031              		.loc 1 61 0
+ 1032 0134 09AB     		add	r3, sp, #36
+ 1033 0136 94E80700 		ldm	r4, {r0, r1, r2}
+ 1034 013a 83E80700 		stm	r3, {r0, r1, r2}
+ 1035              	.LVL141:
+ 1036              	.LBB172:
+ 1037              	.LBB173:
+  25:Core/Inc/utils/smoothie.h ****         Vec3<float> smooth(const Vec3<float> &input) {
+ 1038              		.loc 2 25 0
+ 1039 013e 3D49     		ldr	r1, .L34+44
+ 1040 0140 2960     		str	r1, [r5]
+ 1041              	.LVL142:
+ 1042              	.LBE173:
+ 1043              	.LBE172:
+ 1044              	.LBB174:
+ 1045              	.LBB175:
+ 1046              		.loc 2 27 0
+ 1047 0142 21AD     		add	r5, sp, #132
+ 1048 0144 06AC     		add	r4, sp, #24
+ 1049              	.LVL143:
+ 1050 0146 0B68     		ldr	r3, [r1]
+ 1051 0148 1B68     		ldr	r3, [r3]
+ 1052 014a 2246     		mov	r2, r4
+ 1053 014c 2846     		mov	r0, r5
+ 1054 014e 9847     		blx	r3
+ 1055              	.LVL144:
+ 1056              	.LBE175:
+ 1057              	.LBE174:
+  64:Core/Src/robot/robo_actions.cpp **** 
+ 1058              		.loc 1 64 0
+ 1059 0150 95E80700 		ldm	r5, {r0, r1, r2}
+ 1060 0154 84E80700 		stm	r4, {r0, r1, r2}
+ 1061              	.LVL145:
+ 1062              	.LBB176:
+ 1063              	.LBB177:
+ 1064              	.LBB178:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 1065              		.loc 3 101 0
+ 1066 0158 0F9B     		ldr	r3, [sp, #60]	@ float
+ 1067 015a 2793     		str	r3, [sp, #156]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 1068              		.loc 3 102 0
+ 1069 015c 109B     		ldr	r3, [sp, #64]	@ float
+ 1070 015e 2893     		str	r3, [sp, #160]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 27
+
+
+ 103:Core/Inc/utils/vec3.h ****         }
+ 1071              		.loc 3 103 0
+ 1072 0160 119B     		ldr	r3, [sp, #68]	@ float
+ 1073 0162 2993     		str	r3, [sp, #164]	@ float
+ 1074              	.LVL146:
+ 1075              	.LBE178:
+ 1076              	.LBE177:
+ 1077              	.LBE176:
+ 1078              	.LBB179:
+ 1079              	.LBB180:
+ 1080              	.LBB181:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 1081              		.loc 3 101 0
+ 1082 0164 0C9B     		ldr	r3, [sp, #48]	@ float
+ 1083 0166 2A93     		str	r3, [sp, #168]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 1084              		.loc 3 102 0
+ 1085 0168 0D9B     		ldr	r3, [sp, #52]	@ float
+ 1086 016a 2B93     		str	r3, [sp, #172]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 1087              		.loc 3 103 0
+ 1088 016c 0E9B     		ldr	r3, [sp, #56]	@ float
+ 1089 016e 2C93     		str	r3, [sp, #176]	@ float
+ 1090              	.LVL147:
+ 1091              	.LBE181:
+ 1092              	.LBE180:
+ 1093              	.LBE179:
+ 1094              	.LBB182:
+ 1095              	.LBB183:
+ 1096              	.LBB184:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 1097              		.loc 3 101 0
+ 1098 0170 099B     		ldr	r3, [sp, #36]	@ float
+ 1099 0172 2D93     		str	r3, [sp, #180]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 1100              		.loc 3 102 0
+ 1101 0174 0A9B     		ldr	r3, [sp, #40]	@ float
+ 1102 0176 2E93     		str	r3, [sp, #184]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 1103              		.loc 3 103 0
+ 1104 0178 0B9B     		ldr	r3, [sp, #44]	@ float
+ 1105 017a 2F93     		str	r3, [sp, #188]	@ float
+ 1106              	.LVL148:
+ 1107              	.LBE184:
+ 1108              	.LBE183:
+ 1109              	.LBE182:
+  66:Core/Src/robot/robo_actions.cpp ****         position = calc_Position(lidar, enc, dt_millis).mult_EW(0.1);
+ 1110              		.loc 1 66 0
+ 1111 017c 24AC     		add	r4, sp, #144
+ 1112 017e CDF80080 		str	r8, [sp]
+ 1113 0182 2DAB     		add	r3, sp, #180
+ 1114 0184 2AAA     		add	r2, sp, #168
+ 1115 0186 27A9     		add	r1, sp, #156
+ 1116 0188 2046     		mov	r0, r4
+ 1117 018a FFF7FEFF 		bl	_ZL16calc_Orientation4Vec3IfES0_S0_m
+ 1118              	.LVL149:
+ 1119 018e 94E80700 		ldm	r4, {r0, r1, r2}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 28
+
+
+ 1120 0192 87E80700 		stm	r7, {r0, r1, r2}
+ 1121              	.LVL150:
+ 1122              	.LBB185:
+ 1123              	.LBB186:
+ 1124              	.LBB187:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 1125              		.loc 3 101 0
+ 1126 0196 069B     		ldr	r3, [sp, #24]	@ float
+ 1127 0198 3693     		str	r3, [sp, #216]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 1128              		.loc 3 102 0
+ 1129 019a 079B     		ldr	r3, [sp, #28]	@ float
+ 1130 019c 3793     		str	r3, [sp, #220]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 1131              		.loc 3 103 0
+ 1132 019e 089B     		ldr	r3, [sp, #32]	@ float
+ 1133 01a0 3893     		str	r3, [sp, #224]	@ float
+ 1134              	.LVL151:
+ 1135              	.LBE187:
+ 1136              	.LBE186:
+ 1137              	.LBE185:
+ 1138              	.LBB188:
+ 1139              	.LBB189:
+ 1140              	.LBB190:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 1141              		.loc 3 101 0
+ 1142 01a2 039B     		ldr	r3, [sp, #12]	@ float
+ 1143 01a4 3993     		str	r3, [sp, #228]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 1144              		.loc 3 102 0
+ 1145 01a6 049B     		ldr	r3, [sp, #16]	@ float
+ 1146 01a8 3A93     		str	r3, [sp, #232]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 1147              		.loc 3 103 0
+ 1148 01aa 059B     		ldr	r3, [sp, #20]	@ float
+ 1149 01ac 3B93     		str	r3, [sp, #236]	@ float
+ 1150              	.LVL152:
+ 1151              	.LBE190:
+ 1152              	.LBE189:
+ 1153              	.LBE188:
+  67:Core/Src/robot/robo_actions.cpp **** }
+ 1154              		.loc 1 67 0
+ 1155 01ae 4346     		mov	r3, r8
+ 1156 01b0 39AA     		add	r2, sp, #228
+ 1157 01b2 36A9     		add	r1, sp, #216
+ 1158 01b4 33A8     		add	r0, sp, #204
+ 1159 01b6 FFF7FEFF 		bl	_ZL13calc_Position4Vec3IfES0_m
+ 1160              	.LVL153:
+ 1161              	.LBB191:
+ 1162              	.LBB192:
+  49:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+ 1163              		.loc 3 49 0
+ 1164 01ba 9FED1F7A 		vldr.32	s14, .L34+48
+ 1165 01be DDED337A 		vldr.32	s15, [sp, #204]
+ 1166 01c2 67EE877A 		vmul.f32	s15, s15, s14
+ 1167 01c6 CDED307A 		vstr.32	s15, [sp, #192]
+  50:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 29
+
+
+ 1168              		.loc 3 50 0
+ 1169 01ca DDED347A 		vldr.32	s15, [sp, #208]
+ 1170 01ce 67EE877A 		vmul.f32	s15, s15, s14
+ 1171 01d2 CDED317A 		vstr.32	s15, [sp, #196]
+  51:Core/Inc/utils/vec3.h **** 
+ 1172              		.loc 3 51 0
+ 1173 01d6 DDED357A 		vldr.32	s15, [sp, #212]
+ 1174 01da 67EE877A 		vmul.f32	s15, s15, s14
+ 1175 01de CDED327A 		vstr.32	s15, [sp, #200]
+ 1176              	.LVL154:
+ 1177              	.LBE192:
+ 1178              	.LBE191:
+  67:Core/Src/robot/robo_actions.cpp **** }
+ 1179              		.loc 1 67 0
+ 1180 01e2 30AB     		add	r3, sp, #192
+ 1181 01e4 93E80700 		ldm	r3, {r0, r1, r2}
+ 1182 01e8 86E80700 		stm	r6, {r0, r1, r2}
+  68:Core/Src/robot/robo_actions.cpp **** 
+ 1183              		.loc 1 68 0
+ 1184 01ec 3DB0     		add	sp, sp, #244
+ 1185              	.LCFI13:
+ 1186              		.cfi_remember_state
+ 1187              		.cfi_def_cfa_offset 36
+ 1188              		@ sp needed
+ 1189 01ee BDEC028B 		vldm	sp!, {d8}
+ 1190              	.LCFI14:
+ 1191              		.cfi_restore 80
+ 1192              		.cfi_restore 81
+ 1193              		.cfi_def_cfa_offset 28
+ 1194 01f2 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 1195              	.LVL155:
+ 1196              	.L33:
+ 1197              	.LCFI15:
+ 1198              		.cfi_restore_state
+  41:Core/Src/robot/robo_actions.cpp ****                 // printf("%ld\n", dist);
+ 1199              		.loc 1 41 0
+ 1200 01f6 FFF7FEFF 		bl	_Z10LIDAR_Readv
+ 1201              	.LVL156:
+  46:Core/Src/robot/robo_actions.cpp ****                 gLast_Lidar_Data = dist;
+ 1202              		.loc 1 46 0
+ 1203 01fa 9628     		cmp	r0, #150
+ 1204 01fc 7FF642AF 		bls	.L31
+  47:Core/Src/robot/robo_actions.cpp ****         }
+ 1205              		.loc 1 47 0
+ 1206 0200 044B     		ldr	r3, .L34+12
+ 1207 0202 1860     		str	r0, [r3]
+ 1208 0204 3EE7     		b	.L31
+ 1209              	.L35:
+ 1210 0206 00BF     		.align	2
+ 1211              	.L34:
+ 1212 0208 00000000 		.word	0
+ 1213 020c 00000000 		.word	Body_IMU
+ 1214 0210 00000000 		.word	Body_HMC
+ 1215 0214 00000000 		.word	.LANCHOR5
+ 1216 0218 00000000 		.word	gXEncoder
+ 1217 021c 00000000 		.word	.LANCHOR4
+ 1218 0220 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 30
+
+
+ 1219 0224 1C000000 		.word	Body_IMU+28
+ 1220 0228 00000000 		.word	gOmega_Bias
+ 1221 022c 00000000 		.word	.LANCHOR2
+ 1222 0230 04000000 		.word	Body_HMC+4
+ 1223 0234 00000000 		.word	.LANCHOR3
+ 1224 0238 CDCCCC3D 		.word	1036831949
+ 1225 023c 00000000 		.word	.LANCHOR1
+ 1226              		.cfi_endproc
+ 1227              	.LFE473:
+ 1229              		.section	.text._GLOBAL__sub_I_gLast_Lidar_Data,"ax",%progbits
+ 1230              		.align	1
+ 1231              		.syntax unified
+ 1232              		.thumb
+ 1233              		.thumb_func
+ 1234              		.fpu fpv4-sp-d16
+ 1236              	_GLOBAL__sub_I_gLast_Lidar_Data:
+ 1237              	.LFB499:
+ 1238              		.loc 1 124 0
+ 1239              		.cfi_startproc
+ 1240              		@ args = 0, pretend = 0, frame = 0
+ 1241              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1242 0000 08B5     		push	{r3, lr}
+ 1243              	.LCFI16:
+ 1244              		.cfi_def_cfa_offset 8
+ 1245              		.cfi_offset 3, -8
+ 1246              		.cfi_offset 14, -4
+ 1247              		.loc 1 124 0
+ 1248 0002 4FF6FF71 		movw	r1, #65535
+ 1249 0006 0120     		movs	r0, #1
+ 1250 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 1251              	.LVL157:
+ 1252 000c 08BD     		pop	{r3, pc}
+ 1253              		.cfi_endproc
+ 1254              	.LFE499:
+ 1256              		.section	.init_array,"aw",%init_array
+ 1257              		.align	2
+ 1258 0000 00000000 		.word	_GLOBAL__sub_I_gLast_Lidar_Data(target1)
+ 1259              		.global	gLast_Lidar_Data
+ 1260              		.section	.bss._ZL11gFirst_Pass,"aw",%nobits
+ 1261              		.align	2
+ 1262              		.set	.LANCHOR4,. + 0
+ 1265              	_ZL11gFirst_Pass:
+ 1266 0000 00000000 		.space	4
+ 1267              		.section	.bss._ZL11gMagAlpha35,"aw",%nobits
+ 1268              		.align	2
+ 1269              		.set	.LANCHOR2,. + 0
+ 1272              	_ZL11gMagAlpha35:
+ 1273 0000 00000000 		.space	24
+ 1273      00000000 
+ 1273      00000000 
+ 1273      00000000 
+ 1273      00000000 
+ 1274              		.section	.bss._ZL12gGyroAlpha35,"aw",%nobits
+ 1275              		.align	2
+ 1276              		.set	.LANCHOR1,. + 0
+ 1279              	_ZL12gGyroAlpha35:
+ 1280 0000 00000000 		.space	24
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 31
+
+
+ 1280      00000000 
+ 1280      00000000 
+ 1280      00000000 
+ 1280      00000000 
+ 1281              		.section	.bss._ZL13gAccelAlpha35,"aw",%nobits
+ 1282              		.align	2
+ 1283              		.set	.LANCHOR0,. + 0
+ 1286              	_ZL13gAccelAlpha35:
+ 1287 0000 00000000 		.space	24
+ 1287      00000000 
+ 1287      00000000 
+ 1287      00000000 
+ 1287      00000000 
+ 1288              		.section	.bss._ZL13gLidarAlpha35,"aw",%nobits
+ 1289              		.align	2
+ 1290              		.set	.LANCHOR3,. + 0
+ 1293              	_ZL13gLidarAlpha35:
+ 1294 0000 00000000 		.space	24
+ 1294      00000000 
+ 1294      00000000 
+ 1294      00000000 
+ 1294      00000000 
+ 1295              		.section	.bss.gLast_Lidar_Data,"aw",%nobits
+ 1296              		.align	2
+ 1297              		.set	.LANCHOR5,. + 0
+ 1300              	gLast_Lidar_Data:
+ 1301 0000 00000000 		.space	4
+ 1302              		.text
+ 1303              	.Letext0:
+ 1304              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1305              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1306              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 1307              		.file 9 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1308              		.file 10 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/S
+ 1309              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1310              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1311              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1312              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1313              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1314              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1315              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1316              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1317              		.file 19 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1318              		.file 20 "Core/Inc\\periphs/i2c.h"
+ 1319              		.file 21 "Core/Inc/devs/mpu6050.h"
+ 1320              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1321              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1322              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1323              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1324              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1325              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1326              		.file 28 "Core/Inc/utils/mat.h"
+ 1327              		.file 29 "Core/Inc/utils/kalman.h"
+ 1328              		.file 30 "Core/Inc/utils/filter_algorithm.h"
+ 1329              		.file 31 "Core/Inc/periphs/tim.h"
+ 1330              		.file 32 "Core/Inc/devs/a4988.h"
+ 1331              		.file 33 "Core/Inc/devs/hmc5883.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 32
+
+
+ 1332              		.file 34 "Core/Inc/devs/encoder.h"
+ 1333              		.file 35 "Core/Inc/periphs/usart.h"
+ 1334              		.file 36 "Core/Inc\\devs/wheeler.h"
+ 1335              		.file 37 "Core/Inc/robot/devs_config.h"
+ 1336              		.file 38 "Core/Inc/robot/robo_init.h"
+ 1337              		.file 39 "Core/Inc/devs/lidar.h"
+ 1338              		.file 40 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 33
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_actions.cpp
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:18     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:24     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:129    .text._Z41__static_initialization_and_destruction_0ii:00000088 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:173    .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:142    .text._ZN4Vec3IfED2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:149    .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:149    .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:166    .text._ZN10Exp_SmoothD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:173    .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:191    .text._ZN10Exp_SmoothD2Ev:00000008 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:198    .text._ZN10Exp_SmoothD0Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:205    .text._ZN10Exp_SmoothD0Ev:00000000 _ZN10Exp_SmoothD0Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:236    .text._ZN10Exp_SmoothD0Ev:00000014 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:241    .text._ZNK4Vec3IfE4getXEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:248    .text._ZNK4Vec3IfE4getXEv:00000000 _ZNK4Vec3IfE4getXEv
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:263    .text._ZNK4Vec3IfE4getYEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:270    .text._ZNK4Vec3IfE4getYEv:00000000 _ZNK4Vec3IfE4getYEv
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:285    .text._ZNK4Vec3IfE4getZEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:292    .text._ZNK4Vec3IfE4getZEv:00000000 _ZNK4Vec3IfE4getZEv
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:307    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:314    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 _ZN4Vec3IfE10set_ValuesEfff
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:334    .text._ZL13calc_Position4Vec3IfES0_m:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:340    .text._ZL13calc_Position4Vec3IfES0_m:00000000 _ZL13calc_Position4Vec3IfES0_m
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:429    .text._ZL13calc_Position4Vec3IfES0_m:00000054 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:440    .text._ZL16calc_Orientation4Vec3IfES0_S0_m:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:446    .text._ZL16calc_Orientation4Vec3IfES0_S0_m:00000000 _ZL16calc_Orientation4Vec3IfES0_S0_m
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:757    .text._ZL16calc_Orientation4Vec3IfES0_S0_m:000001e0 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:767    .text._Z10read_StateR4Vec3IfES1_m:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:774    .text._Z10read_StateR4Vec3IfES1_m:00000000 _Z10read_StateR4Vec3IfES1_m
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1212   .text._Z10read_StateR4Vec3IfES1_m:00000208 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1230   .text._GLOBAL__sub_I_gLast_Lidar_Data:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1236   .text._GLOBAL__sub_I_gLast_Lidar_Data:00000000 _GLOBAL__sub_I_gLast_Lidar_Data
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1257   .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1300   .bss.gLast_Lidar_Data:00000000 gLast_Lidar_Data
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1261   .bss._ZL11gFirst_Pass:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1265   .bss._ZL11gFirst_Pass:00000000 _ZL11gFirst_Pass
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1268   .bss._ZL11gMagAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1272   .bss._ZL11gMagAlpha35:00000000 _ZL11gMagAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1275   .bss._ZL12gGyroAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1279   .bss._ZL12gGyroAlpha35:00000000 _ZL12gGyroAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1282   .bss._ZL13gAccelAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1286   .bss._ZL13gAccelAlpha35:00000000 _ZL13gAccelAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1289   .bss._ZL13gLidarAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1293   .bss._ZL13gLidarAlpha35:00000000 _ZL13gLidarAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s:1296   .bss.gLast_Lidar_Data:00000000 $d
+                           .group:00000000 _ZN4Vec3IfED5Ev
+                           .group:00000000 _ZN10Exp_SmoothD5Ev
+
+UNDEFINED SYMBOLS
+_ZN10Exp_SmoothC1Ef
+__aeabi_atexit
+__dso_handle
+_ZN8SmoothieD1Ev
+_ZTV10Exp_Smooth
+_ZdlPvj
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4dYfvK.s 			page 34
+
+
+gXDist_Filter
+Second_Pass
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+__aeabi_ddiv
+atan2f
+sin
+cos
+gRoll_Filter
+gPitch_Filter
+gYaw_Filter
+_Z21MPU6050_Read_NormAxesP7MPU6050
+_Z12HMC5883_ReadP7HMC5883
+_Z13LIDAR_IsEmptyv
+_Z22Encoder_get_DeltaCountP7Encoder
+_Z10LIDAR_Readv
+Body_IMU
+Body_HMC
+gXEncoder
+gOmega_Bias

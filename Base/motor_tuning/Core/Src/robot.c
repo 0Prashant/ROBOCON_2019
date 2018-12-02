@@ -179,7 +179,6 @@ void play(void)
 int goto_distance(float dx, float dy, float dth)
 {	
 	double distance;
-	required_distance = distance;
 	//float temp_velocity;
 	calculate_robot_distance();
 	previous_robotx = robotx;
@@ -194,25 +193,24 @@ int goto_distance(float dx, float dy, float dth)
     required_dy = dy;
 	required_theta = dth;
 	distance = pow((dx*dx + dy*dy + ((dth*WIDTH)/2)*((dth*WIDTH)/2)),0.5);
+	required_distance = distance;
 	time = distance/ROBOT_VELOCITY;
 	velocity[0] = dx / time;
 	velocity[1] = dy / time;
 	velocity[2] = dth/ time;
 	calculate_robot_velocity();
-	//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, distance, pow((pow((dx-robotx),2)+pow((dy-roboty),2)) , 0.5));
 	calculate_robot_distance();
 	//while((fabs(del_distance_pid[0])>10) || (fabs(del_distance_pid[1])>10) ||  (fabs(dx-robotx)>10) || (fabs(dy-roboty)>10))
 	while ((pow((pow((robotx),2)+pow((roboty),2)) , 0.5) - distance) <= 0 )
 	{
 		calculate_robot_distance();
-		velocity[2] = -((theta)*distance*2 ) / time;	
-		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, previous_robotx, previous_roboty);
-		pid_distance();
+		velocity[2] = -((theta)*distance*4 ) / time;	
+		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, previous_dy, previous_roboty);
+		//pid_distance();
 		//calculate_velocity_with_pid();
 		calculate_robot_velocity();	
 	}	
 	printf("Finished \n");
-	//reset_robot_distance();
 	previous_dx = dx;
 	previous_dy = dy; 
 	previous_dth = dth;

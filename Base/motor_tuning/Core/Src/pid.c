@@ -150,7 +150,7 @@ void pid_distance()
 	
 	velocity[0] = distance_pid[0] / time;
 	velocity[1] = distance_pid[1] / time;
-	velocity[2] = (distance_pid[2] * 2 )/ time;
+	velocity[2] = (distance_pid[2] * required_distance )/ (time*5);
 	
 	//printf("%f\t %f\t %f\t %f\t %f \t%f \t%f \t%f \t%f\n", required_dx,robotx,distance_pid[0],required_dy,roboty,distance_pid[1],required_theta, theta,distance_pid[2] );
 }
