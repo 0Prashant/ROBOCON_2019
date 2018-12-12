@@ -1,0 +1,1564 @@
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"play.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN12Discrete_PIDD2Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN12Discrete_PIDD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN12Discrete_PIDD2Ev:
+  26              	.LFB162:
+  27              		.file 1 "Core/Inc/utils/pid_algorithms.h"
+   1:Core/Inc/utils/pid_algorithms.h **** #ifndef _PID_ALGORITHMS_H_
+   2:Core/Inc/utils/pid_algorithms.h **** #define _PID_ALGORITHMS_H_
+   3:Core/Inc/utils/pid_algorithms.h **** 
+   4:Core/Inc/utils/pid_algorithms.h **** class PID_Algorithm
+   5:Core/Inc/utils/pid_algorithms.h **** {
+   6:Core/Inc/utils/pid_algorithms.h **** public:
+   7:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm() { set_PID(0,0,0); }
+   8:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(float p, float i, float d) { set_PID(p,i,d); }
+   9:Core/Inc/utils/pid_algorithms.h ****         virtual float compute(float error, uint32_t dt_millis) = 0;
+  10:Core/Inc/utils/pid_algorithms.h **** 
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_P(float p) { p_ = p; }
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+  14:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+  15:Core/Inc/utils/pid_algorithms.h ****                 set_P(p);
+  16:Core/Inc/utils/pid_algorithms.h ****                 set_I(i);
+  17:Core/Inc/utils/pid_algorithms.h ****                 set_D(d);
+  18:Core/Inc/utils/pid_algorithms.h ****         }
+  19:Core/Inc/utils/pid_algorithms.h ****         float get_P() { return p_; }
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  22:Core/Inc/utils/pid_algorithms.h **** 
+  23:Core/Inc/utils/pid_algorithms.h ****         void set_Limits(float max_out, float min_out) {
+  24:Core/Inc/utils/pid_algorithms.h ****                 max_ = max_out;
+  25:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+  26:Core/Inc/utils/pid_algorithms.h ****         }
+  27:Core/Inc/utils/pid_algorithms.h **** 
+  28:Core/Inc/utils/pid_algorithms.h ****         float get_Upper() { return max_; }
+  29:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+  30:Core/Inc/utils/pid_algorithms.h **** 
+  31:Core/Inc/utils/pid_algorithms.h ****         virtual ~PID_Algorithm() { }
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 2
+
+
+  32:Core/Inc/utils/pid_algorithms.h **** 
+  33:Core/Inc/utils/pid_algorithms.h **** protected:
+  34:Core/Inc/utils/pid_algorithms.h ****         float p_, i_, d_;
+  35:Core/Inc/utils/pid_algorithms.h ****         float max_, min_;
+  36:Core/Inc/utils/pid_algorithms.h **** };
+  37:Core/Inc/utils/pid_algorithms.h **** 
+  38:Core/Inc/utils/pid_algorithms.h **** class Discrete_PID : public PID_Algorithm
+  39:Core/Inc/utils/pid_algorithms.h **** {
+  40:Core/Inc/utils/pid_algorithms.h **** public:
+  41:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(float p, float i, float d) :
+  42:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(p, i, d) {
+  43:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  44:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  45:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  46:Core/Inc/utils/pid_algorithms.h ****         }
+  47:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID() {
+  48:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  49:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  50:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  51:Core/Inc/utils/pid_algorithms.h ****         }
+  52:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(Discrete_PID &&) = default;
+  53:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(const Discrete_PID &) = default;
+  54:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(Discrete_PID &&) = default;
+  55:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(const Discrete_PID &) = default;
+  56:Core/Inc/utils/pid_algorithms.h ****         ~Discrete_PID() { }
+  28              		.loc 1 56 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 56 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE162:
+  39              		.weak	_ZN12Discrete_PIDD1Ev
+  40              		.thumb_set _ZN12Discrete_PIDD1Ev,_ZN12Discrete_PIDD2Ev
+  41              		.section	.text._ZN12Discrete_PID7computeEfm,"axG",%progbits,_ZN12Discrete_PID7computeEfm,comdat
+  42              		.align	1
+  43              		.weak	_ZN12Discrete_PID7computeEfm
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN12Discrete_PID7computeEfm:
+  50              	.LFB165:
+  57:Core/Inc/utils/pid_algorithms.h **** 
+  58:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+  59:Core/Inc/utils/pid_algorithms.h ****          * 1) Discrete PID control Algorithm
+  60:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
+  61:Core/Inc/utils/pid_algorithms.h ****          * 3) //! Filtered Derivative not used
+  62:Core/Inc/utils/pid_algorithms.h ****          * 4) Output Limited
+  63:Core/Inc/utils/pid_algorithms.h ****          * 5) Form : Parallel
+  64:Core/Inc/utils/pid_algorithms.h ****          * 6) Compensator Formula : Dz = P + I*Ts/(z-1) + D*(z-1)/(Ts*z)
+  65:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
+  66:Core/Inc/utils/pid_algorithms.h ****          *      y(t) - y(t-1) = a*x(t) + b*x(t-1) + c*x(t-2)
+  67:Core/Inc/utils/pid_algorithms.h ****          *      where,
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 3
+
+
+  68:Core/Inc/utils/pid_algorithms.h ****          *              a = P + D/Ts
+  69:Core/Inc/utils/pid_algorithms.h ****          *              b = -P + I*Ts - 2*D/Ts
+  70:Core/Inc/utils/pid_algorithms.h ****          *              c = D/Ts
+  71:Core/Inc/utils/pid_algorithms.h ****          */
+  72:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis) {
+  51              		.loc 1 72 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  73:Core/Inc/utils/pid_algorithms.h ****                 float Ts = (float)dt_millis / 1000.0;
+  57              		.loc 1 73 0
+  58 0000 07EE901A 		vmov	s15, r1	@ int
+  59 0004 F8EE676A 		vcvt.f32.u32	s13, s15
+  60 0008 DFED217A 		vldr.32	s15, .L11
+  61 000c 86EEA77A 		vdiv.f32	s14, s13, s15
+  62              	.LVL2:
+  63              	.LBB128:
+  64              	.LBB129:
+  19:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  65              		.loc 1 19 0
+  66 0010 90ED016A 		vldr.32	s12, [r0, #4]
+  67              	.LVL3:
+  68              	.LBE129:
+  69              	.LBE128:
+  70              	.LBB130:
+  71              	.LBB131:
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  72              		.loc 1 20 0
+  73 0014 D0ED025A 		vldr.32	s11, [r0, #8]
+  74              	.LVL4:
+  75              	.LBE131:
+  76              	.LBE130:
+  77              	.LBB132:
+  78              	.LBB133:
+  21:Core/Inc/utils/pid_algorithms.h **** 
+  79              		.loc 1 21 0
+  80 0018 D0ED037A 		vldr.32	s15, [r0, #12]
+  81              	.LVL5:
+  82              	.LBE133:
+  83              	.LBE132:
+  74:Core/Inc/utils/pid_algorithms.h ****                 
+  75:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+  76:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+  77:Core/Inc/utils/pid_algorithms.h ****                 float D_by_Ts = get_D() / Ts;
+  84              		.loc 1 77 0
+  85 001c C7EE876A 		vdiv.f32	s13, s15, s14
+  86              	.LVL6:
+  78:Core/Inc/utils/pid_algorithms.h **** 
+  79:Core/Inc/utils/pid_algorithms.h ****                 float a = P + D_by_Ts;
+  87              		.loc 1 79 0
+  88 0020 76EE867A 		vadd.f32	s15, s13, s12
+  89              	.LVL7:
+  80:Core/Inc/utils/pid_algorithms.h ****                 float b = -P + I * Ts - 2 * D_by_Ts;
+  90              		.loc 1 80 0
+  91 0024 27EE257A 		vmul.f32	s14, s14, s11
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 4
+
+
+  92              	.LVL8:
+  93 0028 37EE467A 		vsub.f32	s14, s14, s12
+  94 002c 36EEA66A 		vadd.f32	s12, s13, s13
+  95 0030 37EE467A 		vsub.f32	s14, s14, s12
+  96              	.LVL9:
+  81:Core/Inc/utils/pid_algorithms.h ****                 float c = D_by_Ts;
+  82:Core/Inc/utils/pid_algorithms.h **** 
+  83:Core/Inc/utils/pid_algorithms.h ****                 l_output_ += a * error + b * l_err_ + c * ll_err_;
+  97              		.loc 1 83 0
+  98 0034 67EE807A 		vmul.f32	s15, s15, s0
+  99              	.LVL10:
+ 100 0038 90ED076A 		vldr.32	s12, [r0, #28]
+ 101 003c 26EE077A 		vmul.f32	s14, s12, s14
+ 102              	.LVL11:
+ 103 0040 77EE877A 		vadd.f32	s15, s15, s14
+ 104 0044 90ED087A 		vldr.32	s14, [r0, #32]
+ 105 0048 67EE266A 		vmul.f32	s13, s14, s13
+ 106              	.LVL12:
+ 107 004c 77EEA67A 		vadd.f32	s15, s15, s13
+ 108 0050 90ED067A 		vldr.32	s14, [r0, #24]
+ 109 0054 77EE877A 		vadd.f32	s15, s15, s14
+ 110 0058 C0ED067A 		vstr.32	s15, [r0, #24]
+ 111              	.LVL13:
+ 112              	.LBB134:
+ 113              	.LBB135:
+  28:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ 114              		.loc 1 28 0
+ 115 005c 90ED047A 		vldr.32	s14, [r0, #16]
+ 116              	.LVL14:
+ 117              	.LBE135:
+ 118              	.LBE134:
+  84:Core/Inc/utils/pid_algorithms.h **** 
+  85:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper()) {
+ 119              		.loc 1 85 0
+ 120 0060 F4EEC77A 		vcmpe.f32	s15, s14
+ 121 0064 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 122 0068 09DC     		bgt	.L10
+ 123              	.LVL15:
+ 124              	.LBB136:
+ 125              	.LBB137:
+  29:Core/Inc/utils/pid_algorithms.h **** 
+ 126              		.loc 1 29 0
+ 127 006a 90ED057A 		vldr.32	s14, [r0, #20]
+ 128              	.LVL16:
+ 129              	.LBE137:
+ 130              	.LBE136:
+  86:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+  87:Core/Inc/utils/pid_algorithms.h ****                 }
+  88:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower()) {
+ 131              		.loc 1 88 0
+ 132 006e F4EEC77A 		vcmpe.f32	s15, s14
+ 133 0072 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 134 0076 04D5     		bpl	.L5
+  89:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 135              		.loc 1 89 0
+ 136 0078 80ED067A 		vstr.32	s14, [r0, #24]
+ 137 007c 01E0     		b	.L5
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 5
+
+
+ 138              	.L10:
+  86:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+ 139              		.loc 1 86 0
+ 140 007e 80ED067A 		vstr.32	s14, [r0, #24]
+ 141              	.L5:
+  90:Core/Inc/utils/pid_algorithms.h ****                 }
+  91:Core/Inc/utils/pid_algorithms.h **** 
+  92:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
+ 142              		.loc 1 92 0
+ 143 0082 80ED086A 		vstr.32	s12, [r0, #32]
+  93:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
+ 144              		.loc 1 93 0
+ 145 0086 80ED070A 		vstr.32	s0, [r0, #28]
+  94:Core/Inc/utils/pid_algorithms.h **** 
+  95:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
+  96:Core/Inc/utils/pid_algorithms.h ****         }
+ 146              		.loc 1 96 0
+ 147 008a 90ED060A 		vldr.32	s0, [r0, #24]
+ 148              	.LVL17:
+ 149 008e 7047     		bx	lr
+ 150              	.L12:
+ 151              		.align	2
+ 152              	.L11:
+ 153 0090 00007A44 		.word	1148846080
+ 154              		.cfi_endproc
+ 155              	.LFE165:
+ 157              		.section	.text.__tcf_0,"ax",%progbits
+ 158              		.align	1
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.fpu fpv4-sp-d16
+ 164              	__tcf_0:
+ 165              	.LFB406:
+ 166              		.file 2 "Core/Src/robot/play.cpp"
+   1:Core/Src/robot/play.cpp **** #include "robot/play.h"
+   2:Core/Src/robot/play.cpp **** #include "utils/pid_algorithms.h"
+   3:Core/Src/robot/play.cpp **** #include "utils/pid.h"
+   4:Core/Src/robot/play.cpp **** #include <math.h>
+   5:Core/Src/robot/play.cpp **** 
+   6:Core/Src/robot/play.cpp **** void update(float set_points[4])
+   7:Core/Src/robot/play.cpp **** {
+   8:Core/Src/robot/play.cpp ****         // Only update to new value if the buffer actually contains data else
+   9:Core/Src/robot/play.cpp ****         // keep the previous data.
+  10:Core/Src/robot/play.cpp ****         if (!Thinker_isEmpty()) {
+  11:Core/Src/robot/play.cpp ****                 get_Thinker(set_points);
+  12:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+  13:Core/Src/robot/play.cpp ****                         printf("%ld  ", (int32_t)(set_points[i]*1000));
+  14:Core/Src/robot/play.cpp ****                 }
+  15:Core/Src/robot/play.cpp ****                 printf("\n");
+  16:Core/Src/robot/play.cpp ****         }
+  17:Core/Src/robot/play.cpp **** }
+  18:Core/Src/robot/play.cpp **** 
+  19:Core/Src/robot/play.cpp **** /* *** Tasks To Be Done By tune function ***
+  20:Core/Src/robot/play.cpp ****  TODO 1: Measure omega of all wheels
+  21:Core/Src/robot/play.cpp ****  TODO 2: Compute error
+  22:Core/Src/robot/play.cpp ****  TODO 3: Compute PID using available PID algorithm
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 6
+
+
+  23:Core/Src/robot/play.cpp ****  TODO 4: set Omega of each wheel
+  24:Core/Src/robot/play.cpp ****  TODO 5: Repeat from step 1
+  25:Core/Src/robot/play.cpp ****  */
+  26:Core/Src/robot/play.cpp **** 
+  27:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 167              		.loc 2 27 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171 0000 10B5     		push	{r4, lr}
+ 172              	.LCFI0:
+ 173              		.cfi_def_cfa_offset 8
+ 174              		.cfi_offset 4, -8
+ 175              		.cfi_offset 14, -4
+ 176              		.loc 2 27 0
+ 177 0002 054C     		ldr	r4, .L17
+ 178              	.L15:
+ 179              		.loc 2 27 0 is_stmt 0 discriminator 5
+ 180 0004 054B     		ldr	r3, .L17+4
+ 181 0006 9C42     		cmp	r4, r3
+ 182 0008 05D0     		beq	.L13
+ 183              		.loc 2 27 0 discriminator 4
+ 184 000a 54F8243D 		ldr	r3, [r4, #-36]!
+ 185 000e 5B68     		ldr	r3, [r3, #4]
+ 186 0010 2046     		mov	r0, r4
+ 187 0012 9847     		blx	r3
+ 188              	.LVL18:
+ 189 0014 F6E7     		b	.L15
+ 190              	.L13:
+ 191              		.loc 2 27 0
+ 192 0016 10BD     		pop	{r4, pc}
+ 193              	.L18:
+ 194              		.align	2
+ 195              	.L17:
+ 196 0018 90000000 		.word	.LANCHOR0+144
+ 197 001c 00000000 		.word	.LANCHOR0
+ 198              		.cfi_endproc
+ 199              	.LFE406:
+ 201              		.section	.text.__tcf_1,"ax",%progbits
+ 202              		.align	1
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 206              		.fpu fpv4-sp-d16
+ 208              	__tcf_1:
+ 209              	.LFB407:
+  28:Core/Src/robot/play.cpp **** PID gPID[4];
+ 210              		.loc 2 28 0 is_stmt 1
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		@ link register save eliminated.
+ 215              		.loc 2 28 0
+ 216 0000 034B     		ldr	r3, .L22
+ 217              	.L21:
+ 218              		.loc 2 28 0 is_stmt 0 discriminator 5
+ 219 0002 044A     		ldr	r2, .L22+4
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 7
+
+
+ 220 0004 9342     		cmp	r3, r2
+ 221 0006 01D0     		beq	.L19
+ 222              		.loc 2 28 0 discriminator 4
+ 223 0008 043B     		subs	r3, r3, #4
+ 224              	.LVL19:
+ 225 000a FAE7     		b	.L21
+ 226              	.LVL20:
+ 227              	.L19:
+ 228              		.loc 2 28 0
+ 229 000c 7047     		bx	lr
+ 230              	.L23:
+ 231 000e 00BF     		.align	2
+ 232              	.L22:
+ 233 0010 10000000 		.word	.LANCHOR1+16
+ 234 0014 00000000 		.word	.LANCHOR1
+ 235              		.cfi_endproc
+ 236              	.LFE407:
+ 238              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 239              		.align	1
+ 240              		.syntax unified
+ 241              		.thumb
+ 242              		.thumb_func
+ 243              		.fpu fpv4-sp-d16
+ 245              	_Z41__static_initialization_and_destruction_0ii:
+ 246              	.LFB405:
+  29:Core/Src/robot/play.cpp **** 
+  30:Core/Src/robot/play.cpp **** float gI_Factor = 2;
+  31:Core/Src/robot/play.cpp **** float gP_Factor = 1;
+  32:Core/Src/robot/play.cpp **** 
+  33:Core/Src/robot/play.cpp **** void pid_Init()
+  34:Core/Src/robot/play.cpp **** {
+  35:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_PID(0.6336, gI_Factor*10.05, 0);
+  36:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_Limits(24, -24);
+  37:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_PID(0.5262, gI_Factor*9.528, 0);
+  38:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_Limits(24, -24);
+  39:Core/Src/robot/play.cpp ****         gDisc_PID[2].set_PID(0.7336, gI_Factor*10.05, 0);
+  40:Core/Src/robot/play.cpp ****         gDisc_PID[2].set_Limits(24, -24);
+  41:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_PID(0.49, gI_Factor*7.615, 0);
+  42:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_Limits(24, -24);
+  43:Core/Src/robot/play.cpp **** 
+  44:Core/Src/robot/play.cpp ****         gPID[0].set_Algorithm(&gDisc_PID[0]);
+  45:Core/Src/robot/play.cpp ****         gPID[1].set_Algorithm(&gDisc_PID[1]);
+  46:Core/Src/robot/play.cpp ****         gPID[2].set_Algorithm(&gDisc_PID[2]);
+  47:Core/Src/robot/play.cpp ****         gPID[3].set_Algorithm(&gDisc_PID[3]);
+  48:Core/Src/robot/play.cpp **** }
+  49:Core/Src/robot/play.cpp **** 
+  50:Core/Src/robot/play.cpp **** void tune(float set_points[4], uint32_t dt_millis)
+  51:Core/Src/robot/play.cpp **** {
+  52:Core/Src/robot/play.cpp ****         float omega[4];
+  53:Core/Src/robot/play.cpp ****         float error[4];
+  54:Core/Src/robot/play.cpp ****         float voltage[4];
+  55:Core/Src/robot/play.cpp ****         float new_omega[4];
+  56:Core/Src/robot/play.cpp **** 
+  57:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+  58:Core/Src/robot/play.cpp ****                 omega[i] = gWheels[i].get_Omega(dt_millis);
+  59:Core/Src/robot/play.cpp ****                 error[i] = set_points[i] - omega[i];
+  60:Core/Src/robot/play.cpp ****                 voltage[i] = gPID[i].compute_PID(error[i], dt_millis);
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 8
+
+
+  61:Core/Src/robot/play.cpp ****                 new_omega[i] = voltage[i] * MAX_OMEGA / 24.0;
+  62:Core/Src/robot/play.cpp ****                 gWheels[i].set_Omega(new_omega[i]);
+  63:Core/Src/robot/play.cpp ****                 // printf("(%ld, %ld)  ", (int32_t)(new_omega[i]*1000), (int32_t)(omega[i]*1000));
+  64:Core/Src/robot/play.cpp ****         }
+  65:Core/Src/robot/play.cpp ****         
+  66:Core/Src/robot/play.cpp ****         // omega[0] = gWheels[0].get_Omega(dt_millis);
+  67:Core/Src/robot/play.cpp ****         // error[0] = set_points[0] - omega[0];
+  68:Core/Src/robot/play.cpp ****         // voltage[0] = gPID[0].compute_PID(error[0], dt_millis);
+  69:Core/Src/robot/play.cpp ****         // new_omega[0] = voltage[0] * MAX_OMEGA / 24.0;
+  70:Core/Src/robot/play.cpp ****         // gWheels[0].set_Omega(new_omega[0]);
+  71:Core/Src/robot/play.cpp ****         // printf("(%ld, %ld)  ", (int32_t)(new_omega[0]), (int32_t)(omega[0]));
+  72:Core/Src/robot/play.cpp ****         // printf("\n");
+  73:Core/Src/robot/play.cpp **** 
+  74:Core/Src/robot/play.cpp ****         // gWheels[0].update();
+  75:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+  76:Core/Src/robot/play.cpp ****                 gWheels[i].update();
+  77:Core/Src/robot/play.cpp ****         }
+  78:Core/Src/robot/play.cpp **** }
+  79:Core/Src/robot/play.cpp **** 
+  80:Core/Src/robot/play.cpp **** void ramp_down(uint32_t dt_millis)
+  81:Core/Src/robot/play.cpp **** {
+  82:Core/Src/robot/play.cpp ****         float omega[4];
+  83:Core/Src/robot/play.cpp ****         float error[4];
+  84:Core/Src/robot/play.cpp ****         float voltage[4];
+  85:Core/Src/robot/play.cpp ****         float new_omega[4];
+  86:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+  87:Core/Src/robot/play.cpp ****                 
+  88:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+  89:Core/Src/robot/play.cpp ****                         omega[i] = gWheels[i].get_Omega(dt_millis);
+  90:Core/Src/robot/play.cpp ****                         if (fabsf(omega[i]) < 5) {
+  91:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(0);
+  92:Core/Src/robot/play.cpp ****                         }else {
+  93:Core/Src/robot/play.cpp ****                                 error[i] = -(omega[i] / 2.0);
+  94:Core/Src/robot/play.cpp ****                                 voltage[i] = gPID[i].compute_PID(error[i], dt_millis);
+  95:Core/Src/robot/play.cpp ****                                 new_omega[i] = voltage[i] * MAX_OMEGA / 24.0;
+  96:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(new_omega[i]);
+  97:Core/Src/robot/play.cpp ****                         }
+  98:Core/Src/robot/play.cpp ****                 }
+  99:Core/Src/robot/play.cpp **** 
+ 100:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 101:Core/Src/robot/play.cpp ****                         gWheels[i].update();
+ 102:Core/Src/robot/play.cpp ****                 }
+ 103:Core/Src/robot/play.cpp ****                 HAL_Delay(10);
+ 104:Core/Src/robot/play.cpp ****         }
+ 105:Core/Src/robot/play.cpp **** }...
+ 247              		.loc 2 105 0 is_stmt 1
+ 248              		.cfi_startproc
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251              	.LVL21:
+ 252 0000 0128     		cmp	r0, #1
+ 253 0002 00D0     		beq	.L34
+ 254 0004 7047     		bx	lr
+ 255              	.L34:
+ 256              		.loc 2 105 0 is_stmt 0 discriminator 1
+ 257 0006 08B5     		push	{r3, lr}
+ 258              	.LCFI1:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 9
+
+
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+ 262              		.loc 2 105 0 is_stmt 1 discriminator 1
+ 263 0008 4FF6FF73 		movw	r3, #65535
+ 264 000c 9942     		cmp	r1, r3
+ 265 000e 00D0     		beq	.L35
+ 266              	.LVL22:
+ 267              	.L24:
+ 268              		.loc 2 105 0 is_stmt 0
+ 269 0010 08BD     		pop	{r3, pc}
+ 270              	.LVL23:
+ 271              	.L35:
+  27:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 272              		.loc 2 27 0 is_stmt 1
+ 273 0012 0321     		movs	r1, #3
+ 274              	.LVL24:
+ 275 0014 0F4B     		ldr	r3, .L36
+ 276              	.LVL25:
+ 277              	.L27:
+  27:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 278              		.loc 2 27 0 is_stmt 0 discriminator 4
+ 279 0016 0029     		cmp	r1, #0
+ 280 0018 0BDB     		blt	.L26
+ 281              	.LVL26:
+ 282              	.LBB138:
+ 283              	.LBB139:
+ 284              	.LBB140:
+ 285              	.LBB141:
+ 286              	.LBB142:
+ 287              	.LBB143:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 288              		.loc 1 11 0 is_stmt 1
+ 289 001a 0022     		movs	r2, #0
+ 290 001c 5A60     		str	r2, [r3, #4]	@ float
+ 291              	.LVL27:
+ 292              	.LBE143:
+ 293              	.LBE142:
+ 294              	.LBB144:
+ 295              	.LBB145:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 296              		.loc 1 12 0
+ 297 001e 9A60     		str	r2, [r3, #8]	@ float
+ 298              	.LVL28:
+ 299              	.LBE145:
+ 300              	.LBE144:
+ 301              	.LBB146:
+ 302              	.LBB147:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 303              		.loc 1 13 0
+ 304 0020 DA60     		str	r2, [r3, #12]	@ float
+ 305              	.LVL29:
+ 306              	.LBE147:
+ 307              	.LBE146:
+ 308              	.LBE141:
+ 309              	.LBE140:
+  47:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 10
+
+
+ 310              		.loc 1 47 0
+ 311 0022 0D48     		ldr	r0, .L36+4
+ 312 0024 1860     		str	r0, [r3]
+  48:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 313              		.loc 1 48 0
+ 314 0026 9A61     		str	r2, [r3, #24]	@ float
+  49:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 315              		.loc 1 49 0
+ 316 0028 DA61     		str	r2, [r3, #28]	@ float
+  50:Core/Inc/utils/pid_algorithms.h ****         }
+ 317              		.loc 1 50 0
+ 318 002a 1A62     		str	r2, [r3, #32]	@ float
+ 319              	.LVL30:
+ 320              	.LBE139:
+ 321              	.LBE138:
+  27:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 322              		.loc 2 27 0
+ 323 002c 2433     		adds	r3, r3, #36
+ 324 002e 0139     		subs	r1, r1, #1
+ 325 0030 F1E7     		b	.L27
+ 326              	.L26:
+  27:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 327              		.loc 2 27 0 is_stmt 0 discriminator 2
+ 328 0032 0A4A     		ldr	r2, .L36+8
+ 329 0034 0A49     		ldr	r1, .L36+12
+ 330 0036 0020     		movs	r0, #0
+ 331 0038 FFF7FEFF 		bl	__aeabi_atexit
+ 332              	.LVL31:
+  28:Core/Src/robot/play.cpp **** PID gPID[4];
+ 333              		.loc 2 28 0 is_stmt 1 discriminator 2
+ 334 003c 0323     		movs	r3, #3
+ 335              	.L29:
+  28:Core/Src/robot/play.cpp **** PID gPID[4];
+ 336              		.loc 2 28 0 is_stmt 0 discriminator 4
+ 337 003e 002B     		cmp	r3, #0
+ 338 0040 01DB     		blt	.L28
+  28:Core/Src/robot/play.cpp **** PID gPID[4];
+ 339              		.loc 2 28 0
+ 340 0042 013B     		subs	r3, r3, #1
+ 341 0044 FBE7     		b	.L29
+ 342              	.L28:
+  28:Core/Src/robot/play.cpp **** PID gPID[4];
+ 343              		.loc 2 28 0 discriminator 2
+ 344 0046 054A     		ldr	r2, .L36+8
+ 345 0048 0649     		ldr	r1, .L36+16
+ 346 004a 0020     		movs	r0, #0
+ 347 004c FFF7FEFF 		bl	__aeabi_atexit
+ 348              	.LVL32:
+ 349              		.loc 2 105 0 is_stmt 1 discriminator 2
+ 350 0050 DEE7     		b	.L24
+ 351              	.L37:
+ 352 0052 00BF     		.align	2
+ 353              	.L36:
+ 354 0054 00000000 		.word	.LANCHOR0
+ 355 0058 08000000 		.word	_ZTV12Discrete_PID+8
+ 356 005c 00000000 		.word	__dso_handle
+ 357 0060 00000000 		.word	__tcf_0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 11
+
+
+ 358 0064 00000000 		.word	__tcf_1
+ 359              		.cfi_endproc
+ 360              	.LFE405:
+ 362              		.section	.text._ZN12Discrete_PIDD0Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+ 363              		.align	1
+ 364              		.weak	_ZN12Discrete_PIDD0Ev
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 368              		.fpu fpv4-sp-d16
+ 370              	_ZN12Discrete_PIDD0Ev:
+ 371              	.LFB164:
+  56:Core/Inc/utils/pid_algorithms.h **** 
+ 372              		.loc 1 56 0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 0
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 376              	.LVL33:
+ 377 0000 10B5     		push	{r4, lr}
+ 378              	.LCFI2:
+ 379              		.cfi_def_cfa_offset 8
+ 380              		.cfi_offset 4, -8
+ 381              		.cfi_offset 14, -4
+ 382 0002 0446     		mov	r4, r0
+  56:Core/Inc/utils/pid_algorithms.h **** 
+ 383              		.loc 1 56 0
+ 384 0004 2421     		movs	r1, #36
+ 385 0006 FFF7FEFF 		bl	_ZdlPvj
+ 386              	.LVL34:
+ 387 000a 2046     		mov	r0, r4
+ 388 000c 10BD     		pop	{r4, pc}
+ 389              		.cfi_endproc
+ 390              	.LFE164:
+ 392              		.section	.text._Z6updatePf,"ax",%progbits
+ 393              		.align	1
+ 394              		.global	_Z6updatePf
+ 395              		.syntax unified
+ 396              		.thumb
+ 397              		.thumb_func
+ 398              		.fpu fpv4-sp-d16
+ 400              	_Z6updatePf:
+ 401              	.LFB401:
+   7:Core/Src/robot/play.cpp **** {
+ 402              		.loc 2 7 0
+ 403              		.cfi_startproc
+ 404              		@ args = 0, pretend = 0, frame = 0
+ 405              		@ frame_needed = 0, uses_anonymous_args = 0
+ 406              	.LVL35:
+ 407 0000 38B5     		push	{r3, r4, r5, lr}
+ 408              	.LCFI3:
+ 409              		.cfi_def_cfa_offset 16
+ 410              		.cfi_offset 3, -16
+ 411              		.cfi_offset 4, -12
+ 412              		.cfi_offset 5, -8
+ 413              		.cfi_offset 14, -4
+ 414 0002 0546     		mov	r5, r0
+ 415              	.LBB148:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 12
+
+
+  10:Core/Src/robot/play.cpp ****         if (!Thinker_isEmpty()) {
+ 416              		.loc 2 10 0
+ 417 0004 FFF7FEFF 		bl	_Z15Thinker_isEmptyv
+ 418              	.LVL36:
+ 419 0008 00B1     		cbz	r0, .L45
+ 420              	.L40:
+ 421              	.LBE148:
+  17:Core/Src/robot/play.cpp **** }
+ 422              		.loc 2 17 0
+ 423 000a 38BD     		pop	{r3, r4, r5, pc}
+ 424              	.LVL37:
+ 425              	.L45:
+ 426              	.LBB151:
+ 427              	.LBB149:
+  11:Core/Src/robot/play.cpp ****                 get_Thinker(set_points);
+ 428              		.loc 2 11 0
+ 429 000c 2846     		mov	r0, r5
+ 430 000e FFF7FEFF 		bl	_Z11get_ThinkerPf
+ 431              	.LVL38:
+ 432              	.LBB150:
+  12:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 433              		.loc 2 12 0
+ 434 0012 0024     		movs	r4, #0
+ 435              	.LVL39:
+ 436              	.L43:
+  12:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 437              		.loc 2 12 0 is_stmt 0 discriminator 3
+ 438 0014 032C     		cmp	r4, #3
+ 439 0016 11D8     		bhi	.L42
+  13:Core/Src/robot/play.cpp ****                         printf("%ld  ", (int32_t)(set_points[i]*1000));
+ 440              		.loc 2 13 0 is_stmt 1 discriminator 2
+ 441 0018 05EB8403 		add	r3, r5, r4, lsl #2
+ 442 001c D3ED007A 		vldr.32	s15, [r3]
+ 443 0020 9FED087A 		vldr.32	s14, .L46
+ 444 0024 67EE877A 		vmul.f32	s15, s15, s14
+ 445 0028 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 446 002c 17EE901A 		vmov	r1, s15	@ int
+ 447 0030 0548     		ldr	r0, .L46+4
+ 448 0032 FFF7FEFF 		bl	printf
+ 449              	.LVL40:
+  12:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 450              		.loc 2 12 0 discriminator 2
+ 451 0036 0134     		adds	r4, r4, #1
+ 452              	.LVL41:
+ 453 0038 E4B2     		uxtb	r4, r4
+ 454              	.LVL42:
+ 455 003a EBE7     		b	.L43
+ 456              	.L42:
+ 457              	.LBE150:
+  15:Core/Src/robot/play.cpp ****                 printf("\n");
+ 458              		.loc 2 15 0
+ 459 003c 0A20     		movs	r0, #10
+ 460 003e FFF7FEFF 		bl	putchar
+ 461              	.LVL43:
+ 462              	.LBE149:
+ 463              	.LBE151:
+  17:Core/Src/robot/play.cpp **** }
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 13
+
+
+ 464              		.loc 2 17 0
+ 465 0042 E2E7     		b	.L40
+ 466              	.L47:
+ 467              		.align	2
+ 468              	.L46:
+ 469 0044 00007A44 		.word	1148846080
+ 470 0048 00000000 		.word	.LC0
+ 471              		.cfi_endproc
+ 472              	.LFE401:
+ 474              		.global	__aeabi_f2d
+ 475              		.global	__aeabi_dmul
+ 476              		.global	__aeabi_d2f
+ 477              		.section	.text._Z8pid_Initv,"ax",%progbits
+ 478              		.align	1
+ 479              		.global	_Z8pid_Initv
+ 480              		.syntax unified
+ 481              		.thumb
+ 482              		.thumb_func
+ 483              		.fpu fpv4-sp-d16
+ 485              	_Z8pid_Initv:
+ 486              	.LFB402:
+  34:Core/Src/robot/play.cpp **** {
+ 487              		.loc 2 34 0
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 492              	.LCFI4:
+ 493              		.cfi_def_cfa_offset 32
+ 494              		.cfi_offset 4, -32
+ 495              		.cfi_offset 5, -28
+ 496              		.cfi_offset 6, -24
+ 497              		.cfi_offset 7, -20
+ 498              		.cfi_offset 8, -16
+ 499              		.cfi_offset 9, -12
+ 500              		.cfi_offset 10, -8
+ 501              		.cfi_offset 14, -4
+  35:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_PID(0.6336, gI_Factor*10.05, 0);
+ 502              		.loc 2 35 0
+ 503 0004 2A4B     		ldr	r3, .L50+24
+ 504 0006 1868     		ldr	r0, [r3]	@ float
+ 505 0008 FFF7FEFF 		bl	__aeabi_f2d
+ 506              	.LVL44:
+ 507 000c 8046     		mov	r8, r0
+ 508 000e 8946     		mov	r9, r1
+ 509 0010 21A3     		adr	r3, .L50
+ 510 0012 D3E90023 		ldrd	r2, [r3]
+ 511 0016 FFF7FEFF 		bl	__aeabi_dmul
+ 512              	.LVL45:
+ 513 001a FFF7FEFF 		bl	__aeabi_d2f
+ 514              	.LVL46:
+ 515 001e 8246     		mov	r10, r0	@ float
+ 516              	.LVL47:
+ 517              	.LBB152:
+ 518              	.LBB153:
+ 519              	.LBB154:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 14
+
+
+ 520              		.loc 1 11 0
+ 521 0020 244C     		ldr	r4, .L50+28
+ 522 0022 254B     		ldr	r3, .L50+32
+ 523 0024 6360     		str	r3, [r4, #4]	@ float
+ 524              	.LVL48:
+ 525              	.LBE154:
+ 526              	.LBE153:
+ 527              	.LBB155:
+ 528              	.LBB156:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 529              		.loc 1 12 0
+ 530 0026 A060     		str	r0, [r4, #8]	@ float
+ 531              	.LVL49:
+ 532              	.LBE156:
+ 533              	.LBE155:
+ 534              	.LBB157:
+ 535              	.LBB158:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 536              		.loc 1 13 0
+ 537 0028 0027     		movs	r7, #0
+ 538 002a E760     		str	r7, [r4, #12]	@ float
+ 539              	.LVL50:
+ 540              	.LBE158:
+ 541              	.LBE157:
+ 542              	.LBE152:
+ 543              	.LBB159:
+ 544              	.LBB160:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 545              		.loc 1 24 0
+ 546 002c 234E     		ldr	r6, .L50+36
+ 547 002e 2661     		str	r6, [r4, #16]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 548              		.loc 1 25 0
+ 549 0030 234D     		ldr	r5, .L50+40
+ 550 0032 6561     		str	r5, [r4, #20]	@ float
+ 551              	.LVL51:
+ 552              	.LBE160:
+ 553              	.LBE159:
+  37:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_PID(0.5262, gI_Factor*9.528, 0);
+ 554              		.loc 2 37 0
+ 555 0034 1AA3     		adr	r3, .L50+8
+ 556 0036 D3E90023 		ldrd	r2, [r3]
+ 557 003a 4046     		mov	r0, r8
+ 558 003c 4946     		mov	r1, r9
+ 559 003e FFF7FEFF 		bl	__aeabi_dmul
+ 560              	.LVL52:
+ 561 0042 FFF7FEFF 		bl	__aeabi_d2f
+ 562              	.LVL53:
+ 563              	.LBB161:
+ 564              	.LBB162:
+ 565              	.LBB163:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 566              		.loc 1 11 0
+ 567 0046 1F4B     		ldr	r3, .L50+44
+ 568 0048 A362     		str	r3, [r4, #40]	@ float
+ 569              	.LVL54:
+ 570              	.LBE163:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 15
+
+
+ 571              	.LBE162:
+ 572              	.LBB164:
+ 573              	.LBB165:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 574              		.loc 1 12 0
+ 575 004a E062     		str	r0, [r4, #44]	@ float
+ 576              	.LVL55:
+ 577              	.LBE165:
+ 578              	.LBE164:
+ 579              	.LBB166:
+ 580              	.LBB167:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 581              		.loc 1 13 0
+ 582 004c 2763     		str	r7, [r4, #48]	@ float
+ 583              	.LVL56:
+ 584              	.LBE167:
+ 585              	.LBE166:
+ 586              	.LBE161:
+ 587              	.LBB168:
+ 588              	.LBB169:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 589              		.loc 1 24 0
+ 590 004e 6663     		str	r6, [r4, #52]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 591              		.loc 1 25 0
+ 592 0050 A563     		str	r5, [r4, #56]	@ float
+ 593              	.LVL57:
+ 594              	.LBE169:
+ 595              	.LBE168:
+ 596              	.LBB170:
+ 597              	.LBB171:
+ 598              	.LBB172:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 599              		.loc 1 11 0
+ 600 0052 1D4B     		ldr	r3, .L50+48
+ 601 0054 E364     		str	r3, [r4, #76]	@ float
+ 602              	.LVL58:
+ 603              	.LBE172:
+ 604              	.LBE171:
+ 605              	.LBB173:
+ 606              	.LBB174:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 607              		.loc 1 12 0
+ 608 0056 C4F850A0 		str	r10, [r4, #80]	@ float
+ 609              	.LVL59:
+ 610              	.LBE174:
+ 611              	.LBE173:
+ 612              	.LBB175:
+ 613              	.LBB176:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 614              		.loc 1 13 0
+ 615 005a 6765     		str	r7, [r4, #84]	@ float
+ 616              	.LVL60:
+ 617              	.LBE176:
+ 618              	.LBE175:
+ 619              	.LBE170:
+ 620              	.LBB177:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 16
+
+
+ 621              	.LBB178:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 622              		.loc 1 24 0
+ 623 005c A665     		str	r6, [r4, #88]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 624              		.loc 1 25 0
+ 625 005e E565     		str	r5, [r4, #92]	@ float
+ 626              	.LVL61:
+ 627              	.LBE178:
+ 628              	.LBE177:
+  41:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_PID(0.49, gI_Factor*7.615, 0);
+ 629              		.loc 2 41 0
+ 630 0060 11A3     		adr	r3, .L50+16
+ 631 0062 D3E90023 		ldrd	r2, [r3]
+ 632 0066 4046     		mov	r0, r8
+ 633 0068 4946     		mov	r1, r9
+ 634 006a FFF7FEFF 		bl	__aeabi_dmul
+ 635              	.LVL62:
+ 636 006e FFF7FEFF 		bl	__aeabi_d2f
+ 637              	.LVL63:
+ 638              	.LBB179:
+ 639              	.LBB180:
+ 640              	.LBB181:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 641              		.loc 1 11 0
+ 642 0072 164B     		ldr	r3, .L50+52
+ 643 0074 2367     		str	r3, [r4, #112]	@ float
+ 644              	.LVL64:
+ 645              	.LBE181:
+ 646              	.LBE180:
+ 647              	.LBB182:
+ 648              	.LBB183:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 649              		.loc 1 12 0
+ 650 0076 6067     		str	r0, [r4, #116]	@ float
+ 651              	.LVL65:
+ 652              	.LBE183:
+ 653              	.LBE182:
+ 654              	.LBB184:
+ 655              	.LBB185:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 656              		.loc 1 13 0
+ 657 0078 A767     		str	r7, [r4, #120]	@ float
+ 658              	.LVL66:
+ 659              	.LBE185:
+ 660              	.LBE184:
+ 661              	.LBE179:
+ 662              	.LBB186:
+ 663              	.LBB187:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 664              		.loc 1 24 0
+ 665 007a E667     		str	r6, [r4, #124]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 666              		.loc 1 25 0
+ 667 007c C4F88050 		str	r5, [r4, #128]	@ float
+ 668              	.LVL67:
+ 669              	.LBE187:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 17
+
+
+ 670              	.LBE186:
+ 671              	.LBB188:
+ 672              	.LBB189:
+ 673              		.file 3 "Core/Inc/utils/pid.h"
+   1:Core/Inc/utils/pid.h **** #ifndef _PID_H_
+   2:Core/Inc/utils/pid.h **** #define _PID_H_
+   3:Core/Inc/utils/pid.h **** 
+   4:Core/Inc/utils/pid.h **** #include "pid_algorithms.h"
+   5:Core/Inc/utils/pid.h **** 
+   6:Core/Inc/utils/pid.h **** class PID
+   7:Core/Inc/utils/pid.h **** {
+   8:Core/Inc/utils/pid.h **** public:
+   9:Core/Inc/utils/pid.h ****         PID() { }
+  10:Core/Inc/utils/pid.h ****         PID(PID_Algorithm *algo) { set_Algorithm(algo); }
+  11:Core/Inc/utils/pid.h ****         PID(PID &&) = default;
+  12:Core/Inc/utils/pid.h ****         PID(const PID &) = default;
+  13:Core/Inc/utils/pid.h ****         PID &operator=(PID &&) = default;
+  14:Core/Inc/utils/pid.h ****         PID &operator=(const PID &) = default;
+  15:Core/Inc/utils/pid.h ****         ~PID() { }
+  16:Core/Inc/utils/pid.h **** 
+  17:Core/Inc/utils/pid.h ****         void set_Algorithm(PID_Algorithm *algo) { algo_ = algo; }
+ 674              		.loc 3 17 0
+ 675 0080 134B     		ldr	r3, .L50+56
+ 676 0082 1C60     		str	r4, [r3]
+ 677              	.LVL68:
+ 678              	.LBE189:
+ 679              	.LBE188:
+ 680              	.LBB190:
+ 681              	.LBB191:
+ 682 0084 04F12402 		add	r2, r4, #36
+ 683 0088 5A60     		str	r2, [r3, #4]
+ 684              	.LVL69:
+ 685              	.LBE191:
+ 686              	.LBE190:
+ 687              	.LBB192:
+ 688              	.LBB193:
+ 689 008a 04F14802 		add	r2, r4, #72
+ 690 008e 9A60     		str	r2, [r3, #8]
+ 691              	.LVL70:
+ 692              	.LBE193:
+ 693              	.LBE192:
+ 694              	.LBB194:
+ 695              	.LBB195:
+ 696 0090 6C34     		adds	r4, r4, #108
+ 697 0092 DC60     		str	r4, [r3, #12]
+ 698              	.LVL71:
+ 699              	.LBE195:
+ 700              	.LBE194:
+  48:Core/Src/robot/play.cpp **** }
+ 701              		.loc 2 48 0
+ 702 0094 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 703              	.L51:
+ 704              		.align	3
+ 705              	.L50:
+ 706 0098 9A999999 		.word	-1717986918
+ 707 009c 99192440 		.word	1076107673
+ 708 00a0 75931804 		.word	68719477
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 18
+
+
+ 709 00a4 560E2340 		.word	1076039254
+ 710 00a8 F6285C8F 		.word	-1889785610
+ 711 00ac C2751E40 		.word	1075738050
+ 712 00b0 00000000 		.word	.LANCHOR2
+ 713 00b4 00000000 		.word	.LANCHOR0
+ 714 00b8 9C33223F 		.word	1059206044
+ 715 00bc 0000C041 		.word	1103101952
+ 716 00c0 0000C0C1 		.word	-1044381696
+ 717 00c4 0BB5063F 		.word	1057404171
+ 718 00c8 36CD3B3F 		.word	1060883766
+ 719 00cc 48E1FA3E 		.word	1056629064
+ 720 00d0 00000000 		.word	.LANCHOR1
+ 721              		.cfi_endproc
+ 722              	.LFE402:
+ 724              		.section	.text._Z4tunePfm,"ax",%progbits
+ 725              		.align	1
+ 726              		.global	_Z4tunePfm
+ 727              		.syntax unified
+ 728              		.thumb
+ 729              		.thumb_func
+ 730              		.fpu fpv4-sp-d16
+ 732              	_Z4tunePfm:
+ 733              	.LFB403:
+  51:Core/Src/robot/play.cpp **** {
+ 734              		.loc 2 51 0
+ 735              		.cfi_startproc
+ 736              		@ args = 0, pretend = 0, frame = 0
+ 737              		@ frame_needed = 0, uses_anonymous_args = 0
+ 738              	.LVL72:
+ 739 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 740              	.LCFI5:
+ 741              		.cfi_def_cfa_offset 24
+ 742              		.cfi_offset 3, -24
+ 743              		.cfi_offset 4, -20
+ 744              		.cfi_offset 5, -16
+ 745              		.cfi_offset 6, -12
+ 746              		.cfi_offset 7, -8
+ 747              		.cfi_offset 14, -4
+ 748 0002 0746     		mov	r7, r0
+ 749 0004 0E46     		mov	r6, r1
+ 750              	.LVL73:
+ 751              	.LBB196:
+  57:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 752              		.loc 2 57 0
+ 753 0006 0024     		movs	r4, #0
+ 754              	.LVL74:
+ 755              	.L54:
+  57:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 756              		.loc 2 57 0 is_stmt 0 discriminator 3
+ 757 0008 032C     		cmp	r4, #3
+ 758 000a 23D8     		bhi	.L56
+  58:Core/Src/robot/play.cpp ****                 omega[i] = gWheels[i].get_Omega(dt_millis);
+ 759              		.loc 2 58 0 is_stmt 1 discriminator 2
+ 760 000c 04EB4403 		add	r3, r4, r4, lsl #1
+ 761 0010 9D00     		lsls	r5, r3, #2
+ 762 0012 174B     		ldr	r3, .L58
+ 763 0014 1D44     		add	r5, r5, r3
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 19
+
+
+ 764 0016 3146     		mov	r1, r6
+ 765 0018 2846     		mov	r0, r5
+ 766 001a FFF7FEFF 		bl	_ZN5Wheel9get_OmegaEm
+ 767              	.LVL75:
+  59:Core/Src/robot/play.cpp ****                 error[i] = set_points[i] - omega[i];
+ 768              		.loc 2 59 0 discriminator 2
+ 769 001e 07EB8403 		add	r3, r7, r4, lsl #2
+ 770 0022 D3ED007A 		vldr.32	s15, [r3]
+ 771              	.LVL76:
+ 772              	.LBB197:
+ 773              	.LBB198:
+  18:Core/Inc/utils/pid.h **** 
+  19:Core/Inc/utils/pid.h ****         float compute_PID(float err, uint32_t dt_millis) {
+  20:Core/Inc/utils/pid.h ****                 return algo_->compute(err, dt_millis);
+ 774              		.loc 3 20 0 discriminator 2
+ 775 0026 134B     		ldr	r3, .L58+4
+ 776 0028 53F82400 		ldr	r0, [r3, r4, lsl #2]
+ 777 002c 0368     		ldr	r3, [r0]
+ 778 002e 1B68     		ldr	r3, [r3]
+ 779 0030 3146     		mov	r1, r6
+ 780 0032 37EEC00A 		vsub.f32	s0, s15, s0
+ 781              	.LVL77:
+ 782 0036 9847     		blx	r3
+ 783              	.LVL78:
+ 784              	.LBE198:
+ 785              	.LBE197:
+  61:Core/Src/robot/play.cpp ****                 new_omega[i] = voltage[i] * MAX_OMEGA / 24.0;
+ 786              		.loc 2 61 0 discriminator 2
+ 787 0038 DFED0F7A 		vldr.32	s15, .L58+8
+ 788 003c 20EE270A 		vmul.f32	s0, s0, s15
+  62:Core/Src/robot/play.cpp ****                 gWheels[i].set_Omega(new_omega[i]);
+ 789              		.loc 2 62 0 discriminator 2
+ 790 0040 F3EE087A 		vmov.f32	s15, #2.4e+1
+ 791 0044 80EE270A 		vdiv.f32	s0, s0, s15
+ 792 0048 2846     		mov	r0, r5
+ 793 004a FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ 794              	.LVL79:
+  57:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 795              		.loc 2 57 0 discriminator 2
+ 796 004e 0134     		adds	r4, r4, #1
+ 797              	.LVL80:
+ 798 0050 E4B2     		uxtb	r4, r4
+ 799              	.LVL81:
+ 800 0052 D9E7     		b	.L54
+ 801              	.L56:
+ 802              	.LBE196:
+ 803              	.LBB199:
+  75:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 804              		.loc 2 75 0
+ 805 0054 0024     		movs	r4, #0
+ 806              	.LVL82:
+ 807              	.L53:
+  75:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 808              		.loc 2 75 0 is_stmt 0 discriminator 3
+ 809 0056 032C     		cmp	r4, #3
+ 810 0058 09D8     		bhi	.L52
+  76:Core/Src/robot/play.cpp ****                 gWheels[i].update();
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 20
+
+
+ 811              		.loc 2 76 0 is_stmt 1 discriminator 2
+ 812 005a 04EB4402 		add	r2, r4, r4, lsl #1
+ 813 005e 9300     		lsls	r3, r2, #2
+ 814 0060 0348     		ldr	r0, .L58
+ 815 0062 1844     		add	r0, r0, r3
+ 816 0064 FFF7FEFF 		bl	_ZNK5Wheel6updateEv
+ 817              	.LVL83:
+  75:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 818              		.loc 2 75 0 discriminator 2
+ 819 0068 0134     		adds	r4, r4, #1
+ 820              	.LVL84:
+ 821 006a E4B2     		uxtb	r4, r4
+ 822              	.LVL85:
+ 823 006c F3E7     		b	.L53
+ 824              	.L52:
+ 825              	.LBE199:
+  78:Core/Src/robot/play.cpp **** }
+ 826              		.loc 2 78 0
+ 827 006e F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 828              	.LVL86:
+ 829              	.L59:
+ 830              		.align	2
+ 831              	.L58:
+ 832 0070 00000000 		.word	gWheels
+ 833 0074 00000000 		.word	.LANCHOR1
+ 834 0078 00008C42 		.word	1116471296
+ 835              		.cfi_endproc
+ 836              	.LFE403:
+ 838              		.section	.text._Z9ramp_downm,"ax",%progbits
+ 839              		.align	1
+ 840              		.global	_Z9ramp_downm
+ 841              		.syntax unified
+ 842              		.thumb
+ 843              		.thumb_func
+ 844              		.fpu fpv4-sp-d16
+ 846              	_Z9ramp_downm:
+ 847              	.LFB404:
+  81:Core/Src/robot/play.cpp **** {
+ 848              		.loc 2 81 0
+ 849              		.cfi_startproc
+ 850              		@ args = 0, pretend = 0, frame = 0
+ 851              		@ frame_needed = 0, uses_anonymous_args = 0
+ 852              	.LVL87:
+ 853 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 854              	.LCFI6:
+ 855              		.cfi_def_cfa_offset 24
+ 856              		.cfi_offset 3, -24
+ 857              		.cfi_offset 4, -20
+ 858              		.cfi_offset 5, -16
+ 859              		.cfi_offset 6, -12
+ 860              		.cfi_offset 7, -8
+ 861              		.cfi_offset 14, -4
+ 862 0002 0646     		mov	r6, r0
+ 863              	.LVL88:
+ 864              	.LBB200:
+  86:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 865              		.loc 2 86 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 21
+
+
+ 866 0004 0027     		movs	r7, #0
+ 867 0006 43E0     		b	.L68
+ 868              	.LVL89:
+ 869              	.L73:
+ 870              	.LBB201:
+ 871              	.LBB202:
+  91:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(0);
+ 872              		.loc 2 91 0
+ 873 0008 9FED240A 		vldr.32	s0, .L74
+ 874 000c 2846     		mov	r0, r5
+ 875 000e FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ 876              	.LVL90:
+ 877              	.L65:
+  88:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 878              		.loc 2 88 0 discriminator 2
+ 879 0012 0134     		adds	r4, r4, #1
+ 880              	.LVL91:
+ 881 0014 E4B2     		uxtb	r4, r4
+ 882              	.LVL92:
+ 883              	.L66:
+  88:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 884              		.loc 2 88 0 is_stmt 0 discriminator 1
+ 885 0016 032C     		cmp	r4, #3
+ 886 0018 28D8     		bhi	.L69
+  89:Core/Src/robot/play.cpp ****                         omega[i] = gWheels[i].get_Omega(dt_millis);
+ 887              		.loc 2 89 0 is_stmt 1
+ 888 001a 04EB4402 		add	r2, r4, r4, lsl #1
+ 889 001e 9300     		lsls	r3, r2, #2
+ 890 0020 1F4D     		ldr	r5, .L74+4
+ 891 0022 1D44     		add	r5, r5, r3
+ 892 0024 3146     		mov	r1, r6
+ 893 0026 2846     		mov	r0, r5
+ 894 0028 FFF7FEFF 		bl	_ZN5Wheel9get_OmegaEm
+ 895              	.LVL93:
+  90:Core/Src/robot/play.cpp ****                         if (fabsf(omega[i]) < 5) {
+ 896              		.loc 2 90 0
+ 897 002c B0EEC07A 		vabs.f32	s14, s0
+ 898 0030 F1EE047A 		vmov.f32	s15, #5.0e+0
+ 899 0034 B4EEE77A 		vcmpe.f32	s14, s15
+ 900 0038 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 901 003c E4D4     		bmi	.L73
+ 902              	.LVL94:
+ 903              	.LBB203:
+ 904              	.LBB204:
+ 905              		.loc 3 20 0
+ 906 003e 194B     		ldr	r3, .L74+8
+ 907 0040 53F82400 		ldr	r0, [r3, r4, lsl #2]
+ 908 0044 0368     		ldr	r3, [r0]
+ 909 0046 1B68     		ldr	r3, [r3]
+ 910 0048 3146     		mov	r1, r6
+ 911 004a F6EE007A 		vmov.f32	s15, #5.0e-1
+ 912 004e 27EEC00A 		vnmul.f32	s0, s15, s0
+ 913              	.LVL95:
+ 914 0052 9847     		blx	r3
+ 915              	.LVL96:
+ 916              	.LBE204:
+ 917              	.LBE203:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 22
+
+
+  95:Core/Src/robot/play.cpp ****                                 new_omega[i] = voltage[i] * MAX_OMEGA / 24.0;
+ 918              		.loc 2 95 0
+ 919 0054 DFED147A 		vldr.32	s15, .L74+12
+ 920 0058 20EE270A 		vmul.f32	s0, s0, s15
+  96:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(new_omega[i]);
+ 921              		.loc 2 96 0
+ 922 005c F3EE087A 		vmov.f32	s15, #2.4e+1
+ 923 0060 80EE270A 		vdiv.f32	s0, s0, s15
+ 924 0064 2846     		mov	r0, r5
+ 925 0066 FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ 926              	.LVL97:
+ 927 006a D2E7     		b	.L65
+ 928              	.L69:
+ 929              	.LBE202:
+ 930              	.LBB205:
+ 100:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 931              		.loc 2 100 0
+ 932 006c 0024     		movs	r4, #0
+ 933              	.LVL98:
+ 934              	.L62:
+ 100:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 935              		.loc 2 100 0 is_stmt 0 discriminator 3
+ 936 006e 032C     		cmp	r4, #3
+ 937 0070 09D8     		bhi	.L67
+ 101:Core/Src/robot/play.cpp ****                         gWheels[i].update();
+ 938              		.loc 2 101 0 is_stmt 1 discriminator 2
+ 939 0072 04EB4402 		add	r2, r4, r4, lsl #1
+ 940 0076 9300     		lsls	r3, r2, #2
+ 941 0078 0948     		ldr	r0, .L74+4
+ 942 007a 1844     		add	r0, r0, r3
+ 943 007c FFF7FEFF 		bl	_ZNK5Wheel6updateEv
+ 944              	.LVL99:
+ 100:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 945              		.loc 2 100 0 discriminator 2
+ 946 0080 0134     		adds	r4, r4, #1
+ 947              	.LVL100:
+ 948 0082 E4B2     		uxtb	r4, r4
+ 949              	.LVL101:
+ 950 0084 F3E7     		b	.L62
+ 951              	.L67:
+ 952              	.LBE205:
+ 103:Core/Src/robot/play.cpp ****                 HAL_Delay(10);
+ 953              		.loc 2 103 0 discriminator 2
+ 954 0086 0A20     		movs	r0, #10
+ 955 0088 FFF7FEFF 		bl	HAL_Delay
+ 956              	.LVL102:
+ 957              	.LBE201:
+  86:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 958              		.loc 2 86 0 discriminator 2
+ 959 008c 0137     		adds	r7, r7, #1
+ 960              	.LVL103:
+ 961 008e FFB2     		uxtb	r7, r7
+ 962              	.LVL104:
+ 963              	.L68:
+  86:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 964              		.loc 2 86 0 is_stmt 0 discriminator 1
+ 965 0090 092F     		cmp	r7, #9
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 23
+
+
+ 966 0092 01D8     		bhi	.L60
+ 967              	.LBB207:
+ 968              	.LBB206:
+  88:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 969              		.loc 2 88 0 is_stmt 1
+ 970 0094 0024     		movs	r4, #0
+ 971 0096 BEE7     		b	.L66
+ 972              	.L60:
+ 973              	.LBE206:
+ 974              	.LBE207:
+ 975              	.LBE200:
+ 976              		.loc 2 105 0
+ 977 0098 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 978              	.LVL105:
+ 979              	.L75:
+ 980 009a 00BF     		.align	2
+ 981              	.L74:
+ 982 009c 00000000 		.word	0
+ 983 00a0 00000000 		.word	gWheels
+ 984 00a4 00000000 		.word	.LANCHOR1
+ 985 00a8 00008C42 		.word	1116471296
+ 986              		.cfi_endproc
+ 987              	.LFE404:
+ 989              		.section	.text._GLOBAL__sub_I__Z6updatePf,"ax",%progbits
+ 990              		.align	1
+ 991              		.syntax unified
+ 992              		.thumb
+ 993              		.thumb_func
+ 994              		.fpu fpv4-sp-d16
+ 996              	_GLOBAL__sub_I__Z6updatePf:
+ 997              	.LFB408:
+ 998              		.loc 2 105 0
+ 999              		.cfi_startproc
+ 1000              		@ args = 0, pretend = 0, frame = 0
+ 1001              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1002 0000 08B5     		push	{r3, lr}
+ 1003              	.LCFI7:
+ 1004              		.cfi_def_cfa_offset 8
+ 1005              		.cfi_offset 3, -8
+ 1006              		.cfi_offset 14, -4
+ 1007              		.loc 2 105 0
+ 1008 0002 4FF6FF71 		movw	r1, #65535
+ 1009 0006 0120     		movs	r0, #1
+ 1010 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 1011              	.LVL106:
+ 1012 000c 08BD     		pop	{r3, pc}
+ 1013              		.cfi_endproc
+ 1014              	.LFE408:
+ 1016              		.section	.init_array,"aw",%init_array
+ 1017              		.align	2
+ 1018 0000 00000000 		.word	_GLOBAL__sub_I__Z6updatePf(target1)
+ 1019              		.weak	_ZTS13PID_Algorithm
+ 1020              		.section	.rodata._ZTS13PID_Algorithm,"aG",%progbits,_ZTS13PID_Algorithm,comdat
+ 1021              		.align	2
+ 1024              	_ZTS13PID_Algorithm:
+ 1025 0000 31335049 		.ascii	"13PID_Algorithm\000"
+ 1025      445F416C 
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 24
+
+
+ 1025      676F7269 
+ 1025      74686D00 
+ 1026              		.weak	_ZTI13PID_Algorithm
+ 1027              		.section	.rodata._ZTI13PID_Algorithm,"aG",%progbits,_ZTI13PID_Algorithm,comdat
+ 1028              		.align	2
+ 1031              	_ZTI13PID_Algorithm:
+ 1032 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 1033 0004 00000000 		.word	_ZTS13PID_Algorithm
+ 1034              		.weak	_ZTS12Discrete_PID
+ 1035              		.section	.rodata._ZTS12Discrete_PID,"aG",%progbits,_ZTS12Discrete_PID,comdat
+ 1036              		.align	2
+ 1039              	_ZTS12Discrete_PID:
+ 1040 0000 31324469 		.ascii	"12Discrete_PID\000"
+ 1040      73637265 
+ 1040      74655F50 
+ 1040      494400
+ 1041              		.weak	_ZTI12Discrete_PID
+ 1042              		.section	.rodata._ZTI12Discrete_PID,"aG",%progbits,_ZTI12Discrete_PID,comdat
+ 1043              		.align	2
+ 1046              	_ZTI12Discrete_PID:
+ 1047 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1048 0004 00000000 		.word	_ZTS12Discrete_PID
+ 1049 0008 00000000 		.word	_ZTI13PID_Algorithm
+ 1050              		.weak	_ZTV12Discrete_PID
+ 1051              		.section	.rodata._ZTV12Discrete_PID,"aG",%progbits,_ZTV12Discrete_PID,comdat
+ 1052              		.align	2
+ 1055              	_ZTV12Discrete_PID:
+ 1056 0000 00000000 		.word	0
+ 1057 0004 00000000 		.word	_ZTI12Discrete_PID
+ 1058 0008 00000000 		.word	_ZN12Discrete_PID7computeEfm
+ 1059 000c 00000000 		.word	_ZN12Discrete_PIDD1Ev
+ 1060 0010 00000000 		.word	_ZN12Discrete_PIDD0Ev
+ 1061              		.global	gP_Factor
+ 1062              		.global	gI_Factor
+ 1063              		.global	gPID
+ 1064              		.global	gDisc_PID
+ 1065              		.section	.bss.gDisc_PID,"aw",%nobits
+ 1066              		.align	2
+ 1067              		.set	.LANCHOR0,. + 0
+ 1070              	gDisc_PID:
+ 1071 0000 00000000 		.space	144
+ 1071      00000000 
+ 1071      00000000 
+ 1071      00000000 
+ 1071      00000000 
+ 1072              		.section	.bss.gPID,"aw",%nobits
+ 1073              		.align	2
+ 1074              		.set	.LANCHOR1,. + 0
+ 1077              	gPID:
+ 1078 0000 00000000 		.space	16
+ 1078      00000000 
+ 1078      00000000 
+ 1078      00000000 
+ 1079              		.section	.data.gI_Factor,"aw",%progbits
+ 1080              		.align	2
+ 1081              		.set	.LANCHOR2,. + 0
+ 1084              	gI_Factor:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 25
+
+
+ 1085 0000 00000040 		.word	1073741824
+ 1086              		.section	.data.gP_Factor,"aw",%progbits
+ 1087              		.align	2
+ 1090              	gP_Factor:
+ 1091 0000 0000803F 		.word	1065353216
+ 1092              		.section	.rodata._Z6updatePf.str1.4,"aMS",%progbits,1
+ 1093              		.align	2
+ 1094              	.LC0:
+ 1095 0000 256C6420 		.ascii	"%ld  \000"
+ 1095      2000
+ 1096              		.text
+ 1097              	.Letext0:
+ 1098              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1099              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1100              		.file 6 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 1101              		.file 7 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 1102              		.file 8 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 1103              		.file 9 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 1104              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1105              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1106              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1107              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1108              		.file 14 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1109              		.file 15 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1110              		.file 16 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1111              		.file 17 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1112              		.file 18 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1113              		.file 19 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 1114              		.file 20 "Core/Inc\\periphs/tim.h"
+ 1115              		.file 21 "Core/Inc\\periphs/usart.h"
+ 1116              		.file 22 "Core/Inc\\periphs/adc.h"
+ 1117              		.file 23 "Core/Inc\\devs/wheel.h"
+ 1118              		.file 24 "Core/Inc/robot/robo_init.h"
+ 1119              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1120              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1121              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1122              		.file 28 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1123              		.file 29 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1124              		.file 30 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1125              		.file 31 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1126              		.file 32 "Core/Inc\\devs/thinker.h"
+ 1127              		.file 33 "<built-in>"
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 26
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 play.cpp
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:18     .text._ZN12Discrete_PIDD2Ev:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD2Ev
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD1Ev
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:42     .text._ZN12Discrete_PID7computeEfm:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:49     .text._ZN12Discrete_PID7computeEfm:00000000 _ZN12Discrete_PID7computeEfm
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:153    .text._ZN12Discrete_PID7computeEfm:00000090 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:158    .text.__tcf_0:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:164    .text.__tcf_0:00000000 __tcf_0
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:196    .text.__tcf_0:00000018 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:202    .text.__tcf_1:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:208    .text.__tcf_1:00000000 __tcf_1
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:233    .text.__tcf_1:00000010 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:239    .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:245    .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:354    .text._Z41__static_initialization_and_destruction_0ii:00000054 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1055   .rodata._ZTV12Discrete_PID:00000000 _ZTV12Discrete_PID
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:363    .text._ZN12Discrete_PIDD0Ev:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:370    .text._ZN12Discrete_PIDD0Ev:00000000 _ZN12Discrete_PIDD0Ev
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:393    .text._Z6updatePf:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:400    .text._Z6updatePf:00000000 _Z6updatePf
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:469    .text._Z6updatePf:00000044 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:478    .text._Z8pid_Initv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:485    .text._Z8pid_Initv:00000000 _Z8pid_Initv
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:706    .text._Z8pid_Initv:00000098 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:725    .text._Z4tunePfm:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:732    .text._Z4tunePfm:00000000 _Z4tunePfm
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:832    .text._Z4tunePfm:00000070 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:839    .text._Z9ramp_downm:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:846    .text._Z9ramp_downm:00000000 _Z9ramp_downm
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:982    .text._Z9ramp_downm:0000009c $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:990    .text._GLOBAL__sub_I__Z6updatePf:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:996    .text._GLOBAL__sub_I__Z6updatePf:00000000 _GLOBAL__sub_I__Z6updatePf
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1017   .init_array:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1024   .rodata._ZTS13PID_Algorithm:00000000 _ZTS13PID_Algorithm
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1021   .rodata._ZTS13PID_Algorithm:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1031   .rodata._ZTI13PID_Algorithm:00000000 _ZTI13PID_Algorithm
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1028   .rodata._ZTI13PID_Algorithm:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1039   .rodata._ZTS12Discrete_PID:00000000 _ZTS12Discrete_PID
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1036   .rodata._ZTS12Discrete_PID:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1046   .rodata._ZTI12Discrete_PID:00000000 _ZTI12Discrete_PID
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1043   .rodata._ZTI12Discrete_PID:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1052   .rodata._ZTV12Discrete_PID:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1090   .data.gP_Factor:00000000 gP_Factor
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1084   .data.gI_Factor:00000000 gI_Factor
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1077   .bss.gPID:00000000 gPID
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1070   .bss.gDisc_PID:00000000 gDisc_PID
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1066   .bss.gDisc_PID:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1073   .bss.gPID:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1080   .data.gI_Factor:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1087   .data.gP_Factor:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s:1093   .rodata._Z6updatePf.str1.4:00000000 $d
+                           .group:00000000 _ZN12Discrete_PIDD5Ev
+
+UNDEFINED SYMBOLS
+__aeabi_atexit
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc3gxXYq.s 			page 27
+
+
+__dso_handle
+_ZdlPvj
+_Z15Thinker_isEmptyv
+_Z11get_ThinkerPf
+printf
+putchar
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+_ZN5Wheel9get_OmegaEm
+_ZN5Wheel9set_OmegaEf
+_ZNK5Wheel6updateEv
+gWheels
+HAL_Delay
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

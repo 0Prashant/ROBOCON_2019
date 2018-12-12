@@ -1,0 +1,1077 @@
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lidar.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN5LidarD2Ev,"axG",%progbits,_ZN5LidarD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN5LidarD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN5LidarD2Ev:
+  26              	.LFB136:
+  27              		.file 1 "Core/Inc/devs/lidar.h"
+   1:Core/Inc/devs/lidar.h **** /*
+   2:Core/Inc/devs/lidar.h ****  * lidar.h
+   3:Core/Inc/devs/lidar.h ****  * 
+   4:Core/Inc/devs/lidar.h ****  * Created : 11/9/2018
+   5:Core/Inc/devs/lidar.h ****  *  Author : n-is
+   6:Core/Inc/devs/lidar.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/devs/lidar.h ****  */
+   8:Core/Inc/devs/lidar.h **** 
+   9:Core/Inc/devs/lidar.h **** #ifndef _LIDAR_H_
+  10:Core/Inc/devs/lidar.h **** #define _LIDAR_H_
+  11:Core/Inc/devs/lidar.h **** 
+  12:Core/Inc/devs/lidar.h **** #include "sensor.h"
+  13:Core/Inc/devs/lidar.h **** 
+  14:Core/Inc/devs/lidar.h **** void LIDAR_Init();
+  15:Core/Inc/devs/lidar.h **** uint16_t LIDAR_Read();
+  16:Core/Inc/devs/lidar.h **** void LIDAR_UART3_RxCpltCallback();
+  17:Core/Inc/devs/lidar.h **** bool LIDAR_IsEmpty();
+  18:Core/Inc/devs/lidar.h **** 
+  19:Core/Inc/devs/lidar.h **** class Lidar : public Sensor
+  20:Core/Inc/devs/lidar.h **** {
+  21:Core/Inc/devs/lidar.h **** public:
+  22:Core/Inc/devs/lidar.h ****         Lidar() = default;
+  23:Core/Inc/devs/lidar.h ****         Lidar(Lidar &&) = default;
+  24:Core/Inc/devs/lidar.h ****         Lidar(const Lidar &) = default;
+  25:Core/Inc/devs/lidar.h ****         Lidar &operator=(Lidar &&) = default;
+  26:Core/Inc/devs/lidar.h ****         Lidar &operator=(const Lidar &) = default;
+  27:Core/Inc/devs/lidar.h ****         ~Lidar() { }
+  28              		.loc 1 27 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 2
+
+
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 27 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE136:
+  39              		.weak	_ZN5LidarD1Ev
+  40              		.thumb_set _ZN5LidarD1Ev,_ZN5LidarD2Ev
+  41              		.section	.text._ZN5Lidar5denitEv,"ax",%progbits
+  42              		.align	1
+  43              		.global	_ZN5Lidar5denitEv
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN5Lidar5denitEv:
+  50              	.LFB152:
+  51              		.file 2 "Core/Src/devs/lidar.cpp"
+   1:Core/Src/devs/lidar.cpp **** /*
+   2:Core/Src/devs/lidar.cpp ****  * lidar.cpp
+   3:Core/Src/devs/lidar.cpp ****  * 
+   4:Core/Src/devs/lidar.cpp ****  * Created : 11/9/2018
+   5:Core/Src/devs/lidar.cpp ****  *  Author : n-is
+   6:Core/Src/devs/lidar.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/devs/lidar.cpp ****  */
+   8:Core/Src/devs/lidar.cpp **** 
+   9:Core/Src/devs/lidar.cpp **** #include "periphs/usart.h"
+  10:Core/Src/devs/lidar.cpp **** 
+  11:Core/Src/devs/lidar.cpp **** /*
+  12:Core/Src/devs/lidar.cpp ****  * Configuring LIDAR for measuring distance
+  13:Core/Src/devs/lidar.cpp ****  * => If the pulse emitted by the LIDAR is n us long, then the distance to
+  14:Core/Src/devs/lidar.cpp ****  *      obstacle is n mm
+  15:Core/Src/devs/lidar.cpp ****  TODO : Send low on Trigger Pin
+  16:Core/Src/devs/lidar.cpp ****  TODO : Wait for high to occur in Monitor Pin
+  17:Core/Src/devs/lidar.cpp ****  TODO : Start timer
+  18:Core/Src/devs/lidar.cpp ****  TODO : Wait for low to occur in Monitor Pin
+  19:Core/Src/devs/lidar.cpp ****  TODO : Stop timer
+  20:Core/Src/devs/lidar.cpp ****  TODO : Get Counter Value
+  21:Core/Src/devs/lidar.cpp ****  */
+  22:Core/Src/devs/lidar.cpp **** 
+  23:Core/Src/devs/lidar.cpp **** #define START_BYTE      (0xA5)
+  24:Core/Src/devs/lidar.cpp **** #define NUM_DATA        (2)     // For LIDAR
+  25:Core/Src/devs/lidar.cpp **** 
+  26:Core/Src/devs/lidar.cpp **** #include "utils/queue.h"
+  27:Core/Src/devs/lidar.cpp **** #include "periphs/usart.h"
+  28:Core/Src/devs/lidar.cpp **** #include "devs/lidar.h"
+  29:Core/Src/devs/lidar.cpp **** 
+  30:Core/Src/devs/lidar.cpp **** static uint8_t gRx_Data;
+  31:Core/Src/devs/lidar.cpp **** static Queue<uint8_t, NUM_DATA> gLidar_Bytes;
+  32:Core/Src/devs/lidar.cpp **** static uint8_t gNum_Data_Received = 0;
+  33:Core/Src/devs/lidar.cpp **** static Queue<uint16_t, 2> gLidar_Data;
+  34:Core/Src/devs/lidar.cpp **** static uint16_t gDistance;
+  35:Core/Src/devs/lidar.cpp **** 
+  36:Core/Src/devs/lidar.cpp **** static uint16_t gXLidar_Offset = 186;
+  37:Core/Src/devs/lidar.cpp **** // static uint16_t gYLidar_Offset = 0;
+  38:Core/Src/devs/lidar.cpp **** 
+  39:Core/Src/devs/lidar.cpp **** static bool gStart_Byte_Received = false;
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 3
+
+
+  40:Core/Src/devs/lidar.cpp **** 
+  41:Core/Src/devs/lidar.cpp **** void LIDAR_Init()
+  42:Core/Src/devs/lidar.cpp **** {
+  43:Core/Src/devs/lidar.cpp ****         HAL_UART_Receive_DMA(&huart3, &gRx_Data, 1);
+  44:Core/Src/devs/lidar.cpp **** }
+  45:Core/Src/devs/lidar.cpp **** 
+  46:Core/Src/devs/lidar.cpp **** uint16_t LIDAR_Read()
+  47:Core/Src/devs/lidar.cpp **** {
+  48:Core/Src/devs/lidar.cpp ****         return gLidar_Data.lookup() + gXLidar_Offset;
+  49:Core/Src/devs/lidar.cpp **** }
+  50:Core/Src/devs/lidar.cpp **** 
+  51:Core/Src/devs/lidar.cpp **** bool LIDAR_IsEmpty()
+  52:Core/Src/devs/lidar.cpp **** {
+  53:Core/Src/devs/lidar.cpp ****         return (gLidar_Data.length() == 0);
+  54:Core/Src/devs/lidar.cpp **** }
+  55:Core/Src/devs/lidar.cpp **** 
+  56:Core/Src/devs/lidar.cpp **** void LIDAR_UART3_RxCpltCallback()
+  57:Core/Src/devs/lidar.cpp **** {
+  58:Core/Src/devs/lidar.cpp ****         if (!gStart_Byte_Received) {
+  59:Core/Src/devs/lidar.cpp ****                 if (gRx_Data == START_BYTE) {
+  60:Core/Src/devs/lidar.cpp ****                         gStart_Byte_Received = true;
+  61:Core/Src/devs/lidar.cpp ****                 }
+  62:Core/Src/devs/lidar.cpp ****         }
+  63:Core/Src/devs/lidar.cpp ****         else {
+  64:Core/Src/devs/lidar.cpp ****                 gLidar_Bytes.insert(gRx_Data);
+  65:Core/Src/devs/lidar.cpp ****                 ++gNum_Data_Received;
+  66:Core/Src/devs/lidar.cpp ****                 // If required number of data is received initiate new data;
+  67:Core/Src/devs/lidar.cpp ****                 if (gNum_Data_Received == NUM_DATA) {
+  68:Core/Src/devs/lidar.cpp ****                         gNum_Data_Received = 0;
+  69:Core/Src/devs/lidar.cpp ****                         gStart_Byte_Received = false;
+  70:Core/Src/devs/lidar.cpp ****                         // For LIDAR
+  71:Core/Src/devs/lidar.cpp ****                         gDistance = gLidar_Bytes.lookup() << 8;
+  72:Core/Src/devs/lidar.cpp ****                         gDistance |= gLidar_Bytes.lookup();
+  73:Core/Src/devs/lidar.cpp ****                         if (gDistance) {
+  74:Core/Src/devs/lidar.cpp ****                                 gLidar_Data.insert(gDistance);
+  75:Core/Src/devs/lidar.cpp ****                         }
+  76:Core/Src/devs/lidar.cpp ****                 }
+  77:Core/Src/devs/lidar.cpp ****         }
+  78:Core/Src/devs/lidar.cpp **** }
+  79:Core/Src/devs/lidar.cpp **** 
+  80:Core/Src/devs/lidar.cpp **** 
+  81:Core/Src/devs/lidar.cpp **** int Lidar::init()
+  82:Core/Src/devs/lidar.cpp **** {
+  83:Core/Src/devs/lidar.cpp ****         LIDAR_Init();
+  84:Core/Src/devs/lidar.cpp ****         return 0;
+  85:Core/Src/devs/lidar.cpp **** }
+  86:Core/Src/devs/lidar.cpp **** 
+  87:Core/Src/devs/lidar.cpp **** float Lidar::read()
+  88:Core/Src/devs/lidar.cpp **** {
+  89:Core/Src/devs/lidar.cpp ****         float dist = (float)(LIDAR_Read());
+  90:Core/Src/devs/lidar.cpp ****         return dist;
+  91:Core/Src/devs/lidar.cpp **** }
+  92:Core/Src/devs/lidar.cpp **** 
+  93:Core/Src/devs/lidar.cpp **** bool Lidar::available()
+  94:Core/Src/devs/lidar.cpp **** {
+  95:Core/Src/devs/lidar.cpp ****         return !LIDAR_IsEmpty();
+  96:Core/Src/devs/lidar.cpp **** }
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 4
+
+
+  97:Core/Src/devs/lidar.cpp **** 
+  98:Core/Src/devs/lidar.cpp **** void Lidar::denit()
+  99:Core/Src/devs/lidar.cpp **** {
+  52              		.loc 2 99 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+ 100:Core/Src/devs/lidar.cpp **** 
+ 101:Core/Src/devs/lidar.cpp **** }
+  58              		.loc 2 101 0
+  59 0000 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE152:
+  63              		.section	.text._ZN5QueueIhLj2EED2Ev,"axG",%progbits,_ZN5QueueIhLj2EED5Ev,comdat
+  64              		.align	1
+  65              		.weak	_ZN5QueueIhLj2EED2Ev
+  66              		.syntax unified
+  67              		.thumb
+  68              		.thumb_func
+  69              		.fpu fpv4-sp-d16
+  71              	_ZN5QueueIhLj2EED2Ev:
+  72              	.LFB166:
+  73              		.file 3 "Core/Inc/utils/queue.h"
+   1:Core/Inc/utils/queue.h **** /*
+   2:Core/Inc/utils/queue.h ****  * queue.h
+   3:Core/Inc/utils/queue.h ****  * 
+   4:Core/Inc/utils/queue.h ****  * Created : 11/16/2018
+   5:Core/Inc/utils/queue.h ****  *  Author : n-is
+   6:Core/Inc/utils/queue.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/queue.h ****  */
+   8:Core/Inc/utils/queue.h **** 
+   9:Core/Inc/utils/queue.h **** #ifndef _QUEUE_H_
+  10:Core/Inc/utils/queue.h **** #define _QUEUE_H_
+  11:Core/Inc/utils/queue.h **** 
+  12:Core/Inc/utils/queue.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/queue.h **** 
+  14:Core/Inc/utils/queue.h **** template <class T, size_t q_size>
+  15:Core/Inc/utils/queue.h **** class Queue
+  16:Core/Inc/utils/queue.h **** {
+  17:Core/Inc/utils/queue.h **** public:
+  18:Core/Inc/utils/queue.h ****         Queue():head_(0), tail_(0), curr_size_(0) { }
+  19:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+  20:Core/Inc/utils/queue.h ****         Queue(const Queue &) = default;
+  21:Core/Inc/utils/queue.h ****         Queue &operator=(Queue &&) = default;
+  22:Core/Inc/utils/queue.h ****         Queue &operator=(const Queue &) = default;
+  23:Core/Inc/utils/queue.h ****         ~Queue() {  }
+  74              		.loc 3 23 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  79              	.LVL2:
+  80              		.loc 3 23 0
+  81 0000 7047     		bx	lr
+  82              		.cfi_endproc
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 5
+
+
+  83              	.LFE166:
+  85              		.weak	_ZN5QueueIhLj2EED1Ev
+  86              		.thumb_set _ZN5QueueIhLj2EED1Ev,_ZN5QueueIhLj2EED2Ev
+  87              		.section	.text._ZN5QueueItLj2EED2Ev,"axG",%progbits,_ZN5QueueItLj2EED5Ev,comdat
+  88              		.align	1
+  89              		.weak	_ZN5QueueItLj2EED2Ev
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  93              		.fpu fpv4-sp-d16
+  95              	_ZN5QueueItLj2EED2Ev:
+  96              	.LFB169:
+  97              		.loc 3 23 0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101              		@ link register save eliminated.
+ 102              	.LVL3:
+ 103              		.loc 3 23 0
+ 104 0000 7047     		bx	lr
+ 105              		.cfi_endproc
+ 106              	.LFE169:
+ 108              		.weak	_ZN5QueueItLj2EED1Ev
+ 109              		.thumb_set _ZN5QueueItLj2EED1Ev,_ZN5QueueItLj2EED2Ev
+ 110              		.section	.text._ZN5LidarD0Ev,"axG",%progbits,_ZN5LidarD5Ev,comdat
+ 111              		.align	1
+ 112              		.weak	_ZN5LidarD0Ev
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 116              		.fpu fpv4-sp-d16
+ 118              	_ZN5LidarD0Ev:
+ 119              	.LFB138:
+ 120              		.loc 1 27 0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124              	.LVL4:
+ 125 0000 10B5     		push	{r4, lr}
+ 126              	.LCFI0:
+ 127              		.cfi_def_cfa_offset 8
+ 128              		.cfi_offset 4, -8
+ 129              		.cfi_offset 14, -4
+ 130 0002 0446     		mov	r4, r0
+ 131              		.loc 1 27 0
+ 132 0004 0821     		movs	r1, #8
+ 133 0006 FFF7FEFF 		bl	_ZdlPvj
+ 134              	.LVL5:
+ 135 000a 2046     		mov	r0, r4
+ 136 000c 10BD     		pop	{r4, pc}
+ 137              		.cfi_endproc
+ 138              	.LFE138:
+ 140              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 141              		.align	1
+ 142              		.syntax unified
+ 143              		.thumb
+ 144              		.thumb_func
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 6
+
+
+ 145              		.fpu fpv4-sp-d16
+ 147              	_Z41__static_initialization_and_destruction_0ii:
+ 148              	.LFB164:
+ 149              		.loc 2 101 0
+ 150              		.cfi_startproc
+ 151              		@ args = 0, pretend = 0, frame = 0
+ 152              		@ frame_needed = 0, uses_anonymous_args = 0
+ 153              	.LVL6:
+ 154 0000 0128     		cmp	r0, #1
+ 155 0002 00D0     		beq	.L13
+ 156 0004 7047     		bx	lr
+ 157              	.L13:
+ 158              		.loc 2 101 0 is_stmt 0 discriminator 1
+ 159 0006 38B5     		push	{r3, r4, r5, lr}
+ 160              	.LCFI1:
+ 161              		.cfi_def_cfa_offset 16
+ 162              		.cfi_offset 3, -16
+ 163              		.cfi_offset 4, -12
+ 164              		.cfi_offset 5, -8
+ 165              		.cfi_offset 14, -4
+ 166              		.loc 2 101 0 is_stmt 1 discriminator 1
+ 167 0008 4FF6FF73 		movw	r3, #65535
+ 168 000c 9942     		cmp	r1, r3
+ 169 000e 00D0     		beq	.L14
+ 170              	.LVL7:
+ 171              	.L7:
+ 172              		.loc 2 101 0 is_stmt 0
+ 173 0010 38BD     		pop	{r3, r4, r5, pc}
+ 174              	.LVL8:
+ 175              	.L14:
+ 176              	.LBB37:
+ 177              	.LBB38:
+ 178              	.LBB39:
+  18:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+ 179              		.loc 3 18 0 is_stmt 1
+ 180 0012 0948     		ldr	r0, .L15
+ 181              	.LVL9:
+ 182 0014 0024     		movs	r4, #0
+ 183 0016 0460     		str	r4, [r0]
+ 184 0018 4460     		str	r4, [r0, #4]
+ 185 001a 8460     		str	r4, [r0, #8]
+ 186              	.LVL10:
+ 187              	.LBE39:
+ 188              	.LBE38:
+ 189              	.LBE37:
+  31:Core/Src/devs/lidar.cpp **** static uint8_t gNum_Data_Received = 0;
+ 190              		.loc 2 31 0
+ 191 001c 074D     		ldr	r5, .L15+4
+ 192 001e 2A46     		mov	r2, r5
+ 193 0020 0749     		ldr	r1, .L15+8
+ 194              	.LVL11:
+ 195 0022 FFF7FEFF 		bl	__aeabi_atexit
+ 196              	.LVL12:
+ 197              	.LBB40:
+ 198              	.LBB41:
+ 199              	.LBB42:
+  18:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 7
+
+
+ 200              		.loc 3 18 0
+ 201 0026 0748     		ldr	r0, .L15+12
+ 202 0028 0460     		str	r4, [r0]
+ 203 002a 4460     		str	r4, [r0, #4]
+ 204 002c 8460     		str	r4, [r0, #8]
+ 205              	.LVL13:
+ 206              	.LBE42:
+ 207              	.LBE41:
+ 208              	.LBE40:
+  33:Core/Src/devs/lidar.cpp **** static uint16_t gDistance;
+ 209              		.loc 2 33 0
+ 210 002e 2A46     		mov	r2, r5
+ 211 0030 0549     		ldr	r1, .L15+16
+ 212 0032 FFF7FEFF 		bl	__aeabi_atexit
+ 213              	.LVL14:
+ 214              		.loc 2 101 0
+ 215 0036 EBE7     		b	.L7
+ 216              	.L16:
+ 217              		.align	2
+ 218              	.L15:
+ 219 0038 00000000 		.word	.LANCHOR0
+ 220 003c 00000000 		.word	__dso_handle
+ 221 0040 00000000 		.word	_ZN5QueueIhLj2EED1Ev
+ 222 0044 00000000 		.word	.LANCHOR1
+ 223 0048 00000000 		.word	_ZN5QueueItLj2EED1Ev
+ 224              		.cfi_endproc
+ 225              	.LFE164:
+ 227              		.section	.text._Z10LIDAR_Initv,"ax",%progbits
+ 228              		.align	1
+ 229              		.global	_Z10LIDAR_Initv
+ 230              		.syntax unified
+ 231              		.thumb
+ 232              		.thumb_func
+ 233              		.fpu fpv4-sp-d16
+ 235              	_Z10LIDAR_Initv:
+ 236              	.LFB145:
+  42:Core/Src/devs/lidar.cpp ****         HAL_UART_Receive_DMA(&huart3, &gRx_Data, 1);
+ 237              		.loc 2 42 0
+ 238              		.cfi_startproc
+ 239              		@ args = 0, pretend = 0, frame = 0
+ 240              		@ frame_needed = 0, uses_anonymous_args = 0
+ 241 0000 08B5     		push	{r3, lr}
+ 242              	.LCFI2:
+ 243              		.cfi_def_cfa_offset 8
+ 244              		.cfi_offset 3, -8
+ 245              		.cfi_offset 14, -4
+  43:Core/Src/devs/lidar.cpp **** }
+ 246              		.loc 2 43 0
+ 247 0002 0122     		movs	r2, #1
+ 248 0004 0249     		ldr	r1, .L19
+ 249 0006 0348     		ldr	r0, .L19+4
+ 250 0008 FFF7FEFF 		bl	HAL_UART_Receive_DMA
+ 251              	.LVL15:
+  44:Core/Src/devs/lidar.cpp **** 
+ 252              		.loc 2 44 0
+ 253 000c 08BD     		pop	{r3, pc}
+ 254              	.L20:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 8
+
+
+ 255 000e 00BF     		.align	2
+ 256              	.L19:
+ 257 0010 00000000 		.word	.LANCHOR2
+ 258 0014 00000000 		.word	huart3
+ 259              		.cfi_endproc
+ 260              	.LFE145:
+ 262              		.section	.text._ZN5Lidar4initEv,"ax",%progbits
+ 263              		.align	1
+ 264              		.global	_ZN5Lidar4initEv
+ 265              		.syntax unified
+ 266              		.thumb
+ 267              		.thumb_func
+ 268              		.fpu fpv4-sp-d16
+ 270              	_ZN5Lidar4initEv:
+ 271              	.LFB149:
+  82:Core/Src/devs/lidar.cpp ****         LIDAR_Init();
+ 272              		.loc 2 82 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              	.LVL16:
+ 277 0000 08B5     		push	{r3, lr}
+ 278              	.LCFI3:
+ 279              		.cfi_def_cfa_offset 8
+ 280              		.cfi_offset 3, -8
+ 281              		.cfi_offset 14, -4
+  83:Core/Src/devs/lidar.cpp ****         return 0;
+ 282              		.loc 2 83 0
+ 283 0002 FFF7FEFF 		bl	_Z10LIDAR_Initv
+ 284              	.LVL17:
+  85:Core/Src/devs/lidar.cpp **** 
+ 285              		.loc 2 85 0
+ 286 0006 0020     		movs	r0, #0
+ 287 0008 08BD     		pop	{r3, pc}
+ 288              		.cfi_endproc
+ 289              	.LFE149:
+ 291              		.section	.text._Z10LIDAR_Readv,"ax",%progbits
+ 292              		.align	1
+ 293              		.global	_Z10LIDAR_Readv
+ 294              		.syntax unified
+ 295              		.thumb
+ 296              		.thumb_func
+ 297              		.fpu fpv4-sp-d16
+ 299              	_Z10LIDAR_Readv:
+ 300              	.LFB146:
+  47:Core/Src/devs/lidar.cpp ****         return gLidar_Data.lookup() + gXLidar_Offset;
+ 301              		.loc 2 47 0
+ 302              		.cfi_startproc
+ 303              		@ args = 0, pretend = 0, frame = 0
+ 304              		@ frame_needed = 0, uses_anonymous_args = 0
+ 305              		@ link register save eliminated.
+ 306              	.LVL18:
+ 307              	.LBB43:
+ 308              	.LBB44:
+ 309              	.LBB45:
+  24:Core/Inc/utils/queue.h **** 
+  25:Core/Inc/utils/queue.h ****         void insert(T elem) {
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 9
+
+
+  26:Core/Inc/utils/queue.h ****                 ++curr_size_;
+  27:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+  28:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+  29:Core/Inc/utils/queue.h ****         }
+  30:Core/Inc/utils/queue.h **** 
+  31:Core/Inc/utils/queue.h ****         T lookup() {
+  32:Core/Inc/utils/queue.h ****                 if( curr_size_ ) {
+ 310              		.loc 3 32 0
+ 311 0000 094B     		ldr	r3, .L26
+ 312 0002 9B68     		ldr	r3, [r3, #8]
+ 313 0004 73B1     		cbz	r3, .L25
+ 314              	.LBB46:
+  33:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 315              		.loc 3 33 0
+ 316 0006 084A     		ldr	r2, .L26
+ 317 0008 013B     		subs	r3, r3, #1
+ 318 000a 9360     		str	r3, [r2, #8]
+  34:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 319              		.loc 3 34 0
+ 320 000c 5368     		ldr	r3, [r2, #4]
+ 321 000e 591C     		adds	r1, r3, #1
+ 322 0010 0433     		adds	r3, r3, #4
+ 323 0012 02EB4303 		add	r3, r2, r3, lsl #1
+ 324 0016 9888     		ldrh	r0, [r3, #4]
+ 325              	.LVL19:
+  35:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 326              		.loc 3 35 0
+ 327 0018 01F00101 		and	r1, r1, #1
+ 328 001c 5160     		str	r1, [r2, #4]
+ 329              	.LVL20:
+ 330              	.L24:
+ 331              	.LBE46:
+ 332              	.LBE45:
+ 333              	.LBE44:
+ 334              	.LBE43:
+  48:Core/Src/devs/lidar.cpp **** }
+ 335              		.loc 2 48 0
+ 336 001e BA30     		adds	r0, r0, #186
+  49:Core/Src/devs/lidar.cpp **** 
+ 337              		.loc 2 49 0
+ 338 0020 80B2     		uxth	r0, r0
+ 339 0022 7047     		bx	lr
+ 340              	.LVL21:
+ 341              	.L25:
+ 342              	.LBB48:
+ 343              	.LBB47:
+  36:Core/Inc/utils/queue.h ****                         return elem;
+  37:Core/Inc/utils/queue.h ****                 }
+  38:Core/Inc/utils/queue.h ****                 return 0;
+ 344              		.loc 3 38 0
+ 345 0024 0020     		movs	r0, #0
+ 346 0026 FAE7     		b	.L24
+ 347              	.L27:
+ 348              		.align	2
+ 349              	.L26:
+ 350 0028 00000000 		.word	.LANCHOR1
+ 351              	.LBE47:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 10
+
+
+ 352              	.LBE48:
+ 353              		.cfi_endproc
+ 354              	.LFE146:
+ 356              		.section	.text._ZN5Lidar4readEv,"ax",%progbits
+ 357              		.align	1
+ 358              		.global	_ZN5Lidar4readEv
+ 359              		.syntax unified
+ 360              		.thumb
+ 361              		.thumb_func
+ 362              		.fpu fpv4-sp-d16
+ 364              	_ZN5Lidar4readEv:
+ 365              	.LFB150:
+  88:Core/Src/devs/lidar.cpp ****         float dist = (float)(LIDAR_Read());
+ 366              		.loc 2 88 0
+ 367              		.cfi_startproc
+ 368              		@ args = 0, pretend = 0, frame = 0
+ 369              		@ frame_needed = 0, uses_anonymous_args = 0
+ 370              	.LVL22:
+ 371 0000 08B5     		push	{r3, lr}
+ 372              	.LCFI4:
+ 373              		.cfi_def_cfa_offset 8
+ 374              		.cfi_offset 3, -8
+ 375              		.cfi_offset 14, -4
+  89:Core/Src/devs/lidar.cpp ****         return dist;
+ 376              		.loc 2 89 0
+ 377 0002 FFF7FEFF 		bl	_Z10LIDAR_Readv
+ 378              	.LVL23:
+  91:Core/Src/devs/lidar.cpp **** 
+ 379              		.loc 2 91 0
+ 380 0006 07EE900A 		vmov	s15, r0	@ int
+ 381 000a B8EE670A 		vcvt.f32.u32	s0, s15
+ 382              	.LVL24:
+ 383 000e 08BD     		pop	{r3, pc}
+ 384              		.cfi_endproc
+ 385              	.LFE150:
+ 387              		.section	.text._Z13LIDAR_IsEmptyv,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	_Z13LIDAR_IsEmptyv
+ 390              		.syntax unified
+ 391              		.thumb
+ 392              		.thumb_func
+ 393              		.fpu fpv4-sp-d16
+ 395              	_Z13LIDAR_IsEmptyv:
+ 396              	.LFB147:
+  52:Core/Src/devs/lidar.cpp ****         return (gLidar_Data.length() == 0);
+ 397              		.loc 2 52 0
+ 398              		.cfi_startproc
+ 399              		@ args = 0, pretend = 0, frame = 0
+ 400              		@ frame_needed = 0, uses_anonymous_args = 0
+ 401              		@ link register save eliminated.
+ 402              	.LVL25:
+ 403              	.LBB49:
+ 404              	.LBB50:
+  39:Core/Inc/utils/queue.h ****         }
+  40:Core/Inc/utils/queue.h **** 
+  41:Core/Inc/utils/queue.h ****         uint32_t length() const { return curr_size_; }
+ 405              		.loc 3 41 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 11
+
+
+ 406 0000 024B     		ldr	r3, .L31
+ 407 0002 9868     		ldr	r0, [r3, #8]
+ 408              	.LVL26:
+ 409              	.LBE50:
+ 410              	.LBE49:
+  54:Core/Src/devs/lidar.cpp **** 
+ 411              		.loc 2 54 0
+ 412 0004 B0FA80F0 		clz	r0, r0
+ 413 0008 4009     		lsrs	r0, r0, #5
+ 414 000a 7047     		bx	lr
+ 415              	.L32:
+ 416              		.align	2
+ 417              	.L31:
+ 418 000c 00000000 		.word	.LANCHOR1
+ 419              		.cfi_endproc
+ 420              	.LFE147:
+ 422              		.section	.text._ZN5Lidar9availableEv,"ax",%progbits
+ 423              		.align	1
+ 424              		.global	_ZN5Lidar9availableEv
+ 425              		.syntax unified
+ 426              		.thumb
+ 427              		.thumb_func
+ 428              		.fpu fpv4-sp-d16
+ 430              	_ZN5Lidar9availableEv:
+ 431              	.LFB151:
+  94:Core/Src/devs/lidar.cpp ****         return !LIDAR_IsEmpty();
+ 432              		.loc 2 94 0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436              	.LVL27:
+ 437 0000 08B5     		push	{r3, lr}
+ 438              	.LCFI5:
+ 439              		.cfi_def_cfa_offset 8
+ 440              		.cfi_offset 3, -8
+ 441              		.cfi_offset 14, -4
+  95:Core/Src/devs/lidar.cpp **** }
+ 442              		.loc 2 95 0
+ 443 0002 FFF7FEFF 		bl	_Z13LIDAR_IsEmptyv
+ 444              	.LVL28:
+ 445 0006 80F00100 		eor	r0, r0, #1
+  96:Core/Src/devs/lidar.cpp **** 
+ 446              		.loc 2 96 0
+ 447 000a C0B2     		uxtb	r0, r0
+ 448 000c 08BD     		pop	{r3, pc}
+ 449              		.cfi_endproc
+ 450              	.LFE151:
+ 452              		.section	.text._Z26LIDAR_UART3_RxCpltCallbackv,"ax",%progbits
+ 453              		.align	1
+ 454              		.global	_Z26LIDAR_UART3_RxCpltCallbackv
+ 455              		.syntax unified
+ 456              		.thumb
+ 457              		.thumb_func
+ 458              		.fpu fpv4-sp-d16
+ 460              	_Z26LIDAR_UART3_RxCpltCallbackv:
+ 461              	.LFB148:
+  57:Core/Src/devs/lidar.cpp ****         if (!gStart_Byte_Received) {
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 12
+
+
+ 462              		.loc 2 57 0
+ 463              		.cfi_startproc
+ 464              		@ args = 0, pretend = 0, frame = 0
+ 465              		@ frame_needed = 0, uses_anonymous_args = 0
+ 466              		@ link register save eliminated.
+  58:Core/Src/devs/lidar.cpp ****                 if (gRx_Data == START_BYTE) {
+ 467              		.loc 2 58 0
+ 468 0000 294B     		ldr	r3, .L47
+ 469 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 470 0004 43B9     		cbnz	r3, .L36
+  59:Core/Src/devs/lidar.cpp ****                         gStart_Byte_Received = true;
+ 471              		.loc 2 59 0
+ 472 0006 294B     		ldr	r3, .L47+4
+ 473 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 474 000a A52B     		cmp	r3, #165
+ 475 000c 00D0     		beq	.L45
+ 476 000e 7047     		bx	lr
+ 477              	.L45:
+  60:Core/Src/devs/lidar.cpp ****                 }
+ 478              		.loc 2 60 0
+ 479 0010 254B     		ldr	r3, .L47
+ 480 0012 0122     		movs	r2, #1
+ 481 0014 1A70     		strb	r2, [r3]
+ 482 0016 7047     		bx	lr
+ 483              	.L36:
+  57:Core/Src/devs/lidar.cpp ****         if (!gStart_Byte_Received) {
+ 484              		.loc 2 57 0
+ 485 0018 30B4     		push	{r4, r5}
+ 486              	.LCFI6:
+ 487              		.cfi_def_cfa_offset 8
+ 488              		.cfi_offset 4, -8
+ 489              		.cfi_offset 5, -4
+  64:Core/Src/devs/lidar.cpp ****                 ++gNum_Data_Received;
+ 490              		.loc 2 64 0
+ 491 001a 244B     		ldr	r3, .L47+4
+ 492 001c 1D78     		ldrb	r5, [r3]	@ zero_extendqisi2
+ 493              	.LVL29:
+ 494              	.LBB51:
+ 495              	.LBB52:
+  26:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 496              		.loc 3 26 0
+ 497 001e 244B     		ldr	r3, .L47+8
+ 498 0020 9C68     		ldr	r4, [r3, #8]
+ 499 0022 601C     		adds	r0, r4, #1
+ 500 0024 9860     		str	r0, [r3, #8]
+  27:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 501              		.loc 3 27 0
+ 502 0026 1A68     		ldr	r2, [r3]
+ 503 0028 511C     		adds	r1, r2, #1
+ 504 002a 1A44     		add	r2, r2, r3
+ 505 002c 1573     		strb	r5, [r2, #12]
+  28:Core/Inc/utils/queue.h ****         }
+ 506              		.loc 3 28 0
+ 507 002e 01F00101 		and	r1, r1, #1
+ 508 0032 1960     		str	r1, [r3]
+ 509              	.LVL30:
+ 510              	.LBE52:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 13
+
+
+ 511              	.LBE51:
+  65:Core/Src/devs/lidar.cpp ****                 // If required number of data is received initiate new data;
+ 512              		.loc 2 65 0
+ 513 0034 1F4A     		ldr	r2, .L47+12
+ 514 0036 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 515 0038 0133     		adds	r3, r3, #1
+ 516 003a DBB2     		uxtb	r3, r3
+ 517 003c 1370     		strb	r3, [r2]
+  67:Core/Src/devs/lidar.cpp ****                         gNum_Data_Received = 0;
+ 518              		.loc 2 67 0
+ 519 003e 022B     		cmp	r3, #2
+ 520 0040 01D0     		beq	.L46
+ 521              	.L35:
+  78:Core/Src/devs/lidar.cpp **** 
+ 522              		.loc 2 78 0
+ 523 0042 30BC     		pop	{r4, r5}
+ 524              	.LCFI7:
+ 525              		.cfi_remember_state
+ 526              		.cfi_restore 5
+ 527              		.cfi_restore 4
+ 528              		.cfi_def_cfa_offset 0
+ 529 0044 7047     		bx	lr
+ 530              	.L46:
+ 531              	.LCFI8:
+ 532              		.cfi_restore_state
+  68:Core/Src/devs/lidar.cpp ****                         gStart_Byte_Received = false;
+ 533              		.loc 2 68 0
+ 534 0046 0023     		movs	r3, #0
+ 535 0048 1370     		strb	r3, [r2]
+  69:Core/Src/devs/lidar.cpp ****                         // For LIDAR
+ 536              		.loc 2 69 0
+ 537 004a 174A     		ldr	r2, .L47
+ 538 004c 1370     		strb	r3, [r2]
+ 539              	.LVL31:
+ 540              	.LBB53:
+ 541              	.LBB54:
+ 542              	.LBB55:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 543              		.loc 3 32 0
+ 544 004e 30B3     		cbz	r0, .L40
+ 545              	.LBB56:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 546              		.loc 3 33 0
+ 547 0050 174A     		ldr	r2, .L47+8
+ 548 0052 9460     		str	r4, [r2, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 549              		.loc 3 34 0
+ 550 0054 5368     		ldr	r3, [r2, #4]
+ 551 0056 591C     		adds	r1, r3, #1
+ 552 0058 1344     		add	r3, r3, r2
+ 553 005a 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
+ 554              	.LVL32:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 555              		.loc 3 35 0
+ 556 005c 01F00101 		and	r1, r1, #1
+ 557 0060 5160     		str	r1, [r2, #4]
+ 558              	.LVL33:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 14
+
+
+ 559              	.L38:
+ 560              	.LBE56:
+ 561              	.LBE55:
+ 562              	.LBE54:
+ 563              	.LBE53:
+  71:Core/Src/devs/lidar.cpp ****                         gDistance |= gLidar_Bytes.lookup();
+ 564              		.loc 2 71 0
+ 565 0062 1B02     		lsls	r3, r3, #8
+ 566              	.LVL34:
+ 567              	.LBB58:
+ 568              	.LBB59:
+ 569              	.LBB60:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 570              		.loc 3 32 0
+ 571 0064 124A     		ldr	r2, .L47+8
+ 572 0066 9268     		ldr	r2, [r2, #8]
+ 573 0068 DAB1     		cbz	r2, .L41
+ 574              	.LBB61:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 575              		.loc 3 33 0
+ 576 006a 1149     		ldr	r1, .L47+8
+ 577 006c 013A     		subs	r2, r2, #1
+ 578 006e 8A60     		str	r2, [r1, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 579              		.loc 3 34 0
+ 580 0070 4A68     		ldr	r2, [r1, #4]
+ 581 0072 501C     		adds	r0, r2, #1
+ 582 0074 0A44     		add	r2, r2, r1
+ 583 0076 127B     		ldrb	r2, [r2, #12]	@ zero_extendqisi2
+ 584              	.LVL35:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 585              		.loc 3 35 0
+ 586 0078 00F00100 		and	r0, r0, #1
+ 587 007c 4860     		str	r0, [r1, #4]
+ 588              	.LVL36:
+ 589              	.L39:
+ 590              	.LBE61:
+ 591              	.LBE60:
+ 592              	.LBE59:
+ 593              	.LBE58:
+  73:Core/Src/devs/lidar.cpp ****                                 gLidar_Data.insert(gDistance);
+ 594              		.loc 2 73 0
+ 595 007e 1343     		orrs	r3, r3, r2
+ 596 0080 DFD0     		beq	.L35
+ 597              	.LVL37:
+ 598              	.LBB63:
+ 599              	.LBB64:
+  26:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 600              		.loc 3 26 0
+ 601 0082 0D49     		ldr	r1, .L47+16
+ 602 0084 8A68     		ldr	r2, [r1, #8]
+ 603 0086 0132     		adds	r2, r2, #1
+ 604 0088 8A60     		str	r2, [r1, #8]
+  27:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 605              		.loc 3 27 0
+ 606 008a 0A68     		ldr	r2, [r1]
+ 607 008c 501C     		adds	r0, r2, #1
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 15
+
+
+ 608 008e 0432     		adds	r2, r2, #4
+ 609 0090 01EB4202 		add	r2, r1, r2, lsl #1
+ 610 0094 9380     		strh	r3, [r2, #4]	@ movhi
+  28:Core/Inc/utils/queue.h ****         }
+ 611              		.loc 3 28 0
+ 612 0096 00F00100 		and	r0, r0, #1
+ 613 009a 0860     		str	r0, [r1]
+ 614              	.LBE64:
+ 615              	.LBE63:
+  78:Core/Src/devs/lidar.cpp **** 
+ 616              		.loc 2 78 0
+ 617 009c D1E7     		b	.L35
+ 618              	.LVL38:
+ 619              	.L40:
+ 620              	.LBB65:
+ 621              	.LBB57:
+  38:Core/Inc/utils/queue.h ****         }
+ 622              		.loc 3 38 0
+ 623 009e 0023     		movs	r3, #0
+ 624 00a0 DFE7     		b	.L38
+ 625              	.LVL39:
+ 626              	.L41:
+ 627              	.LBE57:
+ 628              	.LBE65:
+ 629              	.LBB66:
+ 630              	.LBB62:
+ 631 00a2 0022     		movs	r2, #0
+ 632 00a4 EBE7     		b	.L39
+ 633              	.L48:
+ 634 00a6 00BF     		.align	2
+ 635              	.L47:
+ 636 00a8 00000000 		.word	.LANCHOR3
+ 637 00ac 00000000 		.word	.LANCHOR2
+ 638 00b0 00000000 		.word	.LANCHOR0
+ 639 00b4 00000000 		.word	.LANCHOR4
+ 640 00b8 00000000 		.word	.LANCHOR1
+ 641              	.LBE62:
+ 642              	.LBE66:
+ 643              		.cfi_endproc
+ 644              	.LFE148:
+ 646              		.section	.text._GLOBAL__sub_I__Z10LIDAR_Initv,"ax",%progbits
+ 647              		.align	1
+ 648              		.syntax unified
+ 649              		.thumb
+ 650              		.thumb_func
+ 651              		.fpu fpv4-sp-d16
+ 653              	_GLOBAL__sub_I__Z10LIDAR_Initv:
+ 654              	.LFB171:
+ 655              		.loc 2 101 0
+ 656              		.cfi_startproc
+ 657              		@ args = 0, pretend = 0, frame = 0
+ 658              		@ frame_needed = 0, uses_anonymous_args = 0
+ 659 0000 08B5     		push	{r3, lr}
+ 660              	.LCFI9:
+ 661              		.cfi_def_cfa_offset 8
+ 662              		.cfi_offset 3, -8
+ 663              		.cfi_offset 14, -4
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 16
+
+
+ 664              		.loc 2 101 0
+ 665 0002 4FF6FF71 		movw	r1, #65535
+ 666 0006 0120     		movs	r0, #1
+ 667 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 668              	.LVL40:
+ 669 000c 08BD     		pop	{r3, pc}
+ 670              		.cfi_endproc
+ 671              	.LFE171:
+ 673              		.section	.init_array,"aw",%init_array
+ 674              		.align	2
+ 675 0000 00000000 		.word	_GLOBAL__sub_I__Z10LIDAR_Initv(target1)
+ 676              		.weak	_ZTS6Sensor
+ 677              		.section	.rodata._ZTS6Sensor,"aG",%progbits,_ZTS6Sensor,comdat
+ 678              		.align	2
+ 681              	_ZTS6Sensor:
+ 682 0000 3653656E 		.ascii	"6Sensor\000"
+ 682      736F7200 
+ 683              		.weak	_ZTI6Sensor
+ 684              		.section	.rodata._ZTI6Sensor,"aG",%progbits,_ZTI6Sensor,comdat
+ 685              		.align	2
+ 688              	_ZTI6Sensor:
+ 689 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 690 0004 00000000 		.word	_ZTS6Sensor
+ 691              		.global	_ZTS5Lidar
+ 692              		.global	_ZTI5Lidar
+ 693              		.global	_ZTV5Lidar
+ 694              		.section	.bss._ZL11gLidar_Data,"aw",%nobits
+ 695              		.align	2
+ 696              		.set	.LANCHOR1,. + 0
+ 699              	_ZL11gLidar_Data:
+ 700 0000 00000000 		.space	16
+ 700      00000000 
+ 700      00000000 
+ 700      00000000 
+ 701              		.section	.bss._ZL12gLidar_Bytes,"aw",%nobits
+ 702              		.align	2
+ 703              		.set	.LANCHOR0,. + 0
+ 706              	_ZL12gLidar_Bytes:
+ 707 0000 00000000 		.space	16
+ 707      00000000 
+ 707      00000000 
+ 707      00000000 
+ 708              		.section	.bss._ZL18gNum_Data_Received,"aw",%nobits
+ 709              		.set	.LANCHOR4,. + 0
+ 712              	_ZL18gNum_Data_Received:
+ 713 0000 00       		.space	1
+ 714              		.section	.bss._ZL20gStart_Byte_Received,"aw",%nobits
+ 715              		.set	.LANCHOR3,. + 0
+ 718              	_ZL20gStart_Byte_Received:
+ 719 0000 00       		.space	1
+ 720              		.section	.bss._ZL8gRx_Data,"aw",%nobits
+ 721              		.set	.LANCHOR2,. + 0
+ 724              	_ZL8gRx_Data:
+ 725 0000 00       		.space	1
+ 726              		.section	.rodata._ZTI5Lidar,"a",%progbits
+ 727              		.align	2
+ 730              	_ZTI5Lidar:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 17
+
+
+ 731 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 732 0004 00000000 		.word	_ZTS5Lidar
+ 733 0008 00000000 		.word	_ZTI6Sensor
+ 734              		.section	.rodata._ZTS5Lidar,"a",%progbits
+ 735              		.align	2
+ 738              	_ZTS5Lidar:
+ 739 0000 354C6964 		.ascii	"5Lidar\000"
+ 739      617200
+ 740              		.section	.rodata._ZTV5Lidar,"a",%progbits
+ 741              		.align	2
+ 744              	_ZTV5Lidar:
+ 745 0000 00000000 		.word	0
+ 746 0004 00000000 		.word	_ZTI5Lidar
+ 747 0008 00000000 		.word	_ZN5LidarD1Ev
+ 748 000c 00000000 		.word	_ZN5LidarD0Ev
+ 749 0010 00000000 		.word	_ZN5Lidar4initEv
+ 750 0014 00000000 		.word	_ZN5Lidar4readEv
+ 751 0018 00000000 		.word	_ZN5Lidar9availableEv
+ 752 001c 00000000 		.word	_ZN5Lidar5denitEv
+ 753              		.text
+ 754              	.Letext0:
+ 755              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 756              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 757              		.file 6 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 758              		.file 7 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 759              		.file 8 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 760              		.file 9 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 761              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 762              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 763              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 764              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 765              		.file 14 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 766              		.file 15 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 767              		.file 16 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 768              		.file 17 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 769              		.file 18 "Core/Inc/periphs/usart.h"
+ 770              		.file 19 "Core/Inc/devs/sensor.h"
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lidar.cpp
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:18     .text._ZN5LidarD2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:25     .text._ZN5LidarD2Ev:00000000 _ZN5LidarD2Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:25     .text._ZN5LidarD2Ev:00000000 _ZN5LidarD1Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:42     .text._ZN5Lidar5denitEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:49     .text._ZN5Lidar5denitEv:00000000 _ZN5Lidar5denitEv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:64     .text._ZN5QueueIhLj2EED2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:71     .text._ZN5QueueIhLj2EED2Ev:00000000 _ZN5QueueIhLj2EED2Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:71     .text._ZN5QueueIhLj2EED2Ev:00000000 _ZN5QueueIhLj2EED1Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:88     .text._ZN5QueueItLj2EED2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:95     .text._ZN5QueueItLj2EED2Ev:00000000 _ZN5QueueItLj2EED2Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:95     .text._ZN5QueueItLj2EED2Ev:00000000 _ZN5QueueItLj2EED1Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:111    .text._ZN5LidarD0Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:118    .text._ZN5LidarD0Ev:00000000 _ZN5LidarD0Ev
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:141    .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:147    .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:219    .text._Z41__static_initialization_and_destruction_0ii:00000038 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:228    .text._Z10LIDAR_Initv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:235    .text._Z10LIDAR_Initv:00000000 _Z10LIDAR_Initv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:257    .text._Z10LIDAR_Initv:00000010 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:263    .text._ZN5Lidar4initEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:270    .text._ZN5Lidar4initEv:00000000 _ZN5Lidar4initEv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:292    .text._Z10LIDAR_Readv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:299    .text._Z10LIDAR_Readv:00000000 _Z10LIDAR_Readv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:350    .text._Z10LIDAR_Readv:00000028 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:357    .text._ZN5Lidar4readEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:364    .text._ZN5Lidar4readEv:00000000 _ZN5Lidar4readEv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:388    .text._Z13LIDAR_IsEmptyv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:395    .text._Z13LIDAR_IsEmptyv:00000000 _Z13LIDAR_IsEmptyv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:418    .text._Z13LIDAR_IsEmptyv:0000000c $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:423    .text._ZN5Lidar9availableEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:430    .text._ZN5Lidar9availableEv:00000000 _ZN5Lidar9availableEv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:453    .text._Z26LIDAR_UART3_RxCpltCallbackv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:460    .text._Z26LIDAR_UART3_RxCpltCallbackv:00000000 _Z26LIDAR_UART3_RxCpltCallbackv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:636    .text._Z26LIDAR_UART3_RxCpltCallbackv:000000a8 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:647    .text._GLOBAL__sub_I__Z10LIDAR_Initv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:653    .text._GLOBAL__sub_I__Z10LIDAR_Initv:00000000 _GLOBAL__sub_I__Z10LIDAR_Initv
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:674    .init_array:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:681    .rodata._ZTS6Sensor:00000000 _ZTS6Sensor
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:678    .rodata._ZTS6Sensor:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:688    .rodata._ZTI6Sensor:00000000 _ZTI6Sensor
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:685    .rodata._ZTI6Sensor:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:738    .rodata._ZTS5Lidar:00000000 _ZTS5Lidar
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:730    .rodata._ZTI5Lidar:00000000 _ZTI5Lidar
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:744    .rodata._ZTV5Lidar:00000000 _ZTV5Lidar
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:695    .bss._ZL11gLidar_Data:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:699    .bss._ZL11gLidar_Data:00000000 _ZL11gLidar_Data
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:702    .bss._ZL12gLidar_Bytes:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:706    .bss._ZL12gLidar_Bytes:00000000 _ZL12gLidar_Bytes
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:712    .bss._ZL18gNum_Data_Received:00000000 _ZL18gNum_Data_Received
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:713    .bss._ZL18gNum_Data_Received:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:718    .bss._ZL20gStart_Byte_Received:00000000 _ZL20gStart_Byte_Received
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:719    .bss._ZL20gStart_Byte_Received:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:724    .bss._ZL8gRx_Data:00000000 _ZL8gRx_Data
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:725    .bss._ZL8gRx_Data:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:727    .rodata._ZTI5Lidar:00000000 $d
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s 			page 19
+
+
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:735    .rodata._ZTS5Lidar:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccLAZgKe.s:741    .rodata._ZTV5Lidar:00000000 $d
+                           .group:00000000 _ZN5LidarD5Ev
+                           .group:00000000 _ZN5QueueIhLj2EED5Ev
+                           .group:00000000 _ZN5QueueItLj2EED5Ev
+
+UNDEFINED SYMBOLS
+_ZdlPvj
+__aeabi_atexit
+__dso_handle
+HAL_UART_Receive_DMA
+huart3
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

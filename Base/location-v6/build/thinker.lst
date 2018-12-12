@@ -1,0 +1,670 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"thinker.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.__tcf_0,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	__tcf_0:
+  25              	.LFB139:
+  26              		.file 1 "Core/Src/devs/thinker.cpp"
+   1:Core/Src/devs/thinker.cpp **** /*
+   2:Core/Src/devs/thinker.cpp ****  * thinker.cpp
+   3:Core/Src/devs/thinker.cpp ****  * 
+   4:Core/Src/devs/thinker.cpp ****  * Created : 11/20/2018
+   5:Core/Src/devs/thinker.cpp ****  *  Author : n-is
+   6:Core/Src/devs/thinker.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/devs/thinker.cpp ****  */
+   8:Core/Src/devs/thinker.cpp **** 
+   9:Core/Src/devs/thinker.cpp **** #include "devs/thinker.h"
+  10:Core/Src/devs/thinker.cpp **** 
+  11:Core/Src/devs/thinker.cpp **** #define NUM_THINKER_BYTES       (6)
+  12:Core/Src/devs/thinker.cpp **** 
+  13:Core/Src/devs/thinker.cpp **** static uint8_t gStart_Byte = 0xA5;
+  14:Core/Src/devs/thinker.cpp **** static bool gThinker_Start_Byte_Sent = false;
+  15:Core/Src/devs/thinker.cpp **** static Queue<int16_t, 32> gThinker_Data[3];
+  27              		.loc 1 15 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              		.loc 1 15 0
+  33 0000 034B     		ldr	r3, .L4
+  34              	.L3:
+  35              		.loc 1 15 0 is_stmt 0 discriminator 5
+  36 0002 044A     		ldr	r2, .L4+4
+  37 0004 9342     		cmp	r3, r2
+  38 0006 01D0     		beq	.L1
+  39              		.loc 1 15 0 discriminator 4
+  40 0008 4C3B     		subs	r3, r3, #76
+  41              	.LVL0:
+  42 000a FAE7     		b	.L3
+  43              	.LVL1:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 2
+
+
+  44              	.L1:
+  45              		.loc 1 15 0
+  46 000c 7047     		bx	lr
+  47              	.L5:
+  48 000e 00BF     		.align	2
+  49              	.L4:
+  50 0010 E4000000 		.word	.LANCHOR0+228
+  51 0014 00000000 		.word	.LANCHOR0
+  52              		.cfi_endproc
+  53              	.LFE139:
+  55              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+  56              		.align	1
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  60              		.fpu fpv4-sp-d16
+  62              	_Z41__static_initialization_and_destruction_0ii:
+  63              	.LFB138:
+  16:Core/Src/devs/thinker.cpp **** uint8_t gThinker_Bytes[NUM_THINKER_BYTES];
+  17:Core/Src/devs/thinker.cpp **** 
+  18:Core/Src/devs/thinker.cpp **** void Thinker_Init()
+  19:Core/Src/devs/thinker.cpp **** {
+  20:Core/Src/devs/thinker.cpp ****         __HAL_UART_ENABLE_IT(&huart2, UART_IT_TC);
+  21:Core/Src/devs/thinker.cpp **** }
+  22:Core/Src/devs/thinker.cpp **** 
+  23:Core/Src/devs/thinker.cpp **** void send_ThinkerPack(int16_t pack[3])
+  24:Core/Src/devs/thinker.cpp **** {
+  25:Core/Src/devs/thinker.cpp ****         // Data are as follows :
+  26:Core/Src/devs/thinker.cpp ****         // -> x-position        // Only positive values
+  27:Core/Src/devs/thinker.cpp ****         // -> y-position        // "
+  28:Core/Src/devs/thinker.cpp ****         // -> heading           // 0 to 360
+  29:Core/Src/devs/thinker.cpp ****         for (uint8_t i = 0; i < 3; ++i) {
+  30:Core/Src/devs/thinker.cpp ****                 gThinker_Data[i].insert(pack[i]);
+  31:Core/Src/devs/thinker.cpp ****         }
+  32:Core/Src/devs/thinker.cpp ****         if (!gThinker_Start_Byte_Sent) {
+  33:Core/Src/devs/thinker.cpp ****                 gThinker_Start_Byte_Sent = true;
+  34:Core/Src/devs/thinker.cpp ****                 HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+  35:Core/Src/devs/thinker.cpp ****         }
+  36:Core/Src/devs/thinker.cpp **** }
+  37:Core/Src/devs/thinker.cpp **** 
+  38:Core/Src/devs/thinker.cpp **** void Thinker_UART2_TxCpltCallback()
+  39:Core/Src/devs/thinker.cpp **** {
+  40:Core/Src/devs/thinker.cpp ****         if (gThinker_Start_Byte_Sent) {
+  41:Core/Src/devs/thinker.cpp ****                 gThinker_Start_Byte_Sent = false;
+  42:Core/Src/devs/thinker.cpp ****                 int16_t data;
+  43:Core/Src/devs/thinker.cpp ****                 for (uint8_t i = 0; i < 3; ++i) {
+  44:Core/Src/devs/thinker.cpp ****                         data = gThinker_Data[i].lookup();
+  45:Core/Src/devs/thinker.cpp ****                         gThinker_Bytes[2*i + 0] = (uint8_t)(data >> 8);
+  46:Core/Src/devs/thinker.cpp ****                         gThinker_Bytes[2*i + 1] = (uint8_t)(data);
+  47:Core/Src/devs/thinker.cpp ****                 }
+  48:Core/Src/devs/thinker.cpp ****                 HAL_UART_Transmit_IT(&huart2, gThinker_Bytes, 6);
+  49:Core/Src/devs/thinker.cpp ****         }
+  50:Core/Src/devs/thinker.cpp ****         else {
+  51:Core/Src/devs/thinker.cpp ****                 // All thinker buffers contain equal length of data
+  52:Core/Src/devs/thinker.cpp ****                 if (gThinker_Data[0].length()) {
+  53:Core/Src/devs/thinker.cpp ****                         gThinker_Start_Byte_Sent = true;
+  54:Core/Src/devs/thinker.cpp ****                         HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 3
+
+
+  55:Core/Src/devs/thinker.cpp ****                 }
+  56:Core/Src/devs/thinker.cpp ****         }
+  57:Core/Src/devs/thinker.cpp **** }
+  64              		.loc 1 57 0 is_stmt 1
+  65              		.cfi_startproc
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68              	.LVL2:
+  69 0000 0128     		cmp	r0, #1
+  70 0002 00D0     		beq	.L14
+  71 0004 7047     		bx	lr
+  72              	.L14:
+  73              		.loc 1 57 0 is_stmt 0 discriminator 1
+  74 0006 08B5     		push	{r3, lr}
+  75              	.LCFI0:
+  76              		.cfi_def_cfa_offset 8
+  77              		.cfi_offset 3, -8
+  78              		.cfi_offset 14, -4
+  79              		.loc 1 57 0 is_stmt 1 discriminator 1
+  80 0008 4FF6FF73 		movw	r3, #65535
+  81 000c 9942     		cmp	r1, r3
+  82 000e 00D0     		beq	.L15
+  83              	.LVL3:
+  84              	.L6:
+  85              		.loc 1 57 0 is_stmt 0
+  86 0010 08BD     		pop	{r3, pc}
+  87              	.LVL4:
+  88              	.L15:
+  15:Core/Src/devs/thinker.cpp **** uint8_t gThinker_Bytes[NUM_THINKER_BYTES];
+  89              		.loc 1 15 0 is_stmt 1
+  90 0012 0221     		movs	r1, #2
+  91              	.LVL5:
+  92 0014 074B     		ldr	r3, .L16
+  93              	.L9:
+  15:Core/Src/devs/thinker.cpp **** uint8_t gThinker_Bytes[NUM_THINKER_BYTES];
+  94              		.loc 1 15 0 is_stmt 0 discriminator 4
+  95 0016 0029     		cmp	r1, #0
+  96 0018 06DB     		blt	.L8
+  97              	.LVL6:
+  98              	.LBB20:
+  99              	.LBB21:
+ 100              		.file 2 "Core/Inc/utils/queue.h"
+   1:Core/Inc/utils/queue.h **** /*
+   2:Core/Inc/utils/queue.h ****  * queue.h
+   3:Core/Inc/utils/queue.h ****  * 
+   4:Core/Inc/utils/queue.h ****  * Created : 11/16/2018
+   5:Core/Inc/utils/queue.h ****  *  Author : n-is
+   6:Core/Inc/utils/queue.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/queue.h ****  */
+   8:Core/Inc/utils/queue.h **** 
+   9:Core/Inc/utils/queue.h **** #ifndef _QUEUE_H_
+  10:Core/Inc/utils/queue.h **** #define _QUEUE_H_
+  11:Core/Inc/utils/queue.h **** 
+  12:Core/Inc/utils/queue.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/queue.h **** 
+  14:Core/Inc/utils/queue.h **** template <class T, size_t q_size>
+  15:Core/Inc/utils/queue.h **** class Queue
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 4
+
+
+  16:Core/Inc/utils/queue.h **** {
+  17:Core/Inc/utils/queue.h **** public:
+  18:Core/Inc/utils/queue.h ****         Queue():head_(0), tail_(0), curr_size_(0) { }
+ 101              		.loc 2 18 0 is_stmt 1
+ 102 001a 0022     		movs	r2, #0
+ 103 001c 1A60     		str	r2, [r3]
+ 104 001e 5A60     		str	r2, [r3, #4]
+ 105 0020 9A60     		str	r2, [r3, #8]
+ 106              	.LVL7:
+ 107              	.LBE21:
+ 108              	.LBE20:
+  15:Core/Src/devs/thinker.cpp **** uint8_t gThinker_Bytes[NUM_THINKER_BYTES];
+ 109              		.loc 1 15 0
+ 110 0022 4C33     		adds	r3, r3, #76
+ 111 0024 0139     		subs	r1, r1, #1
+ 112 0026 F6E7     		b	.L9
+ 113              	.L8:
+  15:Core/Src/devs/thinker.cpp **** uint8_t gThinker_Bytes[NUM_THINKER_BYTES];
+ 114              		.loc 1 15 0 is_stmt 0 discriminator 2
+ 115 0028 034A     		ldr	r2, .L16+4
+ 116 002a 0449     		ldr	r1, .L16+8
+ 117 002c 0020     		movs	r0, #0
+ 118              	.LVL8:
+ 119 002e FFF7FEFF 		bl	__aeabi_atexit
+ 120              	.LVL9:
+ 121              		.loc 1 57 0 is_stmt 1 discriminator 2
+ 122 0032 EDE7     		b	.L6
+ 123              	.L17:
+ 124              		.align	2
+ 125              	.L16:
+ 126 0034 00000000 		.word	.LANCHOR0
+ 127 0038 00000000 		.word	__dso_handle
+ 128 003c 00000000 		.word	__tcf_0
+ 129              		.cfi_endproc
+ 130              	.LFE138:
+ 132              		.section	.text._Z12Thinker_Initv,"ax",%progbits
+ 133              		.align	1
+ 134              		.global	_Z12Thinker_Initv
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ 138              		.fpu fpv4-sp-d16
+ 140              	_Z12Thinker_Initv:
+ 141              	.LFB129:
+  19:Core/Src/devs/thinker.cpp ****         __HAL_UART_ENABLE_IT(&huart2, UART_IT_TC);
+ 142              		.loc 1 19 0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146              		@ link register save eliminated.
+  20:Core/Src/devs/thinker.cpp **** }
+ 147              		.loc 1 20 0
+ 148 0000 034B     		ldr	r3, .L19
+ 149 0002 1A68     		ldr	r2, [r3]
+ 150 0004 D368     		ldr	r3, [r2, #12]
+ 151 0006 43F04003 		orr	r3, r3, #64
+ 152 000a D360     		str	r3, [r2, #12]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 5
+
+
+  21:Core/Src/devs/thinker.cpp **** 
+ 153              		.loc 1 21 0
+ 154 000c 7047     		bx	lr
+ 155              	.L20:
+ 156 000e 00BF     		.align	2
+ 157              	.L19:
+ 158 0010 00000000 		.word	huart2
+ 159              		.cfi_endproc
+ 160              	.LFE129:
+ 162              		.section	.text._Z16send_ThinkerPackPs,"ax",%progbits
+ 163              		.align	1
+ 164              		.global	_Z16send_ThinkerPackPs
+ 165              		.syntax unified
+ 166              		.thumb
+ 167              		.thumb_func
+ 168              		.fpu fpv4-sp-d16
+ 170              	_Z16send_ThinkerPackPs:
+ 171              	.LFB130:
+  24:Core/Src/devs/thinker.cpp ****         // Data are as follows :
+ 172              		.loc 1 24 0
+ 173              		.cfi_startproc
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              	.LVL10:
+ 177 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 178              	.LCFI1:
+ 179              		.cfi_def_cfa_offset 24
+ 180              		.cfi_offset 3, -24
+ 181              		.cfi_offset 4, -20
+ 182              		.cfi_offset 5, -16
+ 183              		.cfi_offset 6, -12
+ 184              		.cfi_offset 7, -8
+ 185              		.cfi_offset 14, -4
+ 186              	.LVL11:
+ 187              	.LBB22:
+  29:Core/Src/devs/thinker.cpp ****                 gThinker_Data[i].insert(pack[i]);
+ 188              		.loc 1 29 0
+ 189 0002 0023     		movs	r3, #0
+ 190              	.LVL12:
+ 191              	.L23:
+  29:Core/Src/devs/thinker.cpp ****                 gThinker_Data[i].insert(pack[i]);
+ 192              		.loc 1 29 0 is_stmt 0 discriminator 3
+ 193 0004 022B     		cmp	r3, #2
+ 194 0006 18D8     		bhi	.L22
+  30:Core/Src/devs/thinker.cpp ****         }
+ 195              		.loc 1 30 0 is_stmt 1 discriminator 2
+ 196 0008 30F91370 		ldrsh	r7, [r0, r3, lsl #1]
+ 197              	.LVL13:
+ 198              	.LBB23:
+ 199              	.LBB24:
+  19:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+  20:Core/Inc/utils/queue.h ****         Queue(const Queue &) = default;
+  21:Core/Inc/utils/queue.h ****         Queue &operator=(Queue &&) = default;
+  22:Core/Inc/utils/queue.h ****         Queue &operator=(const Queue &) = default;
+  23:Core/Inc/utils/queue.h ****         ~Queue() {  }
+  24:Core/Inc/utils/queue.h **** 
+  25:Core/Inc/utils/queue.h ****         void insert(T elem) {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 6
+
+
+  26:Core/Inc/utils/queue.h ****                 ++curr_size_;
+ 200              		.loc 2 26 0 discriminator 2
+ 201 000c 114E     		ldr	r6, .L27
+ 202 000e 4C25     		movs	r5, #76
+ 203 0010 05FB03F5 		mul	r5, r5, r3
+ 204 0014 7119     		adds	r1, r6, r5
+ 205 0016 8A68     		ldr	r2, [r1, #8]
+ 206 0018 0132     		adds	r2, r2, #1
+ 207 001a 8A60     		str	r2, [r1, #8]
+  27:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 208              		.loc 2 27 0 discriminator 2
+ 209 001c 7459     		ldr	r4, [r6, r5]
+ 210 001e 611C     		adds	r1, r4, #1
+ 211 0020 2622     		movs	r2, #38
+ 212 0022 02FB0342 		mla	r2, r2, r3, r4
+ 213 0026 0432     		adds	r2, r2, #4
+ 214 0028 06EB4202 		add	r2, r6, r2, lsl #1
+ 215 002c 9780     		strh	r7, [r2, #4]	@ movhi
+  28:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 216              		.loc 2 28 0 discriminator 2
+ 217 002e 01F01F01 		and	r1, r1, #31
+ 218 0032 7151     		str	r1, [r6, r5]
+ 219              	.LVL14:
+ 220              	.LBE24:
+ 221              	.LBE23:
+  29:Core/Src/devs/thinker.cpp ****                 gThinker_Data[i].insert(pack[i]);
+ 222              		.loc 1 29 0 discriminator 2
+ 223 0034 0133     		adds	r3, r3, #1
+ 224              	.LVL15:
+ 225 0036 DBB2     		uxtb	r3, r3
+ 226              	.LVL16:
+ 227 0038 E4E7     		b	.L23
+ 228              	.L22:
+ 229              	.LBE22:
+  32:Core/Src/devs/thinker.cpp ****                 gThinker_Start_Byte_Sent = true;
+ 230              		.loc 1 32 0
+ 231 003a 074B     		ldr	r3, .L27+4
+ 232              	.LVL17:
+ 233 003c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 234 003e 03B1     		cbz	r3, .L26
+ 235              	.LVL18:
+ 236              	.L21:
+  36:Core/Src/devs/thinker.cpp **** 
+ 237              		.loc 1 36 0
+ 238 0040 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 239              	.LVL19:
+ 240              	.L26:
+  33:Core/Src/devs/thinker.cpp ****                 HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+ 241              		.loc 1 33 0
+ 242 0042 0122     		movs	r2, #1
+ 243 0044 044B     		ldr	r3, .L27+4
+ 244 0046 1A70     		strb	r2, [r3]
+  34:Core/Src/devs/thinker.cpp ****         }
+ 245              		.loc 1 34 0
+ 246 0048 0449     		ldr	r1, .L27+8
+ 247 004a 0548     		ldr	r0, .L27+12
+ 248              	.LVL20:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 7
+
+
+ 249 004c FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 250              	.LVL21:
+  36:Core/Src/devs/thinker.cpp **** 
+ 251              		.loc 1 36 0
+ 252 0050 F6E7     		b	.L21
+ 253              	.L28:
+ 254 0052 00BF     		.align	2
+ 255              	.L27:
+ 256 0054 00000000 		.word	.LANCHOR0
+ 257 0058 00000000 		.word	.LANCHOR1
+ 258 005c 00000000 		.word	.LANCHOR2
+ 259 0060 00000000 		.word	huart2
+ 260              		.cfi_endproc
+ 261              	.LFE130:
+ 263              		.section	.text._Z28Thinker_UART2_TxCpltCallbackv,"ax",%progbits
+ 264              		.align	1
+ 265              		.global	_Z28Thinker_UART2_TxCpltCallbackv
+ 266              		.syntax unified
+ 267              		.thumb
+ 268              		.thumb_func
+ 269              		.fpu fpv4-sp-d16
+ 271              	_Z28Thinker_UART2_TxCpltCallbackv:
+ 272              	.LFB131:
+  39:Core/Src/devs/thinker.cpp ****         if (gThinker_Start_Byte_Sent) {
+ 273              		.loc 1 39 0
+ 274              		.cfi_startproc
+ 275              		@ args = 0, pretend = 0, frame = 0
+ 276              		@ frame_needed = 0, uses_anonymous_args = 0
+ 277 0000 70B5     		push	{r4, r5, r6, lr}
+ 278              	.LCFI2:
+ 279              		.cfi_def_cfa_offset 16
+ 280              		.cfi_offset 4, -16
+ 281              		.cfi_offset 5, -12
+ 282              		.cfi_offset 6, -8
+ 283              		.cfi_offset 14, -4
+ 284              	.LBB25:
+  40:Core/Src/devs/thinker.cpp ****                 gThinker_Start_Byte_Sent = false;
+ 285              		.loc 1 40 0
+ 286 0002 204B     		ldr	r3, .L37
+ 287 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 288 0006 8BB3     		cbz	r3, .L30
+ 289              	.LBB26:
+  41:Core/Src/devs/thinker.cpp ****                 int16_t data;
+ 290              		.loc 1 41 0
+ 291 0008 0023     		movs	r3, #0
+ 292 000a 1E4A     		ldr	r2, .L37
+ 293 000c 1370     		strb	r3, [r2]
+ 294              	.LVL22:
+ 295 000e 09E0     		b	.L33
+ 296              	.LVL23:
+ 297              	.L35:
+ 298              	.LBB27:
+ 299              	.LBB28:
+ 300              	.LBB29:
+  29:Core/Inc/utils/queue.h ****         }
+  30:Core/Inc/utils/queue.h **** 
+  31:Core/Inc/utils/queue.h ****         T lookup() {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 8
+
+
+  32:Core/Inc/utils/queue.h ****                 if( curr_size_ ) {
+  33:Core/Inc/utils/queue.h ****                         --curr_size_;
+  34:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+  35:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+  36:Core/Inc/utils/queue.h ****                         return elem;
+  37:Core/Inc/utils/queue.h ****                 }
+  38:Core/Inc/utils/queue.h ****                 return 0;
+ 301              		.loc 2 38 0
+ 302 0010 0020     		movs	r0, #0
+ 303              	.L32:
+ 304              	.LVL24:
+ 305              	.LBE29:
+ 306              	.LBE28:
+  45:Core/Src/devs/thinker.cpp ****                         gThinker_Bytes[2*i + 1] = (uint8_t)(data);
+ 307              		.loc 1 45 0
+ 308 0012 0512     		asrs	r5, r0, #8
+ 309 0014 6200     		lsls	r2, r4, #1
+ 310 0016 1C49     		ldr	r1, .L37+4
+ 311 0018 01F81450 		strb	r5, [r1, r4, lsl #1]
+  46:Core/Src/devs/thinker.cpp ****                 }
+ 312              		.loc 1 46 0
+ 313 001c 0132     		adds	r2, r2, #1
+ 314 001e 8854     		strb	r0, [r1, r2]
+  43:Core/Src/devs/thinker.cpp ****                         data = gThinker_Data[i].lookup();
+ 315              		.loc 1 43 0
+ 316 0020 0133     		adds	r3, r3, #1
+ 317              	.LVL25:
+ 318 0022 DBB2     		uxtb	r3, r3
+ 319              	.LVL26:
+ 320              	.L33:
+  43:Core/Src/devs/thinker.cpp ****                         data = gThinker_Data[i].lookup();
+ 321              		.loc 1 43 0 is_stmt 0 discriminator 3
+ 322 0024 022B     		cmp	r3, #2
+ 323 0026 1BD8     		bhi	.L31
+  44:Core/Src/devs/thinker.cpp ****                         gThinker_Bytes[2*i + 0] = (uint8_t)(data >> 8);
+ 324              		.loc 1 44 0 is_stmt 1 discriminator 2
+ 325 0028 1C46     		mov	r4, r3
+ 326              	.LVL27:
+ 327              	.LBB33:
+ 328              	.LBB32:
+ 329              	.LBB30:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 330              		.loc 2 32 0 discriminator 2
+ 331 002a 1849     		ldr	r1, .L37+8
+ 332 002c 4C22     		movs	r2, #76
+ 333 002e 02FB0312 		mla	r2, r2, r3, r1
+ 334 0032 9268     		ldr	r2, [r2, #8]
+ 335 0034 002A     		cmp	r2, #0
+ 336 0036 EBD0     		beq	.L35
+ 337              	.LBB31:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 338              		.loc 2 33 0
+ 339 0038 0846     		mov	r0, r1
+ 340 003a 4C21     		movs	r1, #76
+ 341 003c 01FB0301 		mla	r1, r1, r3, r0
+ 342 0040 013A     		subs	r2, r2, #1
+ 343 0042 8A60     		str	r2, [r1, #8]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 9
+
+
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 344              		.loc 2 34 0
+ 345 0044 4E68     		ldr	r6, [r1, #4]
+ 346 0046 751C     		adds	r5, r6, #1
+ 347 0048 2622     		movs	r2, #38
+ 348 004a 02FB0362 		mla	r2, r2, r3, r6
+ 349 004e 0432     		adds	r2, r2, #4
+ 350 0050 00EB4202 		add	r2, r0, r2, lsl #1
+ 351 0054 B2F90400 		ldrsh	r0, [r2, #4]
+ 352              	.LVL28:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 353              		.loc 2 35 0
+ 354 0058 05F01F05 		and	r5, r5, #31
+ 355 005c 4D60     		str	r5, [r1, #4]
+ 356 005e D8E7     		b	.L32
+ 357              	.LVL29:
+ 358              	.L31:
+ 359              	.LBE31:
+ 360              	.LBE30:
+ 361              	.LBE32:
+ 362              	.LBE33:
+ 363              	.LBE27:
+  48:Core/Src/devs/thinker.cpp ****         }
+ 364              		.loc 1 48 0
+ 365 0060 0622     		movs	r2, #6
+ 366 0062 0949     		ldr	r1, .L37+4
+ 367 0064 0A48     		ldr	r0, .L37+12
+ 368 0066 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 369              	.LVL30:
+ 370              	.L29:
+ 371              	.LBE26:
+ 372              	.LBE25:
+ 373              		.loc 1 57 0
+ 374 006a 70BD     		pop	{r4, r5, r6, pc}
+ 375              	.L30:
+ 376              	.LVL31:
+ 377              	.LBB36:
+ 378              	.LBB34:
+ 379              	.LBB35:
+  39:Core/Inc/utils/queue.h ****         }
+  40:Core/Inc/utils/queue.h **** 
+  41:Core/Inc/utils/queue.h ****         uint32_t length() const { return curr_size_; }
+ 380              		.loc 2 41 0
+ 381 006c 074B     		ldr	r3, .L37+8
+ 382 006e 9B68     		ldr	r3, [r3, #8]
+ 383              	.LVL32:
+ 384              	.LBE35:
+ 385              	.LBE34:
+  52:Core/Src/devs/thinker.cpp ****                         gThinker_Start_Byte_Sent = true;
+ 386              		.loc 1 52 0
+ 387 0070 002B     		cmp	r3, #0
+ 388 0072 FAD0     		beq	.L29
+  53:Core/Src/devs/thinker.cpp ****                         HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+ 389              		.loc 1 53 0
+ 390 0074 0122     		movs	r2, #1
+ 391 0076 034B     		ldr	r3, .L37
+ 392 0078 1A70     		strb	r2, [r3]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 10
+
+
+  54:Core/Src/devs/thinker.cpp ****                 }
+ 393              		.loc 1 54 0
+ 394 007a 0649     		ldr	r1, .L37+16
+ 395 007c 0448     		ldr	r0, .L37+12
+ 396 007e FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 397              	.LVL33:
+ 398              	.LBE36:
+ 399              		.loc 1 57 0
+ 400 0082 F2E7     		b	.L29
+ 401              	.L38:
+ 402              		.align	2
+ 403              	.L37:
+ 404 0084 00000000 		.word	.LANCHOR1
+ 405 0088 00000000 		.word	.LANCHOR3
+ 406 008c 00000000 		.word	.LANCHOR0
+ 407 0090 00000000 		.word	huart2
+ 408 0094 00000000 		.word	.LANCHOR2
+ 409              		.cfi_endproc
+ 410              	.LFE131:
+ 412              		.section	.text._GLOBAL__sub_I_gThinker_Bytes,"ax",%progbits
+ 413              		.align	1
+ 414              		.syntax unified
+ 415              		.thumb
+ 416              		.thumb_func
+ 417              		.fpu fpv4-sp-d16
+ 419              	_GLOBAL__sub_I_gThinker_Bytes:
+ 420              	.LFB143:
+ 421              		.loc 1 57 0
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 0
+ 424              		@ frame_needed = 0, uses_anonymous_args = 0
+ 425 0000 08B5     		push	{r3, lr}
+ 426              	.LCFI3:
+ 427              		.cfi_def_cfa_offset 8
+ 428              		.cfi_offset 3, -8
+ 429              		.cfi_offset 14, -4
+ 430              		.loc 1 57 0
+ 431 0002 4FF6FF71 		movw	r1, #65535
+ 432 0006 0120     		movs	r0, #1
+ 433 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 434              	.LVL34:
+ 435 000c 08BD     		pop	{r3, pc}
+ 436              		.cfi_endproc
+ 437              	.LFE143:
+ 439              		.section	.init_array,"aw",%init_array
+ 440              		.align	2
+ 441 0000 00000000 		.word	_GLOBAL__sub_I_gThinker_Bytes(target1)
+ 442              		.global	gThinker_Bytes
+ 443              		.section	.bss._ZL13gThinker_Data,"aw",%nobits
+ 444              		.align	2
+ 445              		.set	.LANCHOR0,. + 0
+ 448              	_ZL13gThinker_Data:
+ 449 0000 00000000 		.space	228
+ 449      00000000 
+ 449      00000000 
+ 449      00000000 
+ 449      00000000 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 11
+
+
+ 450              		.section	.bss._ZL24gThinker_Start_Byte_Sent,"aw",%nobits
+ 451              		.set	.LANCHOR1,. + 0
+ 454              	_ZL24gThinker_Start_Byte_Sent:
+ 455 0000 00       		.space	1
+ 456              		.section	.bss.gThinker_Bytes,"aw",%nobits
+ 457              		.align	2
+ 458              		.set	.LANCHOR3,. + 0
+ 461              	gThinker_Bytes:
+ 462 0000 00000000 		.space	6
+ 462      0000
+ 463              		.section	.data._ZL11gStart_Byte,"aw",%progbits
+ 464              		.set	.LANCHOR2,. + 0
+ 467              	_ZL11gStart_Byte:
+ 468 0000 A5       		.byte	-91
+ 469              		.text
+ 470              	.Letext0:
+ 471              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 472              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 473              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 474              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 475              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 476              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 477              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 478              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 479              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 480              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 481              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 482              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 483              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 484              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 485              		.file 17 "Core/Inc/periphs/usart.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 thinker.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:18     .text.__tcf_0:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:24     .text.__tcf_0:00000000 __tcf_0
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:50     .text.__tcf_0:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:56     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:62     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:126    .text._Z41__static_initialization_and_destruction_0ii:00000034 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:133    .text._Z12Thinker_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:140    .text._Z12Thinker_Initv:00000000 _Z12Thinker_Initv
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:158    .text._Z12Thinker_Initv:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:163    .text._Z16send_ThinkerPackPs:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:170    .text._Z16send_ThinkerPackPs:00000000 _Z16send_ThinkerPackPs
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:256    .text._Z16send_ThinkerPackPs:00000054 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:264    .text._Z28Thinker_UART2_TxCpltCallbackv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:271    .text._Z28Thinker_UART2_TxCpltCallbackv:00000000 _Z28Thinker_UART2_TxCpltCallbackv
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:404    .text._Z28Thinker_UART2_TxCpltCallbackv:00000084 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:413    .text._GLOBAL__sub_I_gThinker_Bytes:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:419    .text._GLOBAL__sub_I_gThinker_Bytes:00000000 _GLOBAL__sub_I_gThinker_Bytes
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:440    .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:461    .bss.gThinker_Bytes:00000000 gThinker_Bytes
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:444    .bss._ZL13gThinker_Data:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:448    .bss._ZL13gThinker_Data:00000000 _ZL13gThinker_Data
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:454    .bss._ZL24gThinker_Start_Byte_Sent:00000000 _ZL24gThinker_Start_Byte_Sent
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:455    .bss._ZL24gThinker_Start_Byte_Sent:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:457    .bss.gThinker_Bytes:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccUyQsvK.s:467    .data._ZL11gStart_Byte:00000000 _ZL11gStart_Byte
+
+UNDEFINED SYMBOLS
+__aeabi_atexit
+__dso_handle
+huart2
+HAL_UART_Transmit_IT

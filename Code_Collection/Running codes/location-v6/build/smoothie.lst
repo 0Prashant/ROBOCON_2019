@@ -1,0 +1,465 @@
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"smoothie.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN10Exp_SmoothD2Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN10Exp_SmoothD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN10Exp_SmoothD2Ev:
+  26              	.LFB154:
+  27              		.file 1 "Core/Inc/utils/smoothing_algorithm.h"
+   1:Core/Inc/utils/smoothing_algorithm.h **** 
+   2:Core/Inc/utils/smoothing_algorithm.h **** #ifndef _SMOOTHING_ALGORITHM_H_
+   3:Core/Inc/utils/smoothing_algorithm.h **** #define _SMOOTHING_ALGORITHM_H_
+   4:Core/Inc/utils/smoothing_algorithm.h **** 
+   5:Core/Inc/utils/smoothing_algorithm.h **** #include "vec3.h"
+   6:Core/Inc/utils/smoothing_algorithm.h **** 
+   7:Core/Inc/utils/smoothing_algorithm.h **** class Smoothing_Algorithm
+   8:Core/Inc/utils/smoothing_algorithm.h **** {
+   9:Core/Inc/utils/smoothing_algorithm.h **** public:
+  10:Core/Inc/utils/smoothing_algorithm.h ****         virtual float smooth(const float &input) = 0;
+  11:Core/Inc/utils/smoothing_algorithm.h ****         virtual ~Smoothing_Algorithm() { }
+  12:Core/Inc/utils/smoothing_algorithm.h **** };
+  13:Core/Inc/utils/smoothing_algorithm.h **** 
+  14:Core/Inc/utils/smoothing_algorithm.h **** class Exp_Smooth : public Smoothing_Algorithm
+  15:Core/Inc/utils/smoothing_algorithm.h **** {
+  16:Core/Inc/utils/smoothing_algorithm.h **** public:
+  17:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth();
+  18:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(float alpha);
+  19:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(Exp_Smooth &&) = default;
+  20:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(const Exp_Smooth &) = default;
+  21:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(Exp_Smooth &&) = default;
+  22:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(const Exp_Smooth &) = default;
+  23:Core/Inc/utils/smoothing_algorithm.h ****         ~Exp_Smooth() { }
+  28              		.loc 1 23 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 23 0
+  35 0000 7047     		bx	lr
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 2
+
+
+  36              		.cfi_endproc
+  37              	.LFE154:
+  39              		.weak	_ZN10Exp_SmoothD1Ev
+  40              		.thumb_set _ZN10Exp_SmoothD1Ev,_ZN10Exp_SmoothD2Ev
+  41              		.section	.text._ZN10Exp_Smooth6smoothERKf,"ax",%progbits
+  42              		.align	1
+  43              		.global	_ZN10Exp_Smooth6smoothERKf
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN10Exp_Smooth6smoothERKf:
+  50              	.LFB172:
+  51              		.file 2 "Core/Src/utils/smoothie.cpp"
+   1:Core/Src/utils/smoothie.cpp **** /*
+   2:Core/Src/utils/smoothie.cpp ****  * exp_smooth.cpp
+   3:Core/Src/utils/smoothie.cpp ****  * 
+   4:Core/Src/utils/smoothie.cpp ****  * Created : 11/9/2018
+   5:Core/Src/utils/smoothie.cpp ****  *  Author : n-is
+   6:Core/Src/utils/smoothie.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/utils/smoothie.cpp ****  */
+   8:Core/Src/utils/smoothie.cpp **** 
+   9:Core/Src/utils/smoothie.cpp **** #include "utils/smoothie.h"
+  10:Core/Src/utils/smoothie.cpp **** 
+  11:Core/Src/utils/smoothie.cpp **** //* Exponential Smoothing Implementation
+  12:Core/Src/utils/smoothie.cpp **** Exp_Smooth::Exp_Smooth()
+  13:Core/Src/utils/smoothie.cpp **** {
+  14:Core/Src/utils/smoothie.cpp ****         alpha_ = 1;
+  15:Core/Src/utils/smoothie.cpp ****         is_first_ = true;
+  16:Core/Src/utils/smoothie.cpp **** }
+  17:Core/Src/utils/smoothie.cpp **** 
+  18:Core/Src/utils/smoothie.cpp **** Exp_Smooth::Exp_Smooth(float alpha)
+  19:Core/Src/utils/smoothie.cpp **** {
+  20:Core/Src/utils/smoothie.cpp ****         alpha_ = alpha;
+  21:Core/Src/utils/smoothie.cpp ****         is_first_ = true;
+  22:Core/Src/utils/smoothie.cpp **** }
+  23:Core/Src/utils/smoothie.cpp **** 
+  24:Core/Src/utils/smoothie.cpp **** float Exp_Smooth::smooth(const float &input)
+  25:Core/Src/utils/smoothie.cpp **** {
+  52              		.loc 2 25 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  58              	.LBB24:
+  26:Core/Src/utils/smoothie.cpp ****         if (is_first_) {
+  59              		.loc 2 26 0
+  60 0000 037B     		ldrb	r3, [r0, #12]	@ zero_extendqisi2
+  61 0002 83B9     		cbnz	r3, .L5
+  62              	.LBB25:
+  27:Core/Src/utils/smoothie.cpp ****                 is_first_ = false;
+  28:Core/Src/utils/smoothie.cpp ****                 last_output_ = input;
+  29:Core/Src/utils/smoothie.cpp ****         }
+  30:Core/Src/utils/smoothie.cpp ****         else {
+  31:Core/Src/utils/smoothie.cpp ****                 float residue = input - last_output_;
+  63              		.loc 2 31 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 3
+
+
+  64 0004 91ED007A 		vldr.32	s14, [r1]
+  65 0008 D0ED017A 		vldr.32	s15, [r0, #4]
+  66 000c 77EE676A 		vsub.f32	s13, s14, s15
+  67              	.LVL2:
+  32:Core/Src/utils/smoothie.cpp ****                 residue *= alpha_;
+  68              		.loc 2 32 0
+  69 0010 90ED027A 		vldr.32	s14, [r0, #8]
+  70 0014 27EE267A 		vmul.f32	s14, s14, s13
+  71              	.LVL3:
+  33:Core/Src/utils/smoothie.cpp ****                 last_output_ += residue;
+  72              		.loc 2 33 0
+  73 0018 77EE877A 		vadd.f32	s15, s15, s14
+  74 001c C0ED017A 		vstr.32	s15, [r0, #4]
+  75              	.LVL4:
+  76              	.L4:
+  77              	.LBE25:
+  78              	.LBE24:
+  34:Core/Src/utils/smoothie.cpp ****         }
+  35:Core/Src/utils/smoothie.cpp ****         return last_output_;
+  36:Core/Src/utils/smoothie.cpp **** }
+  79              		.loc 2 36 0
+  80 0020 90ED010A 		vldr.32	s0, [r0, #4]
+  81 0024 7047     		bx	lr
+  82              	.L5:
+  83              	.LBB26:
+  27:Core/Src/utils/smoothie.cpp ****                 last_output_ = input;
+  84              		.loc 2 27 0
+  85 0026 0023     		movs	r3, #0
+  86 0028 0373     		strb	r3, [r0, #12]
+  28:Core/Src/utils/smoothie.cpp ****         }
+  87              		.loc 2 28 0
+  88 002a 0B68     		ldr	r3, [r1]	@ float
+  89 002c 4360     		str	r3, [r0, #4]	@ float
+  90 002e F7E7     		b	.L4
+  91              	.LBE26:
+  92              		.cfi_endproc
+  93              	.LFE172:
+  95              		.section	.text._ZN10Exp_SmoothD0Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+  96              		.align	1
+  97              		.weak	_ZN10Exp_SmoothD0Ev
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 101              		.fpu fpv4-sp-d16
+ 103              	_ZN10Exp_SmoothD0Ev:
+ 104              	.LFB156:
+ 105              		.loc 1 23 0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              	.LVL5:
+ 110 0000 10B5     		push	{r4, lr}
+ 111              	.LCFI0:
+ 112              		.cfi_def_cfa_offset 8
+ 113              		.cfi_offset 4, -8
+ 114              		.cfi_offset 14, -4
+ 115 0002 0446     		mov	r4, r0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 4
+
+
+ 116              		.loc 1 23 0
+ 117 0004 1021     		movs	r1, #16
+ 118 0006 FFF7FEFF 		bl	_ZdlPvj
+ 119              	.LVL6:
+ 120 000a 2046     		mov	r0, r4
+ 121 000c 10BD     		pop	{r4, pc}
+ 122              		.cfi_endproc
+ 123              	.LFE156:
+ 125              		.section	.text._ZN10Exp_SmoothC2Ev,"ax",%progbits
+ 126              		.align	1
+ 127              		.global	_ZN10Exp_SmoothC2Ev
+ 128              		.syntax unified
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.fpu fpv4-sp-d16
+ 133              	_ZN10Exp_SmoothC2Ev:
+ 134              	.LFB167:
+  12:Core/Src/utils/smoothie.cpp **** {
+ 135              		.loc 2 12 0
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 0, uses_anonymous_args = 0
+ 139              		@ link register save eliminated.
+ 140              	.LVL7:
+ 141              	.LBB27:
+  12:Core/Src/utils/smoothie.cpp **** {
+ 142              		.loc 2 12 0
+ 143 0000 034A     		ldr	r2, .L9
+ 144 0002 0260     		str	r2, [r0]
+  14:Core/Src/utils/smoothie.cpp ****         is_first_ = true;
+ 145              		.loc 2 14 0
+ 146 0004 4FF07E52 		mov	r2, #1065353216
+ 147 0008 8260     		str	r2, [r0, #8]	@ float
+  15:Core/Src/utils/smoothie.cpp **** }
+ 148              		.loc 2 15 0
+ 149 000a 0122     		movs	r2, #1
+ 150 000c 0273     		strb	r2, [r0, #12]
+ 151              	.LBE27:
+  16:Core/Src/utils/smoothie.cpp **** 
+ 152              		.loc 2 16 0
+ 153 000e 7047     		bx	lr
+ 154              	.L10:
+ 155              		.align	2
+ 156              	.L9:
+ 157 0010 08000000 		.word	.LANCHOR0+8
+ 158              		.cfi_endproc
+ 159              	.LFE167:
+ 161              		.global	_ZN10Exp_SmoothC1Ev
+ 162              		.thumb_set _ZN10Exp_SmoothC1Ev,_ZN10Exp_SmoothC2Ev
+ 163              		.section	.text._ZN10Exp_SmoothC2Ef,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	_ZN10Exp_SmoothC2Ef
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 169              		.fpu fpv4-sp-d16
+ 171              	_ZN10Exp_SmoothC2Ef:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 5
+
+
+ 172              	.LFB170:
+  18:Core/Src/utils/smoothie.cpp **** {
+ 173              		.loc 2 18 0
+ 174              		.cfi_startproc
+ 175              		@ args = 0, pretend = 0, frame = 0
+ 176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 177              		@ link register save eliminated.
+ 178              	.LVL8:
+ 179              	.LBB28:
+  18:Core/Src/utils/smoothie.cpp **** {
+ 180              		.loc 2 18 0
+ 181 0000 034A     		ldr	r2, .L12
+ 182 0002 0260     		str	r2, [r0]
+  20:Core/Src/utils/smoothie.cpp ****         is_first_ = true;
+ 183              		.loc 2 20 0
+ 184 0004 80ED020A 		vstr.32	s0, [r0, #8]
+  21:Core/Src/utils/smoothie.cpp **** }
+ 185              		.loc 2 21 0
+ 186 0008 0122     		movs	r2, #1
+ 187 000a 0273     		strb	r2, [r0, #12]
+ 188              	.LBE28:
+  22:Core/Src/utils/smoothie.cpp **** 
+ 189              		.loc 2 22 0
+ 190 000c 7047     		bx	lr
+ 191              	.L13:
+ 192 000e 00BF     		.align	2
+ 193              	.L12:
+ 194 0010 08000000 		.word	.LANCHOR0+8
+ 195              		.cfi_endproc
+ 196              	.LFE170:
+ 198              		.global	_ZN10Exp_SmoothC1Ef
+ 199              		.thumb_set _ZN10Exp_SmoothC1Ef,_ZN10Exp_SmoothC2Ef
+ 200              		.section	.text._ZN8SmoothieC2EP19Smoothing_Algorithm,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	_ZN8SmoothieC2EP19Smoothing_Algorithm
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 206              		.fpu fpv4-sp-d16
+ 208              	_ZN8SmoothieC2EP19Smoothing_Algorithm:
+ 209              	.LFB174:
+  37:Core/Src/utils/smoothie.cpp **** //*
+  38:Core/Src/utils/smoothie.cpp **** //* Smoothie Implementation
+  39:Core/Src/utils/smoothie.cpp **** 
+  40:Core/Src/utils/smoothie.cpp **** 
+  41:Core/Src/utils/smoothie.cpp **** Smoothie::Smoothie(Smoothing_Algorithm *sm_algo)
+ 210              		.loc 2 41 0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		@ link register save eliminated.
+ 215              	.LVL9:
+ 216              	.LBB29:
+ 217              	.LBB30:
+ 218              		.file 3 "Core/Inc/utils/smoothie.h"
+   1:Core/Inc/utils/smoothie.h **** /*
+   2:Core/Inc/utils/smoothie.h ****  * smoothie.h
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 6
+
+
+   3:Core/Inc/utils/smoothie.h ****  * 
+   4:Core/Inc/utils/smoothie.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/smoothie.h ****  *  Author : n-is
+   6:Core/Inc/utils/smoothie.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/smoothie.h ****  */
+   8:Core/Inc/utils/smoothie.h **** 
+   9:Core/Inc/utils/smoothie.h **** #ifndef _SMOOTHIE_H_
+  10:Core/Inc/utils/smoothie.h **** #define _SMOOTHIE_H_
+  11:Core/Inc/utils/smoothie.h **** 
+  12:Core/Inc/utils/smoothie.h **** #include "smoothing_algorithm.h"
+  13:Core/Inc/utils/smoothie.h **** 
+  14:Core/Inc/utils/smoothie.h **** class Smoothie
+  15:Core/Inc/utils/smoothie.h **** {
+  16:Core/Inc/utils/smoothie.h **** public:
+  17:Core/Inc/utils/smoothie.h ****         Smoothie() { algo_ = 0; }
+  18:Core/Inc/utils/smoothie.h ****         Smoothie(Smoothing_Algorithm *sm_algo);
+  19:Core/Inc/utils/smoothie.h ****         Smoothie(Smoothie &&) = default;
+  20:Core/Inc/utils/smoothie.h ****         Smoothie(const Smoothie &) = default;
+  21:Core/Inc/utils/smoothie.h ****         Smoothie &operator=(Smoothie &&) = default;
+  22:Core/Inc/utils/smoothie.h ****         Smoothie &operator=(const Smoothie &) = default;
+  23:Core/Inc/utils/smoothie.h ****         ~Smoothie();
+  24:Core/Inc/utils/smoothie.h **** 
+  25:Core/Inc/utils/smoothie.h ****         void set_Algorithm(Smoothing_Algorithm *sm_algo) { algo_ = sm_algo; }
+ 219              		.loc 3 25 0
+ 220 0000 0160     		str	r1, [r0]
+ 221              	.LVL10:
+ 222              	.LBE30:
+ 223              	.LBE29:
+  42:Core/Src/utils/smoothie.cpp **** {
+  43:Core/Src/utils/smoothie.cpp ****         set_Algorithm(sm_algo);
+  44:Core/Src/utils/smoothie.cpp **** }
+ 224              		.loc 2 44 0
+ 225 0002 7047     		bx	lr
+ 226              		.cfi_endproc
+ 227              	.LFE174:
+ 229              		.global	_ZN8SmoothieC1EP19Smoothing_Algorithm
+ 230              		.thumb_set _ZN8SmoothieC1EP19Smoothing_Algorithm,_ZN8SmoothieC2EP19Smoothing_Algorithm
+ 231              		.section	.text._ZN8SmoothieD2Ev,"ax",%progbits
+ 232              		.align	1
+ 233              		.global	_ZN8SmoothieD2Ev
+ 234              		.syntax unified
+ 235              		.thumb
+ 236              		.thumb_func
+ 237              		.fpu fpv4-sp-d16
+ 239              	_ZN8SmoothieD2Ev:
+ 240              	.LFB177:
+  45:Core/Src/utils/smoothie.cpp **** 
+  46:Core/Src/utils/smoothie.cpp **** Smoothie::~Smoothie()
+ 241              		.loc 2 46 0
+ 242              		.cfi_startproc
+ 243              		@ args = 0, pretend = 0, frame = 0
+ 244              		@ frame_needed = 0, uses_anonymous_args = 0
+ 245              		@ link register save eliminated.
+ 246              	.LVL11:
+  47:Core/Src/utils/smoothie.cpp **** {
+  48:Core/Src/utils/smoothie.cpp **** }
+ 247              		.loc 2 48 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 7
+
+
+ 248 0000 7047     		bx	lr
+ 249              		.cfi_endproc
+ 250              	.LFE177:
+ 252              		.global	_ZN8SmoothieD1Ev
+ 253              		.thumb_set _ZN8SmoothieD1Ev,_ZN8SmoothieD2Ev
+ 254              		.weak	_ZTS19Smoothing_Algorithm
+ 255              		.section	.rodata._ZTS19Smoothing_Algorithm,"aG",%progbits,_ZTS19Smoothing_Algorithm,comdat
+ 256              		.align	2
+ 259              	_ZTS19Smoothing_Algorithm:
+ 260 0000 3139536D 		.ascii	"19Smoothing_Algorithm\000"
+ 260      6F6F7468 
+ 260      696E675F 
+ 260      416C676F 
+ 260      72697468 
+ 261              		.weak	_ZTI19Smoothing_Algorithm
+ 262              		.section	.rodata._ZTI19Smoothing_Algorithm,"aG",%progbits,_ZTI19Smoothing_Algorithm,comdat
+ 263              		.align	2
+ 266              	_ZTI19Smoothing_Algorithm:
+ 267 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 268 0004 00000000 		.word	_ZTS19Smoothing_Algorithm
+ 269              		.global	_ZTS10Exp_Smooth
+ 270              		.global	_ZTI10Exp_Smooth
+ 271              		.global	_ZTV10Exp_Smooth
+ 272              		.section	.rodata._ZTI10Exp_Smooth,"a",%progbits
+ 273              		.align	2
+ 276              	_ZTI10Exp_Smooth:
+ 277 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 278 0004 00000000 		.word	_ZTS10Exp_Smooth
+ 279 0008 00000000 		.word	_ZTI19Smoothing_Algorithm
+ 280              		.section	.rodata._ZTS10Exp_Smooth,"a",%progbits
+ 281              		.align	2
+ 284              	_ZTS10Exp_Smooth:
+ 285 0000 31304578 		.ascii	"10Exp_Smooth\000"
+ 285      705F536D 
+ 285      6F6F7468 
+ 285      00
+ 286              		.section	.rodata._ZTV10Exp_Smooth,"a",%progbits
+ 287              		.align	2
+ 288              		.set	.LANCHOR0,. + 0
+ 291              	_ZTV10Exp_Smooth:
+ 292 0000 00000000 		.word	0
+ 293 0004 00000000 		.word	_ZTI10Exp_Smooth
+ 294 0008 00000000 		.word	_ZN10Exp_Smooth6smoothERKf
+ 295 000c 00000000 		.word	_ZN10Exp_SmoothD1Ev
+ 296 0010 00000000 		.word	_ZN10Exp_SmoothD0Ev
+ 297              		.text
+ 298              	.Letext0:
+ 299              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 300              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 301              		.file 6 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 302              		.file 7 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 303              		.file 8 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 304              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 305              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 306              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 307              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 308              		.file 13 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 8
+
+
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 smoothie.cpp
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:18     .text._ZN10Exp_SmoothD2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD2Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD1Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:42     .text._ZN10Exp_Smooth6smoothERKf:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:49     .text._ZN10Exp_Smooth6smoothERKf:00000000 _ZN10Exp_Smooth6smoothERKf
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:96     .text._ZN10Exp_SmoothD0Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:103    .text._ZN10Exp_SmoothD0Ev:00000000 _ZN10Exp_SmoothD0Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:126    .text._ZN10Exp_SmoothC2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:133    .text._ZN10Exp_SmoothC2Ev:00000000 _ZN10Exp_SmoothC2Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:157    .text._ZN10Exp_SmoothC2Ev:00000010 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:133    .text._ZN10Exp_SmoothC2Ev:00000000 _ZN10Exp_SmoothC1Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:164    .text._ZN10Exp_SmoothC2Ef:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:171    .text._ZN10Exp_SmoothC2Ef:00000000 _ZN10Exp_SmoothC2Ef
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:194    .text._ZN10Exp_SmoothC2Ef:00000010 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:171    .text._ZN10Exp_SmoothC2Ef:00000000 _ZN10Exp_SmoothC1Ef
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:201    .text._ZN8SmoothieC2EP19Smoothing_Algorithm:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:208    .text._ZN8SmoothieC2EP19Smoothing_Algorithm:00000000 _ZN8SmoothieC2EP19Smoothing_Algorithm
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:208    .text._ZN8SmoothieC2EP19Smoothing_Algorithm:00000000 _ZN8SmoothieC1EP19Smoothing_Algorithm
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:232    .text._ZN8SmoothieD2Ev:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:239    .text._ZN8SmoothieD2Ev:00000000 _ZN8SmoothieD2Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:239    .text._ZN8SmoothieD2Ev:00000000 _ZN8SmoothieD1Ev
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:259    .rodata._ZTS19Smoothing_Algorithm:00000000 _ZTS19Smoothing_Algorithm
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:256    .rodata._ZTS19Smoothing_Algorithm:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:266    .rodata._ZTI19Smoothing_Algorithm:00000000 _ZTI19Smoothing_Algorithm
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:263    .rodata._ZTI19Smoothing_Algorithm:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:284    .rodata._ZTS10Exp_Smooth:00000000 _ZTS10Exp_Smooth
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:276    .rodata._ZTI10Exp_Smooth:00000000 _ZTI10Exp_Smooth
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:291    .rodata._ZTV10Exp_Smooth:00000000 _ZTV10Exp_Smooth
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:273    .rodata._ZTI10Exp_Smooth:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:281    .rodata._ZTS10Exp_Smooth:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccNzkQJQ.s:287    .rodata._ZTV10Exp_Smooth:00000000 $d
+                           .group:00000000 _ZN10Exp_SmoothD5Ev
+
+UNDEFINED SYMBOLS
+_ZdlPvj
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

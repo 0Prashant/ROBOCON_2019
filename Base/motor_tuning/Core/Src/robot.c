@@ -8,6 +8,7 @@
 #include "pid.h"
 #include  "usart.h"
 
+#include <math.h>
 
 extern struct encoder e[4];
 extern float robotx, roboty, theta;
@@ -15,9 +16,11 @@ extern float actual_robotx, actual_roboty;
 float required_dx, required_dy,required_theta;
 float previous_robotx = 0, previous_roboty = 0, previous_theta = 0;
 float previous_dx = 0, previous_dy = 0, previous_dth = 0;
+float previous_x = -450, previous_y = 500, previous_th = 0;
+//float previous_x = 0, previous_y = 0, previous_th = 0;
 double previous_distance = 0;
 extern float velocity[3];
-float time;
+double time;
 double required_distance;
 extern float distance_pid[3];
 extern uint32_t ramp_counter;
@@ -204,11 +207,11 @@ int goto_distance(float dx, float dy, float dth)
 	while ((pow((pow((robotx),2)+pow((roboty),2)) , 0.5) - distance) <= 0 )
 	{
 		calculate_robot_distance();
-		velocity[2] = -((theta)*distance*4 ) / time;	
+		//velocity[2] = -((theta)*distance*4 ) / time;	
 		printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, dy, previous_dy, previous_roboty);
 		//pid_distance();
-		//calculate_velocity_with_pid();
-		calculate_robot_velocity();	
+		calculate_velocity_with_pid();
+		//calculate_robot_velocity();	
 	}	
 	printf("Finished \n");
 	previous_dx = dx;
@@ -218,11 +221,47 @@ int goto_distance(float dx, float dy, float dth)
 }
 
 
-int goto_absolute_distance(float dx, float dy)
+int goto_absolute_distance(float x, float y, float th)
 {
-	float time;
-	double distance;
-	double temp_velocity;
+//	double temp_distance = 0;
+	float dx = x - robotx;
+	float dy = y - roboty;
+	float dth = th - theta;
+	float distance = pow((dx*dx + dy*dy) ,0.5);
+	time = (double) (distance) / ROBOT_VELOCITY;
+	 
+	//while ((fabs(dx)>50) || (fabs(dy)>50))
+	while (  fabs(distance) >= 50 )
+	{
+		//temp_distance = pow((pow((previous_x-robotx),2)+pow((previous_y-roboty),2)) , 0.5);
+		calculate_robot_distance();
+		//dx -= (robotx-previous_x);
+		
+		dx = x - robotx;
+		dy = y - roboty;
+ 
+		distance = pow((dx*dx + dy*dy) ,0.5);
+		time = (double) (distance) / ROBOT_VELOCITY;
+
+		velocity[0] = (dx / time) ;
+		velocity[1] = (dy / time) ;
+		velocity[2] = -((theta)*4 *distance) / time; 
+		//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", velocity[0], velocity[1], velocity[2], robotx, roboty, theta, x, y, dx, dy); 
+		//printf("%f \t%f\n",robotx, roboty); 
+		//calculate_robot_velocity();
+		calculate_velocity_with_pid();
+		//HAL_Delay(10);  
+	}
+	
+	previous_x = robotx;
+	previous_y = roboty;
+	previous_th = theta;
+	//printf("Finished");
+	return 1;
+}	
+	
+
+	/*double distance;
 	double temp_distance = 0;
 	dx -= previous_robotx;
 	dy -= previous_roboty;
@@ -231,11 +270,7 @@ int goto_absolute_distance(float dx, float dy)
 	velocity[0] = dx / time;
 	velocity[1] = dy / time;
 	velocity[2] = 0;
-	temp_velocity = float_abs(velocity[0]) + float_abs(velocity[1]);
-	velocity[0] = velocity[0] * (ROBOT_VELOCITY / temp_velocity);	// this is to ensure that vx+vy = robot_velocity so that any motor donot exceed it
-	velocity[1] = velocity[1] * (ROBOT_VELOCITY / temp_velocity);
-	//reset_robot_distance();	 
-	while( temp_distance < distance)
+	while (temp_distance < distance)
 	{	
 		temp_distance = pow((pow((previous_robotx-robotx),2)+pow((previous_roboty-roboty),2)) , 0.5);
 		calculate_velocity_with_pid();
@@ -251,30 +286,8 @@ int goto_absolute_distance(float dx, float dy)
 	previous_robotx = robotx;
 	previous_roboty = roboty;	
 	printf("Finished \n");
-	return 1;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return 1;*/
+	
 
 
 

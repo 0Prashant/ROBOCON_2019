@@ -1,0 +1,478 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"encoder.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN7EncoderD2Ev,"axG",%progbits,_ZN7EncoderD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN7EncoderD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN7EncoderD2Ev:
+  26              	.LFB131:
+  27              		.file 1 "Core/Inc/devs/encoder.h"
+   1:Core/Inc/devs/encoder.h **** /*
+   2:Core/Inc/devs/encoder.h ****  * encoder.h
+   3:Core/Inc/devs/encoder.h ****  * 
+   4:Core/Inc/devs/encoder.h ****  * Created : 11/16/2018
+   5:Core/Inc/devs/encoder.h ****  *  Author : n-is
+   6:Core/Inc/devs/encoder.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/devs/encoder.h ****  */
+   8:Core/Inc/devs/encoder.h **** 
+   9:Core/Inc/devs/encoder.h **** #ifndef _ENCODER_H_
+  10:Core/Inc/devs/encoder.h **** #define _ENCODER_H_
+  11:Core/Inc/devs/encoder.h **** 
+  12:Core/Inc/devs/encoder.h **** #include "periphs/gpio.h"
+  13:Core/Inc/devs/encoder.h **** #include "sensor.h"
+  14:Core/Inc/devs/encoder.h **** 
+  15:Core/Inc/devs/encoder.h **** struct Enc
+  16:Core/Inc/devs/encoder.h **** {
+  17:Core/Inc/devs/encoder.h ****         GPIO_TypeDef *chB_port;
+  18:Core/Inc/devs/encoder.h ****         uint16_t chB_pin;
+  19:Core/Inc/devs/encoder.h ****         int32_t count;
+  20:Core/Inc/devs/encoder.h ****         float radius;
+  21:Core/Inc/devs/encoder.h **** };
+  22:Core/Inc/devs/encoder.h **** 
+  23:Core/Inc/devs/encoder.h **** void Enc_HandleCount(struct Enc *enc);
+  24:Core/Inc/devs/encoder.h **** 
+  25:Core/Inc/devs/encoder.h **** 
+  26:Core/Inc/devs/encoder.h **** class Encoder : public Sensor
+  27:Core/Inc/devs/encoder.h **** {
+  28:Core/Inc/devs/encoder.h **** public:
+  29:Core/Inc/devs/encoder.h ****         Encoder() = default;
+  30:Core/Inc/devs/encoder.h ****         Encoder(Encoder &&) = default;
+  31:Core/Inc/devs/encoder.h ****         Encoder(const Encoder &) = default;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 2
+
+
+  32:Core/Inc/devs/encoder.h ****         Encoder &operator=(Encoder &&) = default;
+  33:Core/Inc/devs/encoder.h ****         Encoder &operator=(const Encoder &) = default;
+  34:Core/Inc/devs/encoder.h ****         ~Encoder() { }
+  28              		.loc 1 34 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 34 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE131:
+  39              		.weak	_ZN7EncoderD1Ev
+  40              		.thumb_set _ZN7EncoderD1Ev,_ZN7EncoderD2Ev
+  41              		.section	.text._ZL18Enc_get_DeltaCountP3Enc,"ax",%progbits
+  42              		.align	1
+  43              		.syntax unified
+  44              		.thumb
+  45              		.thumb_func
+  46              		.fpu fpv4-sp-d16
+  48              	_ZL18Enc_get_DeltaCountP3Enc:
+  49              	.LFB141:
+  50              		.file 2 "Core/Src/devs/encoder.cpp"
+   1:Core/Src/devs/encoder.cpp **** /*
+   2:Core/Src/devs/encoder.cpp ****  * encoder.h
+   3:Core/Src/devs/encoder.cpp ****  * 
+   4:Core/Src/devs/encoder.cpp ****  * Created : 11/16/2018
+   5:Core/Src/devs/encoder.cpp ****  *  Author : n-is
+   6:Core/Src/devs/encoder.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/devs/encoder.cpp ****  */
+   8:Core/Src/devs/encoder.cpp **** 
+   9:Core/Src/devs/encoder.cpp **** #include "devs/encoder.h"
+  10:Core/Src/devs/encoder.cpp **** 
+  11:Core/Src/devs/encoder.cpp **** #define PULSE_PER_REVOLUTION    (200)
+  12:Core/Src/devs/encoder.cpp **** #define FREEWHEEL_RADIUS        (32)
+  13:Core/Src/devs/encoder.cpp **** 
+  14:Core/Src/devs/encoder.cpp **** void Enc_HandleCount(struct Enc *enc)
+  15:Core/Src/devs/encoder.cpp **** {
+  16:Core/Src/devs/encoder.cpp ****         if (HAL_GPIO_ReadPin(enc->chB_port, enc->chB_pin)) {
+  17:Core/Src/devs/encoder.cpp ****                 ++enc->count;
+  18:Core/Src/devs/encoder.cpp ****         } else {
+  19:Core/Src/devs/encoder.cpp ****                 --enc->count;
+  20:Core/Src/devs/encoder.cpp ****         }
+  21:Core/Src/devs/encoder.cpp **** }
+  22:Core/Src/devs/encoder.cpp **** 
+  23:Core/Src/devs/encoder.cpp **** static int32_t Enc_get_DeltaCount(struct Enc *enc)
+  24:Core/Src/devs/encoder.cpp **** {
+  51              		.loc 2 24 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  57 0000 0346     		mov	r3, r0
+  25:Core/Src/devs/encoder.cpp ****         uint32_t last_count = enc->count;
+  58              		.loc 2 25 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 3
+
+
+  59 0002 8068     		ldr	r0, [r0, #8]
+  60              	.LVL2:
+  26:Core/Src/devs/encoder.cpp ****         enc->count = 0;
+  61              		.loc 2 26 0
+  62 0004 0022     		movs	r2, #0
+  63 0006 9A60     		str	r2, [r3, #8]
+  27:Core/Src/devs/encoder.cpp ****         return last_count;
+  28:Core/Src/devs/encoder.cpp **** }
+  64              		.loc 2 28 0
+  65 0008 7047     		bx	lr
+  66              		.cfi_endproc
+  67              	.LFE141:
+  69              		.section	.text._ZN7Encoder4initEv,"ax",%progbits
+  70              		.align	1
+  71              		.global	_ZN7Encoder4initEv
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  75              		.fpu fpv4-sp-d16
+  77              	_ZN7Encoder4initEv:
+  78              	.LFB142:
+  29:Core/Src/devs/encoder.cpp **** 
+  30:Core/Src/devs/encoder.cpp **** 
+  31:Core/Src/devs/encoder.cpp **** int Encoder::init()
+  32:Core/Src/devs/encoder.cpp **** {
+  79              		.loc 2 32 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+  84              	.LVL3:
+  33:Core/Src/devs/encoder.cpp ****         return 0;
+  34:Core/Src/devs/encoder.cpp **** }
+  85              		.loc 2 34 0
+  86 0000 0020     		movs	r0, #0
+  87              	.LVL4:
+  88 0002 7047     		bx	lr
+  89              		.cfi_endproc
+  90              	.LFE142:
+  92              		.global	__aeabi_f2d
+  93              		.global	__aeabi_dmul
+  94              		.global	__aeabi_d2f
+  95              		.section	.text._ZN7Encoder4readEv,"ax",%progbits
+  96              		.align	1
+  97              		.global	_ZN7Encoder4readEv
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 101              		.fpu fpv4-sp-d16
+ 103              	_ZN7Encoder4readEv:
+ 104              	.LFB143:
+  35:Core/Src/devs/encoder.cpp **** 
+  36:Core/Src/devs/encoder.cpp **** float Encoder::read()
+  37:Core/Src/devs/encoder.cpp **** {
+ 105              		.loc 2 37 0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 4
+
+
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              	.LVL5:
+ 110 0000 D0B5     		push	{r4, r6, r7, lr}
+ 111              	.LCFI0:
+ 112              		.cfi_def_cfa_offset 16
+ 113              		.cfi_offset 4, -16
+ 114              		.cfi_offset 6, -12
+ 115              		.cfi_offset 7, -8
+ 116              		.cfi_offset 14, -4
+ 117 0002 0446     		mov	r4, r0
+  38:Core/Src/devs/encoder.cpp ****         int32_t counts = Enc_get_DeltaCount(enc_);
+ 118              		.loc 2 38 0
+ 119 0004 8068     		ldr	r0, [r0, #8]
+ 120              	.LVL6:
+ 121 0006 FFF7FEFF 		bl	_ZL18Enc_get_DeltaCountP3Enc
+ 122              	.LVL7:
+  39:Core/Src/devs/encoder.cpp ****         // return (float)counts;
+  40:Core/Src/devs/encoder.cpp ****         float dist = ((float)counts / (float)PULSE_PER_REVOLUTION) * 2 * 3.14159 * (enc_->radius);
+ 123              		.loc 2 40 0
+ 124 000a 07EE900A 		vmov	s15, r0	@ int
+ 125 000e F8EEE76A 		vcvt.f32.s32	s13, s15
+ 126 0012 9FED137A 		vldr.32	s14, .L6+8
+ 127 0016 C6EE877A 		vdiv.f32	s15, s13, s14
+ 128 001a 77EEA77A 		vadd.f32	s15, s15, s15
+ 129 001e 17EE900A 		vmov	r0, s15
+ 130              	.LVL8:
+ 131 0022 FFF7FEFF 		bl	__aeabi_f2d
+ 132              	.LVL9:
+ 133 0026 0CA3     		adr	r3, .L6
+ 134 0028 D3E90023 		ldrd	r2, [r3]
+ 135 002c FFF7FEFF 		bl	__aeabi_dmul
+ 136              	.LVL10:
+ 137 0030 0646     		mov	r6, r0
+ 138 0032 0F46     		mov	r7, r1
+ 139 0034 A368     		ldr	r3, [r4, #8]
+ 140 0036 D868     		ldr	r0, [r3, #12]	@ float
+ 141 0038 FFF7FEFF 		bl	__aeabi_f2d
+ 142              	.LVL11:
+ 143 003c 0246     		mov	r2, r0
+ 144 003e 0B46     		mov	r3, r1
+ 145 0040 3046     		mov	r0, r6
+ 146 0042 3946     		mov	r1, r7
+ 147 0044 FFF7FEFF 		bl	__aeabi_dmul
+ 148              	.LVL12:
+ 149 0048 FFF7FEFF 		bl	__aeabi_d2f
+ 150              	.LVL13:
+  41:Core/Src/devs/encoder.cpp ****         return dist;
+  42:Core/Src/devs/encoder.cpp **** }
+ 151              		.loc 2 42 0
+ 152 004c 00EE100A 		vmov	s0, r0
+ 153 0050 D0BD     		pop	{r4, r6, r7, pc}
+ 154              	.LVL14:
+ 155              	.L7:
+ 156 0052 00BFAFF3 		.align	3
+ 156      0080
+ 157              	.L6:
+ 158 0058 6E861BF0 		.word	-266631570
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 5
+
+
+ 159 005c F9210940 		.word	1074340345
+ 160 0060 00004843 		.word	1128792064
+ 161              		.cfi_endproc
+ 162              	.LFE143:
+ 164              		.section	.text._ZN7Encoder9availableEv,"ax",%progbits
+ 165              		.align	1
+ 166              		.global	_ZN7Encoder9availableEv
+ 167              		.syntax unified
+ 168              		.thumb
+ 169              		.thumb_func
+ 170              		.fpu fpv4-sp-d16
+ 172              	_ZN7Encoder9availableEv:
+ 173              	.LFB144:
+  43:Core/Src/devs/encoder.cpp **** 
+  44:Core/Src/devs/encoder.cpp **** bool Encoder::available()
+  45:Core/Src/devs/encoder.cpp **** {
+ 174              		.loc 2 45 0
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 0
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178              		@ link register save eliminated.
+ 179              	.LVL15:
+  46:Core/Src/devs/encoder.cpp ****         return true;
+  47:Core/Src/devs/encoder.cpp **** }
+ 180              		.loc 2 47 0
+ 181 0000 0120     		movs	r0, #1
+ 182              	.LVL16:
+ 183 0002 7047     		bx	lr
+ 184              		.cfi_endproc
+ 185              	.LFE144:
+ 187              		.section	.text._ZN7Encoder5denitEv,"ax",%progbits
+ 188              		.align	1
+ 189              		.global	_ZN7Encoder5denitEv
+ 190              		.syntax unified
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.fpu fpv4-sp-d16
+ 195              	_ZN7Encoder5denitEv:
+ 196              	.LFB145:
+  48:Core/Src/devs/encoder.cpp **** 
+  49:Core/Src/devs/encoder.cpp **** void Encoder::denit()
+  50:Core/Src/devs/encoder.cpp **** {
+ 197              		.loc 2 50 0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 0
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201              		@ link register save eliminated.
+ 202              	.LVL17:
+  51:Core/Src/devs/encoder.cpp ****         
+  52:Core/Src/devs/encoder.cpp **** }
+ 203              		.loc 2 52 0
+ 204 0000 7047     		bx	lr
+ 205              		.cfi_endproc
+ 206              	.LFE145:
+ 208              		.section	.text._ZN7EncoderD0Ev,"axG",%progbits,_ZN7EncoderD5Ev,comdat
+ 209              		.align	1
+ 210              		.weak	_ZN7EncoderD0Ev
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 6
+
+
+ 211              		.syntax unified
+ 212              		.thumb
+ 213              		.thumb_func
+ 214              		.fpu fpv4-sp-d16
+ 216              	_ZN7EncoderD0Ev:
+ 217              	.LFB133:
+ 218              		.loc 1 34 0
+ 219              		.cfi_startproc
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222              	.LVL18:
+ 223 0000 10B5     		push	{r4, lr}
+ 224              	.LCFI1:
+ 225              		.cfi_def_cfa_offset 8
+ 226              		.cfi_offset 4, -8
+ 227              		.cfi_offset 14, -4
+ 228 0002 0446     		mov	r4, r0
+ 229              		.loc 1 34 0
+ 230 0004 0C21     		movs	r1, #12
+ 231 0006 FFF7FEFF 		bl	_ZdlPvj
+ 232              	.LVL19:
+ 233 000a 2046     		mov	r0, r4
+ 234 000c 10BD     		pop	{r4, pc}
+ 235              		.cfi_endproc
+ 236              	.LFE133:
+ 238              		.section	.text._Z15Enc_HandleCountP3Enc,"ax",%progbits
+ 239              		.align	1
+ 240              		.global	_Z15Enc_HandleCountP3Enc
+ 241              		.syntax unified
+ 242              		.thumb
+ 243              		.thumb_func
+ 244              		.fpu fpv4-sp-d16
+ 246              	_Z15Enc_HandleCountP3Enc:
+ 247              	.LFB140:
+  15:Core/Src/devs/encoder.cpp ****         if (HAL_GPIO_ReadPin(enc->chB_port, enc->chB_pin)) {
+ 248              		.loc 2 15 0
+ 249              		.cfi_startproc
+ 250              		@ args = 0, pretend = 0, frame = 0
+ 251              		@ frame_needed = 0, uses_anonymous_args = 0
+ 252              	.LVL20:
+ 253 0000 10B5     		push	{r4, lr}
+ 254              	.LCFI2:
+ 255              		.cfi_def_cfa_offset 8
+ 256              		.cfi_offset 4, -8
+ 257              		.cfi_offset 14, -4
+ 258 0002 0446     		mov	r4, r0
+  16:Core/Src/devs/encoder.cpp ****                 ++enc->count;
+ 259              		.loc 2 16 0
+ 260 0004 8188     		ldrh	r1, [r0, #4]
+ 261 0006 0068     		ldr	r0, [r0]
+ 262              	.LVL21:
+ 263 0008 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 264              	.LVL22:
+ 265 000c 18B9     		cbnz	r0, .L16
+  19:Core/Src/devs/encoder.cpp ****         }
+ 266              		.loc 2 19 0
+ 267 000e A368     		ldr	r3, [r4, #8]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 7
+
+
+ 268 0010 013B     		subs	r3, r3, #1
+ 269 0012 A360     		str	r3, [r4, #8]
+ 270              	.L12:
+  21:Core/Src/devs/encoder.cpp **** 
+ 271              		.loc 2 21 0
+ 272 0014 10BD     		pop	{r4, pc}
+ 273              	.LVL23:
+ 274              	.L16:
+  17:Core/Src/devs/encoder.cpp ****         } else {
+ 275              		.loc 2 17 0
+ 276 0016 A368     		ldr	r3, [r4, #8]
+ 277 0018 0133     		adds	r3, r3, #1
+ 278 001a A360     		str	r3, [r4, #8]
+ 279 001c FAE7     		b	.L12
+ 280              		.cfi_endproc
+ 281              	.LFE140:
+ 283              		.weak	_ZTS6Sensor
+ 284              		.section	.rodata._ZTS6Sensor,"aG",%progbits,_ZTS6Sensor,comdat
+ 285              		.align	2
+ 288              	_ZTS6Sensor:
+ 289 0000 3653656E 		.ascii	"6Sensor\000"
+ 289      736F7200 
+ 290              		.weak	_ZTI6Sensor
+ 291              		.section	.rodata._ZTI6Sensor,"aG",%progbits,_ZTI6Sensor,comdat
+ 292              		.align	2
+ 295              	_ZTI6Sensor:
+ 296 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 297 0004 00000000 		.word	_ZTS6Sensor
+ 298              		.global	_ZTS7Encoder
+ 299              		.global	_ZTI7Encoder
+ 300              		.global	_ZTV7Encoder
+ 301              		.section	.rodata._ZTI7Encoder,"a",%progbits
+ 302              		.align	2
+ 305              	_ZTI7Encoder:
+ 306 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 307 0004 00000000 		.word	_ZTS7Encoder
+ 308 0008 00000000 		.word	_ZTI6Sensor
+ 309              		.section	.rodata._ZTS7Encoder,"a",%progbits
+ 310              		.align	2
+ 313              	_ZTS7Encoder:
+ 314 0000 37456E63 		.ascii	"7Encoder\000"
+ 314      6F646572 
+ 314      00
+ 315              		.section	.rodata._ZTV7Encoder,"a",%progbits
+ 316              		.align	2
+ 319              	_ZTV7Encoder:
+ 320 0000 00000000 		.word	0
+ 321 0004 00000000 		.word	_ZTI7Encoder
+ 322 0008 00000000 		.word	_ZN7EncoderD1Ev
+ 323 000c 00000000 		.word	_ZN7EncoderD0Ev
+ 324 0010 00000000 		.word	_ZN7Encoder4initEv
+ 325 0014 00000000 		.word	_ZN7Encoder4readEv
+ 326 0018 00000000 		.word	_ZN7Encoder9availableEv
+ 327 001c 00000000 		.word	_ZN7Encoder5denitEv
+ 328              		.text
+ 329              	.Letext0:
+ 330              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 8
+
+
+ 331              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 332              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 333              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 334              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 335              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 336              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 337              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 338              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 339              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 340              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 341              		.file 14 "Core/Inc/devs/sensor.h"
+ 342              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 encoder.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:18     .text._ZN7EncoderD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:25     .text._ZN7EncoderD2Ev:00000000 _ZN7EncoderD2Ev
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:25     .text._ZN7EncoderD2Ev:00000000 _ZN7EncoderD1Ev
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:42     .text._ZL18Enc_get_DeltaCountP3Enc:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:48     .text._ZL18Enc_get_DeltaCountP3Enc:00000000 _ZL18Enc_get_DeltaCountP3Enc
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:70     .text._ZN7Encoder4initEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:77     .text._ZN7Encoder4initEv:00000000 _ZN7Encoder4initEv
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:96     .text._ZN7Encoder4readEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:103    .text._ZN7Encoder4readEv:00000000 _ZN7Encoder4readEv
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:158    .text._ZN7Encoder4readEv:00000058 $d
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:165    .text._ZN7Encoder9availableEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:172    .text._ZN7Encoder9availableEv:00000000 _ZN7Encoder9availableEv
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:188    .text._ZN7Encoder5denitEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:195    .text._ZN7Encoder5denitEv:00000000 _ZN7Encoder5denitEv
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:209    .text._ZN7EncoderD0Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:216    .text._ZN7EncoderD0Ev:00000000 _ZN7EncoderD0Ev
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:239    .text._Z15Enc_HandleCountP3Enc:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:246    .text._Z15Enc_HandleCountP3Enc:00000000 _Z15Enc_HandleCountP3Enc
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:288    .rodata._ZTS6Sensor:00000000 _ZTS6Sensor
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:285    .rodata._ZTS6Sensor:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:295    .rodata._ZTI6Sensor:00000000 _ZTI6Sensor
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:292    .rodata._ZTI6Sensor:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:313    .rodata._ZTS7Encoder:00000000 _ZTS7Encoder
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:305    .rodata._ZTI7Encoder:00000000 _ZTI7Encoder
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:319    .rodata._ZTV7Encoder:00000000 _ZTV7Encoder
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:302    .rodata._ZTI7Encoder:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:310    .rodata._ZTS7Encoder:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccnA5Cde.s:316    .rodata._ZTV7Encoder:00000000 $d
+                           .group:00000000 _ZN7EncoderD5Ev
+
+UNDEFINED SYMBOLS
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+_ZdlPvj
+HAL_GPIO_ReadPin
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

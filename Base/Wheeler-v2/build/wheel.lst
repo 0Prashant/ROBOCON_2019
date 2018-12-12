@@ -1,0 +1,655 @@
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wheel.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZL11time_periodt,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	_ZL11time_periodt:
+  25              	.LFB359:
+  26              		.file 1 "Core/Src/devs/wheel.cpp"
+   1:Core/Src/devs/wheel.cpp **** /*
+   2:Core/Src/devs/wheel.cpp ****  * wheel.c
+   3:Core/Src/devs/wheel.cpp ****  *
+   4:Core/Src/devs/wheel.cpp ****  * Created : 10/1/2018
+   5:Core/Src/devs/wheel.cpp ****  */
+   6:Core/Src/devs/wheel.cpp **** 
+   7:Core/Src/devs/wheel.cpp **** #include "wheel.h"
+   8:Core/Src/devs/wheel.cpp **** #include <math.h>
+   9:Core/Src/devs/wheel.cpp **** 
+  10:Core/Src/devs/wheel.cpp **** static uint16_t time_period(uint16_t PWM_frequency)
+  11:Core/Src/devs/wheel.cpp **** {
+  27              		.loc 1 11 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 10B5     		push	{r4, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0446     		mov	r4, r0
+  12:Core/Src/devs/wheel.cpp ****         if (PWM_frequency < 2000) { //MIN PWM_FREQUENCY = 1281.738 for time period to be 16 bit
+  38              		.loc 1 12 0
+  39 0004 B0F5FA6F 		cmp	r0, #2000
+  40 0008 06D3     		bcc	.L4
+  41              	.LVL1:
+  42              	.L2:
+  13:Core/Src/devs/wheel.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+  14:Core/Src/devs/wheel.cpp ****         }
+  15:Core/Src/devs/wheel.cpp ****         return ((PWM_TIMER_FREQUENCY / 2) / PWM_frequency) - 1; // In Center aligned mode period do
+  43              		.loc 1 15 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 2
+
+
+  44 000a 0648     		ldr	r0, .L5
+  45 000c 90FBF4F0 		sdiv	r0, r0, r4
+  46 0010 80B2     		uxth	r0, r0
+  47 0012 0138     		subs	r0, r0, #1
+  16:Core/Src/devs/wheel.cpp **** }
+  48              		.loc 1 16 0
+  49 0014 80B2     		uxth	r0, r0
+  50 0016 10BD     		pop	{r4, pc}
+  51              	.LVL2:
+  52              	.L4:
+  13:Core/Src/devs/wheel.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+  53              		.loc 1 13 0
+  54 0018 0D21     		movs	r1, #13
+  55 001a 0348     		ldr	r0, .L5+4
+  56              	.LVL3:
+  57 001c FFF7FEFF 		bl	_Error_Handler
+  58              	.LVL4:
+  59 0020 F3E7     		b	.L2
+  60              	.L6:
+  61 0022 00BF     		.align	2
+  62              	.L5:
+  63 0024 00BD0105 		.word	84000000
+  64 0028 00000000 		.word	.LC0
+  65              		.cfi_endproc
+  66              	.LFE359:
+  68              		.section	.text._ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt,"ax",%progbits
+  69              		.align	1
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  73              		.fpu fpv4-sp-d16
+  75              	_ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt:
+  76              	.LFB360:
+  17:Core/Src/devs/wheel.cpp **** 
+  18:Core/Src/devs/wheel.cpp **** /* SET DUTYCYCLE primary function */
+  19:Core/Src/devs/wheel.cpp **** static void set_DutyCycle_Primary(TIM_HandleTypeDef *htim, uint32_t Channel, uint16_t dutyCycle)
+  20:Core/Src/devs/wheel.cpp **** {
+  77              		.loc 1 20 0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              	.LVL5:
+  82 0000 70B5     		push	{r4, r5, r6, lr}
+  83              	.LCFI1:
+  84              		.cfi_def_cfa_offset 16
+  85              		.cfi_offset 4, -16
+  86              		.cfi_offset 5, -12
+  87              		.cfi_offset 6, -8
+  88              		.cfi_offset 14, -4
+  89 0002 0646     		mov	r6, r0
+  90 0004 0D46     		mov	r5, r1
+  91 0006 1446     		mov	r4, r2
+  21:Core/Src/devs/wheel.cpp ****         uint16_t mapped_value;
+  22:Core/Src/devs/wheel.cpp ****         mapped_value = (time_period(MOTOR_DRIVER_FREQUENCY) * dutyCycle) / 65535;
+  92              		.loc 1 22 0
+  93 0008 4FF4FA50 		mov	r0, #8000
+  94              	.LVL6:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 3
+
+
+  95 000c FFF7FEFF 		bl	_ZL11time_periodt
+  96              	.LVL7:
+  97 0010 00FB04F0 		mul	r0, r0, r4
+  98 0014 064B     		ldr	r3, .L9
+  99 0016 83FB0023 		smull	r2, r3, r3, r0
+ 100 001a 0344     		add	r3, r3, r0
+ 101 001c C017     		asrs	r0, r0, #31
+ 102 001e C0EBE330 		rsb	r0, r0, r3, asr #15
+ 103              	.LVL8:
+  23:Core/Src/devs/wheel.cpp ****         __HAL_TIM_SET_COMPARE(htim, Channel, mapped_value);
+ 104              		.loc 1 23 0
+ 105 0022 3368     		ldr	r3, [r6]
+ 106 0024 3433     		adds	r3, r3, #52
+ 107 0026 AD08     		lsrs	r5, r5, #2
+ 108              	.LVL9:
+ 109 0028 80B2     		uxth	r0, r0
+ 110 002a 43F82500 		str	r0, [r3, r5, lsl #2]
+ 111              	.LVL10:
+  24:Core/Src/devs/wheel.cpp **** }
+ 112              		.loc 1 24 0
+ 113 002e 70BD     		pop	{r4, r5, r6, pc}
+ 114              	.LVL11:
+ 115              	.L10:
+ 116              		.align	2
+ 117              	.L9:
+ 118 0030 01800080 		.word	-2147450879
+ 119              		.cfi_endproc
+ 120              	.LFE360:
+ 122              		.section	.text._ZL13set_DutyCycleP12Wheel_Configt,"ax",%progbits
+ 123              		.align	1
+ 124              		.syntax unified
+ 125              		.thumb
+ 126              		.thumb_func
+ 127              		.fpu fpv4-sp-d16
+ 129              	_ZL13set_DutyCycleP12Wheel_Configt:
+ 130              	.LFB361:
+  25:Core/Src/devs/wheel.cpp **** 
+  26:Core/Src/devs/wheel.cpp **** static void set_DutyCycle(Wheel_Config *w, uint16_t dutyCycle)
+  27:Core/Src/devs/wheel.cpp **** {
+ 131              		.loc 1 27 0
+ 132              		.cfi_startproc
+ 133              		@ args = 0, pretend = 0, frame = 0
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135              	.LVL12:
+ 136 0000 08B5     		push	{r3, lr}
+ 137              	.LCFI2:
+ 138              		.cfi_def_cfa_offset 8
+ 139              		.cfi_offset 3, -8
+ 140              		.cfi_offset 14, -4
+  28:Core/Src/devs/wheel.cpp ****         set_DutyCycle_Primary(w->htim, w->channel, dutyCycle);
+ 141              		.loc 1 28 0
+ 142 0002 0A46     		mov	r2, r1
+ 143 0004 C169     		ldr	r1, [r0, #28]
+ 144              	.LVL13:
+ 145 0006 8069     		ldr	r0, [r0, #24]
+ 146              	.LVL14:
+ 147 0008 FFF7FEFF 		bl	_ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 4
+
+
+ 148              	.LVL15:
+  29:Core/Src/devs/wheel.cpp **** }
+ 149              		.loc 1 29 0
+ 150 000c 08BD     		pop	{r3, pc}
+ 151              		.cfi_endproc
+ 152              	.LFE361:
+ 154              		.global	__aeabi_f2d
+ 155              		.global	__aeabi_dmul
+ 156              		.global	__aeabi_d2uiz
+ 157              		.section	.text._ZL14set_WheelOmegaP12Wheel_Configf,"ax",%progbits
+ 158              		.align	1
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.fpu fpv4-sp-d16
+ 164              	_ZL14set_WheelOmegaP12Wheel_Configf:
+ 165              	.LFB363:
+  30:Core/Src/devs/wheel.cpp **** 
+  31:Core/Src/devs/wheel.cpp **** static void set_WheelDirection(Wheel_Config *w, Direction d)
+  32:Core/Src/devs/wheel.cpp **** {
+  33:Core/Src/devs/wheel.cpp ****         if (d == Direction::AHEAD)       // AHEAD
+  34:Core/Src/devs/wheel.cpp ****         {
+  35:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, GPIO_PIN_SET);
+  36:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_RESET);
+  37:Core/Src/devs/wheel.cpp ****         }
+  38:Core/Src/devs/wheel.cpp ****         else if (d == Direction::BACK)  // BACK
+  39:Core/Src/devs/wheel.cpp ****         {
+  40:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, GPIO_PIN_RESET);
+  41:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_SET);
+  42:Core/Src/devs/wheel.cpp ****         }
+  43:Core/Src/devs/wheel.cpp ****         else                    // HALT
+  44:Core/Src/devs/wheel.cpp ****         {
+  45:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in1_port, w->in1_pin, GPIO_PIN_RESET);
+  46:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_RESET);
+  47:Core/Src/devs/wheel.cpp ****         }
+  48:Core/Src/devs/wheel.cpp **** }
+  49:Core/Src/devs/wheel.cpp **** 
+  50:Core/Src/devs/wheel.cpp **** static void set_WheelOmega(Wheel_Config *w, float omega)
+  51:Core/Src/devs/wheel.cpp **** {
+ 166              		.loc 1 51 0
+ 167              		.cfi_startproc
+ 168              		@ args = 0, pretend = 0, frame = 0
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170              	.LVL16:
+ 171 0000 10B5     		push	{r4, lr}
+ 172              	.LCFI3:
+ 173              		.cfi_def_cfa_offset 8
+ 174              		.cfi_offset 4, -8
+ 175              		.cfi_offset 14, -4
+ 176 0002 0446     		mov	r4, r0
+  52:Core/Src/devs/wheel.cpp ****         uint16_t new_omega = (65535.0 / MAX_OMEGA) * (omega);
+ 177              		.loc 1 52 0
+ 178 0004 10EE100A 		vmov	r0, s0
+ 179              	.LVL17:
+ 180 0008 FFF7FEFF 		bl	__aeabi_f2d
+ 181              	.LVL18:
+ 182 000c 06A3     		adr	r3, .L15
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 5
+
+
+ 183 000e D3E90023 		ldrd	r2, [r3]
+ 184 0012 FFF7FEFF 		bl	__aeabi_dmul
+ 185              	.LVL19:
+ 186 0016 FFF7FEFF 		bl	__aeabi_d2uiz
+ 187              	.LVL20:
+  53:Core/Src/devs/wheel.cpp ****         set_DutyCycle(w, new_omega);
+ 188              		.loc 1 53 0
+ 189 001a 81B2     		uxth	r1, r0
+ 190 001c 2046     		mov	r0, r4
+ 191              	.LVL21:
+ 192 001e FFF7FEFF 		bl	_ZL13set_DutyCycleP12Wheel_Configt
+ 193              	.LVL22:
+  54:Core/Src/devs/wheel.cpp **** }
+ 194              		.loc 1 54 0
+ 195 0022 10BD     		pop	{r4, pc}
+ 196              	.LVL23:
+ 197              	.L16:
+ 198 0024 AFF30080 		.align	3
+ 199              	.L15:
+ 200 0028 DBB66DDB 		.word	-613566757
+ 201 002c B6418D40 		.word	1082999222
+ 202              		.cfi_endproc
+ 203              	.LFE363:
+ 205              		.section	.text._ZL18set_WheelDirectionP12Wheel_Config9Direction,"ax",%progbits
+ 206              		.align	1
+ 207              		.syntax unified
+ 208              		.thumb
+ 209              		.thumb_func
+ 210              		.fpu fpv4-sp-d16
+ 212              	_ZL18set_WheelDirectionP12Wheel_Config9Direction:
+ 213              	.LFB362:
+  32:Core/Src/devs/wheel.cpp ****         if (d == Direction::AHEAD)       // AHEAD
+ 214              		.loc 1 32 0
+ 215              		.cfi_startproc
+ 216              		@ args = 0, pretend = 0, frame = 0
+ 217              		@ frame_needed = 0, uses_anonymous_args = 0
+ 218              	.LVL24:
+ 219 0000 10B5     		push	{r4, lr}
+ 220              	.LCFI4:
+ 221              		.cfi_def_cfa_offset 8
+ 222              		.cfi_offset 4, -8
+ 223              		.cfi_offset 14, -4
+ 224 0002 0446     		mov	r4, r0
+  33:Core/Src/devs/wheel.cpp ****         {
+ 225              		.loc 1 33 0
+ 226 0004 61B1     		cbz	r1, .L22
+  38:Core/Src/devs/wheel.cpp ****         {
+ 227              		.loc 1 38 0
+ 228 0006 0129     		cmp	r1, #1
+ 229 0008 15D0     		beq	.L23
+  45:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_RESET);
+ 230              		.loc 1 45 0
+ 231 000a 0022     		movs	r2, #0
+ 232 000c 8189     		ldrh	r1, [r0, #12]
+ 233              	.LVL25:
+ 234 000e 8068     		ldr	r0, [r0, #8]
+ 235              	.LVL26:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 6
+
+
+ 236 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 237              	.LVL27:
+  46:Core/Src/devs/wheel.cpp ****         }
+ 238              		.loc 1 46 0
+ 239 0014 0022     		movs	r2, #0
+ 240 0016 A18A     		ldrh	r1, [r4, #20]
+ 241 0018 2069     		ldr	r0, [r4, #16]
+ 242 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 243              	.LVL28:
+ 244              	.L17:
+  48:Core/Src/devs/wheel.cpp **** 
+ 245              		.loc 1 48 0
+ 246 001e 10BD     		pop	{r4, pc}
+ 247              	.LVL29:
+ 248              	.L22:
+  35:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_RESET);
+ 249              		.loc 1 35 0
+ 250 0020 0122     		movs	r2, #1
+ 251 0022 8189     		ldrh	r1, [r0, #12]
+ 252              	.LVL30:
+ 253 0024 8068     		ldr	r0, [r0, #8]
+ 254              	.LVL31:
+ 255 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 256              	.LVL32:
+  36:Core/Src/devs/wheel.cpp ****         }
+ 257              		.loc 1 36 0
+ 258 002a 0022     		movs	r2, #0
+ 259 002c A18A     		ldrh	r1, [r4, #20]
+ 260 002e 2069     		ldr	r0, [r4, #16]
+ 261 0030 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 262              	.LVL33:
+ 263 0034 F3E7     		b	.L17
+ 264              	.LVL34:
+ 265              	.L23:
+  40:Core/Src/devs/wheel.cpp ****                 HAL_GPIO_WritePin(w->in2_port, w->in2_pin, GPIO_PIN_SET);
+ 266              		.loc 1 40 0
+ 267 0036 0022     		movs	r2, #0
+ 268 0038 8189     		ldrh	r1, [r0, #12]
+ 269              	.LVL35:
+ 270 003a 8068     		ldr	r0, [r0, #8]
+ 271              	.LVL36:
+ 272 003c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 273              	.LVL37:
+  41:Core/Src/devs/wheel.cpp ****         }
+ 274              		.loc 1 41 0
+ 275 0040 0122     		movs	r2, #1
+ 276 0042 A18A     		ldrh	r1, [r4, #20]
+ 277 0044 2069     		ldr	r0, [r4, #16]
+ 278 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 279              	.LVL38:
+ 280 004a E8E7     		b	.L17
+ 281              		.cfi_endproc
+ 282              	.LFE362:
+ 284              		.section	.text._ZN5Wheel9set_OmegaEf,"ax",%progbits
+ 285              		.align	1
+ 286              		.global	_ZN5Wheel9set_OmegaEf
+ 287              		.syntax unified
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 7
+
+
+ 288              		.thumb
+ 289              		.thumb_func
+ 290              		.fpu fpv4-sp-d16
+ 292              	_ZN5Wheel9set_OmegaEf:
+ 293              	.LFB364:
+  55:Core/Src/devs/wheel.cpp **** 
+  56:Core/Src/devs/wheel.cpp **** void Wheel::set_Omega(float omega)
+  57:Core/Src/devs/wheel.cpp **** {
+ 294              		.loc 1 57 0
+ 295              		.cfi_startproc
+ 296              		@ args = 0, pretend = 0, frame = 0
+ 297              		@ frame_needed = 0, uses_anonymous_args = 0
+ 298              		@ link register save eliminated.
+ 299              	.LVL39:
+  58:Core/Src/devs/wheel.cpp ****         if (omega < -wheel_->tolerance) {
+ 300              		.loc 1 58 0
+ 301 0000 0368     		ldr	r3, [r0]
+ 302 0002 D3ED097A 		vldr.32	s15, [r3, #36]
+ 303 0006 B1EE677A 		vneg.f32	s14, s15
+ 304 000a B4EEC07A 		vcmpe.f32	s14, s0
+ 305 000e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 306 0012 07DC     		bgt	.L34
+  59:Core/Src/devs/wheel.cpp ****                 dir_ = Direction::BACK;
+  60:Core/Src/devs/wheel.cpp ****         }
+  61:Core/Src/devs/wheel.cpp ****         else if (omega > wheel_->tolerance) {
+ 307              		.loc 1 61 0
+ 308 0014 F4EEC07A 		vcmpe.f32	s15, s0
+ 309 0018 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 310 001c 09D4     		bmi	.L35
+  62:Core/Src/devs/wheel.cpp ****                 dir_ = Direction::AHEAD;
+  63:Core/Src/devs/wheel.cpp ****         }
+  64:Core/Src/devs/wheel.cpp ****         else {
+  65:Core/Src/devs/wheel.cpp ****                 dir_ = Direction::HALT;
+ 311              		.loc 1 65 0
+ 312 001e 0223     		movs	r3, #2
+ 313 0020 0371     		strb	r3, [r0, #4]
+ 314 0022 01E0     		b	.L27
+ 315              	.L34:
+  59:Core/Src/devs/wheel.cpp ****                 dir_ = Direction::BACK;
+ 316              		.loc 1 59 0
+ 317 0024 0123     		movs	r3, #1
+ 318 0026 0371     		strb	r3, [r0, #4]
+ 319              	.L27:
+  66:Core/Src/devs/wheel.cpp ****                 omega_ = 0;
+  67:Core/Src/devs/wheel.cpp ****         }
+  68:Core/Src/devs/wheel.cpp ****         omega_ = fabsf(omega);
+ 320              		.loc 1 68 0
+ 321 0028 B0EEC00A 		vabs.f32	s0, s0
+ 322              	.LVL40:
+ 323 002c 80ED020A 		vstr.32	s0, [r0, #8]
+  69:Core/Src/devs/wheel.cpp **** }
+ 324              		.loc 1 69 0
+ 325 0030 7047     		bx	lr
+ 326              	.LVL41:
+ 327              	.L35:
+  62:Core/Src/devs/wheel.cpp ****                 dir_ = Direction::AHEAD;
+ 328              		.loc 1 62 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 8
+
+
+ 329 0032 0023     		movs	r3, #0
+ 330 0034 0371     		strb	r3, [r0, #4]
+ 331 0036 F7E7     		b	.L27
+ 332              		.cfi_endproc
+ 333              	.LFE364:
+ 335              		.section	.text._ZNK5Wheel6updateEv,"ax",%progbits
+ 336              		.align	1
+ 337              		.global	_ZNK5Wheel6updateEv
+ 338              		.syntax unified
+ 339              		.thumb
+ 340              		.thumb_func
+ 341              		.fpu fpv4-sp-d16
+ 343              	_ZNK5Wheel6updateEv:
+ 344              	.LFB365:
+  70:Core/Src/devs/wheel.cpp **** 
+  71:Core/Src/devs/wheel.cpp **** void Wheel::update() const
+  72:Core/Src/devs/wheel.cpp **** {
+ 345              		.loc 1 72 0
+ 346              		.cfi_startproc
+ 347              		@ args = 0, pretend = 0, frame = 0
+ 348              		@ frame_needed = 0, uses_anonymous_args = 0
+ 349              	.LVL42:
+ 350 0000 10B5     		push	{r4, lr}
+ 351              	.LCFI5:
+ 352              		.cfi_def_cfa_offset 8
+ 353              		.cfi_offset 4, -8
+ 354              		.cfi_offset 14, -4
+ 355 0002 0446     		mov	r4, r0
+  73:Core/Src/devs/wheel.cpp ****         if (omega_ < 0) {
+ 356              		.loc 1 73 0
+ 357 0004 D0ED027A 		vldr.32	s15, [r0, #8]
+ 358 0008 F5EEC07A 		vcmpe.f32	s15, #0
+ 359 000c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 360 0010 09D4     		bmi	.L41
+ 361              	.LVL43:
+ 362              	.L37:
+  74:Core/Src/devs/wheel.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+  75:Core/Src/devs/wheel.cpp ****         }
+  76:Core/Src/devs/wheel.cpp ****         set_WheelDirection(wheel_, dir_);
+ 363              		.loc 1 76 0
+ 364 0012 2179     		ldrb	r1, [r4, #4]	@ zero_extendqisi2
+ 365 0014 2068     		ldr	r0, [r4]
+ 366 0016 FFF7FEFF 		bl	_ZL18set_WheelDirectionP12Wheel_Config9Direction
+ 367              	.LVL44:
+  77:Core/Src/devs/wheel.cpp ****         set_WheelOmega(wheel_, omega_);
+ 368              		.loc 1 77 0
+ 369 001a 94ED020A 		vldr.32	s0, [r4, #8]
+ 370 001e 2068     		ldr	r0, [r4]
+ 371 0020 FFF7FEFF 		bl	_ZL14set_WheelOmegaP12Wheel_Configf
+ 372              	.LVL45:
+  78:Core/Src/devs/wheel.cpp **** }
+ 373              		.loc 1 78 0
+ 374 0024 10BD     		pop	{r4, pc}
+ 375              	.LVL46:
+ 376              	.L41:
+  74:Core/Src/devs/wheel.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+ 377              		.loc 1 74 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 9
+
+
+ 378 0026 4A21     		movs	r1, #74
+ 379 0028 0148     		ldr	r0, .L42
+ 380              	.LVL47:
+ 381 002a FFF7FEFF 		bl	_Error_Handler
+ 382              	.LVL48:
+ 383 002e F0E7     		b	.L37
+ 384              	.L43:
+ 385              		.align	2
+ 386              	.L42:
+ 387 0030 00000000 		.word	.LC0
+ 388              		.cfi_endproc
+ 389              	.LFE365:
+ 391              		.global	__aeabi_i2d
+ 392              		.global	__aeabi_ddiv
+ 393              		.global	__aeabi_d2f
+ 394              		.section	.text._ZN5Wheel9get_OmegaEm,"ax",%progbits
+ 395              		.align	1
+ 396              		.global	_ZN5Wheel9get_OmegaEm
+ 397              		.syntax unified
+ 398              		.thumb
+ 399              		.thumb_func
+ 400              		.fpu fpv4-sp-d16
+ 402              	_ZN5Wheel9get_OmegaEm:
+ 403              	.LFB366:
+  79:Core/Src/devs/wheel.cpp **** 
+  80:Core/Src/devs/wheel.cpp **** float Wheel::get_Omega(uint32_t dt_millis)
+  81:Core/Src/devs/wheel.cpp **** {
+ 404              		.loc 1 81 0
+ 405              		.cfi_startproc
+ 406              		@ args = 0, pretend = 0, frame = 0
+ 407              		@ frame_needed = 0, uses_anonymous_args = 0
+ 408              	.LVL49:
+ 409 0000 38B5     		push	{r3, r4, r5, lr}
+ 410              	.LCFI6:
+ 411              		.cfi_def_cfa_offset 16
+ 412              		.cfi_offset 3, -16
+ 413              		.cfi_offset 4, -12
+ 414              		.cfi_offset 5, -8
+ 415              		.cfi_offset 14, -4
+ 416 0002 2DED028B 		vpush.64	{d8}
+ 417              	.LCFI7:
+ 418              		.cfi_def_cfa_offset 24
+ 419              		.cfi_offset 80, -24
+ 420              		.cfi_offset 81, -20
+ 421 0006 08EE101A 		vmov	s16, r1	@ int
+  82:Core/Src/devs/wheel.cpp ****         int16_t cps = wheel_->henc->Instance->CNT;
+ 422              		.loc 1 82 0
+ 423 000a 0368     		ldr	r3, [r0]
+ 424 000c 1B6A     		ldr	r3, [r3, #32]
+ 425 000e 1B68     		ldr	r3, [r3]
+ 426 0010 586A     		ldr	r0, [r3, #36]
+ 427              	.LVL50:
+  83:Core/Src/devs/wheel.cpp ****         wheel_->henc->Instance->CNT = 0;
+ 428              		.loc 1 83 0
+ 429 0012 0022     		movs	r2, #0
+ 430 0014 5A62     		str	r2, [r3, #36]
+  84:Core/Src/devs/wheel.cpp ****         float omega = 6.29325 * cps / (float)dt_millis;
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 10
+
+
+ 431              		.loc 1 84 0
+ 432 0016 00B2     		sxth	r0, r0
+ 433 0018 FFF7FEFF 		bl	__aeabi_i2d
+ 434              	.LVL51:
+ 435 001c 0CA3     		adr	r3, .L46
+ 436 001e D3E90023 		ldrd	r2, [r3]
+ 437 0022 FFF7FEFF 		bl	__aeabi_dmul
+ 438              	.LVL52:
+ 439 0026 0446     		mov	r4, r0
+ 440 0028 0D46     		mov	r5, r1
+ 441 002a F8EE487A 		vcvt.f32.u32	s15, s16
+ 442 002e 17EE900A 		vmov	r0, s15
+ 443 0032 FFF7FEFF 		bl	__aeabi_f2d
+ 444              	.LVL53:
+ 445 0036 0246     		mov	r2, r0
+ 446 0038 0B46     		mov	r3, r1
+ 447 003a 2046     		mov	r0, r4
+ 448 003c 2946     		mov	r1, r5
+ 449 003e FFF7FEFF 		bl	__aeabi_ddiv
+ 450              	.LVL54:
+ 451 0042 FFF7FEFF 		bl	__aeabi_d2f
+ 452              	.LVL55:
+  85:Core/Src/devs/wheel.cpp **** 
+  86:Core/Src/devs/wheel.cpp ****         return omega;
+  87:Core/Src/devs/wheel.cpp **** }...
+ 453              		.loc 1 87 0
+ 454 0046 00EE100A 		vmov	s0, r0
+ 455 004a BDEC028B 		vldm	sp!, {d8}
+ 456              	.LCFI8:
+ 457              		.cfi_restore 80
+ 458              		.cfi_restore 81
+ 459              		.cfi_def_cfa_offset 16
+ 460              	.LVL56:
+ 461 004e 38BD     		pop	{r3, r4, r5, pc}
+ 462              	.L47:
+ 463              		.align	3
+ 464              	.L46:
+ 465 0050 3F355EBA 		.word	-1168231105
+ 466 0054 492C1940 		.word	1075391561
+ 467              		.cfi_endproc
+ 468              	.LFE366:
+ 470              		.section	.rodata._ZL11time_periodt.str1.4,"aMS",%progbits,1
+ 471              		.align	2
+ 472              	.LC0:
+ 473 0000 436F7265 		.ascii	"Core/Src/devs/wheel.cpp\000"
+ 473      2F537263 
+ 473      2F646576 
+ 473      732F7768 
+ 473      65656C2E 
+ 474              		.text
+ 475              	.Letext0:
+ 476              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 477              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 478              		.file 4 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 479              		.file 5 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 480              		.file 6 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 481              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 11
+
+
+ 482              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 483              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 484              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 485              		.file 11 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 486              		.file 12 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 487              		.file 13 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 488              		.file 14 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 489              		.file 15 "Core/Inc\\periphs/tim.h"
+ 490              		.file 16 "Core/Inc\\devs/wheel.h"
+ 491              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 492              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 493              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 494              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 495              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 496              		.file 22 "<built-in>"
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 wheel.cpp
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:18     .text._ZL11time_periodt:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:24     .text._ZL11time_periodt:00000000 _ZL11time_periodt
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:63     .text._ZL11time_periodt:00000024 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:69     .text._ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:75     .text._ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt:00000000 _ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:118    .text._ZL21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt:00000030 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:123    .text._ZL13set_DutyCycleP12Wheel_Configt:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:129    .text._ZL13set_DutyCycleP12Wheel_Configt:00000000 _ZL13set_DutyCycleP12Wheel_Configt
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:158    .text._ZL14set_WheelOmegaP12Wheel_Configf:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:164    .text._ZL14set_WheelOmegaP12Wheel_Configf:00000000 _ZL14set_WheelOmegaP12Wheel_Configf
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:200    .text._ZL14set_WheelOmegaP12Wheel_Configf:00000028 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:206    .text._ZL18set_WheelDirectionP12Wheel_Config9Direction:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:212    .text._ZL18set_WheelDirectionP12Wheel_Config9Direction:00000000 _ZL18set_WheelDirectionP12Wheel_Config9Direction
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:285    .text._ZN5Wheel9set_OmegaEf:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:292    .text._ZN5Wheel9set_OmegaEf:00000000 _ZN5Wheel9set_OmegaEf
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:336    .text._ZNK5Wheel6updateEv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:343    .text._ZNK5Wheel6updateEv:00000000 _ZNK5Wheel6updateEv
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:387    .text._ZNK5Wheel6updateEv:00000030 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:395    .text._ZN5Wheel9get_OmegaEm:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:402    .text._ZN5Wheel9get_OmegaEm:00000000 _ZN5Wheel9get_OmegaEm
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:465    .text._ZN5Wheel9get_OmegaEm:00000050 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\ccFq3utI.s:471    .rodata._ZL11time_periodt.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+_Error_Handler
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2uiz
+HAL_GPIO_WritePin
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_d2f

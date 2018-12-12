@@ -1,0 +1,1453 @@
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wheeler.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZL15calculate_Omegaff,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	_ZL15calculate_Omegaff:
+  25              	.LFB354:
+  26              		.file 1 "Core/Src/devs/wheeler.cpp"
+   1:Core/Src/devs/wheeler.cpp **** #include "devs/wheeler.h"
+   2:Core/Src/devs/wheeler.cpp **** #include <math.h>
+   3:Core/Src/devs/wheeler.cpp **** #include "utils/queue.h"
+   4:Core/Src/devs/wheeler.cpp **** 
+   5:Core/Src/devs/wheeler.cpp **** #define WHEEL_RADIUS            (67.5)
+   6:Core/Src/devs/wheeler.cpp **** #define MAX_POSSIBLE_OMEGA      (40)
+   7:Core/Src/devs/wheeler.cpp **** 
+   8:Core/Src/devs/wheeler.cpp **** const float gSpeed_Multiplier = 1;
+   9:Core/Src/devs/wheeler.cpp **** 
+  10:Core/Src/devs/wheeler.cpp **** float gWheel_Velocities[4];
+  11:Core/Src/devs/wheeler.cpp **** float gWheel_Omegas[4];
+  12:Core/Src/devs/wheeler.cpp **** const int gCoupling_Matrix[4][3] = {{ 1,  1, 1},
+  13:Core/Src/devs/wheeler.cpp ****                                     { 1, -1, 1},
+  14:Core/Src/devs/wheeler.cpp ****                                     {-1, -1, 1},
+  15:Core/Src/devs/wheeler.cpp ****                                     {-1,  1, 1}};
+  16:Core/Src/devs/wheeler.cpp ****                                     
+  17:Core/Src/devs/wheeler.cpp **** 
+  18:Core/Src/devs/wheeler.cpp **** #define NUM_WHEELER_BYTES       (8)
+  19:Core/Src/devs/wheeler.cpp **** #define THETA_NOT               (1.570796)
+  20:Core/Src/devs/wheeler.cpp **** 
+  21:Core/Src/devs/wheeler.cpp **** static uint8_t gStart_Byte = 0xA5;
+  22:Core/Src/devs/wheeler.cpp **** static bool gWheeler_Start_Byte_Sent = false;
+  23:Core/Src/devs/wheeler.cpp **** static Queue<int16_t, 2> gWheeler_Data[NUM_WHEELER_BYTES / 2];
+  24:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  25:Core/Src/devs/wheeler.cpp **** 
+  26:Core/Src/devs/wheeler.cpp **** void Wheeler_Init()
+  27:Core/Src/devs/wheeler.cpp **** {
+  28:Core/Src/devs/wheeler.cpp ****         __HAL_UART_ENABLE_IT(&huart2, UART_IT_TC);
+  29:Core/Src/devs/wheeler.cpp **** }
+  30:Core/Src/devs/wheeler.cpp **** 
+  31:Core/Src/devs/wheeler.cpp **** static float calculate_Omega(float velocity, float radius)
+  32:Core/Src/devs/wheeler.cpp **** {
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 2
+
+
+  27              		.loc 1 32 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              	.LVL0:
+  33:Core/Src/devs/wheeler.cpp ****         return (velocity) / (radius);
+  34:Core/Src/devs/wheeler.cpp **** }
+  33              		.loc 1 34 0
+  34 0000 80EE200A 		vdiv.f32	s0, s0, s1
+  35              	.LVL1:
+  36 0004 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE354:
+  40              		.section	.text.__tcf_0,"ax",%progbits
+  41              		.align	1
+  42              		.syntax unified
+  43              		.thumb
+  44              		.thumb_func
+  45              		.fpu fpv4-sp-d16
+  47              	__tcf_0:
+  48              	.LFB365:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  49              		.loc 1 23 0
+  50              		.cfi_startproc
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  54              		.loc 1 23 0
+  55 0000 034B     		ldr	r3, .L5
+  56              	.L4:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  57              		.loc 1 23 0 is_stmt 0 discriminator 5
+  58 0002 044A     		ldr	r2, .L5+4
+  59 0004 9342     		cmp	r3, r2
+  60 0006 01D0     		beq	.L2
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  61              		.loc 1 23 0 discriminator 4
+  62 0008 103B     		subs	r3, r3, #16
+  63              	.LVL2:
+  64 000a FAE7     		b	.L4
+  65              	.LVL3:
+  66              	.L2:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+  67              		.loc 1 23 0
+  68 000c 7047     		bx	lr
+  69              	.L6:
+  70 000e 00BF     		.align	2
+  71              	.L5:
+  72 0010 40000000 		.word	.LANCHOR0+64
+  73 0014 00000000 		.word	.LANCHOR0
+  74              		.cfi_endproc
+  75              	.LFE365:
+  77              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+  78              		.align	1
+  79              		.syntax unified
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 3
+
+
+  80              		.thumb
+  81              		.thumb_func
+  82              		.fpu fpv4-sp-d16
+  84              	_Z41__static_initialization_and_destruction_0ii:
+  85              	.LFB364:
+  35:Core/Src/devs/wheeler.cpp **** 
+  36:Core/Src/devs/wheeler.cpp **** void calc_WheelsOmegas(float omegas[4], float v, float theta, float phi, uint32_t dt_millis)
+  37:Core/Src/devs/wheeler.cpp **** {
+  38:Core/Src/devs/wheeler.cpp ****         float vel[4];
+  39:Core/Src/devs/wheeler.cpp ****         theta += THETA_NOT;
+  40:Core/Src/devs/wheeler.cpp ****         float velocity[3] = {v * cos(theta), v * sin(theta), -3*phi * 1000 / (float)(dt_millis)};
+  41:Core/Src/devs/wheeler.cpp **** 
+  42:Core/Src/devs/wheeler.cpp ****         for (int i = 0; i < 4; ++i) {
+  43:Core/Src/devs/wheeler.cpp ****                 vel[i] = 0;
+  44:Core/Src/devs/wheeler.cpp ****                 for (int j = 0; j < 3; ++j) {
+  45:Core/Src/devs/wheeler.cpp ****                         vel[i] += velocity[j] * gCoupling_Matrix[i][j];
+  46:Core/Src/devs/wheeler.cpp ****                 }
+  47:Core/Src/devs/wheeler.cpp ****                 omegas[i] = calculate_Omega(vel[i], WHEEL_RADIUS);
+  48:Core/Src/devs/wheeler.cpp ****         }
+  49:Core/Src/devs/wheeler.cpp **** }
+  50:Core/Src/devs/wheeler.cpp **** 
+  51:Core/Src/devs/wheeler.cpp **** // void calculate_robot_velocity(float v, float theta, float phi, uint32_t dt_millis)
+  52:Core/Src/devs/wheeler.cpp **** // {
+  53:Core/Src/devs/wheeler.cpp ****         // float velocity[3] = {v * cos(theta) * cos(phi), v * sin(theta) * cos(phi), -phi * 1000 /
+  54:Core/Src/devs/wheeler.cpp **** 
+  55:Core/Src/devs/wheeler.cpp ****         // for (int i = 0; i < 4; ++i) {
+  56:Core/Src/devs/wheeler.cpp ****         //         gWheel_Velocities[i] = 0;
+  57:Core/Src/devs/wheeler.cpp ****         //         for (int j = 0; j < 3; ++j) {
+  58:Core/Src/devs/wheeler.cpp ****         //                 gWheel_Velocities[i] += velocity[j] * gCoupling_Matrix[i][j];
+  59:Core/Src/devs/wheeler.cpp ****         //         }
+  60:Core/Src/devs/wheeler.cpp ****         //         gWheel_Omegas[i] = calculate_Omega(gWheel_Velocities[i]);
+  61:Core/Src/devs/wheeler.cpp ****         // }
+  62:Core/Src/devs/wheeler.cpp **** // }
+  63:Core/Src/devs/wheeler.cpp **** 
+  64:Core/Src/devs/wheeler.cpp **** void send_WheelerPack(float pack[NUM_WHEELER_BYTES / 2])
+  65:Core/Src/devs/wheeler.cpp **** {
+  66:Core/Src/devs/wheeler.cpp ****         int16_t data;
+  67:Core/Src/devs/wheeler.cpp ****         // Data are omegas of four motors
+  68:Core/Src/devs/wheeler.cpp ****         for (uint8_t i = 0; i < NUM_WHEELER_BYTES / 2; ++i) {
+  69:Core/Src/devs/wheeler.cpp ****                 data = (int16_t)((pack[i] * 32768.0) / (MAX_POSSIBLE_OMEGA));
+  70:Core/Src/devs/wheeler.cpp ****                 gWheeler_Data[i].insert(data);
+  71:Core/Src/devs/wheeler.cpp ****         }
+  72:Core/Src/devs/wheeler.cpp ****         if (!gWheeler_Start_Byte_Sent) {
+  73:Core/Src/devs/wheeler.cpp ****                 gWheeler_Start_Byte_Sent = true;
+  74:Core/Src/devs/wheeler.cpp ****                 HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+  75:Core/Src/devs/wheeler.cpp ****         }
+  76:Core/Src/devs/wheeler.cpp **** }
+  77:Core/Src/devs/wheeler.cpp **** 
+  78:Core/Src/devs/wheeler.cpp **** void Wheeler_UART2_TxCpltCallback()
+  79:Core/Src/devs/wheeler.cpp **** {
+  80:Core/Src/devs/wheeler.cpp ****         if (gWheeler_Start_Byte_Sent) {
+  81:Core/Src/devs/wheeler.cpp ****                 gWheeler_Start_Byte_Sent = false;
+  82:Core/Src/devs/wheeler.cpp ****                 int16_t data;
+  83:Core/Src/devs/wheeler.cpp ****                 for (uint8_t i = 0; i < NUM_WHEELER_BYTES / 2; ++i) {
+  84:Core/Src/devs/wheeler.cpp ****                         data = gWheeler_Data[i].lookup();
+  85:Core/Src/devs/wheeler.cpp ****                         gWheeler_Bytes[2*i + 0] = (uint8_t)(data >> 8);
+  86:Core/Src/devs/wheeler.cpp ****                         gWheeler_Bytes[2*i + 1] = (uint8_t)(data);
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 4
+
+
+  87:Core/Src/devs/wheeler.cpp ****                 }
+  88:Core/Src/devs/wheeler.cpp ****                 HAL_UART_Transmit_IT(&huart2, gWheeler_Bytes, NUM_WHEELER_BYTES);
+  89:Core/Src/devs/wheeler.cpp ****         }
+  90:Core/Src/devs/wheeler.cpp ****         else {
+  91:Core/Src/devs/wheeler.cpp ****                 // All Wheeler buffers contain equal length of data
+  92:Core/Src/devs/wheeler.cpp ****                 if (gWheeler_Data[0].length()) {
+  93:Core/Src/devs/wheeler.cpp ****                         gWheeler_Start_Byte_Sent = true;
+  94:Core/Src/devs/wheeler.cpp ****                         HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+  95:Core/Src/devs/wheeler.cpp ****                 }
+  96:Core/Src/devs/wheeler.cpp ****         }
+  97:Core/Src/devs/wheeler.cpp **** }
+  86              		.loc 1 97 0 is_stmt 1
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 0
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              	.LVL4:
+  91 0000 0128     		cmp	r0, #1
+  92 0002 00D0     		beq	.L15
+  93 0004 7047     		bx	lr
+  94              	.L15:
+  95              		.loc 1 97 0 is_stmt 0 discriminator 1
+  96 0006 08B5     		push	{r3, lr}
+  97              	.LCFI0:
+  98              		.cfi_def_cfa_offset 8
+  99              		.cfi_offset 3, -8
+ 100              		.cfi_offset 14, -4
+ 101              		.loc 1 97 0 is_stmt 1 discriminator 1
+ 102 0008 4FF6FF73 		movw	r3, #65535
+ 103 000c 9942     		cmp	r1, r3
+ 104 000e 00D0     		beq	.L16
+ 105              	.LVL5:
+ 106              	.L7:
+ 107              		.loc 1 97 0 is_stmt 0
+ 108 0010 08BD     		pop	{r3, pc}
+ 109              	.LVL6:
+ 110              	.L16:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+ 111              		.loc 1 23 0 is_stmt 1
+ 112 0012 0321     		movs	r1, #3
+ 113              	.LVL7:
+ 114 0014 074B     		ldr	r3, .L17
+ 115              	.L10:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+ 116              		.loc 1 23 0 is_stmt 0 discriminator 4
+ 117 0016 0029     		cmp	r1, #0
+ 118 0018 06DB     		blt	.L9
+ 119              	.LVL8:
+ 120              	.LBB27:
+ 121              	.LBB28:
+ 122              		.file 2 "Core/Inc/utils/queue.h"
+   1:Core/Inc/utils/queue.h **** /*
+   2:Core/Inc/utils/queue.h ****  * queue.h
+   3:Core/Inc/utils/queue.h ****  * 
+   4:Core/Inc/utils/queue.h ****  * Created : 11/16/2018
+   5:Core/Inc/utils/queue.h ****  *  Author : n-is
+   6:Core/Inc/utils/queue.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/queue.h ****  */
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 5
+
+
+   8:Core/Inc/utils/queue.h **** 
+   9:Core/Inc/utils/queue.h **** #ifndef _QUEUE_H_
+  10:Core/Inc/utils/queue.h **** #define _QUEUE_H_
+  11:Core/Inc/utils/queue.h **** 
+  12:Core/Inc/utils/queue.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/queue.h **** 
+  14:Core/Inc/utils/queue.h **** template <class T, size_t q_size>
+  15:Core/Inc/utils/queue.h **** class Queue
+  16:Core/Inc/utils/queue.h **** {
+  17:Core/Inc/utils/queue.h **** public:
+  18:Core/Inc/utils/queue.h ****         Queue():head_(0), tail_(0), curr_size_(0) { }
+ 123              		.loc 2 18 0 is_stmt 1
+ 124 001a 0022     		movs	r2, #0
+ 125 001c 1A60     		str	r2, [r3]
+ 126 001e 5A60     		str	r2, [r3, #4]
+ 127 0020 9A60     		str	r2, [r3, #8]
+ 128              	.LVL9:
+ 129              	.LBE28:
+ 130              	.LBE27:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+ 131              		.loc 1 23 0
+ 132 0022 1033     		adds	r3, r3, #16
+ 133 0024 0139     		subs	r1, r1, #1
+ 134 0026 F6E7     		b	.L10
+ 135              	.L9:
+  23:Core/Src/devs/wheeler.cpp **** uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+ 136              		.loc 1 23 0 is_stmt 0 discriminator 2
+ 137 0028 034A     		ldr	r2, .L17+4
+ 138 002a 0449     		ldr	r1, .L17+8
+ 139 002c 0020     		movs	r0, #0
+ 140              	.LVL10:
+ 141 002e FFF7FEFF 		bl	__aeabi_atexit
+ 142              	.LVL11:
+ 143              		.loc 1 97 0 is_stmt 1 discriminator 2
+ 144 0032 EDE7     		b	.L7
+ 145              	.L18:
+ 146              		.align	2
+ 147              	.L17:
+ 148 0034 00000000 		.word	.LANCHOR0
+ 149 0038 00000000 		.word	__dso_handle
+ 150 003c 00000000 		.word	__tcf_0
+ 151              		.cfi_endproc
+ 152              	.LFE364:
+ 154              		.section	.text._Z12Wheeler_Initv,"ax",%progbits
+ 155              		.align	1
+ 156              		.global	_Z12Wheeler_Initv
+ 157              		.syntax unified
+ 158              		.thumb
+ 159              		.thumb_func
+ 160              		.fpu fpv4-sp-d16
+ 162              	_Z12Wheeler_Initv:
+ 163              	.LFB353:
+  27:Core/Src/devs/wheeler.cpp ****         __HAL_UART_ENABLE_IT(&huart2, UART_IT_TC);
+ 164              		.loc 1 27 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 0
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 6
+
+
+ 168              		@ link register save eliminated.
+  28:Core/Src/devs/wheeler.cpp **** }
+ 169              		.loc 1 28 0
+ 170 0000 034B     		ldr	r3, .L20
+ 171 0002 1A68     		ldr	r2, [r3]
+ 172 0004 D368     		ldr	r3, [r2, #12]
+ 173 0006 43F04003 		orr	r3, r3, #64
+ 174 000a D360     		str	r3, [r2, #12]
+  29:Core/Src/devs/wheeler.cpp **** 
+ 175              		.loc 1 29 0
+ 176 000c 7047     		bx	lr
+ 177              	.L21:
+ 178 000e 00BF     		.align	2
+ 179              	.L20:
+ 180 0010 00000000 		.word	huart2
+ 181              		.cfi_endproc
+ 182              	.LFE353:
+ 184              		.global	__aeabi_f2d
+ 185              		.global	__aeabi_dadd
+ 186              		.global	__aeabi_d2f
+ 187              		.section	.text._Z17calc_WheelsOmegasPffffm,"ax",%progbits
+ 188              		.align	1
+ 189              		.global	_Z17calc_WheelsOmegasPffffm
+ 190              		.syntax unified
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.fpu fpv4-sp-d16
+ 195              	_Z17calc_WheelsOmegasPffffm:
+ 196              	.LFB355:
+  37:Core/Src/devs/wheeler.cpp ****         float vel[4];
+ 197              		.loc 1 37 0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 32
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201              	.LVL12:
+ 202 0000 70B5     		push	{r4, r5, r6, lr}
+ 203              	.LCFI1:
+ 204              		.cfi_def_cfa_offset 16
+ 205              		.cfi_offset 4, -16
+ 206              		.cfi_offset 5, -12
+ 207              		.cfi_offset 6, -8
+ 208              		.cfi_offset 14, -4
+ 209 0002 2DED048B 		vpush.64	{d8, d9}
+ 210              	.LCFI2:
+ 211              		.cfi_def_cfa_offset 32
+ 212              		.cfi_offset 80, -32
+ 213              		.cfi_offset 81, -28
+ 214              		.cfi_offset 82, -24
+ 215              		.cfi_offset 83, -20
+ 216 0006 88B0     		sub	sp, sp, #32
+ 217              	.LCFI3:
+ 218              		.cfi_def_cfa_offset 64
+ 219 0008 0546     		mov	r5, r0
+ 220 000a F0EE408A 		vmov.f32	s17, s0
+ 221 000e B0EE418A 		vmov.f32	s16, s2
+ 222 0012 09EE101A 		vmov	s18, r1	@ int
+  39:Core/Src/devs/wheeler.cpp ****         float velocity[3] = {v * cos(theta), v * sin(theta), -3*phi * 1000 / (float)(dt_millis)};
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 7
+
+
+ 223              		.loc 1 39 0
+ 224 0016 10EE900A 		vmov	r0, s1
+ 225              	.LVL13:
+ 226 001a FFF7FEFF 		bl	__aeabi_f2d
+ 227              	.LVL14:
+ 228 001e 33A3     		adr	r3, .L28+12
+ 229 0020 D3E90023 		ldrd	r2, [r3]
+ 230 0024 FFF7FEFF 		bl	__aeabi_dadd
+ 231              	.LVL15:
+ 232 0028 FFF7FEFF 		bl	__aeabi_d2f
+ 233              	.LVL16:
+ 234 002c 09EE900A 		vmov	s19, r0
+ 235              	.LVL17:
+ 236              	.LBB29:
+ 237              	.LBB30:
+ 238              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+   1:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // -*- C++ -*- C forwarding header.
+   2:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+   3:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Copyright (C) 1997-2017 Free Software Foundation, Inc.
+   4:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+   5:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This file is part of the GNU ISO C++ Library.  This library is free
+   6:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // software; you can redistribute it and/or modify it under the
+   7:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // terms of the GNU General Public License as published by the
+   8:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Free Software Foundation; either version 3, or (at your option)
+   9:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // any later version.
+  10:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  11:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This library is distributed in the hope that it will be useful,
+  12:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // GNU General Public License for more details.
+  15:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  16:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Under Section 7 of GPL version 3, you are granted additional
+  17:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // permissions described in the GCC Runtime Library Exception, version
+  18:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // 3.1, as published by the Free Software Foundation.
+  19:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  20:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // You should have received a copy of the GNU General Public License and
+  21:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // a copy of the GCC Runtime Library Exception along with this program;
+  22:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  23:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // <http://www.gnu.org/licenses/>.
+  24:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  25:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** /** @file include/cmath
+  26:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is a Standard C++ Library file.  You should @c \#include this file
+  27:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  in your programs, rather than any of the @a *.h implementation files.
+  28:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *
+  29:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is the C++ version of the Standard C Library header @c math.h,
+  30:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  and its contents are (mostly) the same as that header, but are all
+  31:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  contained in the namespace @c std (except for names which are defined
+  32:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  as macros in C).
+  33:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  */
+  34:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  35:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+  36:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // ISO C++ 14882: 26.5  C library
+  37:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+  38:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  39:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #pragma GCC system_header
+  40:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  41:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/c++config.h>
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 8
+
+
+  42:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/cpp_type_traits.h>
+  43:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <ext/type_traits.h>
+  44:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+  45:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include_next <math.h>
+  46:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+  47:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/std_abs.h>
+  48:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  49:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef _GLIBCXX_CMATH
+  50:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_CMATH 1
+  51:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  52:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Get rid of those macros defined in <math.h> in lieu of real functions.
+  53:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef div
+  54:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef acos
+  55:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef asin
+  56:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan
+  57:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan2
+  58:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ceil
+  59:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cos
+  60:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cosh
+  61:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef exp
+  62:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fabs
+  63:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef floor
+  64:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fmod
+  65:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef frexp
+  66:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ldexp
+  67:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log
+  68:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log10
+  69:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef modf
+  70:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef pow
+  71:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sin
+  72:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sinh
+  73:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sqrt
+  74:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tan
+  75:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tanh
+  76:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  77:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** extern "C++"
+  78:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
+  79:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** namespace std _GLIBCXX_VISIBILITY(default)
+  80:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
+  81:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** _GLIBCXX_BEGIN_NAMESPACE_VERSION
+  82:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  83:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::acos;
+  84:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  85:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+  86:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+  87:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(float __x)
+  88:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosf(__x); }
+  89:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  90:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+  91:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(long double __x)
+  92:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosl(__x); }
+  93:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+  94:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  95:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+  96:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+  97:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+  98:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 9
+
+
+  99:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     acos(_Tp __x)
+ 100:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_acos(__x); }
+ 101:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 102:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::asin;
+ 103:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 104:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 105:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 106:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(float __x)
+ 107:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinf(__x); }
+ 108:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 109:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 110:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(long double __x)
+ 111:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinl(__x); }
+ 112:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 113:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 114:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 115:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 116:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 117:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 118:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     asin(_Tp __x)
+ 119:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_asin(__x); }
+ 120:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 121:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan;
+ 122:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 123:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 124:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 125:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(float __x)
+ 126:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanf(__x); }
+ 127:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 128:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 129:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(long double __x)
+ 130:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanl(__x); }
+ 131:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 132:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 133:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 134:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 135:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 136:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 137:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan(_Tp __x)
+ 138:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_atan(__x); }
+ 139:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 140:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan2;
+ 141:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 142:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 143:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 144:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(float __y, float __x)
+ 145:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2f(__y, __x); }
+ 146:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 147:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 148:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(long double __y, long double __x)
+ 149:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2l(__y, __x); }
+ 150:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 151:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 152:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 153:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 154:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 155:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan2(_Tp __y, _Up __x)
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 10
+
+
+ 156:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 157:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 158:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return atan2(__type(__y), __type(__x));
+ 159:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 160:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 161:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::ceil;
+ 162:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 163:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 164:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 165:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(float __x)
+ 166:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceilf(__x); }
+ 167:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 168:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 169:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(long double __x)
+ 170:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceill(__x); }
+ 171:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 172:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 173:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 174:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 175:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 176:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 177:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     ceil(_Tp __x)
+ 178:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_ceil(__x); }
+ 179:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 180:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::cos;
+ 181:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 182:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 183:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 184:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cos(float __x)
+ 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_cosf(__x); }
+ 239              		.loc 3 185 0
+ 240 0030 00EE100A 		vmov	s0, r0
+ 241 0034 FFF7FEFF 		bl	cosf
+ 242              	.LVL18:
+ 243              	.LBE30:
+ 244              	.LBE29:
+  40:Core/Src/devs/wheeler.cpp **** 
+ 245              		.loc 1 40 0
+ 246 0038 28EE800A 		vmul.f32	s0, s17, s0
+ 247 003c 8DED010A 		vstr.32	s0, [sp, #4]
+ 248              	.LVL19:
+ 249              	.LBB31:
+ 250              	.LBB32:
+ 186:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 187:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 188:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cos(long double __x)
+ 189:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_cosl(__x); }
+ 190:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 191:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 192:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 193:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 194:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 195:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 196:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     cos(_Tp __x)
+ 197:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_cos(__x); }
+ 198:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 199:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::cosh;
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 11
+
+
+ 200:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 201:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 202:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 203:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cosh(float __x)
+ 204:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_coshf(__x); }
+ 205:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 206:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 207:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cosh(long double __x)
+ 208:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_coshl(__x); }
+ 209:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 210:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 211:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 212:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 213:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 214:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 215:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     cosh(_Tp __x)
+ 216:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_cosh(__x); }
+ 217:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 218:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::exp;
+ 219:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 220:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 221:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 222:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   exp(float __x)
+ 223:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_expf(__x); }
+ 224:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 225:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 226:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   exp(long double __x)
+ 227:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_expl(__x); }
+ 228:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 229:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 230:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 231:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 232:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 233:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 234:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     exp(_Tp __x)
+ 235:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_exp(__x); }
+ 236:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 237:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::fabs;
+ 238:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 239:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 240:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 241:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fabs(float __x)
+ 242:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fabsf(__x); }
+ 243:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 244:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 245:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fabs(long double __x)
+ 246:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fabsl(__x); }
+ 247:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 248:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 249:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 250:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 251:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 252:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 253:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     fabs(_Tp __x)
+ 254:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_fabs(__x); }
+ 255:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 256:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::floor;
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 12
+
+
+ 257:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 258:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 259:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 260:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   floor(float __x)
+ 261:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_floorf(__x); }
+ 262:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 263:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 264:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   floor(long double __x)
+ 265:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_floorl(__x); }
+ 266:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 267:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 268:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 269:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 270:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 271:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 272:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     floor(_Tp __x)
+ 273:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_floor(__x); }
+ 274:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 275:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::fmod;
+ 276:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 277:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 278:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 279:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fmod(float __x, float __y)
+ 280:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fmodf(__x, __y); }
+ 281:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 282:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 283:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fmod(long double __x, long double __y)
+ 284:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fmodl(__x, __y); }
+ 285:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 286:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 287:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 288:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 289:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 290:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     fmod(_Tp __x, _Up __y)
+ 291:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 292:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 293:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return fmod(__type(__x), __type(__y));
+ 294:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 295:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 296:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::frexp;
+ 297:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 298:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 299:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 300:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   frexp(float __x, int* __exp)
+ 301:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_frexpf(__x, __exp); }
+ 302:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 303:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 304:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   frexp(long double __x, int* __exp)
+ 305:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_frexpl(__x, __exp); }
+ 306:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 307:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 308:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 309:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 310:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 311:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 312:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     frexp(_Tp __x, int* __exp)
+ 313:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_frexp(__x, __exp); }
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 13
+
+
+ 314:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 315:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::ldexp;
+ 316:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 317:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 318:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 319:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ldexp(float __x, int __exp)
+ 320:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ldexpf(__x, __exp); }
+ 321:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 322:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 323:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ldexp(long double __x, int __exp)
+ 324:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ldexpl(__x, __exp); }
+ 325:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 326:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 327:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 328:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 329:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 330:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 331:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     ldexp(_Tp __x, int __exp)
+ 332:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_ldexp(__x, __exp); }
+ 333:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 334:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::log;
+ 335:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 336:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 337:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 338:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log(float __x)
+ 339:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_logf(__x); }
+ 340:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 341:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 342:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log(long double __x)
+ 343:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_logl(__x); }
+ 344:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 345:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 346:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 347:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 348:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 349:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 350:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     log(_Tp __x)
+ 351:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_log(__x); }
+ 352:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 353:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::log10;
+ 354:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 355:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 356:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 357:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log10(float __x)
+ 358:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_log10f(__x); }
+ 359:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 360:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 361:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log10(long double __x)
+ 362:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_log10l(__x); }
+ 363:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 364:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 365:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 366:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 367:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 368:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 369:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     log10(_Tp __x)
+ 370:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_log10(__x); }
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 14
+
+
+ 371:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 372:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::modf;
+ 373:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 374:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 375:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 376:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   modf(float __x, float* __iptr)
+ 377:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_modff(__x, __iptr); }
+ 378:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 379:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 380:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   modf(long double __x, long double* __iptr)
+ 381:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_modfl(__x, __iptr); }
+ 382:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 383:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 384:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::pow;
+ 385:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 386:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 387:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 388:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(float __x, float __y)
+ 389:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powf(__x, __y); }
+ 390:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 391:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 392:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(long double __x, long double __y)
+ 393:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powl(__x, __y); }
+ 394:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 395:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #if __cplusplus < 201103L
+ 396:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   // _GLIBCXX_RESOLVE_LIB_DEFECTS
+ 397:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   // DR 550. What should the return type of pow(float,int) be?
+ 398:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline double
+ 399:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(double __x, int __i)
+ 400:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powi(__x, __i); }
+ 401:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 402:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 403:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(float __x, int __n)
+ 404:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powif(__x, __n); }
+ 405:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 406:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 407:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(long double __x, int __n)
+ 408:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powil(__x, __n); }
+ 409:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 410:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 411:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 412:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 413:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 414:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 415:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     pow(_Tp __x, _Up __y)
+ 416:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 417:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 418:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return pow(__type(__x), __type(__y));
+ 419:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 420:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 421:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::sin;
+ 422:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 423:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 424:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 425:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   sin(float __x)
+ 426:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_sinf(__x); }
+ 251              		.loc 3 426 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 15
+
+
+ 252 0040 B0EE690A 		vmov.f32	s0, s19
+ 253 0044 FFF7FEFF 		bl	sinf
+ 254              	.LVL20:
+ 255              	.LBE32:
+ 256              	.LBE31:
+  40:Core/Src/devs/wheeler.cpp **** 
+ 257              		.loc 1 40 0
+ 258 0048 28EE800A 		vmul.f32	s0, s17, s0
+ 259 004c 8DED020A 		vstr.32	s0, [sp, #8]
+ 260 0050 F8EE087A 		vmov.f32	s15, #-3.0e+0
+ 261 0054 28EE278A 		vmul.f32	s16, s16, s15
+ 262              	.LVL21:
+ 263 0058 DFED217A 		vldr.32	s15, .L28
+ 264 005c 28EE278A 		vmul.f32	s16, s16, s15
+ 265 0060 B8EE499A 		vcvt.f32.u32	s18, s18
+ 266              	.LVL22:
+ 267 0064 C8EE097A 		vdiv.f32	s15, s16, s18
+ 268 0068 CDED037A 		vstr.32	s15, [sp, #12]
+ 269              	.LVL23:
+ 270              	.LBB33:
+  42:Core/Src/devs/wheeler.cpp ****                 vel[i] = 0;
+ 271              		.loc 1 42 0
+ 272 006c 0024     		movs	r4, #0
+ 273 006e 0CE0     		b	.L26
+ 274              	.LVL24:
+ 275              	.L24:
+ 276              	.LBB34:
+  47:Core/Src/devs/wheeler.cpp ****         }
+ 277              		.loc 1 47 0 discriminator 2
+ 278 0070 A300     		lsls	r3, r4, #2
+ 279              	.LVL25:
+ 280 0072 EE18     		adds	r6, r5, r3
+ 281 0074 08AA     		add	r2, sp, #32
+ 282 0076 1344     		add	r3, r3, r2
+ 283 0078 DFED1A0A 		vldr.32	s1, .L28+4
+ 284 007c 13ED040A 		vldr.32	s0, [r3, #-16]
+ 285 0080 FFF7FEFF 		bl	_ZL15calculate_Omegaff
+ 286              	.LVL26:
+ 287 0084 86ED000A 		vstr.32	s0, [r6]
+ 288              	.LBE34:
+  42:Core/Src/devs/wheeler.cpp ****                 vel[i] = 0;
+ 289              		.loc 1 42 0 discriminator 2
+ 290 0088 0134     		adds	r4, r4, #1
+ 291              	.LVL27:
+ 292              	.L26:
+  42:Core/Src/devs/wheeler.cpp ****                 vel[i] = 0;
+ 293              		.loc 1 42 0 is_stmt 0 discriminator 1
+ 294 008a 032C     		cmp	r4, #3
+ 295 008c 24DC     		bgt	.L22
+ 296              	.LBB36:
+  43:Core/Src/devs/wheeler.cpp ****                 for (int j = 0; j < 3; ++j) {
+ 297              		.loc 1 43 0 is_stmt 1
+ 298 008e 0022     		movs	r2, #0
+ 299 0090 08AB     		add	r3, sp, #32
+ 300 0092 03EB8403 		add	r3, r3, r4, lsl #2
+ 301 0096 43F8102C 		str	r2, [r3, #-16]	@ float
+ 302              	.LVL28:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 16
+
+
+ 303              	.LBB35:
+  44:Core/Src/devs/wheeler.cpp ****                         vel[i] += velocity[j] * gCoupling_Matrix[i][j];
+ 304              		.loc 1 44 0
+ 305 009a 0023     		movs	r3, #0
+ 306              	.LVL29:
+ 307              	.L25:
+  44:Core/Src/devs/wheeler.cpp ****                         vel[i] += velocity[j] * gCoupling_Matrix[i][j];
+ 308              		.loc 1 44 0 is_stmt 0 discriminator 3
+ 309 009c 022B     		cmp	r3, #2
+ 310 009e E7DC     		bgt	.L24
+  45:Core/Src/devs/wheeler.cpp ****                 }
+ 311              		.loc 1 45 0 is_stmt 1 discriminator 2
+ 312 00a0 08AA     		add	r2, sp, #32
+ 313 00a2 02EB8302 		add	r2, r2, r3, lsl #2
+ 314 00a6 12ED077A 		vldr.32	s14, [r2, #-28]
+ 315 00aa 04EB4402 		add	r2, r4, r4, lsl #1
+ 316 00ae 1A44     		add	r2, r2, r3
+ 317 00b0 0D49     		ldr	r1, .L28+8
+ 318 00b2 51F82220 		ldr	r2, [r1, r2, lsl #2]
+ 319 00b6 07EE902A 		vmov	s15, r2	@ int
+ 320 00ba F8EEE77A 		vcvt.f32.s32	s15, s15
+ 321 00be 67EE877A 		vmul.f32	s15, s15, s14
+ 322 00c2 08AA     		add	r2, sp, #32
+ 323 00c4 02EB8402 		add	r2, r2, r4, lsl #2
+ 324 00c8 12ED047A 		vldr.32	s14, [r2, #-16]
+ 325 00cc 77EE277A 		vadd.f32	s15, s14, s15
+ 326 00d0 42ED047A 		vstr.32	s15, [r2, #-16]
+  44:Core/Src/devs/wheeler.cpp ****                         vel[i] += velocity[j] * gCoupling_Matrix[i][j];
+ 327              		.loc 1 44 0 discriminator 2
+ 328 00d4 0133     		adds	r3, r3, #1
+ 329              	.LVL30:
+ 330 00d6 E1E7     		b	.L25
+ 331              	.LVL31:
+ 332              	.L22:
+ 333              	.LBE35:
+ 334              	.LBE36:
+ 335              	.LBE33:
+  49:Core/Src/devs/wheeler.cpp **** 
+ 336              		.loc 1 49 0
+ 337 00d8 08B0     		add	sp, sp, #32
+ 338              	.LCFI4:
+ 339              		.cfi_def_cfa_offset 32
+ 340              		@ sp needed
+ 341 00da BDEC048B 		vldm	sp!, {d8-d9}
+ 342              	.LCFI5:
+ 343              		.cfi_restore 82
+ 344              		.cfi_restore 83
+ 345              		.cfi_restore 80
+ 346              		.cfi_restore 81
+ 347              		.cfi_def_cfa_offset 16
+ 348 00de 70BD     		pop	{r4, r5, r6, pc}
+ 349              	.LVL32:
+ 350              	.L29:
+ 351              		.align	3
+ 352              	.L28:
+ 353 00e0 00007A44 		.word	1148846080
+ 354 00e4 00008742 		.word	1116143616
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 17
+
+
+ 355 00e8 00000000 		.word	.LANCHOR1
+ 356 00ec 7A008BFC 		.word	-57999238
+ 357 00f0 FA21F93F 		.word	1073291770
+ 358              		.cfi_endproc
+ 359              	.LFE355:
+ 361              		.global	__aeabi_dmul
+ 362              		.global	__aeabi_ddiv
+ 363              		.global	__aeabi_d2iz
+ 364              		.section	.text._Z16send_WheelerPackPf,"ax",%progbits
+ 365              		.align	1
+ 366              		.global	_Z16send_WheelerPackPf
+ 367              		.syntax unified
+ 368              		.thumb
+ 369              		.thumb_func
+ 370              		.fpu fpv4-sp-d16
+ 372              	_Z16send_WheelerPackPf:
+ 373              	.LFB356:
+  65:Core/Src/devs/wheeler.cpp ****         int16_t data;
+ 374              		.loc 1 65 0
+ 375              		.cfi_startproc
+ 376              		@ args = 0, pretend = 0, frame = 0
+ 377              		@ frame_needed = 0, uses_anonymous_args = 0
+ 378              	.LVL33:
+ 379 0000 70B5     		push	{r4, r5, r6, lr}
+ 380              	.LCFI6:
+ 381              		.cfi_def_cfa_offset 16
+ 382              		.cfi_offset 4, -16
+ 383              		.cfi_offset 5, -12
+ 384              		.cfi_offset 6, -8
+ 385              		.cfi_offset 14, -4
+ 386 0002 0546     		mov	r5, r0
+ 387              	.LVL34:
+ 388              	.LBB37:
+  68:Core/Src/devs/wheeler.cpp ****                 data = (int16_t)((pack[i] * 32768.0) / (MAX_POSSIBLE_OMEGA));
+ 389              		.loc 1 68 0
+ 390 0004 0024     		movs	r4, #0
+ 391              	.LVL35:
+ 392              	.L32:
+  68:Core/Src/devs/wheeler.cpp ****                 data = (int16_t)((pack[i] * 32768.0) / (MAX_POSSIBLE_OMEGA));
+ 393              		.loc 1 68 0 is_stmt 0 discriminator 3
+ 394 0006 032C     		cmp	r4, #3
+ 395 0008 22D8     		bhi	.L31
+  69:Core/Src/devs/wheeler.cpp ****                 gWheeler_Data[i].insert(data);
+ 396              		.loc 1 69 0 is_stmt 1 discriminator 2
+ 397 000a 05EB8403 		add	r3, r5, r4, lsl #2
+ 398 000e 1868     		ldr	r0, [r3]	@ float
+ 399 0010 FFF7FEFF 		bl	__aeabi_f2d
+ 400              	.LVL36:
+ 401 0014 0022     		movs	r2, #0
+ 402 0016 144B     		ldr	r3, .L36
+ 403 0018 FFF7FEFF 		bl	__aeabi_dmul
+ 404              	.LVL37:
+ 405 001c 0022     		movs	r2, #0
+ 406 001e 134B     		ldr	r3, .L36+4
+ 407 0020 FFF7FEFF 		bl	__aeabi_ddiv
+ 408              	.LVL38:
+ 409 0024 FFF7FEFF 		bl	__aeabi_d2iz
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 18
+
+
+ 410              	.LVL39:
+ 411              	.LBB38:
+ 412              	.LBB39:
+  19:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+  20:Core/Inc/utils/queue.h ****         Queue(const Queue &) = default;
+  21:Core/Inc/utils/queue.h ****         Queue &operator=(Queue &&) = default;
+  22:Core/Inc/utils/queue.h ****         Queue &operator=(const Queue &) = default;
+  23:Core/Inc/utils/queue.h ****         ~Queue() {  }
+  24:Core/Inc/utils/queue.h **** 
+  25:Core/Inc/utils/queue.h ****         void insert(T elem) {
+  26:Core/Inc/utils/queue.h ****                 ++curr_size_;
+ 413              		.loc 2 26 0 discriminator 2
+ 414 0028 114A     		ldr	r2, .L36+8
+ 415 002a 2101     		lsls	r1, r4, #4
+ 416 002c 5618     		adds	r6, r2, r1
+ 417 002e B368     		ldr	r3, [r6, #8]
+ 418 0030 0133     		adds	r3, r3, #1
+ 419 0032 B360     		str	r3, [r6, #8]
+  27:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 420              		.loc 2 27 0 discriminator 2
+ 421 0034 5358     		ldr	r3, [r2, r1]
+ 422 0036 5E1C     		adds	r6, r3, #1
+ 423 0038 03EBC403 		add	r3, r3, r4, lsl #3
+ 424 003c 0433     		adds	r3, r3, #4
+ 425 003e 02EB4303 		add	r3, r2, r3, lsl #1
+ 426 0042 9880     		strh	r0, [r3, #4]	@ movhi
+  28:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 427              		.loc 2 28 0 discriminator 2
+ 428 0044 06F00106 		and	r6, r6, #1
+ 429 0048 5650     		str	r6, [r2, r1]
+ 430              	.LVL40:
+ 431              	.LBE39:
+ 432              	.LBE38:
+  68:Core/Src/devs/wheeler.cpp ****                 data = (int16_t)((pack[i] * 32768.0) / (MAX_POSSIBLE_OMEGA));
+ 433              		.loc 1 68 0 discriminator 2
+ 434 004a 0134     		adds	r4, r4, #1
+ 435              	.LVL41:
+ 436 004c E4B2     		uxtb	r4, r4
+ 437              	.LVL42:
+ 438 004e DAE7     		b	.L32
+ 439              	.LVL43:
+ 440              	.L31:
+ 441              	.LBE37:
+  72:Core/Src/devs/wheeler.cpp ****                 gWheeler_Start_Byte_Sent = true;
+ 442              		.loc 1 72 0
+ 443 0050 084B     		ldr	r3, .L36+12
+ 444 0052 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 445 0054 03B1     		cbz	r3, .L35
+ 446              	.L30:
+  76:Core/Src/devs/wheeler.cpp **** 
+ 447              		.loc 1 76 0
+ 448 0056 70BD     		pop	{r4, r5, r6, pc}
+ 449              	.LVL44:
+ 450              	.L35:
+  73:Core/Src/devs/wheeler.cpp ****                 HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+ 451              		.loc 1 73 0
+ 452 0058 0122     		movs	r2, #1
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 19
+
+
+ 453 005a 064B     		ldr	r3, .L36+12
+ 454 005c 1A70     		strb	r2, [r3]
+  74:Core/Src/devs/wheeler.cpp ****         }
+ 455              		.loc 1 74 0
+ 456 005e 0649     		ldr	r1, .L36+16
+ 457 0060 0648     		ldr	r0, .L36+20
+ 458 0062 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 459              	.LVL45:
+  76:Core/Src/devs/wheeler.cpp **** 
+ 460              		.loc 1 76 0
+ 461 0066 F6E7     		b	.L30
+ 462              	.L37:
+ 463              		.align	2
+ 464              	.L36:
+ 465 0068 0000E040 		.word	1088421888
+ 466 006c 00004440 		.word	1078198272
+ 467 0070 00000000 		.word	.LANCHOR0
+ 468 0074 00000000 		.word	.LANCHOR2
+ 469 0078 00000000 		.word	.LANCHOR3
+ 470 007c 00000000 		.word	huart2
+ 471              		.cfi_endproc
+ 472              	.LFE356:
+ 474              		.section	.text._Z28Wheeler_UART2_TxCpltCallbackv,"ax",%progbits
+ 475              		.align	1
+ 476              		.global	_Z28Wheeler_UART2_TxCpltCallbackv
+ 477              		.syntax unified
+ 478              		.thumb
+ 479              		.thumb_func
+ 480              		.fpu fpv4-sp-d16
+ 482              	_Z28Wheeler_UART2_TxCpltCallbackv:
+ 483              	.LFB357:
+  79:Core/Src/devs/wheeler.cpp ****         if (gWheeler_Start_Byte_Sent) {
+ 484              		.loc 1 79 0
+ 485              		.cfi_startproc
+ 486              		@ args = 0, pretend = 0, frame = 0
+ 487              		@ frame_needed = 0, uses_anonymous_args = 0
+ 488 0000 38B5     		push	{r3, r4, r5, lr}
+ 489              	.LCFI7:
+ 490              		.cfi_def_cfa_offset 16
+ 491              		.cfi_offset 3, -16
+ 492              		.cfi_offset 4, -12
+ 493              		.cfi_offset 5, -8
+ 494              		.cfi_offset 14, -4
+ 495              	.LBB40:
+  80:Core/Src/devs/wheeler.cpp ****                 gWheeler_Start_Byte_Sent = false;
+ 496              		.loc 1 80 0
+ 497 0002 1E4B     		ldr	r3, .L46
+ 498 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 499 0006 6BB3     		cbz	r3, .L39
+ 500              	.LBB41:
+  81:Core/Src/devs/wheeler.cpp ****                 int16_t data;
+ 501              		.loc 1 81 0
+ 502 0008 0023     		movs	r3, #0
+ 503 000a 1C4A     		ldr	r2, .L46
+ 504 000c 1370     		strb	r3, [r2]
+ 505              	.LVL46:
+ 506 000e 09E0     		b	.L42
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 20
+
+
+ 507              	.LVL47:
+ 508              	.L44:
+ 509              	.LBB42:
+ 510              	.LBB43:
+ 511              	.LBB44:
+  29:Core/Inc/utils/queue.h ****         }
+  30:Core/Inc/utils/queue.h **** 
+  31:Core/Inc/utils/queue.h ****         T lookup() {
+  32:Core/Inc/utils/queue.h ****                 if( curr_size_ ) {
+  33:Core/Inc/utils/queue.h ****                         --curr_size_;
+  34:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+  35:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+  36:Core/Inc/utils/queue.h ****                         return elem;
+  37:Core/Inc/utils/queue.h ****                 }
+  38:Core/Inc/utils/queue.h ****                 return 0;
+ 512              		.loc 2 38 0
+ 513 0010 0020     		movs	r0, #0
+ 514              	.L41:
+ 515              	.LVL48:
+ 516              	.LBE44:
+ 517              	.LBE43:
+  85:Core/Src/devs/wheeler.cpp ****                         gWheeler_Bytes[2*i + 1] = (uint8_t)(data);
+ 518              		.loc 1 85 0
+ 519 0012 0512     		asrs	r5, r0, #8
+ 520 0014 6200     		lsls	r2, r4, #1
+ 521 0016 1A49     		ldr	r1, .L46+4
+ 522 0018 01F81450 		strb	r5, [r1, r4, lsl #1]
+  86:Core/Src/devs/wheeler.cpp ****                 }
+ 523              		.loc 1 86 0
+ 524 001c 0132     		adds	r2, r2, #1
+ 525 001e 8854     		strb	r0, [r1, r2]
+  83:Core/Src/devs/wheeler.cpp ****                         data = gWheeler_Data[i].lookup();
+ 526              		.loc 1 83 0
+ 527 0020 0133     		adds	r3, r3, #1
+ 528              	.LVL49:
+ 529 0022 DBB2     		uxtb	r3, r3
+ 530              	.LVL50:
+ 531              	.L42:
+  83:Core/Src/devs/wheeler.cpp ****                         data = gWheeler_Data[i].lookup();
+ 532              		.loc 1 83 0 is_stmt 0 discriminator 3
+ 533 0024 032B     		cmp	r3, #3
+ 534 0026 17D8     		bhi	.L40
+  84:Core/Src/devs/wheeler.cpp ****                         gWheeler_Bytes[2*i + 0] = (uint8_t)(data >> 8);
+ 535              		.loc 1 84 0 is_stmt 1 discriminator 2
+ 536 0028 1C46     		mov	r4, r3
+ 537              	.LVL51:
+ 538              	.LBB48:
+ 539              	.LBB47:
+ 540              	.LBB45:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 541              		.loc 2 32 0 discriminator 2
+ 542 002a 164A     		ldr	r2, .L46+8
+ 543 002c 02EB0312 		add	r2, r2, r3, lsl #4
+ 544 0030 9168     		ldr	r1, [r2, #8]
+ 545 0032 0029     		cmp	r1, #0
+ 546 0034 ECD0     		beq	.L44
+ 547              	.LBB46:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 21
+
+
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 548              		.loc 2 33 0
+ 549 0036 1348     		ldr	r0, .L46+8
+ 550 0038 1546     		mov	r5, r2
+ 551 003a 0139     		subs	r1, r1, #1
+ 552 003c 9160     		str	r1, [r2, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 553              		.loc 2 34 0
+ 554 003e 5268     		ldr	r2, [r2, #4]
+ 555 0040 511C     		adds	r1, r2, #1
+ 556 0042 02EBC302 		add	r2, r2, r3, lsl #3
+ 557 0046 0432     		adds	r2, r2, #4
+ 558 0048 00EB4202 		add	r2, r0, r2, lsl #1
+ 559 004c B2F90400 		ldrsh	r0, [r2, #4]
+ 560              	.LVL52:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 561              		.loc 2 35 0
+ 562 0050 01F00101 		and	r1, r1, #1
+ 563 0054 6960     		str	r1, [r5, #4]
+ 564 0056 DCE7     		b	.L41
+ 565              	.LVL53:
+ 566              	.L40:
+ 567              	.LBE46:
+ 568              	.LBE45:
+ 569              	.LBE47:
+ 570              	.LBE48:
+ 571              	.LBE42:
+  88:Core/Src/devs/wheeler.cpp ****         }
+ 572              		.loc 1 88 0
+ 573 0058 0822     		movs	r2, #8
+ 574 005a 0949     		ldr	r1, .L46+4
+ 575 005c 0A48     		ldr	r0, .L46+12
+ 576 005e FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 577              	.LVL54:
+ 578              	.L38:
+ 579              	.LBE41:
+ 580              	.LBE40:
+ 581              		.loc 1 97 0
+ 582 0062 38BD     		pop	{r3, r4, r5, pc}
+ 583              	.L39:
+ 584              	.LVL55:
+ 585              	.LBB51:
+ 586              	.LBB49:
+ 587              	.LBB50:
+  39:Core/Inc/utils/queue.h ****         }
+  40:Core/Inc/utils/queue.h **** 
+  41:Core/Inc/utils/queue.h ****         uint32_t length() const { return curr_size_; }
+ 588              		.loc 2 41 0
+ 589 0064 074B     		ldr	r3, .L46+8
+ 590 0066 9B68     		ldr	r3, [r3, #8]
+ 591              	.LVL56:
+ 592              	.LBE50:
+ 593              	.LBE49:
+  92:Core/Src/devs/wheeler.cpp ****                         gWheeler_Start_Byte_Sent = true;
+ 594              		.loc 1 92 0
+ 595 0068 002B     		cmp	r3, #0
+ 596 006a FAD0     		beq	.L38
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 22
+
+
+  93:Core/Src/devs/wheeler.cpp ****                         HAL_UART_Transmit_IT(&huart2, &gStart_Byte, 1);
+ 597              		.loc 1 93 0
+ 598 006c 0122     		movs	r2, #1
+ 599 006e 034B     		ldr	r3, .L46
+ 600 0070 1A70     		strb	r2, [r3]
+  94:Core/Src/devs/wheeler.cpp ****                 }
+ 601              		.loc 1 94 0
+ 602 0072 0649     		ldr	r1, .L46+16
+ 603 0074 0448     		ldr	r0, .L46+12
+ 604 0076 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 605              	.LVL57:
+ 606              	.LBE51:
+ 607              		.loc 1 97 0
+ 608 007a F2E7     		b	.L38
+ 609              	.L47:
+ 610              		.align	2
+ 611              	.L46:
+ 612 007c 00000000 		.word	.LANCHOR2
+ 613 0080 00000000 		.word	.LANCHOR4
+ 614 0084 00000000 		.word	.LANCHOR0
+ 615 0088 00000000 		.word	huart2
+ 616 008c 00000000 		.word	.LANCHOR3
+ 617              		.cfi_endproc
+ 618              	.LFE357:
+ 620              		.section	.text._GLOBAL__sub_I_gWheel_Velocities,"ax",%progbits
+ 621              		.align	1
+ 622              		.syntax unified
+ 623              		.thumb
+ 624              		.thumb_func
+ 625              		.fpu fpv4-sp-d16
+ 627              	_GLOBAL__sub_I_gWheel_Velocities:
+ 628              	.LFB369:
+ 629              		.loc 1 97 0
+ 630              		.cfi_startproc
+ 631              		@ args = 0, pretend = 0, frame = 0
+ 632              		@ frame_needed = 0, uses_anonymous_args = 0
+ 633 0000 08B5     		push	{r3, lr}
+ 634              	.LCFI8:
+ 635              		.cfi_def_cfa_offset 8
+ 636              		.cfi_offset 3, -8
+ 637              		.cfi_offset 14, -4
+ 638              		.loc 1 97 0
+ 639 0002 4FF6FF71 		movw	r1, #65535
+ 640 0006 0120     		movs	r0, #1
+ 641 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 642              	.LVL58:
+ 643 000c 08BD     		pop	{r3, pc}
+ 644              		.cfi_endproc
+ 645              	.LFE369:
+ 647              		.section	.init_array,"aw",%init_array
+ 648              		.align	2
+ 649 0000 00000000 		.word	_GLOBAL__sub_I_gWheel_Velocities(target1)
+ 650              		.global	gWheeler_Bytes
+ 651              		.global	gWheel_Omegas
+ 652              		.global	gWheel_Velocities
+ 653              		.section	.bss._ZL13gWheeler_Data,"aw",%nobits
+ 654              		.align	2
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 23
+
+
+ 655              		.set	.LANCHOR0,. + 0
+ 658              	_ZL13gWheeler_Data:
+ 659 0000 00000000 		.space	64
+ 659      00000000 
+ 659      00000000 
+ 659      00000000 
+ 659      00000000 
+ 660              		.section	.bss._ZL24gWheeler_Start_Byte_Sent,"aw",%nobits
+ 661              		.set	.LANCHOR2,. + 0
+ 664              	_ZL24gWheeler_Start_Byte_Sent:
+ 665 0000 00       		.space	1
+ 666              		.section	.bss.gWheel_Omegas,"aw",%nobits
+ 667              		.align	2
+ 670              	gWheel_Omegas:
+ 671 0000 00000000 		.space	16
+ 671      00000000 
+ 671      00000000 
+ 671      00000000 
+ 672              		.section	.bss.gWheel_Velocities,"aw",%nobits
+ 673              		.align	2
+ 676              	gWheel_Velocities:
+ 677 0000 00000000 		.space	16
+ 677      00000000 
+ 677      00000000 
+ 677      00000000 
+ 678              		.section	.bss.gWheeler_Bytes,"aw",%nobits
+ 679              		.align	2
+ 680              		.set	.LANCHOR4,. + 0
+ 683              	gWheeler_Bytes:
+ 684 0000 00000000 		.space	8
+ 684      00000000 
+ 685              		.section	.data._ZL11gStart_Byte,"aw",%progbits
+ 686              		.set	.LANCHOR3,. + 0
+ 689              	_ZL11gStart_Byte:
+ 690 0000 A5       		.byte	-91
+ 691              		.section	.rodata._ZL16gCoupling_Matrix,"a",%progbits
+ 692              		.align	2
+ 693              		.set	.LANCHOR1,. + 0
+ 696              	_ZL16gCoupling_Matrix:
+ 697 0000 01000000 		.word	1
+ 698 0004 01000000 		.word	1
+ 699 0008 01000000 		.word	1
+ 700 000c 01000000 		.word	1
+ 701 0010 FFFFFFFF 		.word	-1
+ 702 0014 01000000 		.word	1
+ 703 0018 FFFFFFFF 		.word	-1
+ 704 001c FFFFFFFF 		.word	-1
+ 705 0020 01000000 		.word	1
+ 706 0024 FFFFFFFF 		.word	-1
+ 707 0028 01000000 		.word	1
+ 708 002c 01000000 		.word	1
+ 709              		.text
+ 710              	.Letext0:
+ 711              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 712              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 713              		.file 6 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 714              		.file 7 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 24
+
+
+ 715              		.file 8 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 716              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 717              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 718              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 719              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 720              		.file 13 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 721              		.file 14 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 722              		.file 15 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 723              		.file 16 "Core/Inc/periphs/usart.h"
+ 724              		.file 17 "Core/Inc/devs/wheeler.h"
+ 725              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 726              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 727              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 728              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 729              		.file 22 "<built-in>"
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 wheeler.cpp
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:18     .text._ZL15calculate_Omegaff:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:24     .text._ZL15calculate_Omegaff:00000000 _ZL15calculate_Omegaff
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:41     .text.__tcf_0:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:47     .text.__tcf_0:00000000 __tcf_0
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:72     .text.__tcf_0:00000010 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:78     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:84     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:148    .text._Z41__static_initialization_and_destruction_0ii:00000034 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:155    .text._Z12Wheeler_Initv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:162    .text._Z12Wheeler_Initv:00000000 _Z12Wheeler_Initv
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:180    .text._Z12Wheeler_Initv:00000010 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:188    .text._Z17calc_WheelsOmegasPffffm:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:195    .text._Z17calc_WheelsOmegasPffffm:00000000 _Z17calc_WheelsOmegasPffffm
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:353    .text._Z17calc_WheelsOmegasPffffm:000000e0 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:365    .text._Z16send_WheelerPackPf:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:372    .text._Z16send_WheelerPackPf:00000000 _Z16send_WheelerPackPf
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:465    .text._Z16send_WheelerPackPf:00000068 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:475    .text._Z28Wheeler_UART2_TxCpltCallbackv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:482    .text._Z28Wheeler_UART2_TxCpltCallbackv:00000000 _Z28Wheeler_UART2_TxCpltCallbackv
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:612    .text._Z28Wheeler_UART2_TxCpltCallbackv:0000007c $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:621    .text._GLOBAL__sub_I_gWheel_Velocities:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:627    .text._GLOBAL__sub_I_gWheel_Velocities:00000000 _GLOBAL__sub_I_gWheel_Velocities
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:648    .init_array:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:683    .bss.gWheeler_Bytes:00000000 gWheeler_Bytes
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:670    .bss.gWheel_Omegas:00000000 gWheel_Omegas
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:676    .bss.gWheel_Velocities:00000000 gWheel_Velocities
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:654    .bss._ZL13gWheeler_Data:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:658    .bss._ZL13gWheeler_Data:00000000 _ZL13gWheeler_Data
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:664    .bss._ZL24gWheeler_Start_Byte_Sent:00000000 _ZL24gWheeler_Start_Byte_Sent
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:665    .bss._ZL24gWheeler_Start_Byte_Sent:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:667    .bss.gWheel_Omegas:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:673    .bss.gWheel_Velocities:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:679    .bss.gWheeler_Bytes:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:689    .data._ZL11gStart_Byte:00000000 _ZL11gStart_Byte
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:692    .rodata._ZL16gCoupling_Matrix:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccId4rbH.s:696    .rodata._ZL16gCoupling_Matrix:00000000 _ZL16gCoupling_Matrix
+
+UNDEFINED SYMBOLS
+__aeabi_atexit
+__dso_handle
+huart2
+__aeabi_f2d
+__aeabi_dadd
+__aeabi_d2f
+cosf
+sinf
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_d2iz
+HAL_UART_Transmit_IT

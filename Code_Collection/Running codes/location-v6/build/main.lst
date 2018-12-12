@@ -1,0 +1,910 @@
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"main.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Error_Handler,"ax",%progbits
+  18              		.align	1
+  19              		.global	_Error_Handler
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_Error_Handler:
+  26              	.LFB506:
+  27              		.file 1 "Core/Src/main.cpp"
+   1:Core/Src/main.cpp **** 
+   2:Core/Src/main.cpp **** /**
+   3:Core/Src/main.cpp ****   ******************************************************************************
+   4:Core/Src/main.cpp ****   * @file           : main.c
+   5:Core/Src/main.cpp ****   * @brief          : Main program body
+   6:Core/Src/main.cpp ****   ******************************************************************************
+   7:Core/Src/main.cpp ****   ** This notice applies to any and all portions of this file
+   8:Core/Src/main.cpp ****   * that are not between comment pairs USER CODE BEGIN and
+   9:Core/Src/main.cpp ****   * USER CODE END. Other portions of this file, whether 
+  10:Core/Src/main.cpp ****   * inserted by the user or by software development tools
+  11:Core/Src/main.cpp ****   * are owned by their respective copyright owners.
+  12:Core/Src/main.cpp ****   *
+  13:Core/Src/main.cpp ****   * COPYRIGHT(c) 2018 STMicroelectronics
+  14:Core/Src/main.cpp ****   *
+  15:Core/Src/main.cpp ****   * Redistribution and use in source and binary forms, with or without modification,
+  16:Core/Src/main.cpp ****   * are permitted provided that the following conditions are met:
+  17:Core/Src/main.cpp ****   *   1. Redistributions of source code must retain the above copyright notice,
+  18:Core/Src/main.cpp ****   *      this list of conditions and the following disclaimer.
+  19:Core/Src/main.cpp ****   *   2. Redistributions in binary form must reproduce the above copyright notice,
+  20:Core/Src/main.cpp ****   *      this list of conditions and the following disclaimer in the documentation
+  21:Core/Src/main.cpp ****   *      and/or other materials provided with the distribution.
+  22:Core/Src/main.cpp ****   *   3. Neither the name of STMicroelectronics nor the names of its contributors
+  23:Core/Src/main.cpp ****   *      may be used to endorse or promote products derived from this software
+  24:Core/Src/main.cpp ****   *      without specific prior written permission.
+  25:Core/Src/main.cpp ****   *
+  26:Core/Src/main.cpp ****   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  27:Core/Src/main.cpp ****   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  28:Core/Src/main.cpp ****   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  29:Core/Src/main.cpp ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  30:Core/Src/main.cpp ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  31:Core/Src/main.cpp ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 2
+
+
+  32:Core/Src/main.cpp ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  33:Core/Src/main.cpp ****   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  34:Core/Src/main.cpp ****   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  35:Core/Src/main.cpp ****   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  36:Core/Src/main.cpp ****   *
+  37:Core/Src/main.cpp ****   ******************************************************************************
+  38:Core/Src/main.cpp ****   */
+  39:Core/Src/main.cpp **** /* Includes ------------------------------------------------------------------*/
+  40:Core/Src/main.cpp **** #include "main.h"
+  41:Core/Src/main.cpp **** #include "stm32f4xx_hal.h"
+  42:Core/Src/main.cpp **** #include "adc.h"
+  43:Core/Src/main.cpp **** #include "dma.h"
+  44:Core/Src/main.cpp **** #include "i2c.h"
+  45:Core/Src/main.cpp **** #include "spi.h"
+  46:Core/Src/main.cpp **** #include "tim.h"
+  47:Core/Src/main.cpp **** #include "usart.h"
+  48:Core/Src/main.cpp **** #include "gpio.h"
+  49:Core/Src/main.cpp **** /* USER CODE BEGIN Includes */
+  50:Core/Src/main.cpp **** #include "robot/play.h"
+  51:Core/Src/main.cpp **** #include "robot/robo_init.h"
+  52:Core/Src/main.cpp **** #include "utils/i2c_utils.h"
+  53:Core/Src/main.cpp **** /* USER CODE END Includes */
+  54:Core/Src/main.cpp **** 
+  55:Core/Src/main.cpp **** /* Private variables ---------------------------------------------------------*/
+  56:Core/Src/main.cpp **** 
+  57:Core/Src/main.cpp **** /* USER CODE BEGIN PV */
+  58:Core/Src/main.cpp **** /* Private variables ---------------------------------------------------------*/
+  59:Core/Src/main.cpp **** 
+  60:Core/Src/main.cpp **** /* USER CODE END PV */
+  61:Core/Src/main.cpp **** 
+  62:Core/Src/main.cpp **** /* Private function prototypes -----------------------------------------------*/
+  63:Core/Src/main.cpp **** void SystemClock_Config(void);
+  64:Core/Src/main.cpp **** 
+  65:Core/Src/main.cpp **** /* USER CODE BEGIN PFP */
+  66:Core/Src/main.cpp **** /* Private function prototypes -----------------------------------------------*/
+  67:Core/Src/main.cpp **** 
+  68:Core/Src/main.cpp **** /* USER CODE END PFP */
+  69:Core/Src/main.cpp **** 
+  70:Core/Src/main.cpp **** /* USER CODE BEGIN 0 */
+  71:Core/Src/main.cpp **** 
+  72:Core/Src/main.cpp **** volatile bool gSendBufferDataFlag = false;
+  73:Core/Src/main.cpp **** 
+  74:Core/Src/main.cpp **** #ifdef __cplusplus
+  75:Core/Src/main.cpp **** extern "C" {
+  76:Core/Src/main.cpp **** #endif // __cplusplus
+  77:Core/Src/main.cpp **** 
+  78:Core/Src/main.cpp **** extern void send_AllData();
+  79:Core/Src/main.cpp **** 
+  80:Core/Src/main.cpp **** #ifdef __cplusplus
+  81:Core/Src/main.cpp **** }
+  82:Core/Src/main.cpp **** #endif // __cplusplus
+  83:Core/Src/main.cpp **** 
+  84:Core/Src/main.cpp **** /* USER CODE END 0 */
+  85:Core/Src/main.cpp **** 
+  86:Core/Src/main.cpp **** /**
+  87:Core/Src/main.cpp ****   * @brief  The application entry point.
+  88:Core/Src/main.cpp ****   *
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 3
+
+
+  89:Core/Src/main.cpp ****   * @retval None  
+  90:Core/Src/main.cpp ****   */
+  91:Core/Src/main.cpp **** int main(void)
+  92:Core/Src/main.cpp **** {
+  93:Core/Src/main.cpp ****         /* USER CODE BEGIN 1 */
+  94:Core/Src/main.cpp **** 
+  95:Core/Src/main.cpp ****         /* USER CODE END 1 */
+  96:Core/Src/main.cpp **** 
+  97:Core/Src/main.cpp ****         /* MCU Configuration----------------------------------------------------------*/
+  98:Core/Src/main.cpp **** 
+  99:Core/Src/main.cpp ****         /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+ 100:Core/Src/main.cpp ****         HAL_Init();
+ 101:Core/Src/main.cpp **** 
+ 102:Core/Src/main.cpp ****         /* USER CODE BEGIN Init */
+ 103:Core/Src/main.cpp **** 
+ 104:Core/Src/main.cpp ****         /* USER CODE END Init */
+ 105:Core/Src/main.cpp **** 
+ 106:Core/Src/main.cpp ****         /* Configure the system clock */
+ 107:Core/Src/main.cpp ****         SystemClock_Config();
+ 108:Core/Src/main.cpp **** 
+ 109:Core/Src/main.cpp ****         /* USER CODE BEGIN SysInit */
+ 110:Core/Src/main.cpp **** 
+ 111:Core/Src/main.cpp ****         /* USER CODE END SysInit */
+ 112:Core/Src/main.cpp **** 
+ 113:Core/Src/main.cpp ****         /* Initialize all configured peripherals */
+ 114:Core/Src/main.cpp ****         MX_GPIO_Init();
+ 115:Core/Src/main.cpp ****         MX_DMA_Init();
+ 116:Core/Src/main.cpp ****         MX_I2C3_Init();
+ 117:Core/Src/main.cpp ****         MX_USART2_UART_Init();
+ 118:Core/Src/main.cpp ****         MX_I2C1_Init();
+ 119:Core/Src/main.cpp ****         MX_UART4_Init();
+ 120:Core/Src/main.cpp ****         MX_ADC1_Init();
+ 121:Core/Src/main.cpp ****         MX_SPI1_Init();
+ 122:Core/Src/main.cpp ****         MX_I2C2_Init();
+ 123:Core/Src/main.cpp ****         MX_USART3_UART_Init();
+ 124:Core/Src/main.cpp ****         MX_USART6_UART_Init();
+ 125:Core/Src/main.cpp ****         MX_TIM2_Init();
+ 126:Core/Src/main.cpp ****         /* USER CODE BEGIN 2 */
+ 127:Core/Src/main.cpp **** 
+ 128:Core/Src/main.cpp ****         const uint32_t sampling_period = 10; // milli-seconds
+ 129:Core/Src/main.cpp **** 
+ 130:Core/Src/main.cpp ****         HAL_Delay(100);
+ 131:Core/Src/main.cpp ****         if (HAL_I2C_IsDeviceReady(&hi2c1, 0x3C, 1, 10) != HAL_OK) {
+ 132:Core/Src/main.cpp ****                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 133:Core/Src/main.cpp ****         }
+ 134:Core/Src/main.cpp ****         if (HAL_I2C_IsDeviceReady(&hi2c1, 0xD0, 1, 10) != HAL_OK) {
+ 135:Core/Src/main.cpp ****                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 136:Core/Src/main.cpp ****         }
+ 137:Core/Src/main.cpp ****         // print_I2C_Addresses(&hi2c1);
+ 138:Core/Src/main.cpp ****         robo_Init(sampling_period);
+ 139:Core/Src/main.cpp **** 
+ 140:Core/Src/main.cpp ****         const char * greet = "timeStamp, x, y, z, yaw, velocity, angleOfAttack\n";
+ 141:Core/Src/main.cpp ****         printf(greet);
+ 142:Core/Src/main.cpp ****         HAL_Delay(2000);
+ 143:Core/Src/main.cpp ****         setup(sampling_period);
+ 144:Core/Src/main.cpp **** 
+ 145:Core/Src/main.cpp ****         HAL_Delay(100);
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 4
+
+
+ 146:Core/Src/main.cpp ****         /* USER CODE END 2 */
+ 147:Core/Src/main.cpp **** 
+ 148:Core/Src/main.cpp ****         /* Infinite loop */
+ 149:Core/Src/main.cpp ****         /* USER CODE BEGIN WHILE */
+ 150:Core/Src/main.cpp ****         float null_data[] = {0, 0, 0, 0};
+ 151:Core/Src/main.cpp ****         uint32_t sample = HAL_GetTick();
+ 152:Core/Src/main.cpp ****         uint32_t brake = HAL_GetTick();
+ 153:Core/Src/main.cpp ****         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+ 154:Core/Src/main.cpp ****         while (1)
+ 155:Core/Src/main.cpp ****         {
+ 156:Core/Src/main.cpp ****                 /* USER CODE END WHILE */
+ 157:Core/Src/main.cpp **** 
+ 158:Core/Src/main.cpp ****                 /* USER CODE BEGIN 3 */
+ 159:Core/Src/main.cpp ****                 if (HAL_GetTick() - sample > sampling_period) {
+ 160:Core/Src/main.cpp ****                         sample = HAL_GetTick();
+ 161:Core/Src/main.cpp ****                         play(sampling_period);
+ 162:Core/Src/main.cpp ****                         // printf("%ld\n", (int32_t)(HAL_GetTick() - sample));
+ 163:Core/Src/main.cpp ****                 }
+ 164:Core/Src/main.cpp **** 
+ 165:Core/Src/main.cpp ****                 if (HAL_GetTick() - brake > 12000) {
+ 166:Core/Src/main.cpp ****                         send_WheelerPack(null_data);
+ 167:Core/Src/main.cpp ****                         break;
+ 168:Core/Src/main.cpp ****                 }
+ 169:Core/Src/main.cpp ****         }
+ 170:Core/Src/main.cpp ****         HAL_Delay(500);
+ 171:Core/Src/main.cpp ****         gSendBufferDataFlag = false;
+ 172:Core/Src/main.cpp ****         while (!gSendBufferDataFlag);
+ 173:Core/Src/main.cpp ****         send_AllData();
+ 174:Core/Src/main.cpp ****         while (1);
+ 175:Core/Src/main.cpp ****         /* USER CODE END 3 */
+ 176:Core/Src/main.cpp **** }
+ 177:Core/Src/main.cpp **** 
+ 178:Core/Src/main.cpp **** /**
+ 179:Core/Src/main.cpp ****   * @brief System Clock Configuration
+ 180:Core/Src/main.cpp ****   * @retval None
+ 181:Core/Src/main.cpp ****   */
+ 182:Core/Src/main.cpp **** void SystemClock_Config(void)
+ 183:Core/Src/main.cpp **** {
+ 184:Core/Src/main.cpp **** 
+ 185:Core/Src/main.cpp ****         RCC_OscInitTypeDef RCC_OscInitStruct;
+ 186:Core/Src/main.cpp ****         RCC_ClkInitTypeDef RCC_ClkInitStruct;
+ 187:Core/Src/main.cpp **** 
+ 188:Core/Src/main.cpp ****         /**Configure the main internal regulator output voltage 
+ 189:Core/Src/main.cpp ****     */
+ 190:Core/Src/main.cpp ****         __HAL_RCC_PWR_CLK_ENABLE();
+ 191:Core/Src/main.cpp **** 
+ 192:Core/Src/main.cpp ****         __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 193:Core/Src/main.cpp **** 
+ 194:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
+ 195:Core/Src/main.cpp ****     */
+ 196:Core/Src/main.cpp ****         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 197:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 198:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 199:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 200:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 8;
+ 201:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 336;
+ 202:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 5
+
+
+ 203:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
+ 204:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 205:Core/Src/main.cpp ****         {
+ 206:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+ 207:Core/Src/main.cpp ****         }
+ 208:Core/Src/main.cpp **** 
+ 209:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
+ 210:Core/Src/main.cpp ****     */
+ 211:Core/Src/main.cpp ****         RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCL
+ 212:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 213:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 214:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 215:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 216:Core/Src/main.cpp **** 
+ 217:Core/Src/main.cpp ****         if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+ 218:Core/Src/main.cpp ****         {
+ 219:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+ 220:Core/Src/main.cpp ****         }
+ 221:Core/Src/main.cpp **** 
+ 222:Core/Src/main.cpp ****         /**Configure the Systick interrupt time 
+ 223:Core/Src/main.cpp ****     */
+ 224:Core/Src/main.cpp ****         HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
+ 225:Core/Src/main.cpp **** 
+ 226:Core/Src/main.cpp ****         /**Configure the Systick 
+ 227:Core/Src/main.cpp ****     */
+ 228:Core/Src/main.cpp ****         HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+ 229:Core/Src/main.cpp **** 
+ 230:Core/Src/main.cpp ****         /* SysTick_IRQn interrupt configuration */
+ 231:Core/Src/main.cpp ****         HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+ 232:Core/Src/main.cpp **** }
+ 233:Core/Src/main.cpp **** 
+ 234:Core/Src/main.cpp **** /* USER CODE BEGIN 4 */
+ 235:Core/Src/main.cpp **** /* USER CODE END 4 */
+ 236:Core/Src/main.cpp **** 
+ 237:Core/Src/main.cpp **** /**
+ 238:Core/Src/main.cpp ****   * @brief  This function is executed in case of error occurrence.
+ 239:Core/Src/main.cpp ****   * @param  file: The file name as string.
+ 240:Core/Src/main.cpp ****   * @param  line: The line in file as a number.
+ 241:Core/Src/main.cpp ****   * @retval None
+ 242:Core/Src/main.cpp ****   */
+ 243:Core/Src/main.cpp **** void _Error_Handler(const char *file, int line)
+ 244:Core/Src/main.cpp **** {
+  28              		.loc 1 244 0
+  29              		.cfi_startproc
+  30              		@ Volatile: function does not return.
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              	.LVL0:
+  34 0000 08B5     		push	{r3, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+ 245:Core/Src/main.cpp ****         /* USER CODE BEGIN Error_Handler_Debug */
+ 246:Core/Src/main.cpp ****         /* User can add his own implementation to report the HAL error return state */
+ 247:Core/Src/main.cpp ****         printf(file);
+  39              		.loc 1 247 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 6
+
+
+  40 0002 FFF7FEFF 		bl	printf
+  41              	.LVL1:
+  42              	.L2:
+  43 0006 FEE7     		b	.L2
+  44              		.cfi_endproc
+  45              	.LFE506:
+  47              		.section	.text._Z18SystemClock_Configv,"ax",%progbits
+  48              		.align	1
+  49              		.global	_Z18SystemClock_Configv
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  53              		.fpu fpv4-sp-d16
+  55              	_Z18SystemClock_Configv:
+  56              	.LFB505:
+ 183:Core/Src/main.cpp **** 
+  57              		.loc 1 183 0
+  58              		.cfi_startproc
+  59              		@ args = 0, pretend = 0, frame = 80
+  60              		@ frame_needed = 0, uses_anonymous_args = 0
+  61 0000 00B5     		push	{lr}
+  62              	.LCFI1:
+  63              		.cfi_def_cfa_offset 4
+  64              		.cfi_offset 14, -4
+  65 0002 95B0     		sub	sp, sp, #84
+  66              	.LCFI2:
+  67              		.cfi_def_cfa_offset 88
+  68              	.LBB2:
+ 190:Core/Src/main.cpp **** 
+  69              		.loc 1 190 0
+  70 0004 0021     		movs	r1, #0
+  71 0006 0191     		str	r1, [sp, #4]
+  72 0008 2B4B     		ldr	r3, .L10
+  73 000a 1A6C     		ldr	r2, [r3, #64]
+  74 000c 42F08052 		orr	r2, r2, #268435456
+  75 0010 1A64     		str	r2, [r3, #64]
+  76 0012 1B6C     		ldr	r3, [r3, #64]
+  77 0014 03F08053 		and	r3, r3, #268435456
+  78 0018 0193     		str	r3, [sp, #4]
+  79 001a 019B     		ldr	r3, [sp, #4]
+  80              	.LBE2:
+  81              	.LBB3:
+ 192:Core/Src/main.cpp **** 
+  82              		.loc 1 192 0
+  83 001c 0291     		str	r1, [sp, #8]
+  84 001e 274B     		ldr	r3, .L10+4
+  85 0020 1A68     		ldr	r2, [r3]
+  86 0022 42F48042 		orr	r2, r2, #16384
+  87 0026 1A60     		str	r2, [r3]
+  88 0028 1B68     		ldr	r3, [r3]
+  89 002a 03F48043 		and	r3, r3, #16384
+  90 002e 0293     		str	r3, [sp, #8]
+  91 0030 029B     		ldr	r3, [sp, #8]
+  92              	.LBE3:
+ 196:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  93              		.loc 1 196 0
+  94 0032 0123     		movs	r3, #1
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 7
+
+
+  95 0034 0893     		str	r3, [sp, #32]
+ 197:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  96              		.loc 1 197 0
+  97 0036 4FF48033 		mov	r3, #65536
+  98 003a 0993     		str	r3, [sp, #36]
+ 198:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  99              		.loc 1 198 0
+ 100 003c 0223     		movs	r3, #2
+ 101 003e 0E93     		str	r3, [sp, #56]
+ 199:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 8;
+ 102              		.loc 1 199 0
+ 103 0040 4FF48002 		mov	r2, #4194304
+ 104 0044 0F92     		str	r2, [sp, #60]
+ 200:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 336;
+ 105              		.loc 1 200 0
+ 106 0046 0822     		movs	r2, #8
+ 107 0048 1092     		str	r2, [sp, #64]
+ 201:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 108              		.loc 1 201 0
+ 109 004a 4FF4A872 		mov	r2, #336
+ 110 004e 1192     		str	r2, [sp, #68]
+ 202:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
+ 111              		.loc 1 202 0
+ 112 0050 1293     		str	r3, [sp, #72]
+ 203:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 113              		.loc 1 203 0
+ 114 0052 0423     		movs	r3, #4
+ 115 0054 1393     		str	r3, [sp, #76]
+ 204:Core/Src/main.cpp ****         {
+ 116              		.loc 1 204 0
+ 117 0056 08A8     		add	r0, sp, #32
+ 118 0058 FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 119              	.LVL2:
+ 120 005c 20BB     		cbnz	r0, .L8
+ 211:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 121              		.loc 1 211 0
+ 122 005e 0F23     		movs	r3, #15
+ 123 0060 0393     		str	r3, [sp, #12]
+ 212:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 124              		.loc 1 212 0
+ 125 0062 0223     		movs	r3, #2
+ 126 0064 0493     		str	r3, [sp, #16]
+ 213:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 127              		.loc 1 213 0
+ 128 0066 0023     		movs	r3, #0
+ 129 0068 0593     		str	r3, [sp, #20]
+ 214:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 130              		.loc 1 214 0
+ 131 006a 4FF4A053 		mov	r3, #5120
+ 132 006e 0693     		str	r3, [sp, #24]
+ 215:Core/Src/main.cpp **** 
+ 133              		.loc 1 215 0
+ 134 0070 4FF48053 		mov	r3, #4096
+ 135 0074 0793     		str	r3, [sp, #28]
+ 217:Core/Src/main.cpp ****         {
+ 136              		.loc 1 217 0
+ 137 0076 0521     		movs	r1, #5
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 8
+
+
+ 138 0078 03A8     		add	r0, sp, #12
+ 139 007a FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 140              	.LVL3:
+ 141 007e B8B9     		cbnz	r0, .L9
+ 224:Core/Src/main.cpp **** 
+ 142              		.loc 1 224 0
+ 143 0080 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+ 144              	.LVL4:
+ 145 0084 0E4B     		ldr	r3, .L10+8
+ 146 0086 A3FB0030 		umull	r3, r0, r3, r0
+ 147 008a 8009     		lsrs	r0, r0, #6
+ 148 008c FFF7FEFF 		bl	HAL_SYSTICK_Config
+ 149              	.LVL5:
+ 228:Core/Src/main.cpp **** 
+ 150              		.loc 1 228 0
+ 151 0090 0420     		movs	r0, #4
+ 152 0092 FFF7FEFF 		bl	HAL_SYSTICK_CLKSourceConfig
+ 153              	.LVL6:
+ 231:Core/Src/main.cpp **** }
+ 154              		.loc 1 231 0
+ 155 0096 0022     		movs	r2, #0
+ 156 0098 1146     		mov	r1, r2
+ 157 009a 4FF0FF30 		mov	r0, #-1
+ 158 009e FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 159              	.LVL7:
+ 232:Core/Src/main.cpp **** 
+ 160              		.loc 1 232 0
+ 161 00a2 15B0     		add	sp, sp, #84
+ 162              	.LCFI3:
+ 163              		.cfi_remember_state
+ 164              		.cfi_def_cfa_offset 4
+ 165              		@ sp needed
+ 166 00a4 5DF804FB 		ldr	pc, [sp], #4
+ 167              	.L8:
+ 168              	.LCFI4:
+ 169              		.cfi_restore_state
+ 206:Core/Src/main.cpp ****         }
+ 170              		.loc 1 206 0
+ 171 00a8 CE21     		movs	r1, #206
+ 172 00aa 0648     		ldr	r0, .L10+12
+ 173 00ac FFF7FEFF 		bl	_Error_Handler
+ 174              	.LVL8:
+ 175              	.L9:
+ 219:Core/Src/main.cpp ****         }
+ 176              		.loc 1 219 0
+ 177 00b0 DB21     		movs	r1, #219
+ 178 00b2 0448     		ldr	r0, .L10+12
+ 179 00b4 FFF7FEFF 		bl	_Error_Handler
+ 180              	.LVL9:
+ 181              	.L11:
+ 182              		.align	2
+ 183              	.L10:
+ 184 00b8 00380240 		.word	1073887232
+ 185 00bc 00700040 		.word	1073770496
+ 186 00c0 D34D6210 		.word	274877907
+ 187 00c4 00000000 		.word	.LC0
+ 188              		.cfi_endproc
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 9
+
+
+ 189              	.LFE505:
+ 191              		.section	.text.main,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	main
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu fpv4-sp-d16
+ 199              	main:
+ 200              	.LFB504:
+  92:Core/Src/main.cpp ****         /* USER CODE BEGIN 1 */
+ 201              		.loc 1 92 0
+ 202              		.cfi_startproc
+ 203              		@ args = 0, pretend = 0, frame = 16
+ 204              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205 0000 30B5     		push	{r4, r5, lr}
+ 206              	.LCFI5:
+ 207              		.cfi_def_cfa_offset 12
+ 208              		.cfi_offset 4, -12
+ 209              		.cfi_offset 5, -8
+ 210              		.cfi_offset 14, -4
+ 211 0002 85B0     		sub	sp, sp, #20
+ 212              	.LCFI6:
+ 213              		.cfi_def_cfa_offset 32
+ 100:Core/Src/main.cpp **** 
+ 214              		.loc 1 100 0
+ 215 0004 FFF7FEFF 		bl	HAL_Init
+ 216              	.LVL10:
+ 107:Core/Src/main.cpp **** 
+ 217              		.loc 1 107 0
+ 218 0008 FFF7FEFF 		bl	_Z18SystemClock_Configv
+ 219              	.LVL11:
+ 114:Core/Src/main.cpp ****         MX_DMA_Init();
+ 220              		.loc 1 114 0
+ 221 000c FFF7FEFF 		bl	MX_GPIO_Init
+ 222              	.LVL12:
+ 115:Core/Src/main.cpp ****         MX_I2C3_Init();
+ 223              		.loc 1 115 0
+ 224 0010 FFF7FEFF 		bl	MX_DMA_Init
+ 225              	.LVL13:
+ 116:Core/Src/main.cpp ****         MX_USART2_UART_Init();
+ 226              		.loc 1 116 0
+ 227 0014 FFF7FEFF 		bl	MX_I2C3_Init
+ 228              	.LVL14:
+ 117:Core/Src/main.cpp ****         MX_I2C1_Init();
+ 229              		.loc 1 117 0
+ 230 0018 FFF7FEFF 		bl	MX_USART2_UART_Init
+ 231              	.LVL15:
+ 118:Core/Src/main.cpp ****         MX_UART4_Init();
+ 232              		.loc 1 118 0
+ 233 001c FFF7FEFF 		bl	MX_I2C1_Init
+ 234              	.LVL16:
+ 119:Core/Src/main.cpp ****         MX_ADC1_Init();
+ 235              		.loc 1 119 0
+ 236 0020 FFF7FEFF 		bl	MX_UART4_Init
+ 237              	.LVL17:
+ 120:Core/Src/main.cpp ****         MX_SPI1_Init();
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 10
+
+
+ 238              		.loc 1 120 0
+ 239 0024 FFF7FEFF 		bl	MX_ADC1_Init
+ 240              	.LVL18:
+ 121:Core/Src/main.cpp ****         MX_I2C2_Init();
+ 241              		.loc 1 121 0
+ 242 0028 FFF7FEFF 		bl	MX_SPI1_Init
+ 243              	.LVL19:
+ 122:Core/Src/main.cpp ****         MX_USART3_UART_Init();
+ 244              		.loc 1 122 0
+ 245 002c FFF7FEFF 		bl	MX_I2C2_Init
+ 246              	.LVL20:
+ 123:Core/Src/main.cpp ****         MX_USART6_UART_Init();
+ 247              		.loc 1 123 0
+ 248 0030 FFF7FEFF 		bl	MX_USART3_UART_Init
+ 249              	.LVL21:
+ 124:Core/Src/main.cpp ****         MX_TIM2_Init();
+ 250              		.loc 1 124 0
+ 251 0034 FFF7FEFF 		bl	MX_USART6_UART_Init
+ 252              	.LVL22:
+ 125:Core/Src/main.cpp ****         /* USER CODE BEGIN 2 */
+ 253              		.loc 1 125 0
+ 254 0038 FFF7FEFF 		bl	MX_TIM2_Init
+ 255              	.LVL23:
+ 130:Core/Src/main.cpp ****         if (HAL_I2C_IsDeviceReady(&hi2c1, 0x3C, 1, 10) != HAL_OK) {
+ 256              		.loc 1 130 0
+ 257 003c 6420     		movs	r0, #100
+ 258 003e FFF7FEFF 		bl	HAL_Delay
+ 259              	.LVL24:
+ 131:Core/Src/main.cpp ****                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 260              		.loc 1 131 0
+ 261 0042 0A23     		movs	r3, #10
+ 262 0044 0122     		movs	r2, #1
+ 263 0046 3C21     		movs	r1, #60
+ 264 0048 2F48     		ldr	r0, .L23
+ 265 004a FFF7FEFF 		bl	HAL_I2C_IsDeviceReady
+ 266              	.LVL25:
+ 267 004e 40BB     		cbnz	r0, .L20
+ 268              	.L13:
+ 134:Core/Src/main.cpp ****                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 269              		.loc 1 134 0
+ 270 0050 0A23     		movs	r3, #10
+ 271 0052 0122     		movs	r2, #1
+ 272 0054 D021     		movs	r1, #208
+ 273 0056 2C48     		ldr	r0, .L23
+ 274 0058 FFF7FEFF 		bl	HAL_I2C_IsDeviceReady
+ 275              	.LVL26:
+ 276 005c 40BB     		cbnz	r0, .L21
+ 277              	.L14:
+ 138:Core/Src/main.cpp **** 
+ 278              		.loc 1 138 0
+ 279 005e 0A20     		movs	r0, #10
+ 280 0060 FFF7FEFF 		bl	_Z9robo_Initm
+ 281              	.LVL27:
+ 141:Core/Src/main.cpp ****         HAL_Delay(2000);
+ 282              		.loc 1 141 0
+ 283 0064 2948     		ldr	r0, .L23+4
+ 284 0066 FFF7FEFF 		bl	puts
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 11
+
+
+ 285              	.LVL28:
+ 142:Core/Src/main.cpp ****         setup(sampling_period);
+ 286              		.loc 1 142 0
+ 287 006a 4FF4FA60 		mov	r0, #2000
+ 288 006e FFF7FEFF 		bl	HAL_Delay
+ 289              	.LVL29:
+ 143:Core/Src/main.cpp **** 
+ 290              		.loc 1 143 0
+ 291 0072 0A20     		movs	r0, #10
+ 292 0074 FFF7FEFF 		bl	_Z5setupm
+ 293              	.LVL30:
+ 145:Core/Src/main.cpp ****         /* USER CODE END 2 */
+ 294              		.loc 1 145 0
+ 295 0078 6420     		movs	r0, #100
+ 296 007a FFF7FEFF 		bl	HAL_Delay
+ 297              	.LVL31:
+ 150:Core/Src/main.cpp ****         uint32_t sample = HAL_GetTick();
+ 298              		.loc 1 150 0
+ 299 007e 0023     		movs	r3, #0
+ 300 0080 0093     		str	r3, [sp]
+ 301 0082 0193     		str	r3, [sp, #4]
+ 302 0084 0293     		str	r3, [sp, #8]
+ 303 0086 0393     		str	r3, [sp, #12]
+ 151:Core/Src/main.cpp ****         uint32_t brake = HAL_GetTick();
+ 304              		.loc 1 151 0
+ 305 0088 FFF7FEFF 		bl	HAL_GetTick
+ 306              	.LVL32:
+ 307 008c 0446     		mov	r4, r0
+ 308              	.LVL33:
+ 152:Core/Src/main.cpp ****         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+ 309              		.loc 1 152 0
+ 310 008e FFF7FEFF 		bl	HAL_GetTick
+ 311              	.LVL34:
+ 312 0092 0546     		mov	r5, r0
+ 313              	.LVL35:
+ 153:Core/Src/main.cpp ****         while (1)
+ 314              		.loc 1 153 0
+ 315 0094 0122     		movs	r2, #1
+ 316 0096 4FF40041 		mov	r1, #32768
+ 317 009a 1D48     		ldr	r0, .L23+8
+ 318              	.LVL36:
+ 319 009c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 320              	.LVL37:
+ 321 00a0 14E0     		b	.L16
+ 322              	.LVL38:
+ 323              	.L20:
+ 132:Core/Src/main.cpp ****         }
+ 324              		.loc 1 132 0
+ 325 00a2 0122     		movs	r2, #1
+ 326 00a4 4FF48041 		mov	r1, #16384
+ 327 00a8 1948     		ldr	r0, .L23+8
+ 328 00aa FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 329              	.LVL39:
+ 330 00ae CFE7     		b	.L13
+ 331              	.L21:
+ 135:Core/Src/main.cpp ****         }
+ 332              		.loc 1 135 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 12
+
+
+ 333 00b0 0122     		movs	r2, #1
+ 334 00b2 4FF48041 		mov	r1, #16384
+ 335 00b6 1648     		ldr	r0, .L23+8
+ 336 00b8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 337              	.LVL40:
+ 338 00bc CFE7     		b	.L14
+ 339              	.LVL41:
+ 340              	.L15:
+ 165:Core/Src/main.cpp ****                         send_WheelerPack(null_data);
+ 341              		.loc 1 165 0
+ 342 00be FFF7FEFF 		bl	HAL_GetTick
+ 343              	.LVL42:
+ 344 00c2 401B     		subs	r0, r0, r5
+ 345 00c4 42F6E063 		movw	r3, #12000
+ 346 00c8 9842     		cmp	r0, r3
+ 347 00ca 0BD8     		bhi	.L22
+ 348              	.L16:
+ 159:Core/Src/main.cpp ****                         sample = HAL_GetTick();
+ 349              		.loc 1 159 0
+ 350 00cc FFF7FEFF 		bl	HAL_GetTick
+ 351              	.LVL43:
+ 352 00d0 001B     		subs	r0, r0, r4
+ 353 00d2 0A28     		cmp	r0, #10
+ 354 00d4 F3D9     		bls	.L15
+ 160:Core/Src/main.cpp ****                         play(sampling_period);
+ 355              		.loc 1 160 0
+ 356 00d6 FFF7FEFF 		bl	HAL_GetTick
+ 357              	.LVL44:
+ 358 00da 0446     		mov	r4, r0
+ 359              	.LVL45:
+ 161:Core/Src/main.cpp ****                         // printf("%ld\n", (int32_t)(HAL_GetTick() - sample));
+ 360              		.loc 1 161 0
+ 361 00dc 0A20     		movs	r0, #10
+ 362              	.LVL46:
+ 363 00de FFF7FEFF 		bl	_Z4playm
+ 364              	.LVL47:
+ 365 00e2 ECE7     		b	.L15
+ 366              	.L22:
+ 166:Core/Src/main.cpp ****                         break;
+ 367              		.loc 1 166 0
+ 368 00e4 6846     		mov	r0, sp
+ 369 00e6 FFF7FEFF 		bl	_Z16send_WheelerPackPf
+ 370              	.LVL48:
+ 170:Core/Src/main.cpp ****         gSendBufferDataFlag = false;
+ 371              		.loc 1 170 0
+ 372 00ea 4FF4FA70 		mov	r0, #500
+ 373 00ee FFF7FEFF 		bl	HAL_Delay
+ 374              	.LVL49:
+ 171:Core/Src/main.cpp ****         while (!gSendBufferDataFlag);
+ 375              		.loc 1 171 0
+ 376 00f2 084B     		ldr	r3, .L23+12
+ 377 00f4 0022     		movs	r2, #0
+ 378 00f6 1A70     		strb	r2, [r3]
+ 379              	.L17:
+ 172:Core/Src/main.cpp ****         send_AllData();
+ 380              		.loc 1 172 0
+ 381 00f8 064B     		ldr	r3, .L23+12
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 13
+
+
+ 382 00fa 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 383 00fc 002B     		cmp	r3, #0
+ 384 00fe FBD0     		beq	.L17
+ 173:Core/Src/main.cpp ****         while (1);
+ 385              		.loc 1 173 0
+ 386 0100 FFF7FEFF 		bl	send_AllData
+ 387              	.LVL50:
+ 388              	.L18:
+ 389 0104 FEE7     		b	.L18
+ 390              	.L24:
+ 391 0106 00BF     		.align	2
+ 392              	.L23:
+ 393 0108 00000000 		.word	hi2c1
+ 394 010c 00000000 		.word	.LC1
+ 395 0110 000C0240 		.word	1073875968
+ 396 0114 00000000 		.word	.LANCHOR0
+ 397              		.cfi_endproc
+ 398              	.LFE504:
+ 400              		.section	.text.assert_failed,"ax",%progbits
+ 401              		.align	1
+ 402              		.global	assert_failed
+ 403              		.syntax unified
+ 404              		.thumb
+ 405              		.thumb_func
+ 406              		.fpu fpv4-sp-d16
+ 408              	assert_failed:
+ 409              	.LFB507:
+ 248:Core/Src/main.cpp ****         while (1)
+ 249:Core/Src/main.cpp ****         {
+ 250:Core/Src/main.cpp ****         }
+ 251:Core/Src/main.cpp ****         /* USER CODE END Error_Handler_Debug */
+ 252:Core/Src/main.cpp **** }
+ 253:Core/Src/main.cpp **** 
+ 254:Core/Src/main.cpp **** #ifdef USE_FULL_ASSERT
+ 255:Core/Src/main.cpp **** /**
+ 256:Core/Src/main.cpp ****   * @brief  Reports the name of the source file and the source line number
+ 257:Core/Src/main.cpp ****   *         where the assert_param error has occurred.
+ 258:Core/Src/main.cpp ****   * @param  file: pointer to the source file name
+ 259:Core/Src/main.cpp ****   * @param  line: assert_param error line source number
+ 260:Core/Src/main.cpp ****   * @retval None
+ 261:Core/Src/main.cpp ****   */
+ 262:Core/Src/main.cpp **** void assert_failed(uint8_t *file, uint32_t line)
+ 263:Core/Src/main.cpp **** {
+ 410              		.loc 1 263 0
+ 411              		.cfi_startproc
+ 412              		@ args = 0, pretend = 0, frame = 0
+ 413              		@ frame_needed = 0, uses_anonymous_args = 0
+ 414              		@ link register save eliminated.
+ 415              	.LVL51:
+ 264:Core/Src/main.cpp ****         /* USER CODE BEGIN 6 */
+ 265:Core/Src/main.cpp ****         /* User can add his own implementation to report the file name and line number,
+ 266:Core/Src/main.cpp ****      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+ 267:Core/Src/main.cpp ****         /* USER CODE END 6 */
+ 268:Core/Src/main.cpp **** }
+ 416              		.loc 1 268 0
+ 417 0000 7047     		bx	lr
+ 418              		.cfi_endproc
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 14
+
+
+ 419              	.LFE507:
+ 421              		.global	gSendBufferDataFlag
+ 422              		.section	.bss.gSendBufferDataFlag,"aw",%nobits
+ 423              		.set	.LANCHOR0,. + 0
+ 426              	gSendBufferDataFlag:
+ 427 0000 00       		.space	1
+ 428              		.section	.rodata._Z18SystemClock_Configv.str1.4,"aMS",%progbits,1
+ 429              		.align	2
+ 430              	.LC0:
+ 431 0000 436F7265 		.ascii	"Core/Src/main.cpp\000"
+ 431      2F537263 
+ 431      2F6D6169 
+ 431      6E2E6370 
+ 431      7000
+ 432              		.section	.rodata.main.str1.4,"aMS",%progbits,1
+ 433              		.align	2
+ 434              	.LC1:
+ 435 0000 74696D65 		.ascii	"timeStamp, x, y, z, yaw, velocity, angleOfAttack\000"
+ 435      5374616D 
+ 435      702C2078 
+ 435      2C20792C 
+ 435      207A2C20 
+ 436              		.text
+ 437              	.Letext0:
+ 438              		.file 2 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 439              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 440              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 441              		.file 5 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 442              		.file 6 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 443              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 444              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 445              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 446              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 447              		.file 11 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 448              		.file 12 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 449              		.file 13 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 450              		.file 14 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 451              		.file 15 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 452              		.file 16 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 453              		.file 17 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 454              		.file 18 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 455              		.file 19 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 456              		.file 20 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 457              		.file 21 "Core/Inc\\periphs/adc.h"
+ 458              		.file 22 "Core/Inc\\periphs/i2c.h"
+ 459              		.file 23 "Core/Inc\\periphs/spi.h"
+ 460              		.file 24 "Core/Inc\\periphs/tim.h"
+ 461              		.file 25 "Core/Inc\\periphs/usart.h"
+ 462              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 463              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 464              		.file 28 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 465              		.file 29 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 466              		.file 30 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 467              		.file 31 "Core/Inc/utils/mat.h"
+ 468              		.file 32 "Core/Inc/utils/filter.h"
+ 469              		.file 33 "Core/Inc/utils/filter_algorithm.h"
+ 470              		.file 34 "Core/Inc/devs/mpu6050.h"
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 15
+
+
+ 471              		.file 35 "Core/Inc/utils/vec3.h"
+ 472              		.file 36 "Core/Inc/devs/a4988.h"
+ 473              		.file 37 "Core/Inc/devs/hmc5883.h"
+ 474              		.file 38 "Core/Inc/devs/encoder.h"
+ 475              		.file 39 "Core/Inc\\devs/wheeler.h"
+ 476              		.file 40 "Core/Inc/robot/devs_config.h"
+ 477              		.file 41 "Core/Inc/utils/kalman.h"
+ 478              		.file 42 "Core/Inc/robot/robo_init.h"
+ 479              		.file 43 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 480              		.file 44 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 481              		.file 45 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 482              		.file 46 "Core/Inc\\periphs/gpio.h"
+ 483              		.file 47 "Core/Inc\\periphs/dma.h"
+ 484              		.file 48 "Core/Inc/robot/play.h"
+ 485              		.file 49 "<built-in>"
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\ccB1atif.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.cpp
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:18     .text._Error_Handler:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:25     .text._Error_Handler:00000000 _Error_Handler
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:48     .text._Z18SystemClock_Configv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:55     .text._Z18SystemClock_Configv:00000000 _Z18SystemClock_Configv
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:184    .text._Z18SystemClock_Configv:000000b8 $d
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:192    .text.main:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:199    .text.main:00000000 main
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:393    .text.main:00000108 $d
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:401    .text.assert_failed:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:408    .text.assert_failed:00000000 assert_failed
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:426    .bss.gSendBufferDataFlag:00000000 gSendBufferDataFlag
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:427    .bss.gSendBufferDataFlag:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:429    .rodata._Z18SystemClock_Configv.str1.4:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\ccB1atif.s:433    .rodata.main.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+printf
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_RCC_GetHCLKFreq
+HAL_SYSTICK_Config
+HAL_SYSTICK_CLKSourceConfig
+HAL_NVIC_SetPriority
+HAL_Init
+MX_GPIO_Init
+MX_DMA_Init
+MX_I2C3_Init
+MX_USART2_UART_Init
+MX_I2C1_Init
+MX_UART4_Init
+MX_ADC1_Init
+MX_SPI1_Init
+MX_I2C2_Init
+MX_USART3_UART_Init
+MX_USART6_UART_Init
+MX_TIM2_Init
+HAL_Delay
+HAL_I2C_IsDeviceReady
+_Z9robo_Initm
+puts
+_Z5setupm
+HAL_GetTick
+HAL_GPIO_WritePin
+_Z4playm
+_Z16send_WheelerPackPf
+send_AllData
+hi2c1

@@ -2,12 +2,11 @@
 
 
 struct encoder e[4];
+//float robotx = -450, roboty = 500;
 float robotx = 0, roboty = 0;
 float actual_robotx = 0, actual_roboty = 0;
 float theta =0;
-//float false_robotx = 0, false_roboty = 0;
 float distance[2][3];		//set1, set2 (distancex, distancey, yaw)
-//int16_t counts[4] =  {0,0,0,0};
 extern int counts[4];
 void init_encoder()
 {
@@ -37,37 +36,17 @@ void calculate_encoder_distance(struct encoder *e)
 		e->distance = (e->count)*(CIRCUMFERENCE_OF_WHEEL/PPR);
 	}
 	else{}
-	/*if(e->id==0)
-	{
-		e->distancex = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-	}
-	else if(e->id==1)
-	{
-		e->distancex = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-	}
-	else if(e->id==2)
-	{
-		e->distancex = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-	}
-	else if(e->id==3)
-	{
-		e->distancex = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
-	}
-	else{}
-	*/
 }
+
 void reset_robot_distance()
 {
 	actual_robotx = robotx;
 	actual_roboty = roboty;
 }
+
 void calculate_robot_distance()
 {
-	float d13, d24;
+	static float d13 = 0, d24 = 0;
 	int temp_count[4]; 
 	for(int i=0;i<4;i++)
 	{
@@ -75,7 +54,6 @@ void calculate_robot_distance()
 	}
 	d13 = (e[0].distance + e[2].distance)/2;
 	d24 = (e[1].distance + e[3].distance)/2;
-	//printf("%f\t %f",d13,d24);
 	temp_count[0] = e[0].count;
 	temp_count[1] = e[1].count;
 	temp_count[2] = e[2].count;
@@ -87,20 +65,6 @@ void calculate_robot_distance()
 	e[1].count -= temp_count[1];
 	e[2].count -= temp_count[2];
 	e[3].count -= temp_count[3];
-	//robotx = false_robotx * sin (theta + PI/4);
-	//roboty = false_robotx * sin (theta + PI/4);
-	//robotx = false_robotx;
-	//roboty = false_roboty;
-	//printf("%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f \t%f\n", e[0].distance, e[1].distance, e[2].distance, e[3].distance, d13, d24, theta, robotx, roboty);
-	/*
-	for(int i=0;i<4;i++)
-	{
-		calculate_encoder_distance(&e[i]);
-		robotx += e[i].distancex;
-		roboty += e[i].distancey;
-	}
-	robotx /= 4;
-	roboty /= 4;*/
 
 }
 

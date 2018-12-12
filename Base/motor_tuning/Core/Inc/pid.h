@@ -20,6 +20,7 @@ struct Str_pid
 	
 	float last_input;
 	float last_error;
+	float previous_error;
 	float last_output;
 	
 	float output;
@@ -40,9 +41,11 @@ struct Str_pid_distance{
 	double output;
 
 };
+void init_PID(struct Str_pid* spid);
+void reset_Params(struct Str_pid* spid);
 void set_OutputLimit(struct Str_pid* spid, float max_output, float min_output);
-void set_Gains(struct Str_pid* spid, double kp, double ki, double kd);
-double pid_Compute(struct Str_pid* spid,float set_point, float process_value, uint16_t dt);
+void set_Gains(struct Str_pid* spid, float kp, float ki, float kd);
+float pid_Compute(struct Str_pid* spid,float set_point, float process_value, uint16_t dt);
 void calculate_velocity_with_pid(void);
 void pid_distance(void);
 double compute_pid_distance(struct Str_pid_distance* dis_pid,float req_distance, float curr_distance );

@@ -1,0 +1,903 @@
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"thinker.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.__tcf_0,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	__tcf_0:
+  25              	.LFB145:
+  26              		.file 1 "Core/Src/devs/thinker.cpp"
+   1:Core/Src/devs/thinker.cpp **** #include "devs/thinker.h"
+   2:Core/Src/devs/thinker.cpp **** #include "utils/queue.h"
+   3:Core/Src/devs/thinker.cpp **** #include "robot/defines.h"
+   4:Core/Src/devs/thinker.cpp **** #include "periphs/usart.h"
+   5:Core/Src/devs/thinker.cpp **** 
+   6:Core/Src/devs/thinker.cpp **** #define NUM_OMEGAS_RECEIVED	(8)
+   7:Core/Src/devs/thinker.cpp **** 
+   8:Core/Src/devs/thinker.cpp **** static uint8_t gThinker_Byte;
+   9:Core/Src/devs/thinker.cpp **** static bool gStart_Byte_Received = false;
+  10:Core/Src/devs/thinker.cpp **** static uint8_t gNum_Data_Received = 0;
+  11:Core/Src/devs/thinker.cpp **** static int16_t gOmega;
+  12:Core/Src/devs/thinker.cpp **** 
+  13:Core/Src/devs/thinker.cpp **** static Queue<uint8_t, NUM_OMEGAS_RECEIVED> gThinker_Bytes;
+  14:Core/Src/devs/thinker.cpp **** static Queue<int16_t, 1> gThinker_Omegas[4];
+  27              		.loc 1 14 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              		.loc 1 14 0
+  33 0000 034B     		ldr	r3, .L4
+  34              	.L3:
+  35              		.loc 1 14 0 is_stmt 0 discriminator 5
+  36 0002 044A     		ldr	r2, .L4+4
+  37 0004 9342     		cmp	r3, r2
+  38 0006 01D0     		beq	.L1
+  39              		.loc 1 14 0 discriminator 4
+  40 0008 103B     		subs	r3, r3, #16
+  41              	.LVL0:
+  42 000a FAE7     		b	.L3
+  43              	.LVL1:
+  44              	.L1:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 2
+
+
+  45              		.loc 1 14 0
+  46 000c 7047     		bx	lr
+  47              	.L5:
+  48 000e 00BF     		.align	2
+  49              	.L4:
+  50 0010 40000000 		.word	.LANCHOR0+64
+  51 0014 00000000 		.word	.LANCHOR0
+  52              		.cfi_endproc
+  53              	.LFE145:
+  55              		.section	.text._ZN5QueueIhLj8EED2Ev,"axG",%progbits,_ZN5QueueIhLj8EED5Ev,comdat
+  56              		.align	1
+  57              		.weak	_ZN5QueueIhLj8EED2Ev
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  61              		.fpu fpv4-sp-d16
+  63              	_ZN5QueueIhLj8EED2Ev:
+  64              	.LFB147:
+  65              		.file 2 "Core/Inc/utils/queue.h"
+   1:Core/Inc/utils/queue.h **** /*
+   2:Core/Inc/utils/queue.h ****  * queue.h
+   3:Core/Inc/utils/queue.h ****  * 
+   4:Core/Inc/utils/queue.h ****  * Created : 11/16/2018
+   5:Core/Inc/utils/queue.h ****  *  Author : n-is
+   6:Core/Inc/utils/queue.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/queue.h ****  */
+   8:Core/Inc/utils/queue.h **** 
+   9:Core/Inc/utils/queue.h **** #ifndef _QUEUE_H_
+  10:Core/Inc/utils/queue.h **** #define _QUEUE_H_
+  11:Core/Inc/utils/queue.h **** 
+  12:Core/Inc/utils/queue.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/queue.h **** 
+  14:Core/Inc/utils/queue.h **** template <class T, size_t q_size>
+  15:Core/Inc/utils/queue.h **** class Queue
+  16:Core/Inc/utils/queue.h **** {
+  17:Core/Inc/utils/queue.h **** public:
+  18:Core/Inc/utils/queue.h ****         Queue():head_(0), tail_(0), curr_size_(0) { }
+  19:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+  20:Core/Inc/utils/queue.h ****         Queue(const Queue &) = default;
+  21:Core/Inc/utils/queue.h ****         Queue &operator=(Queue &&) = default;
+  22:Core/Inc/utils/queue.h ****         Queue &operator=(const Queue &) = default;
+  23:Core/Inc/utils/queue.h ****         ~Queue() {  }
+  66              		.loc 2 23 0 is_stmt 1
+  67              		.cfi_startproc
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+  71              	.LVL2:
+  72              		.loc 2 23 0
+  73 0000 7047     		bx	lr
+  74              		.cfi_endproc
+  75              	.LFE147:
+  77              		.weak	_ZN5QueueIhLj8EED1Ev
+  78              		.thumb_set _ZN5QueueIhLj8EED1Ev,_ZN5QueueIhLj8EED2Ev
+  79              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+  80              		.align	1
+  81              		.syntax unified
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 3
+
+
+  82              		.thumb
+  83              		.thumb_func
+  84              		.fpu fpv4-sp-d16
+  86              	_Z41__static_initialization_and_destruction_0ii:
+  87              	.LFB144:
+  15:Core/Src/devs/thinker.cpp **** 
+  16:Core/Src/devs/thinker.cpp **** void Thinker_Init(void)
+  17:Core/Src/devs/thinker.cpp **** {
+  18:Core/Src/devs/thinker.cpp **** 	HAL_UART_Receive_DMA(&huart3, &gThinker_Byte, 1);
+  19:Core/Src/devs/thinker.cpp **** }
+  20:Core/Src/devs/thinker.cpp **** 
+  21:Core/Src/devs/thinker.cpp **** void get_Thinker(float arr[4])
+  22:Core/Src/devs/thinker.cpp **** {
+  23:Core/Src/devs/thinker.cpp **** 	for (uint8_t i= 0; i < 4; ++i) {
+  24:Core/Src/devs/thinker.cpp **** 		arr[i] = gThinker_Omegas[i].lookup();
+  25:Core/Src/devs/thinker.cpp **** 		arr[i] *= (MAX_POSSIBLE_OMEGA / 32768.0);
+  26:Core/Src/devs/thinker.cpp **** 	}
+  27:Core/Src/devs/thinker.cpp **** }
+  28:Core/Src/devs/thinker.cpp **** 
+  29:Core/Src/devs/thinker.cpp **** bool Thinker_isEmpty()
+  30:Core/Src/devs/thinker.cpp **** {
+  31:Core/Src/devs/thinker.cpp ****     if (gThinker_Omegas[0].length()) {
+  32:Core/Src/devs/thinker.cpp ****         return false;
+  33:Core/Src/devs/thinker.cpp ****     }
+  34:Core/Src/devs/thinker.cpp ****     return true;
+  35:Core/Src/devs/thinker.cpp **** }
+  36:Core/Src/devs/thinker.cpp **** 
+  37:Core/Src/devs/thinker.cpp **** void Thinker_UART_RxCpltCallback()
+  38:Core/Src/devs/thinker.cpp **** {
+  39:Core/Src/devs/thinker.cpp ****         if(!gStart_Byte_Received)
+  40:Core/Src/devs/thinker.cpp ****         {
+  41:Core/Src/devs/thinker.cpp ****                 if (gThinker_Byte == 0xA5) {
+  42:Core/Src/devs/thinker.cpp ****                         gStart_Byte_Received = true;
+  43:Core/Src/devs/thinker.cpp ****                 }
+  44:Core/Src/devs/thinker.cpp ****         }
+  45:Core/Src/devs/thinker.cpp ****         else
+  46:Core/Src/devs/thinker.cpp ****         {
+  47:Core/Src/devs/thinker.cpp ****                 gThinker_Bytes.insert(gThinker_Byte);
+  48:Core/Src/devs/thinker.cpp ****                 ++gNum_Data_Received;
+  49:Core/Src/devs/thinker.cpp ****                 if (gNum_Data_Received == NUM_OMEGAS_RECEIVED) {
+  50:Core/Src/devs/thinker.cpp ****                         gNum_Data_Received = 0;
+  51:Core/Src/devs/thinker.cpp ****                         gStart_Byte_Received = false;
+  52:Core/Src/devs/thinker.cpp ****                         // Omega calculation using big-endian
+  53:Core/Src/devs/thinker.cpp ****                         for (uint8_t i = 0; i < 4; ++i) {
+  54:Core/Src/devs/thinker.cpp ****                                 gOmega = gThinker_Bytes.lookup() << 8;
+  55:Core/Src/devs/thinker.cpp ****                                 gOmega += gThinker_Bytes.lookup();
+  56:Core/Src/devs/thinker.cpp ****                                 gThinker_Omegas[i].insert(gOmega);
+  57:Core/Src/devs/thinker.cpp ****                         }
+  58:Core/Src/devs/thinker.cpp ****                 }
+  59:Core/Src/devs/thinker.cpp ****         }
+  60:Core/Src/devs/thinker.cpp **** }
+  88              		.loc 1 60 0
+  89              		.cfi_startproc
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92              	.LVL3:
+  93 0000 0128     		cmp	r0, #1
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 4
+
+
+  94 0002 00D0     		beq	.L15
+  95 0004 7047     		bx	lr
+  96              	.L15:
+  97              		.loc 1 60 0 is_stmt 0 discriminator 1
+  98 0006 08B5     		push	{r3, lr}
+  99              	.LCFI0:
+ 100              		.cfi_def_cfa_offset 8
+ 101              		.cfi_offset 3, -8
+ 102              		.cfi_offset 14, -4
+ 103              		.loc 1 60 0 is_stmt 1 discriminator 1
+ 104 0008 4FF6FF73 		movw	r3, #65535
+ 105 000c 9942     		cmp	r1, r3
+ 106 000e 00D0     		beq	.L16
+ 107              	.LVL4:
+ 108              	.L7:
+ 109              		.loc 1 60 0 is_stmt 0
+ 110 0010 08BD     		pop	{r3, pc}
+ 111              	.LVL5:
+ 112              	.L16:
+ 113              	.LBB35:
+ 114              	.LBB36:
+ 115              	.LBB37:
+  18:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+ 116              		.loc 2 18 0 is_stmt 1
+ 117 0012 0D48     		ldr	r0, .L17
+ 118              	.LVL6:
+ 119 0014 0023     		movs	r3, #0
+ 120 0016 0360     		str	r3, [r0]
+ 121 0018 4360     		str	r3, [r0, #4]
+ 122 001a 8360     		str	r3, [r0, #8]
+ 123              	.LVL7:
+ 124              	.LBE37:
+ 125              	.LBE36:
+ 126              	.LBE35:
+  13:Core/Src/devs/thinker.cpp **** static Queue<int16_t, 1> gThinker_Omegas[4];
+ 127              		.loc 1 13 0
+ 128 001c 0B4A     		ldr	r2, .L17+4
+ 129 001e 0C49     		ldr	r1, .L17+8
+ 130              	.LVL8:
+ 131 0020 FFF7FEFF 		bl	__aeabi_atexit
+ 132              	.LVL9:
+  14:Core/Src/devs/thinker.cpp **** 
+ 133              		.loc 1 14 0
+ 134 0024 0321     		movs	r1, #3
+ 135 0026 0B4B     		ldr	r3, .L17+12
+ 136              	.L10:
+  14:Core/Src/devs/thinker.cpp **** 
+ 137              		.loc 1 14 0 is_stmt 0 discriminator 4
+ 138 0028 0029     		cmp	r1, #0
+ 139 002a 06DB     		blt	.L9
+ 140              	.LVL10:
+ 141              	.LBB38:
+ 142              	.LBB39:
+  18:Core/Inc/utils/queue.h ****         Queue(Queue &&) = default;
+ 143              		.loc 2 18 0 is_stmt 1
+ 144 002c 0022     		movs	r2, #0
+ 145 002e 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 5
+
+
+ 146 0030 5A60     		str	r2, [r3, #4]
+ 147 0032 9A60     		str	r2, [r3, #8]
+ 148              	.LVL11:
+ 149              	.LBE39:
+ 150              	.LBE38:
+  14:Core/Src/devs/thinker.cpp **** 
+ 151              		.loc 1 14 0
+ 152 0034 1033     		adds	r3, r3, #16
+ 153 0036 0139     		subs	r1, r1, #1
+ 154 0038 F6E7     		b	.L10
+ 155              	.L9:
+  14:Core/Src/devs/thinker.cpp **** 
+ 156              		.loc 1 14 0 is_stmt 0 discriminator 2
+ 157 003a 044A     		ldr	r2, .L17+4
+ 158 003c 0649     		ldr	r1, .L17+16
+ 159 003e 0020     		movs	r0, #0
+ 160 0040 FFF7FEFF 		bl	__aeabi_atexit
+ 161              	.LVL12:
+ 162              		.loc 1 60 0 is_stmt 1 discriminator 2
+ 163 0044 E4E7     		b	.L7
+ 164              	.L18:
+ 165 0046 00BF     		.align	2
+ 166              	.L17:
+ 167 0048 00000000 		.word	.LANCHOR1
+ 168 004c 00000000 		.word	__dso_handle
+ 169 0050 00000000 		.word	_ZN5QueueIhLj8EED1Ev
+ 170 0054 00000000 		.word	.LANCHOR0
+ 171 0058 00000000 		.word	__tcf_0
+ 172              		.cfi_endproc
+ 173              	.LFE144:
+ 175              		.section	.text._Z12Thinker_Initv,"ax",%progbits
+ 176              		.align	1
+ 177              		.global	_Z12Thinker_Initv
+ 178              		.syntax unified
+ 179              		.thumb
+ 180              		.thumb_func
+ 181              		.fpu fpv4-sp-d16
+ 183              	_Z12Thinker_Initv:
+ 184              	.LFB129:
+  17:Core/Src/devs/thinker.cpp **** 	HAL_UART_Receive_DMA(&huart3, &gThinker_Byte, 1);
+ 185              		.loc 1 17 0
+ 186              		.cfi_startproc
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189 0000 08B5     		push	{r3, lr}
+ 190              	.LCFI1:
+ 191              		.cfi_def_cfa_offset 8
+ 192              		.cfi_offset 3, -8
+ 193              		.cfi_offset 14, -4
+  18:Core/Src/devs/thinker.cpp **** }
+ 194              		.loc 1 18 0
+ 195 0002 0122     		movs	r2, #1
+ 196 0004 0249     		ldr	r1, .L21
+ 197 0006 0348     		ldr	r0, .L21+4
+ 198 0008 FFF7FEFF 		bl	HAL_UART_Receive_DMA
+ 199              	.LVL13:
+  19:Core/Src/devs/thinker.cpp **** 
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 6
+
+
+ 200              		.loc 1 19 0
+ 201 000c 08BD     		pop	{r3, pc}
+ 202              	.L22:
+ 203 000e 00BF     		.align	2
+ 204              	.L21:
+ 205 0010 00000000 		.word	.LANCHOR2
+ 206 0014 00000000 		.word	huart3
+ 207              		.cfi_endproc
+ 208              	.LFE129:
+ 210              		.global	__aeabi_f2d
+ 211              		.global	__aeabi_dmul
+ 212              		.global	__aeabi_d2f
+ 213              		.section	.text._Z11get_ThinkerPf,"ax",%progbits
+ 214              		.align	1
+ 215              		.global	_Z11get_ThinkerPf
+ 216              		.syntax unified
+ 217              		.thumb
+ 218              		.thumb_func
+ 219              		.fpu fpv4-sp-d16
+ 221              	_Z11get_ThinkerPf:
+ 222              	.LFB130:
+  22:Core/Src/devs/thinker.cpp **** 	for (uint8_t i= 0; i < 4; ++i) {
+ 223              		.loc 1 22 0
+ 224              		.cfi_startproc
+ 225              		@ args = 0, pretend = 0, frame = 0
+ 226              		@ frame_needed = 0, uses_anonymous_args = 0
+ 227              	.LVL14:
+ 228 0000 70B5     		push	{r4, r5, r6, lr}
+ 229              	.LCFI2:
+ 230              		.cfi_def_cfa_offset 16
+ 231              		.cfi_offset 4, -16
+ 232              		.cfi_offset 5, -12
+ 233              		.cfi_offset 6, -8
+ 234              		.cfi_offset 14, -4
+ 235 0002 0546     		mov	r5, r0
+ 236              	.LVL15:
+ 237              	.LBB40:
+  23:Core/Src/devs/thinker.cpp **** 		arr[i] = gThinker_Omegas[i].lookup();
+ 238              		.loc 1 23 0
+ 239 0004 0024     		movs	r4, #0
+ 240 0006 12E0     		b	.L26
+ 241              	.LVL16:
+ 242              	.L27:
+ 243              	.LBB41:
+ 244              	.LBB42:
+  24:Core/Inc/utils/queue.h **** 
+  25:Core/Inc/utils/queue.h ****         void insert(T elem) {
+  26:Core/Inc/utils/queue.h ****                 ++curr_size_;
+  27:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+  28:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+  29:Core/Inc/utils/queue.h ****         }
+  30:Core/Inc/utils/queue.h **** 
+  31:Core/Inc/utils/queue.h ****         T lookup() {
+  32:Core/Inc/utils/queue.h ****                 if( curr_size_ ) {
+  33:Core/Inc/utils/queue.h ****                         --curr_size_;
+  34:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+  35:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 7
+
+
+  36:Core/Inc/utils/queue.h ****                         return elem;
+  37:Core/Inc/utils/queue.h ****                 }
+  38:Core/Inc/utils/queue.h ****                 return 0;
+ 245              		.loc 2 38 0
+ 246 0008 DFED167A 		vldr.32	s15, .L29	@ int
+ 247              	.L25:
+ 248              	.LVL17:
+ 249              	.LBE42:
+ 250              	.LBE41:
+  24:Core/Src/devs/thinker.cpp **** 		arr[i] *= (MAX_POSSIBLE_OMEGA / 32768.0);
+ 251              		.loc 1 24 0
+ 252 000c 05EB8406 		add	r6, r5, r4, lsl #2
+  25:Core/Src/devs/thinker.cpp **** 	}
+ 253              		.loc 1 25 0
+ 254 0010 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 255 0014 17EE900A 		vmov	r0, s15
+ 256 0018 FFF7FEFF 		bl	__aeabi_f2d
+ 257              	.LVL18:
+ 258 001c 0022     		movs	r2, #0
+ 259 001e 124B     		ldr	r3, .L29+4
+ 260 0020 FFF7FEFF 		bl	__aeabi_dmul
+ 261              	.LVL19:
+ 262 0024 FFF7FEFF 		bl	__aeabi_d2f
+ 263              	.LVL20:
+ 264 0028 3060     		str	r0, [r6]	@ float
+  23:Core/Src/devs/thinker.cpp **** 		arr[i] = gThinker_Omegas[i].lookup();
+ 265              		.loc 1 23 0
+ 266 002a 0134     		adds	r4, r4, #1
+ 267              	.LVL21:
+ 268 002c E4B2     		uxtb	r4, r4
+ 269              	.LVL22:
+ 270              	.L26:
+  23:Core/Src/devs/thinker.cpp **** 		arr[i] = gThinker_Omegas[i].lookup();
+ 271              		.loc 1 23 0 is_stmt 0 discriminator 3
+ 272 002e 032C     		cmp	r4, #3
+ 273 0030 17D8     		bhi	.L23
+ 274              	.LVL23:
+ 275              	.LBB46:
+ 276              	.LBB45:
+ 277              	.LBB43:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 278              		.loc 2 32 0 is_stmt 1 discriminator 2
+ 279 0032 0E4B     		ldr	r3, .L29+8
+ 280 0034 03EB0413 		add	r3, r3, r4, lsl #4
+ 281 0038 9B68     		ldr	r3, [r3, #8]
+ 282 003a 002B     		cmp	r3, #0
+ 283 003c E4D0     		beq	.L27
+ 284              	.LBB44:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 285              		.loc 2 33 0
+ 286 003e 0B4A     		ldr	r2, .L29+8
+ 287 0040 02EB0411 		add	r1, r2, r4, lsl #4
+ 288 0044 013B     		subs	r3, r3, #1
+ 289 0046 8B60     		str	r3, [r1, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 290              		.loc 2 34 0
+ 291 0048 4B68     		ldr	r3, [r1, #4]
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 8
+
+
+ 292 004a 03EBC403 		add	r3, r3, r4, lsl #3
+ 293 004e 0433     		adds	r3, r3, #4
+ 294 0050 02EB4303 		add	r3, r2, r3, lsl #1
+ 295 0054 B3F90430 		ldrsh	r3, [r3, #4]
+ 296 0058 07EE903A 		vmov	s15, r3	@ int
+ 297              	.LVL24:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 298              		.loc 2 35 0
+ 299 005c 0023     		movs	r3, #0
+ 300 005e 4B60     		str	r3, [r1, #4]
+ 301 0060 D4E7     		b	.L25
+ 302              	.LVL25:
+ 303              	.L23:
+ 304              	.LBE44:
+ 305              	.LBE43:
+ 306              	.LBE45:
+ 307              	.LBE46:
+ 308              	.LBE40:
+  27:Core/Src/devs/thinker.cpp **** 
+ 309              		.loc 1 27 0
+ 310 0062 70BD     		pop	{r4, r5, r6, pc}
+ 311              	.LVL26:
+ 312              	.L30:
+ 313              		.align	2
+ 314              	.L29:
+ 315 0064 00000000 		.word	0
+ 316 0068 0000543F 		.word	1062469632
+ 317 006c 00000000 		.word	.LANCHOR0
+ 318              		.cfi_endproc
+ 319              	.LFE130:
+ 321              		.section	.text._Z15Thinker_isEmptyv,"ax",%progbits
+ 322              		.align	1
+ 323              		.global	_Z15Thinker_isEmptyv
+ 324              		.syntax unified
+ 325              		.thumb
+ 326              		.thumb_func
+ 327              		.fpu fpv4-sp-d16
+ 329              	_Z15Thinker_isEmptyv:
+ 330              	.LFB131:
+  30:Core/Src/devs/thinker.cpp ****     if (gThinker_Omegas[0].length()) {
+ 331              		.loc 1 30 0
+ 332              		.cfi_startproc
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335              		@ link register save eliminated.
+ 336              	.LVL27:
+ 337              	.LBB47:
+ 338              	.LBB48:
+  39:Core/Inc/utils/queue.h ****         }
+  40:Core/Inc/utils/queue.h **** 
+  41:Core/Inc/utils/queue.h ****         uint32_t length() const { return curr_size_; }
+ 339              		.loc 2 41 0
+ 340 0000 034B     		ldr	r3, .L35
+ 341 0002 9B68     		ldr	r3, [r3, #8]
+ 342              	.LVL28:
+ 343              	.LBE48:
+ 344              	.LBE47:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 9
+
+
+  31:Core/Src/devs/thinker.cpp ****         return false;
+ 345              		.loc 1 31 0
+ 346 0004 0BB9     		cbnz	r3, .L34
+  34:Core/Src/devs/thinker.cpp **** }
+ 347              		.loc 1 34 0
+ 348 0006 0120     		movs	r0, #1
+  35:Core/Src/devs/thinker.cpp **** 
+ 349              		.loc 1 35 0
+ 350 0008 7047     		bx	lr
+ 351              	.L34:
+  32:Core/Src/devs/thinker.cpp ****     }
+ 352              		.loc 1 32 0
+ 353 000a 0020     		movs	r0, #0
+ 354 000c 7047     		bx	lr
+ 355              	.L36:
+ 356 000e 00BF     		.align	2
+ 357              	.L35:
+ 358 0010 00000000 		.word	.LANCHOR0
+ 359              		.cfi_endproc
+ 360              	.LFE131:
+ 362              		.section	.text._Z27Thinker_UART_RxCpltCallbackv,"ax",%progbits
+ 363              		.align	1
+ 364              		.global	_Z27Thinker_UART_RxCpltCallbackv
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 368              		.fpu fpv4-sp-d16
+ 370              	_Z27Thinker_UART_RxCpltCallbackv:
+ 371              	.LFB132:
+  38:Core/Src/devs/thinker.cpp ****         if(!gStart_Byte_Received)
+ 372              		.loc 1 38 0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 0
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 376              		@ link register save eliminated.
+ 377              	.LBB49:
+  39:Core/Src/devs/thinker.cpp ****         {
+ 378              		.loc 1 39 0
+ 379 0000 2F4B     		ldr	r3, .L52
+ 380 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 381 0004 43B9     		cbnz	r3, .L38
+  41:Core/Src/devs/thinker.cpp ****                         gStart_Byte_Received = true;
+ 382              		.loc 1 41 0
+ 383 0006 2F4B     		ldr	r3, .L52+4
+ 384 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 385 000a A52B     		cmp	r3, #165
+ 386 000c 00D0     		beq	.L51
+ 387              	.L46:
+ 388 000e 7047     		bx	lr
+ 389              	.L51:
+  42:Core/Src/devs/thinker.cpp ****                 }
+ 390              		.loc 1 42 0
+ 391 0010 2B4B     		ldr	r3, .L52
+ 392 0012 0122     		movs	r2, #1
+ 393 0014 1A70     		strb	r2, [r3]
+ 394 0016 7047     		bx	lr
+ 395              	.L38:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 10
+
+
+ 396              	.LBB50:
+  47:Core/Src/devs/thinker.cpp ****                 ++gNum_Data_Received;
+ 397              		.loc 1 47 0
+ 398 0018 2A4B     		ldr	r3, .L52+4
+ 399 001a 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 400              	.LVL29:
+ 401              	.LBB51:
+ 402              	.LBB52:
+  26:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 403              		.loc 2 26 0
+ 404 001c 2A4B     		ldr	r3, .L52+8
+ 405 001e 9A68     		ldr	r2, [r3, #8]
+ 406 0020 0132     		adds	r2, r2, #1
+ 407 0022 9A60     		str	r2, [r3, #8]
+  27:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 408              		.loc 2 27 0
+ 409 0024 1A68     		ldr	r2, [r3]
+ 410 0026 511C     		adds	r1, r2, #1
+ 411 0028 1A44     		add	r2, r2, r3
+ 412 002a 1073     		strb	r0, [r2, #12]
+  28:Core/Inc/utils/queue.h ****         }
+ 413              		.loc 2 28 0
+ 414 002c 01F00701 		and	r1, r1, #7
+ 415 0030 1960     		str	r1, [r3]
+ 416              	.LVL30:
+ 417              	.LBE52:
+ 418              	.LBE51:
+  48:Core/Src/devs/thinker.cpp ****                 if (gNum_Data_Received == NUM_OMEGAS_RECEIVED) {
+ 419              		.loc 1 48 0
+ 420 0032 264A     		ldr	r2, .L52+12
+ 421 0034 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 422 0036 0133     		adds	r3, r3, #1
+ 423 0038 DBB2     		uxtb	r3, r3
+ 424 003a 1370     		strb	r3, [r2]
+ 425              	.LBB53:
+  49:Core/Src/devs/thinker.cpp ****                         gNum_Data_Received = 0;
+ 426              		.loc 1 49 0
+ 427 003c 082B     		cmp	r3, #8
+ 428 003e E6D1     		bne	.L46
+ 429              	.LBB54:
+  50:Core/Src/devs/thinker.cpp ****                         gStart_Byte_Received = false;
+ 430              		.loc 1 50 0
+ 431 0040 0023     		movs	r3, #0
+ 432 0042 1370     		strb	r3, [r2]
+  51:Core/Src/devs/thinker.cpp ****                         // Omega calculation using big-endian
+ 433              		.loc 1 51 0
+ 434 0044 1E4A     		ldr	r2, .L52
+ 435 0046 1370     		strb	r3, [r2]
+ 436              	.LVL31:
+ 437              	.LBB55:
+  53:Core/Src/devs/thinker.cpp ****                                 gOmega = gThinker_Bytes.lookup() << 8;
+ 438              		.loc 1 53 0
+ 439 0048 032B     		cmp	r3, #3
+ 440 004a E0D8     		bhi	.L46
+ 441              	.LBE55:
+ 442              	.LBE54:
+ 443              	.LBE53:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 11
+
+
+ 444              	.LBE50:
+ 445              	.LBE49:
+  38:Core/Src/devs/thinker.cpp ****         if(!gStart_Byte_Received)
+ 446              		.loc 1 38 0
+ 447 004c 30B4     		push	{r4, r5}
+ 448              	.LCFI3:
+ 449              		.cfi_def_cfa_offset 8
+ 450              		.cfi_offset 4, -8
+ 451              		.cfi_offset 5, -4
+ 452 004e 16E0     		b	.L48
+ 453              	.LVL32:
+ 454              	.L43:
+ 455              	.LBB74:
+ 456              	.LBB73:
+ 457              	.LBB72:
+ 458              	.LBB71:
+ 459              	.LBB70:
+ 460              	.LBB56:
+ 461              	.LBB57:
+  38:Core/Inc/utils/queue.h ****         }
+ 462              		.loc 2 38 0
+ 463 0050 0022     		movs	r2, #0
+ 464 0052 22E0     		b	.L40
+ 465              	.LVL33:
+ 466              	.L44:
+ 467              	.LBE57:
+ 468              	.LBE56:
+ 469              	.LBB61:
+ 470              	.LBB62:
+ 471 0054 0025     		movs	r5, #0
+ 472              	.L41:
+ 473              	.LVL34:
+ 474              	.LBE62:
+ 475              	.LBE61:
+  55:Core/Src/devs/thinker.cpp ****                                 gThinker_Omegas[i].insert(gOmega);
+ 476              		.loc 1 55 0
+ 477 0056 1544     		add	r5, r5, r2
+ 478              	.LVL35:
+ 479              	.LBB66:
+ 480              	.LBB67:
+  26:Core/Inc/utils/queue.h ****                 queue_[head_++] = elem;
+ 481              		.loc 2 26 0
+ 482 0058 1D49     		ldr	r1, .L52+16
+ 483 005a 1801     		lsls	r0, r3, #4
+ 484 005c 0A18     		adds	r2, r1, r0
+ 485 005e 9468     		ldr	r4, [r2, #8]
+ 486 0060 0134     		adds	r4, r4, #1
+ 487 0062 9460     		str	r4, [r2, #8]
+  27:Core/Inc/utils/queue.h ****                 head_ %= q_size;
+ 488              		.loc 2 27 0
+ 489 0064 0A58     		ldr	r2, [r1, r0]
+ 490 0066 02EBC302 		add	r2, r2, r3, lsl #3
+ 491 006a 0432     		adds	r2, r2, #4
+ 492 006c 01EB4202 		add	r2, r1, r2, lsl #1
+ 493 0070 9580     		strh	r5, [r2, #4]	@ movhi
+  28:Core/Inc/utils/queue.h ****         }
+ 494              		.loc 2 28 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 12
+
+
+ 495 0072 0022     		movs	r2, #0
+ 496 0074 0A50     		str	r2, [r1, r0]
+ 497              	.LVL36:
+ 498              	.LBE67:
+ 499              	.LBE66:
+  53:Core/Src/devs/thinker.cpp ****                                 gOmega = gThinker_Bytes.lookup() << 8;
+ 500              		.loc 1 53 0
+ 501 0076 0133     		adds	r3, r3, #1
+ 502              	.LVL37:
+ 503 0078 DBB2     		uxtb	r3, r3
+ 504              	.LVL38:
+ 505 007a 032B     		cmp	r3, #3
+ 506 007c 1ED8     		bhi	.L37
+ 507              	.L48:
+ 508              	.LVL39:
+ 509              	.LBB68:
+ 510              	.LBB60:
+ 511              	.LBB58:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 512              		.loc 2 32 0
+ 513 007e 124A     		ldr	r2, .L52+8
+ 514 0080 9268     		ldr	r2, [r2, #8]
+ 515 0082 002A     		cmp	r2, #0
+ 516 0084 E4D0     		beq	.L43
+ 517              	.LBB59:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 518              		.loc 2 33 0
+ 519 0086 1049     		ldr	r1, .L52+8
+ 520 0088 013A     		subs	r2, r2, #1
+ 521 008a 8A60     		str	r2, [r1, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 522              		.loc 2 34 0
+ 523 008c 4A68     		ldr	r2, [r1, #4]
+ 524 008e 501C     		adds	r0, r2, #1
+ 525 0090 0A44     		add	r2, r2, r1
+ 526 0092 127B     		ldrb	r2, [r2, #12]	@ zero_extendqisi2
+ 527              	.LVL40:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 528              		.loc 2 35 0
+ 529 0094 00F00700 		and	r0, r0, #7
+ 530 0098 4860     		str	r0, [r1, #4]
+ 531              	.LVL41:
+ 532              	.L40:
+ 533              	.LBE59:
+ 534              	.LBE58:
+ 535              	.LBE60:
+ 536              	.LBE68:
+  54:Core/Src/devs/thinker.cpp ****                                 gOmega += gThinker_Bytes.lookup();
+ 537              		.loc 1 54 0
+ 538 009a 1202     		lsls	r2, r2, #8
+ 539 009c 12B2     		sxth	r2, r2
+ 540              	.LVL42:
+ 541              	.LBB69:
+ 542              	.LBB65:
+ 543              	.LBB63:
+  32:Core/Inc/utils/queue.h ****                         --curr_size_;
+ 544              		.loc 2 32 0
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 13
+
+
+ 545 009e 0A49     		ldr	r1, .L52+8
+ 546 00a0 8968     		ldr	r1, [r1, #8]
+ 547 00a2 0029     		cmp	r1, #0
+ 548 00a4 D6D0     		beq	.L44
+ 549              	.LBB64:
+  33:Core/Inc/utils/queue.h ****                         T elem = queue_[tail_++];
+ 550              		.loc 2 33 0
+ 551 00a6 0848     		ldr	r0, .L52+8
+ 552 00a8 0139     		subs	r1, r1, #1
+ 553 00aa 8160     		str	r1, [r0, #8]
+  34:Core/Inc/utils/queue.h ****                         tail_ %= q_size;
+ 554              		.loc 2 34 0
+ 555 00ac 4168     		ldr	r1, [r0, #4]
+ 556 00ae 4C1C     		adds	r4, r1, #1
+ 557 00b0 0144     		add	r1, r1, r0
+ 558 00b2 0D7B     		ldrb	r5, [r1, #12]	@ zero_extendqisi2
+ 559              	.LVL43:
+  35:Core/Inc/utils/queue.h ****                         return elem;
+ 560              		.loc 2 35 0
+ 561 00b4 04F00704 		and	r4, r4, #7
+ 562 00b8 4460     		str	r4, [r0, #4]
+ 563 00ba CCE7     		b	.L41
+ 564              	.LVL44:
+ 565              	.L37:
+ 566              	.LBE64:
+ 567              	.LBE63:
+ 568              	.LBE65:
+ 569              	.LBE69:
+ 570              	.LBE70:
+ 571              	.LBE71:
+ 572              	.LBE72:
+ 573              	.LBE73:
+ 574              	.LBE74:
+ 575              		.loc 1 60 0
+ 576 00bc 30BC     		pop	{r4, r5}
+ 577              	.LCFI4:
+ 578              		.cfi_restore 5
+ 579              		.cfi_restore 4
+ 580              		.cfi_def_cfa_offset 0
+ 581 00be 7047     		bx	lr
+ 582              	.L53:
+ 583              		.align	2
+ 584              	.L52:
+ 585 00c0 00000000 		.word	.LANCHOR3
+ 586 00c4 00000000 		.word	.LANCHOR2
+ 587 00c8 00000000 		.word	.LANCHOR1
+ 588 00cc 00000000 		.word	.LANCHOR4
+ 589 00d0 00000000 		.word	.LANCHOR0
+ 590              		.cfi_endproc
+ 591              	.LFE132:
+ 593              		.section	.text._GLOBAL__sub_I__Z12Thinker_Initv,"ax",%progbits
+ 594              		.align	1
+ 595              		.syntax unified
+ 596              		.thumb
+ 597              		.thumb_func
+ 598              		.fpu fpv4-sp-d16
+ 600              	_GLOBAL__sub_I__Z12Thinker_Initv:
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 14
+
+
+ 601              	.LFB152:
+ 602              		.loc 1 60 0
+ 603              		.cfi_startproc
+ 604              		@ args = 0, pretend = 0, frame = 0
+ 605              		@ frame_needed = 0, uses_anonymous_args = 0
+ 606 0000 08B5     		push	{r3, lr}
+ 607              	.LCFI5:
+ 608              		.cfi_def_cfa_offset 8
+ 609              		.cfi_offset 3, -8
+ 610              		.cfi_offset 14, -4
+ 611              		.loc 1 60 0
+ 612 0002 4FF6FF71 		movw	r1, #65535
+ 613 0006 0120     		movs	r0, #1
+ 614 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 615              	.LVL45:
+ 616 000c 08BD     		pop	{r3, pc}
+ 617              		.cfi_endproc
+ 618              	.LFE152:
+ 620              		.section	.init_array,"aw",%init_array
+ 621              		.align	2
+ 622 0000 00000000 		.word	_GLOBAL__sub_I__Z12Thinker_Initv(target1)
+ 623              		.section	.bss._ZL13gThinker_Byte,"aw",%nobits
+ 624              		.set	.LANCHOR2,. + 0
+ 627              	_ZL13gThinker_Byte:
+ 628 0000 00       		.space	1
+ 629              		.section	.bss._ZL14gThinker_Bytes,"aw",%nobits
+ 630              		.align	2
+ 631              		.set	.LANCHOR1,. + 0
+ 634              	_ZL14gThinker_Bytes:
+ 635 0000 00000000 		.space	20
+ 635      00000000 
+ 635      00000000 
+ 635      00000000 
+ 635      00000000 
+ 636              		.section	.bss._ZL15gThinker_Omegas,"aw",%nobits
+ 637              		.align	2
+ 638              		.set	.LANCHOR0,. + 0
+ 641              	_ZL15gThinker_Omegas:
+ 642 0000 00000000 		.space	64
+ 642      00000000 
+ 642      00000000 
+ 642      00000000 
+ 642      00000000 
+ 643              		.section	.bss._ZL18gNum_Data_Received,"aw",%nobits
+ 644              		.set	.LANCHOR4,. + 0
+ 647              	_ZL18gNum_Data_Received:
+ 648 0000 00       		.space	1
+ 649              		.section	.bss._ZL20gStart_Byte_Received,"aw",%nobits
+ 650              		.set	.LANCHOR3,. + 0
+ 653              	_ZL20gStart_Byte_Received:
+ 654 0000 00       		.space	1
+ 655              		.text
+ 656              	.Letext0:
+ 657              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 658              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 659              		.file 5 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 660              		.file 6 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 15
+
+
+ 661              		.file 7 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 662              		.file 8 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 663              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 664              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 665              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 666              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 667              		.file 13 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 668              		.file 14 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 669              		.file 15 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 670              		.file 16 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 671              		.file 17 "Core/Inc/periphs/usart.h"
+ARM GAS  C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 thinker.cpp
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:18     .text.__tcf_0:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:24     .text.__tcf_0:00000000 __tcf_0
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:50     .text.__tcf_0:00000010 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:56     .text._ZN5QueueIhLj8EED2Ev:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:63     .text._ZN5QueueIhLj8EED2Ev:00000000 _ZN5QueueIhLj8EED2Ev
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:63     .text._ZN5QueueIhLj8EED2Ev:00000000 _ZN5QueueIhLj8EED1Ev
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:80     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:86     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:167    .text._Z41__static_initialization_and_destruction_0ii:00000048 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:176    .text._Z12Thinker_Initv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:183    .text._Z12Thinker_Initv:00000000 _Z12Thinker_Initv
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:205    .text._Z12Thinker_Initv:00000010 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:214    .text._Z11get_ThinkerPf:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:221    .text._Z11get_ThinkerPf:00000000 _Z11get_ThinkerPf
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:315    .text._Z11get_ThinkerPf:00000064 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:322    .text._Z15Thinker_isEmptyv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:329    .text._Z15Thinker_isEmptyv:00000000 _Z15Thinker_isEmptyv
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:358    .text._Z15Thinker_isEmptyv:00000010 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:363    .text._Z27Thinker_UART_RxCpltCallbackv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:370    .text._Z27Thinker_UART_RxCpltCallbackv:00000000 _Z27Thinker_UART_RxCpltCallbackv
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:585    .text._Z27Thinker_UART_RxCpltCallbackv:000000c0 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:594    .text._GLOBAL__sub_I__Z12Thinker_Initv:00000000 $t
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:600    .text._GLOBAL__sub_I__Z12Thinker_Initv:00000000 _GLOBAL__sub_I__Z12Thinker_Initv
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:621    .init_array:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:627    .bss._ZL13gThinker_Byte:00000000 _ZL13gThinker_Byte
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:628    .bss._ZL13gThinker_Byte:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:630    .bss._ZL14gThinker_Bytes:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:634    .bss._ZL14gThinker_Bytes:00000000 _ZL14gThinker_Bytes
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:637    .bss._ZL15gThinker_Omegas:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:641    .bss._ZL15gThinker_Omegas:00000000 _ZL15gThinker_Omegas
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:647    .bss._ZL18gNum_Data_Received:00000000 _ZL18gNum_Data_Received
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:648    .bss._ZL18gNum_Data_Received:00000000 $d
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:653    .bss._ZL20gStart_Byte_Received:00000000 _ZL20gStart_Byte_Received
+C:\Users\Nischal Nepal\AppData\Local\Temp\cc4OoT7V.s:654    .bss._ZL20gStart_Byte_Received:00000000 $d
+                           .group:00000000 _ZN5QueueIhLj8EED5Ev
+
+UNDEFINED SYMBOLS
+__aeabi_atexit
+__dso_handle
+HAL_UART_Receive_DMA
+huart3
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
