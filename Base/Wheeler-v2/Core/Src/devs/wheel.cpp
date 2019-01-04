@@ -7,6 +7,8 @@
 #include "wheel.h"
 #include <math.h>
 
+const float max_omega1[2]= { 8.5, 7};
+
 static uint16_t time_period(uint16_t PWM_frequency)
 {
         if (PWM_frequency < 2000) { //MIN PWM_FREQUENCY = 1281.738 for time period to be 16 bit
@@ -49,7 +51,7 @@ static void set_WheelDirection(Wheel_Config *w, Direction d)
 
 static void set_WheelOmega(Wheel_Config *w, float omega)
 {
-        uint16_t new_omega = (65535.0 / MAX_OMEGA) * (omega);
+        uint16_t new_omega = (65535.0 / max_omega1[w->id]) * (omega);
         set_DutyCycle(w, new_omega);
 }
 
@@ -81,7 +83,7 @@ float Wheel::get_Omega(uint32_t dt_millis)
 {
         int16_t cps = wheel_->henc->Instance->CNT;
         wheel_->henc->Instance->CNT = 0;
-        float omega = 6.29325 * cps / (float)dt_millis;
+        float omega = 2*3.14159*1000.0 * cps / (715.0*(float)dt_millis);
 
         return omega;
 }

@@ -86,7 +86,7 @@ extern void send_AllData();
   * @retval None
   */
 int main(void)
-{
+ {
         /* USER CODE BEGIN 1 */
 
         /* USER CODE END 1 */
@@ -125,39 +125,41 @@ int main(void)
         printf("Hello World!!\n");
         // float speed_multiplier = 2;
 
-        float set_points[4] = { 0, 0, 0, 0 };
+        float set_points[4] = { -4, -4, 0, 0 };
 
         /* USER CODE END 2 */
 
         /* Infinite loop */
         /* USER CODE BEGIN WHILE */
-        const uint32_t sampling_period = 10;
+        const uint32_t sampling_period = 15;
         const uint32_t updating_period = 12;
-        const uint32_t brake_period = 3000;
+        const uint32_t brake_period = 20000;
         uint32_t sample_time = HAL_GetTick();
         uint32_t update_time = HAL_GetTick();
         uint32_t brake_time = HAL_GetTick();
         while (1)
         {
                 /* USER CODE END WHILE */
-                if (HAL_GetTick() - update_time > updating_period) {
+              /*  if (HAL_GetTick() - update_time > updating_period) {
                         update_time = HAL_GetTick();
                         update(set_points);
-                }
+                }*/
 
                 if (HAL_GetTick() - sample_time > sampling_period) {
                         sample_time = HAL_GetTick();
                         tune(set_points, sampling_period);
+			//gWheels[1].set_Omega(16);
+			//gWheels[0].set_Omega(16);
                 }
 
                 // if (gSendDataFlagReceived) {
                 //         break;
                 // }
 
-                // if (HAL_GetTick() - brake_time > brake_period) {
-                //         ramp_down(sampling_period);
-                //         break;
-                // }
+                if (HAL_GetTick() - brake_time > brake_period) {
+                        ramp_down(sampling_period);
+                        break;
+                }
                 /* USER CODE BEGIN 3 */
         }
         // send_AllData();

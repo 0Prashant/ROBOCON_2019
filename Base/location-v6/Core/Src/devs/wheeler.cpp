@@ -4,7 +4,7 @@
 
 #define WHEEL_RADIUS            (67.5)
 #define MAX_POSSIBLE_OMEGA      (40)
-
+#define RAMPING_FACTOR (20)
 const float gSpeed_Multiplier = 1;
 
 float gWheel_Velocities[4];
@@ -20,8 +20,20 @@ const int gCoupling_Matrix[4][3] = {{ 1,  1, 1},
 
 static uint8_t gStart_Byte = 0xA5;
 static bool gWheeler_Start_Byte_Sent = false;
+static bool is_first_ramping = false;
 static Queue<int16_t, 2> gWheeler_Data[NUM_WHEELER_BYTES / 2];
 uint8_t gWheeler_Bytes[NUM_WHEELER_BYTES];
+struct Wheel Wheel_arr[4];
+
+void wheel_init()
+{
+        for (int i = 0; i < 4; i++)
+        {
+                Wheel_arr[i].id = i;
+                Wheel_arr[i].velocity = 0.000000;
+		Wheel_arr[i].next_velocity = 0.000000;
+        }
+}
 
 void Wheeler_Init()
 {
@@ -46,6 +58,7 @@ void calc_WheelsOmegas(float omegas[4], float v, float theta, float phi, uint32_
                 }
                 omegas[i] = calculate_Omega(vel[i], WHEEL_RADIUS);
         }
+
 }
 
 // void calculate_robot_velocity(float v, float theta, float phi, uint32_t dt_millis)
@@ -60,6 +73,69 @@ void calc_WheelsOmegas(float omegas[4], float v, float theta, float phi, uint32_
         //         gWheel_Omegas[i] = calculate_Omega(gWheel_Velocities[i]);
         // }
 // }
+void calculate_robot_velocity(float omegas_[4], float velocity[3])
+{
+        for (int i = 0; i < 4; i++)
+        {
+                Wheel_arr[i].next_velocity = 0;
+                for (int j = 0; j < 3; j++)
+                {
+                        Wheel_arr[i].next_velocity += velocity[j] * gCoupling_Matrix[i][j];
+                }
+			
+		if(Wheel_arr[i].next_velocity >ROBOT_VELOCITY)
+		{
+			for(int j=0;j<4;j++)
+				Wheel_arr[j].next_velocity = (ROBOT_VELOCITY * Wheel_arr[j].next_velocity)/ Wheel_arr[i].next_velocity;
+		}
+		if(Wheel_arr[i].next_velocity < -ROBOT_VELOCITY)
+		{
+			for(int j=0;j<4;j++)
+				Wheel_arr[j].next_velocity = -((ROBOT_VELOCITY * Wheel_arr[j].next_velocity)/ Wheel_arr[i].next_velocity);					
+		}
+                if(!is_first_ramping)
+                {
+                        omegas_[i] = initial_ramp(Wheel_arr[i].id);
+                }
+		else
+                {
+                        omegas_[i] = ramp(Wheel_arr[i].id);
+                }
+        }
+}
+
+float initial_ramp(uint8_t wheel_no) 
+{
+	if(Wheel_arr[wheel_no].velocity != Wheel_arr[wheel_no].next_velocity)
+	{
+		if( (Wheel_arr[wheel_no].velocity + (RAMPING_FACTOR/3)) < Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity += (RAMPING_FACTOR/3);
+		else if( (Wheel_arr[wheel_no].velocity - (RAMPING_FACTOR/3)) > Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity -= (RAMPING_FACTOR/3);
+		else
+		{
+			Wheel_arr[wheel_no].velocity= Wheel_arr[wheel_no].next_velocity;
+                        is_first_ramping = true;
+		}        
+	}	
+        return ((Wheel_arr[wheel_no].velocity*MAX_OMEGA)/MAX_VELOCITY);
+}
+
+float ramp(uint8_t wheel_no) 
+{
+	if(Wheel_arr[wheel_no].velocity != Wheel_arr[wheel_no].next_velocity)
+	{
+		if( (Wheel_arr[wheel_no].velocity + RAMPING_FACTOR) < Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity += RAMPING_FACTOR;
+		else if( (Wheel_arr[wheel_no].velocity - RAMPING_FACTOR) > Wheel_arr[wheel_no].next_velocity)
+			Wheel_arr[wheel_no].velocity -= RAMPING_FACTOR;
+		else
+		{
+			Wheel_arr[wheel_no].velocity= Wheel_arr[wheel_no].next_velocity;
+		}        
+	}	
+        return ((Wheel_arr[wheel_no].velocity*MAX_OMEGA)/MAX_VELOCITY);
+}
 
 void send_WheelerPack(float pack[NUM_WHEELER_BYTES / 2])
 {

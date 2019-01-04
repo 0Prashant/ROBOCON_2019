@@ -29,11 +29,13 @@ public:
         void set_PositionSensor(PositionSensor *pos) { pos_ = pos; }
         PositionSensor *get_PositionSensor() { return pos_; }
         void run(uint32_t dt_millis);
+        void goto_absolute_distance(float dx, float dy, float dth, uint32_t dt_milis);
 
 private:
         Robo_States *state_;
         PositionSensor *pos_;
         float velocity_;
+        float velocity[3];
         float angle_of_attack_;
         float omegas_[4];
         bool is_first_reading_;

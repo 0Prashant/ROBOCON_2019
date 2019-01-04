@@ -47,7 +47,7 @@ static void wheel_init(void)
         gWheel_Configurations[0].in2_port = GPIOD;
         gWheel_Configurations[0].in2_pin = GPIO_PIN_1;
         gWheel_Configurations[0].channel = TIM_CHANNEL_1;
-        gWheel_Configurations[0].henc = &htim2;
+        gWheel_Configurations[0].henc = &htim1;
 
         gWheel_Configurations[1].in1_port = GPIOD;
         gWheel_Configurations[1].in1_pin = GPIO_PIN_14;
@@ -61,7 +61,7 @@ static void wheel_init(void)
         gWheel_Configurations[2].in2_port = GPIOD;
         gWheel_Configurations[2].in2_pin = GPIO_PIN_15;
         gWheel_Configurations[2].channel = TIM_CHANNEL_3;
-        gWheel_Configurations[2].henc = &htim1;
+        gWheel_Configurations[2].henc = &htim2;
 
         gWheel_Configurations[3].in1_port = GPIOC;
         gWheel_Configurations[3].in1_pin = GPIO_PIN_12;

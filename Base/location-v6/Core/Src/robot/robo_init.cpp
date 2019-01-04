@@ -39,6 +39,7 @@ void robo_Init(uint32_t dt_millis)
         LIDAR_Init();
 
         Wheeler_Init();
+        wheel_init();
         gOmega_Bias = calc_OmegaMean(&Body_IMU, 1000);
         
         // Compass Calibration Code

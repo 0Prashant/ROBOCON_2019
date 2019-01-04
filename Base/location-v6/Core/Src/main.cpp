@@ -156,7 +156,8 @@ int main(void)
                 /* USER CODE END WHILE */
 
                 /* USER CODE BEGIN 3 */
-                if (HAL_GetTick() - sample > sampling_period) {
+                play(sampling_period);
+                /* if (HAL_GetTick() - sample > sampling_period) {
                         sample = HAL_GetTick();
                         play(sampling_period);
                         // printf("%ld\n", (int32_t)(HAL_GetTick() - sample));
@@ -165,6 +166,14 @@ int main(void)
                 if (HAL_GetTick() - brake > 12000) {
                         send_WheelerPack(null_data);
                         break;
+                }*/
+                send_WheelerPack(null_data);
+                HAL_Delay(10);
+                send_WheelerPack(null_data);
+                
+                while(1)
+                {
+
                 }
         }
         HAL_Delay(500);

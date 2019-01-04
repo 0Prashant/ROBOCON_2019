@@ -35,12 +35,12 @@ static Vec3<float> read_Orientation(uint32_t dt_millis);
 
 bool gIsFirstTimeStamp = true;
 uint32_t gPrintTime;
+uint32_t time_limit;
+
 
 void Robot::move(Vec3<float> pos, uint32_t dt_millis) {
-        // calculate current heading
         Vec3<float> ori = read_Orientation(dt_millis);
         float heading = ori.getZ();
-
         if (is_first_reading_) {
                 is_first_reading_ = false;
                 first_heading_ = heading;
@@ -77,6 +77,69 @@ void Robot::run(uint32_t dt_millis) {
         }
 
         move(pos, dt_millis);
+}
+
+void Robot::goto_absolute_distance(float x, float y, float th, uint32_t dt_millis)
+{
+        // calculate current heading
+        //char *printf_saman;
+        time_limit = HAL_GetTick();        
+        Vec3<float> ori = read_Orientation(dt_millis);
+        float theta = ori.getZ();
+        Vec3<float> pos = pos_->read_Position(dt_millis);
+        if (is_first_reading_) 
+        {
+                is_first_reading_ = false;
+                first_heading_ = theta;
+        }
+        float distance = 100;
+        float dx = x - (-pos.getX());
+        float dy = y - pos.getY();
+        theta = ori.getZ()-first_heading_;
+	//float dth = th - (theta - first_heading_);
+        distance = pow((dx*dx + dy*dy) ,0.5);
+	float time = (double) (distance) / ROBOT_VELOCITY;
+	//velocity[2] = -((theta)*4 *distance) / time; 
+
+        int temp_x = x;
+        int temp_y = y;
+        int temp_dx = dx;
+        int temp_dy = dy;
+        int curr_y;
+        int curr_x;
+        do
+	{
+
+                if((HAL_GetTick()-time_limit)>=dt_millis)
+                {
+                        time_limit = HAL_GetTick();
+                        ori = read_Orientation(dt_millis);
+                        pos = pos_->read_Position(dt_millis);
+                        theta = ori.getZ()-first_heading_;
+                        curr_x = (-pos.getX());
+                        curr_y = (pos.getY());
+                        dx = x - curr_x;
+                        dy = y - curr_y;
+
+                        distance = pow((dx*dx + dy*dy) ,0.5);
+                        time = (double) (distance) / ROBOT_VELOCITY;
+		        //dx -= (robotx-previous_x);
+                        velocity[0] = (dx / time) ;
+	                velocity[1] = (dy / time) ;
+                        velocity[2] = (-theta)*2;
+                        calculate_robot_velocity(omegas_, velocity);
+                        // sprintf(printf_saman,"%f \t%f \t%f \t%f\n",x,y,dx,dy);
+                        //printf(printf_saman);
+                        temp_x = x;
+                        temp_y = y;
+                        temp_dx = dx;
+                        temp_dy = dy;
+                        printf("%d \t%d \t%d \t%d\n",temp_x,temp_y,curr_x,curr_y);
+                        send_WheelerPack(omegas_);
+                }        
+                  
+	}while (  fabs(distance) >= 100 );
+
 }
 
 
@@ -128,3 +191,5 @@ static Vec3<float> read_Orientation(uint32_t dt_millis)
 
         return angles;
 }
+
+

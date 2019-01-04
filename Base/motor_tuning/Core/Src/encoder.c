@@ -2,7 +2,7 @@
 
 
 struct encoder e[4];
-float robotx = -450, roboty = 500;
+float robotx = -450, roboty = 450;
 //float robotx = 0, roboty = 0;
 float actual_robotx = 0, actual_roboty = 0;
 float theta =0;
