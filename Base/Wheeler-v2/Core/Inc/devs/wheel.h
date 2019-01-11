@@ -54,11 +54,13 @@ public:
         void update() const;
 
         float get_Omega(uint32_t dt_millis);
+	float get_Angle();
 
 private:
        Wheel_Config *wheel_;
        enum Direction dir_;
        float omega_;    // This value should always be positive
+       int16_t wheel_encoder_count;
 };
 
 

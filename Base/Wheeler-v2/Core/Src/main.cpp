@@ -48,6 +48,7 @@
 /* USER CODE BEGIN Includes */
 #include "robot/robo_init.h"
 #include "robot/play.h"
+#include "utils/pid.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -67,6 +68,7 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 bool gSendDataFlagReceived = false;
+extern Discrete_PID gDisc_PID[4];
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,7 +88,7 @@ extern void send_AllData();
   * @retval None
   */
 int main(void)
- {
+  {
         /* USER CODE BEGIN 1 */
 
         /* USER CODE END 1 */
@@ -132,38 +134,70 @@ int main(void)
         /* Infinite loop */
         /* USER CODE BEGIN WHILE */
         const uint32_t sampling_period = 15;
-        const uint32_t updating_period = 12;
-        const uint32_t brake_period = 20000;
+        // const uint32_t updating_period = 12;
+        const uint32_t brake_period = 25000;
         uint32_t sample_time = HAL_GetTick();
-        uint32_t update_time = HAL_GetTick();
+        // uint32_t update_time = HAL_GetTick();
         uint32_t brake_time = HAL_GetTick();
+
         while (1)
         {
                 /* USER CODE END WHILE */
-              /*  if (HAL_GetTick() - update_time > updating_period) {
+                /*  if (HAL_GetTick() - update_time > updating_period) {
                         update_time = HAL_GetTick();
                         update(set_points);
                 }*/
 
-                if (HAL_GetTick() - sample_time > sampling_period) {
+                if (HAL_GetTick() - sample_time > sampling_period) 
+		{
                         sample_time = HAL_GetTick();
-                        tune(set_points, sampling_period);
-			//gWheels[1].set_Omega(16);
-			//gWheels[0].set_Omega(16);
+			for(int i=0; i<2; i++)
+			{
+				float _angle = gWheels[i].get_Angle(); 
+				if(i==0)
+				{
+					if((_angle>0) && (_angle<90))
+						gDisc_PID[i].set_PID(1.77932, 20*1.0738, 0);
+					else if((_angle>90) && (_angle<180))
+						gDisc_PID[i].set_PID(2.40851,20*1.4902, 0);
+					else if((_angle>180) && (_angle<270))
+						gDisc_PID[i].set_PID(1.55038,20*1.4667, 0);
+					else
+						gDisc_PID[i].set_PID(1.67138,20*0.7730434, 0);
+					printf("%ld   ", (int32_t)(_angle*1000));			
+				}
+				else
+				{
+					if((_angle>0) && (_angle<90))
+						gDisc_PID[i].set_PID(1.74393,20*0.9668973, 0);
+					else if((_angle>90) && (_angle<180))
+						gDisc_PID[i].set_PID(1.82590,20*0.7767059,0);
+					else if((_angle>180) && (_angle<270))
+						gDisc_PID[i].set_PID(2.52274,20*1.3564, 0);
+					else
+						gDisc_PID[i].set_PID(1.71653,20*0.8160, 0);
+					printf("%ld   ", (int32_t)(_angle*1000));			
+				}
+
+			}
+			printf("\t\t");
+			
+			tune(set_points, sampling_period);
                 }
-
-                // if (gSendDataFlagReceived) {
-                //         break;
-                // }
-
-                if (HAL_GetTick() - brake_time > brake_period) {
+                if (HAL_GetTick() - brake_time > brake_period) 
+		{
                         ramp_down(sampling_period);
                         break;
                 }
                 /* USER CODE BEGIN 3 */
         }
         // send_AllData();
-        while(1);
+	set_points[0] = 0;
+	set_points[1] = 0;
+        while(1)
+	{
+		tune(set_points, sampling_period);
+	}
         /* USER CODE END 3 */
 }
 

@@ -32,7 +32,8 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Core/Inc\periphs/usart.h Core/Inc\periphs/gpio.h \
  Core/Inc/robot/robo_init.h Core/Inc\devs/wheel.h \
  Core/Inc\robot/defines.h Core/Inc\devs/thinker.h Core/Inc/robot/play.h \
- Core/Inc/robot/robo_init.h
+ Core/Inc/robot/robo_init.h Core/Inc/utils/pid.h \
+ Core/Inc/utils/pid_algorithms.h
 
 Core/Inc/main.h:
 
@@ -117,3 +118,7 @@ Core/Inc\devs/thinker.h:
 Core/Inc/robot/play.h:
 
 Core/Inc/robot/robo_init.h:
+
+Core/Inc/utils/pid.h:
+
+Core/Inc/utils/pid_algorithms.h:

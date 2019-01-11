@@ -82,8 +82,21 @@ void Wheel::update() const
 float Wheel::get_Omega(uint32_t dt_millis)
 {
         int16_t cps = wheel_->henc->Instance->CNT;
+	wheel_encoder_count += wheel_->henc->Instance->CNT;
         wheel_->henc->Instance->CNT = 0;
         float omega = 2*3.14159*1000.0 * cps / (715.0*(float)dt_millis);
 
         return omega;
+}
+
+float Wheel::get_Angle()
+{
+	float angle_value =  (((wheel_encoder_count + (int16_t)wheel_->henc->Instance->CNT)*360)/715);
+	angle_value = fabs(angle_value);
+	if(angle_value >= 360)
+	{
+		wheel_encoder_count = 0;
+		angle_value -= 360;
+	}
+	return fabs(angle_value);
 }
