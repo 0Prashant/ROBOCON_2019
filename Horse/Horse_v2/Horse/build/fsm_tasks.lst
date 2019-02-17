@@ -1,0 +1,1459 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"fsm_tasks.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.phaseOneChores,"ax",%progbits
+  18              		.align	1
+  19              		.global	phaseOneChores
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	phaseOneChores:
+  26              	.LFB127:
+  27              		.file 1 "Core/Src/fsm_tasks.c"
+   1:Core/Src/fsm_tasks.c **** /*28-1-2019*/
+   2:Core/Src/fsm_tasks.c **** 
+   3:Core/Src/fsm_tasks.c **** #include "fsm_tasks.h"
+   4:Core/Src/fsm_tasks.c **** 
+   5:Core/Src/fsm_tasks.c **** void homePositionChores(struct fsmStr *fsm)
+   6:Core/Src/fsm_tasks.c **** {
+   7:Core/Src/fsm_tasks.c ****         setHomePosition();
+   8:Core/Src/fsm_tasks.c ****         check_N_Stop();
+   9:Core/Src/fsm_tasks.c **** }
+  10:Core/Src/fsm_tasks.c **** 
+  11:Core/Src/fsm_tasks.c **** static uint8_t gIs_First = 1;
+  12:Core/Src/fsm_tasks.c **** void phaseOneChores(struct fsmStr *fsm)
+  13:Core/Src/fsm_tasks.c **** {
+  28              		.loc 1 13 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40              	.LVL1:
+  41              	.LBB2:
+  14:Core/Src/fsm_tasks.c ****         uint8_t motor_index = 0;
+  15:Core/Src/fsm_tasks.c ****         float set_point = 0;
+  16:Core/Src/fsm_tasks.c **** 
+  17:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 2
+
+
+  42              		.loc 1 17 0
+  43 0002 0024     		movs	r4, #0
+  44 0004 14E0     		b	.L2
+  45              	.LVL2:
+  46              	.L3:
+  18:Core/Src/fsm_tasks.c ****         {
+  19:Core/Src/fsm_tasks.c ****                 if (i != motor_index)
+  20:Core/Src/fsm_tasks.c ****                 {
+  21:Core/Src/fsm_tasks.c ****                         ffSetAngle(&ff_arr[i], 60);
+  22:Core/Src/fsm_tasks.c ****                         getAngle(&motor_arr[i]);
+  23:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+  24:Core/Src/fsm_tasks.c **** 
+  25:Core/Src/fsm_tasks.c ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  26:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  27:Core/Src/fsm_tasks.c ****                                                                 set_point,
+  28:Core/Src/fsm_tasks.c ****                                                                 motor_arr[i].omega,
+  29:Core/Src/fsm_tasks.c ****                                                                 dt_ms);
+  30:Core/Src/fsm_tasks.c ****                 }
+  31:Core/Src/fsm_tasks.c ****                 else if (i == motor_index)
+  32:Core/Src/fsm_tasks.c ****                 {
+  33:Core/Src/fsm_tasks.c ****                         if (gIs_First) {
+  47              		.loc 1 33 0
+  48 0006 234B     		ldr	r3, .L9
+  49 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  50 000a 002B     		cmp	r3, #0
+  51 000c 3AD0     		beq	.L5
+  34:Core/Src/fsm_tasks.c ****                                 motor_arr[i].update_omega = 0;
+  52              		.loc 1 34 0
+  53 000e 224A     		ldr	r2, .L9+4
+  54 0010 3423     		movs	r3, #52
+  55 0012 03FB0423 		mla	r3, r3, r4, r2
+  56 0016 0022     		movs	r2, #0
+  57 0018 1A61     		str	r2, [r3, #16]	@ float
+  35:Core/Src/fsm_tasks.c ****                                 int_arr[i].intState = STATE_A;
+  58              		.loc 1 35 0
+  59 001a 04EB4403 		add	r3, r4, r4, lsl #1
+  60 001e 9A00     		lsls	r2, r3, #2
+  61 0020 1E4B     		ldr	r3, .L9+8
+  62 0022 1344     		add	r3, r3, r2
+  63 0024 0022     		movs	r2, #0
+  64 0026 9A72     		strb	r2, [r3, #10]
+  36:Core/Src/fsm_tasks.c ****                                 gIs_First = 0;
+  65              		.loc 1 36 0
+  66 0028 1A4B     		ldr	r3, .L9
+  67 002a 1A70     		strb	r2, [r3]
+  68              	.L4:
+  17:Core/Src/fsm_tasks.c ****         {
+  69              		.loc 1 17 0 discriminator 2
+  70 002c 0134     		adds	r4, r4, #1
+  71              	.LVL3:
+  72 002e E4B2     		uxtb	r4, r4
+  73              	.LVL4:
+  74              	.L2:
+  17:Core/Src/fsm_tasks.c ****         {
+  75              		.loc 1 17 0 is_stmt 0 discriminator 1
+  76 0030 032C     		cmp	r4, #3
+  77 0032 2ED8     		bhi	.L8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 3
+
+
+  19:Core/Src/fsm_tasks.c ****                 {
+  78              		.loc 1 19 0 is_stmt 1
+  79 0034 002C     		cmp	r4, #0
+  80 0036 E6D0     		beq	.L3
+  21:Core/Src/fsm_tasks.c ****                         getAngle(&motor_arr[i]);
+  81              		.loc 1 21 0
+  82 0038 C4EB0413 		rsb	r3, r4, r4, lsl #4
+  83 003c 9E00     		lsls	r6, r3, #2
+  84 003e 184B     		ldr	r3, .L9+12
+  85 0040 1E44     		add	r6, r6, r3
+  86 0042 9FED180A 		vldr.32	s0, .L9+16
+  87 0046 3046     		mov	r0, r6
+  88 0048 FFF7FEFF 		bl	ffSetAngle
+  89              	.LVL5:
+  22:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+  90              		.loc 1 22 0
+  91 004c 3425     		movs	r5, #52
+  92 004e 124B     		ldr	r3, .L9+4
+  93 0050 05FB0435 		mla	r5, r5, r4, r3
+  94 0054 2846     		mov	r0, r5
+  95 0056 FFF7FEFF 		bl	getAngle
+  96              	.LVL6:
+  23:Core/Src/fsm_tasks.c **** 
+  97              		.loc 1 23 0
+  98 005a 2846     		mov	r0, r5
+  99 005c FFF7FEFF 		bl	getOmega
+ 100              	.LVL7:
+  25:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 101              		.loc 1 25 0
+ 102 0060 95ED010A 		vldr.32	s0, [r5, #4]
+ 103 0064 3046     		mov	r0, r6
+ 104 0066 FFF7FEFF 		bl	ffGenerate
+ 105              	.LVL8:
+  26:Core/Src/fsm_tasks.c ****                                                                 set_point,
+ 106              		.loc 1 26 0
+ 107 006a C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 108 006e D300     		lsls	r3, r2, #3
+ 109 0070 0A21     		movs	r1, #10
+ 110 0072 D5ED000A 		vldr.32	s1, [r5]
+ 111 0076 0C48     		ldr	r0, .L9+20
+ 112 0078 1844     		add	r0, r0, r3
+ 113 007a FFF7FEFF 		bl	PID_Compute
+ 114              	.LVL9:
+ 115 007e 85ED040A 		vstr.32	s0, [r5, #16]
+ 116 0082 D3E7     		b	.L4
+ 117              	.L5:
+  37:Core/Src/fsm_tasks.c ****                         }
+  38:Core/Src/fsm_tasks.c ****                         else {
+  39:Core/Src/fsm_tasks.c ****                                 motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 118              		.loc 1 39 0
+ 119 0084 044A     		ldr	r2, .L9+4
+ 120 0086 3423     		movs	r3, #52
+ 121 0088 03FB0423 		mla	r3, r3, r4, r2
+ 122 008c 074A     		ldr	r2, .L9+24
+ 123 008e 1A61     		str	r2, [r3, #16]	@ float
+ 124 0090 CCE7     		b	.L4
+ 125              	.L8:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 4
+
+
+ 126              	.LBE2:
+  40:Core/Src/fsm_tasks.c ****                         }
+  41:Core/Src/fsm_tasks.c ****                 }
+  42:Core/Src/fsm_tasks.c ****         }
+  43:Core/Src/fsm_tasks.c **** }
+ 127              		.loc 1 43 0
+ 128 0092 70BD     		pop	{r4, r5, r6, pc}
+ 129              	.LVL10:
+ 130              	.L10:
+ 131              		.align	2
+ 132              	.L9:
+ 133 0094 00000000 		.word	.LANCHOR0
+ 134 0098 00000000 		.word	motor_arr
+ 135 009c 00000000 		.word	int_arr
+ 136 00a0 00000000 		.word	ff_arr
+ 137 00a4 00007042 		.word	1114636288
+ 138 00a8 00000000 		.word	pid_arr
+ 139 00ac 000080C0 		.word	-1065353216
+ 140              		.cfi_endproc
+ 141              	.LFE127:
+ 143              		.section	.text.phaseTwoChores,"ax",%progbits
+ 144              		.align	1
+ 145              		.global	phaseTwoChores
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.fpu fpv4-sp-d16
+ 151              	phaseTwoChores:
+ 152              	.LFB128:
+  44:Core/Src/fsm_tasks.c **** 
+  45:Core/Src/fsm_tasks.c **** void phaseTwoChores(struct fsmStr *fsm)
+  46:Core/Src/fsm_tasks.c **** {
+ 153              		.loc 1 46 0
+ 154              		.cfi_startproc
+ 155              		@ args = 0, pretend = 0, frame = 0
+ 156              		@ frame_needed = 0, uses_anonymous_args = 0
+ 157              	.LVL11:
+ 158 0000 70B5     		push	{r4, r5, r6, lr}
+ 159              	.LCFI1:
+ 160              		.cfi_def_cfa_offset 16
+ 161              		.cfi_offset 4, -16
+ 162              		.cfi_offset 5, -12
+ 163              		.cfi_offset 6, -8
+ 164              		.cfi_offset 14, -4
+ 165              	.LVL12:
+ 166              	.LBB3:
+  47:Core/Src/fsm_tasks.c ****         uint8_t motor_index = 1;
+  48:Core/Src/fsm_tasks.c ****         float set_point = 0;
+  49:Core/Src/fsm_tasks.c **** 
+  50:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 167              		.loc 1 50 0
+ 168 0002 0024     		movs	r4, #0
+ 169 0004 07E0     		b	.L12
+ 170              	.LVL13:
+ 171              	.L13:
+  51:Core/Src/fsm_tasks.c ****         {
+  52:Core/Src/fsm_tasks.c ****                 if (i != motor_index)
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 5
+
+
+  53:Core/Src/fsm_tasks.c ****                 {
+  54:Core/Src/fsm_tasks.c ****                         ffSetAngle(&ff_arr[i], 60);
+  55:Core/Src/fsm_tasks.c **** 
+  56:Core/Src/fsm_tasks.c ****                         getAngle(&motor_arr[i]);
+  57:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+  58:Core/Src/fsm_tasks.c **** 
+  59:Core/Src/fsm_tasks.c ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  60:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  61:Core/Src/fsm_tasks.c ****                                                                 set_point,
+  62:Core/Src/fsm_tasks.c ****                                                                 motor_arr[i].omega,
+  63:Core/Src/fsm_tasks.c ****                                                                 dt_ms);
+  64:Core/Src/fsm_tasks.c ****                 }
+  65:Core/Src/fsm_tasks.c ****                 else {
+  66:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 172              		.loc 1 66 0
+ 173 0006 194A     		ldr	r2, .L18
+ 174 0008 3423     		movs	r3, #52
+ 175 000a 03FB0423 		mla	r3, r3, r4, r2
+ 176 000e 184A     		ldr	r2, .L18+4
+ 177 0010 1A61     		str	r2, [r3, #16]	@ float
+ 178              	.L14:
+  50:Core/Src/fsm_tasks.c ****         {
+ 179              		.loc 1 50 0 discriminator 2
+ 180 0012 0134     		adds	r4, r4, #1
+ 181              	.LVL14:
+ 182 0014 E4B2     		uxtb	r4, r4
+ 183              	.LVL15:
+ 184              	.L12:
+  50:Core/Src/fsm_tasks.c ****         {
+ 185              		.loc 1 50 0 is_stmt 0 discriminator 1
+ 186 0016 032C     		cmp	r4, #3
+ 187 0018 27D8     		bhi	.L17
+  52:Core/Src/fsm_tasks.c ****                 {
+ 188              		.loc 1 52 0 is_stmt 1
+ 189 001a 012C     		cmp	r4, #1
+ 190 001c F3D0     		beq	.L13
+  54:Core/Src/fsm_tasks.c **** 
+ 191              		.loc 1 54 0
+ 192 001e C4EB0413 		rsb	r3, r4, r4, lsl #4
+ 193 0022 9E00     		lsls	r6, r3, #2
+ 194 0024 134B     		ldr	r3, .L18+8
+ 195 0026 1E44     		add	r6, r6, r3
+ 196 0028 9FED130A 		vldr.32	s0, .L18+12
+ 197 002c 3046     		mov	r0, r6
+ 198 002e FFF7FEFF 		bl	ffSetAngle
+ 199              	.LVL16:
+  56:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+ 200              		.loc 1 56 0
+ 201 0032 3425     		movs	r5, #52
+ 202 0034 0D4B     		ldr	r3, .L18
+ 203 0036 05FB0435 		mla	r5, r5, r4, r3
+ 204 003a 2846     		mov	r0, r5
+ 205 003c FFF7FEFF 		bl	getAngle
+ 206              	.LVL17:
+  57:Core/Src/fsm_tasks.c **** 
+ 207              		.loc 1 57 0
+ 208 0040 2846     		mov	r0, r5
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 6
+
+
+ 209 0042 FFF7FEFF 		bl	getOmega
+ 210              	.LVL18:
+  59:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 211              		.loc 1 59 0
+ 212 0046 95ED010A 		vldr.32	s0, [r5, #4]
+ 213 004a 3046     		mov	r0, r6
+ 214 004c FFF7FEFF 		bl	ffGenerate
+ 215              	.LVL19:
+  60:Core/Src/fsm_tasks.c ****                                                                 set_point,
+ 216              		.loc 1 60 0
+ 217 0050 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 218 0054 D300     		lsls	r3, r2, #3
+ 219 0056 0A21     		movs	r1, #10
+ 220 0058 D5ED000A 		vldr.32	s1, [r5]
+ 221 005c 0748     		ldr	r0, .L18+16
+ 222 005e 1844     		add	r0, r0, r3
+ 223 0060 FFF7FEFF 		bl	PID_Compute
+ 224              	.LVL20:
+ 225 0064 85ED040A 		vstr.32	s0, [r5, #16]
+ 226 0068 D3E7     		b	.L14
+ 227              	.L17:
+ 228              	.LBE3:
+  67:Core/Src/fsm_tasks.c ****                 }
+  68:Core/Src/fsm_tasks.c ****         }
+  69:Core/Src/fsm_tasks.c **** }
+ 229              		.loc 1 69 0
+ 230 006a 70BD     		pop	{r4, r5, r6, pc}
+ 231              	.LVL21:
+ 232              	.L19:
+ 233              		.align	2
+ 234              	.L18:
+ 235 006c 00000000 		.word	motor_arr
+ 236 0070 000080C0 		.word	-1065353216
+ 237 0074 00000000 		.word	ff_arr
+ 238 0078 00007042 		.word	1114636288
+ 239 007c 00000000 		.word	pid_arr
+ 240              		.cfi_endproc
+ 241              	.LFE128:
+ 243              		.section	.text.phaseThreeChores,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	phaseThreeChores
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 249              		.fpu fpv4-sp-d16
+ 251              	phaseThreeChores:
+ 252              	.LFB129:
+  70:Core/Src/fsm_tasks.c **** 
+  71:Core/Src/fsm_tasks.c **** void phaseThreeChores(struct fsmStr *fsm)
+  72:Core/Src/fsm_tasks.c **** {
+ 253              		.loc 1 72 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257              	.LVL22:
+ 258 0000 70B5     		push	{r4, r5, r6, lr}
+ 259              	.LCFI2:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 7
+
+
+ 260              		.cfi_def_cfa_offset 16
+ 261              		.cfi_offset 4, -16
+ 262              		.cfi_offset 5, -12
+ 263              		.cfi_offset 6, -8
+ 264              		.cfi_offset 14, -4
+ 265              	.LVL23:
+ 266              	.LBB4:
+  73:Core/Src/fsm_tasks.c ****         uint8_t motor_index = 2;
+  74:Core/Src/fsm_tasks.c ****         float set_point;
+  75:Core/Src/fsm_tasks.c **** 
+  76:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 267              		.loc 1 76 0
+ 268 0002 0024     		movs	r4, #0
+ 269 0004 07E0     		b	.L21
+ 270              	.LVL24:
+ 271              	.L22:
+  77:Core/Src/fsm_tasks.c ****         {
+  78:Core/Src/fsm_tasks.c ****                 if (i != motor_index)
+  79:Core/Src/fsm_tasks.c ****                 {
+  80:Core/Src/fsm_tasks.c ****                         ffSetAngle(&ff_arr[i], 60);
+  81:Core/Src/fsm_tasks.c **** 
+  82:Core/Src/fsm_tasks.c ****                         getAngle(&motor_arr[i]);
+  83:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+  84:Core/Src/fsm_tasks.c **** 
+  85:Core/Src/fsm_tasks.c ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  86:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  87:Core/Src/fsm_tasks.c ****                                                                 set_point,
+  88:Core/Src/fsm_tasks.c ****                                                                 motor_arr[i].omega,
+  89:Core/Src/fsm_tasks.c ****                                                                 dt_ms);
+  90:Core/Src/fsm_tasks.c ****                 }
+  91:Core/Src/fsm_tasks.c ****                 else {
+  92:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 272              		.loc 1 92 0
+ 273 0006 194A     		ldr	r2, .L27
+ 274 0008 3423     		movs	r3, #52
+ 275 000a 03FB0423 		mla	r3, r3, r4, r2
+ 276 000e 184A     		ldr	r2, .L27+4
+ 277 0010 1A61     		str	r2, [r3, #16]	@ float
+ 278              	.L23:
+  76:Core/Src/fsm_tasks.c ****         {
+ 279              		.loc 1 76 0 discriminator 2
+ 280 0012 0134     		adds	r4, r4, #1
+ 281              	.LVL25:
+ 282 0014 E4B2     		uxtb	r4, r4
+ 283              	.LVL26:
+ 284              	.L21:
+  76:Core/Src/fsm_tasks.c ****         {
+ 285              		.loc 1 76 0 is_stmt 0 discriminator 1
+ 286 0016 032C     		cmp	r4, #3
+ 287 0018 27D8     		bhi	.L26
+  78:Core/Src/fsm_tasks.c ****                 {
+ 288              		.loc 1 78 0 is_stmt 1
+ 289 001a 022C     		cmp	r4, #2
+ 290 001c F3D0     		beq	.L22
+  80:Core/Src/fsm_tasks.c **** 
+ 291              		.loc 1 80 0
+ 292 001e C4EB0413 		rsb	r3, r4, r4, lsl #4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 8
+
+
+ 293 0022 9E00     		lsls	r6, r3, #2
+ 294 0024 134B     		ldr	r3, .L27+8
+ 295 0026 1E44     		add	r6, r6, r3
+ 296 0028 9FED130A 		vldr.32	s0, .L27+12
+ 297 002c 3046     		mov	r0, r6
+ 298 002e FFF7FEFF 		bl	ffSetAngle
+ 299              	.LVL27:
+  82:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+ 300              		.loc 1 82 0
+ 301 0032 3425     		movs	r5, #52
+ 302 0034 0D4B     		ldr	r3, .L27
+ 303 0036 05FB0435 		mla	r5, r5, r4, r3
+ 304 003a 2846     		mov	r0, r5
+ 305 003c FFF7FEFF 		bl	getAngle
+ 306              	.LVL28:
+  83:Core/Src/fsm_tasks.c **** 
+ 307              		.loc 1 83 0
+ 308 0040 2846     		mov	r0, r5
+ 309 0042 FFF7FEFF 		bl	getOmega
+ 310              	.LVL29:
+  85:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 311              		.loc 1 85 0
+ 312 0046 95ED010A 		vldr.32	s0, [r5, #4]
+ 313 004a 3046     		mov	r0, r6
+ 314 004c FFF7FEFF 		bl	ffGenerate
+ 315              	.LVL30:
+  86:Core/Src/fsm_tasks.c ****                                                                 set_point,
+ 316              		.loc 1 86 0
+ 317 0050 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 318 0054 D300     		lsls	r3, r2, #3
+ 319 0056 0A21     		movs	r1, #10
+ 320 0058 D5ED000A 		vldr.32	s1, [r5]
+ 321 005c 0748     		ldr	r0, .L27+16
+ 322 005e 1844     		add	r0, r0, r3
+ 323 0060 FFF7FEFF 		bl	PID_Compute
+ 324              	.LVL31:
+ 325 0064 85ED040A 		vstr.32	s0, [r5, #16]
+ 326 0068 D3E7     		b	.L23
+ 327              	.L26:
+ 328              	.LBE4:
+  93:Core/Src/fsm_tasks.c ****                 }
+  94:Core/Src/fsm_tasks.c ****         }
+  95:Core/Src/fsm_tasks.c **** }
+ 329              		.loc 1 95 0
+ 330 006a 70BD     		pop	{r4, r5, r6, pc}
+ 331              	.LVL32:
+ 332              	.L28:
+ 333              		.align	2
+ 334              	.L27:
+ 335 006c 00000000 		.word	motor_arr
+ 336 0070 000080C0 		.word	-1065353216
+ 337 0074 00000000 		.word	ff_arr
+ 338 0078 00007042 		.word	1114636288
+ 339 007c 00000000 		.word	pid_arr
+ 340              		.cfi_endproc
+ 341              	.LFE129:
+ 343              		.section	.text.phaseFourChores,"ax",%progbits
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 9
+
+
+ 344              		.align	1
+ 345              		.global	phaseFourChores
+ 346              		.syntax unified
+ 347              		.thumb
+ 348              		.thumb_func
+ 349              		.fpu fpv4-sp-d16
+ 351              	phaseFourChores:
+ 352              	.LFB130:
+  96:Core/Src/fsm_tasks.c **** 
+  97:Core/Src/fsm_tasks.c **** void phaseFourChores(struct fsmStr *fsm)
+  98:Core/Src/fsm_tasks.c **** {
+ 353              		.loc 1 98 0
+ 354              		.cfi_startproc
+ 355              		@ args = 0, pretend = 0, frame = 0
+ 356              		@ frame_needed = 0, uses_anonymous_args = 0
+ 357              	.LVL33:
+ 358 0000 70B5     		push	{r4, r5, r6, lr}
+ 359              	.LCFI3:
+ 360              		.cfi_def_cfa_offset 16
+ 361              		.cfi_offset 4, -16
+ 362              		.cfi_offset 5, -12
+ 363              		.cfi_offset 6, -8
+ 364              		.cfi_offset 14, -4
+ 365              	.LVL34:
+ 366              	.LBB5:
+  99:Core/Src/fsm_tasks.c ****         uint8_t motor_index = 3;
+ 100:Core/Src/fsm_tasks.c ****         float set_point;
+ 101:Core/Src/fsm_tasks.c **** 
+ 102:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 367              		.loc 1 102 0
+ 368 0002 0024     		movs	r4, #0
+ 369 0004 07E0     		b	.L30
+ 370              	.LVL35:
+ 371              	.L31:
+ 103:Core/Src/fsm_tasks.c ****         {
+ 104:Core/Src/fsm_tasks.c ****                 if (i != motor_index)
+ 105:Core/Src/fsm_tasks.c ****                 {
+ 106:Core/Src/fsm_tasks.c **** 
+ 107:Core/Src/fsm_tasks.c ****                         ffSetAngle(&ff_arr[i], 60);
+ 108:Core/Src/fsm_tasks.c **** 
+ 109:Core/Src/fsm_tasks.c ****                         getAngle(&motor_arr[i]);
+ 110:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+ 111:Core/Src/fsm_tasks.c **** 
+ 112:Core/Src/fsm_tasks.c ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+ 113:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 114:Core/Src/fsm_tasks.c ****                                                                 set_point,
+ 115:Core/Src/fsm_tasks.c ****                                                                 motor_arr[i].omega,
+ 116:Core/Src/fsm_tasks.c ****                                                                 dt_ms);
+ 117:Core/Src/fsm_tasks.c ****                 }
+ 118:Core/Src/fsm_tasks.c ****                 else {
+ 119:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 372              		.loc 1 119 0
+ 373 0006 194A     		ldr	r2, .L36
+ 374 0008 3423     		movs	r3, #52
+ 375 000a 03FB0423 		mla	r3, r3, r4, r2
+ 376 000e 184A     		ldr	r2, .L36+4
+ 377 0010 1A61     		str	r2, [r3, #16]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 10
+
+
+ 378              	.L32:
+ 102:Core/Src/fsm_tasks.c ****         {
+ 379              		.loc 1 102 0 discriminator 2
+ 380 0012 0134     		adds	r4, r4, #1
+ 381              	.LVL36:
+ 382 0014 E4B2     		uxtb	r4, r4
+ 383              	.LVL37:
+ 384              	.L30:
+ 102:Core/Src/fsm_tasks.c ****         {
+ 385              		.loc 1 102 0 is_stmt 0 discriminator 1
+ 386 0016 032C     		cmp	r4, #3
+ 387 0018 27D8     		bhi	.L35
+ 104:Core/Src/fsm_tasks.c ****                 {
+ 388              		.loc 1 104 0 is_stmt 1
+ 389 001a 032C     		cmp	r4, #3
+ 390 001c F3D0     		beq	.L31
+ 107:Core/Src/fsm_tasks.c **** 
+ 391              		.loc 1 107 0
+ 392 001e C4EB0413 		rsb	r3, r4, r4, lsl #4
+ 393 0022 9E00     		lsls	r6, r3, #2
+ 394 0024 134B     		ldr	r3, .L36+8
+ 395 0026 1E44     		add	r6, r6, r3
+ 396 0028 9FED130A 		vldr.32	s0, .L36+12
+ 397 002c 3046     		mov	r0, r6
+ 398 002e FFF7FEFF 		bl	ffSetAngle
+ 399              	.LVL38:
+ 109:Core/Src/fsm_tasks.c ****                         getOmega(&motor_arr[i]);
+ 400              		.loc 1 109 0
+ 401 0032 3425     		movs	r5, #52
+ 402 0034 0D4B     		ldr	r3, .L36
+ 403 0036 05FB0435 		mla	r5, r5, r4, r3
+ 404 003a 2846     		mov	r0, r5
+ 405 003c FFF7FEFF 		bl	getAngle
+ 406              	.LVL39:
+ 110:Core/Src/fsm_tasks.c **** 
+ 407              		.loc 1 110 0
+ 408 0040 2846     		mov	r0, r5
+ 409 0042 FFF7FEFF 		bl	getOmega
+ 410              	.LVL40:
+ 112:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 411              		.loc 1 112 0
+ 412 0046 95ED010A 		vldr.32	s0, [r5, #4]
+ 413 004a 3046     		mov	r0, r6
+ 414 004c FFF7FEFF 		bl	ffGenerate
+ 415              	.LVL41:
+ 113:Core/Src/fsm_tasks.c ****                                                                 set_point,
+ 416              		.loc 1 113 0
+ 417 0050 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 418 0054 D300     		lsls	r3, r2, #3
+ 419 0056 0A21     		movs	r1, #10
+ 420 0058 D5ED000A 		vldr.32	s1, [r5]
+ 421 005c 0748     		ldr	r0, .L36+16
+ 422 005e 1844     		add	r0, r0, r3
+ 423 0060 FFF7FEFF 		bl	PID_Compute
+ 424              	.LVL42:
+ 425 0064 85ED040A 		vstr.32	s0, [r5, #16]
+ 426 0068 D3E7     		b	.L32
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 11
+
+
+ 427              	.L35:
+ 428              	.LBE5:
+ 120:Core/Src/fsm_tasks.c ****                 }
+ 121:Core/Src/fsm_tasks.c ****         }
+ 122:Core/Src/fsm_tasks.c **** }
+ 429              		.loc 1 122 0
+ 430 006a 70BD     		pop	{r4, r5, r6, pc}
+ 431              	.LVL43:
+ 432              	.L37:
+ 433              		.align	2
+ 434              	.L36:
+ 435 006c 00000000 		.word	motor_arr
+ 436 0070 000080C0 		.word	-1065353216
+ 437 0074 00000000 		.word	ff_arr
+ 438 0078 00007042 		.word	1114636288
+ 439 007c 00000000 		.word	pid_arr
+ 440              		.cfi_endproc
+ 441              	.LFE130:
+ 443              		.section	.text.setHomePosition,"ax",%progbits
+ 444              		.align	1
+ 445              		.global	setHomePosition
+ 446              		.syntax unified
+ 447              		.thumb
+ 448              		.thumb_func
+ 449              		.fpu fpv4-sp-d16
+ 451              	setHomePosition:
+ 452              	.LFB131:
+ 123:Core/Src/fsm_tasks.c **** 
+ 124:Core/Src/fsm_tasks.c **** void setHomePosition(void)
+ 125:Core/Src/fsm_tasks.c **** {
+ 453              		.loc 1 125 0
+ 454              		.cfi_startproc
+ 455              		@ args = 0, pretend = 0, frame = 0
+ 456              		@ frame_needed = 0, uses_anonymous_args = 0
+ 457 0000 10B5     		push	{r4, lr}
+ 458              	.LCFI4:
+ 459              		.cfi_def_cfa_offset 8
+ 460              		.cfi_offset 4, -8
+ 461              		.cfi_offset 14, -4
+ 126:Core/Src/fsm_tasks.c ****         setDutyCycle(&balance_motor, 65535);
+ 462              		.loc 1 126 0
+ 463 0002 0B4C     		ldr	r4, .L42
+ 464 0004 4FF6FF71 		movw	r1, #65535
+ 465 0008 2046     		mov	r0, r4
+ 466 000a FFF7FEFF 		bl	setDutyCycle
+ 467              	.LVL44:
+ 127:Core/Src/fsm_tasks.c ****         setDirection(&balance_motor, DIR_ANTICLOCKWISE);
+ 468              		.loc 1 127 0
+ 469 000e 0121     		movs	r1, #1
+ 470 0010 2046     		mov	r0, r4
+ 471 0012 FFF7FEFF 		bl	setDirection
+ 472              	.LVL45:
+ 473              	.LBB6:
+ 128:Core/Src/fsm_tasks.c **** 
+ 129:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 474              		.loc 1 129 0
+ 475 0016 0023     		movs	r3, #0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 12
+
+
+ 476 0018 07E0     		b	.L39
+ 477              	.LVL46:
+ 478              	.L40:
+ 130:Core/Src/fsm_tasks.c ****         {
+ 131:Core/Src/fsm_tasks.c ****                 motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 479              		.loc 1 131 0 discriminator 3
+ 480 001a 0649     		ldr	r1, .L42+4
+ 481 001c 3422     		movs	r2, #52
+ 482 001e 02FB0312 		mla	r2, r2, r3, r1
+ 483 0022 0549     		ldr	r1, .L42+8
+ 484 0024 1161     		str	r1, [r2, #16]	@ float
+ 129:Core/Src/fsm_tasks.c ****         {
+ 485              		.loc 1 129 0 discriminator 3
+ 486 0026 0133     		adds	r3, r3, #1
+ 487              	.LVL47:
+ 488 0028 DBB2     		uxtb	r3, r3
+ 489              	.LVL48:
+ 490              	.L39:
+ 129:Core/Src/fsm_tasks.c ****         {
+ 491              		.loc 1 129 0 is_stmt 0 discriminator 1
+ 492 002a 032B     		cmp	r3, #3
+ 493 002c F5D9     		bls	.L40
+ 494              	.LBE6:
+ 132:Core/Src/fsm_tasks.c ****         }
+ 133:Core/Src/fsm_tasks.c **** }
+ 495              		.loc 1 133 0 is_stmt 1
+ 496 002e 10BD     		pop	{r4, pc}
+ 497              	.L43:
+ 498              		.align	2
+ 499              	.L42:
+ 500 0030 00000000 		.word	balance_motor
+ 501 0034 00000000 		.word	motor_arr
+ 502 0038 000080C0 		.word	-1065353216
+ 503              		.cfi_endproc
+ 504              	.LFE131:
+ 506              		.section	.text.check_N_Stop,"ax",%progbits
+ 507              		.align	1
+ 508              		.global	check_N_Stop
+ 509              		.syntax unified
+ 510              		.thumb
+ 511              		.thumb_func
+ 512              		.fpu fpv4-sp-d16
+ 514              	check_N_Stop:
+ 515              	.LFB132:
+ 134:Core/Src/fsm_tasks.c **** 
+ 135:Core/Src/fsm_tasks.c **** void check_N_Stop(void)
+ 136:Core/Src/fsm_tasks.c **** {
+ 516              		.loc 1 136 0
+ 517              		.cfi_startproc
+ 518              		@ args = 0, pretend = 0, frame = 0
+ 519              		@ frame_needed = 0, uses_anonymous_args = 0
+ 520 0000 10B5     		push	{r4, lr}
+ 521              	.LCFI5:
+ 522              		.cfi_def_cfa_offset 8
+ 523              		.cfi_offset 4, -8
+ 524              		.cfi_offset 14, -4
+ 525              	.LVL49:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 13
+
+
+ 526              	.LBB7:
+ 137:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 527              		.loc 1 137 0
+ 528 0002 0024     		movs	r4, #0
+ 529 0004 01E0     		b	.L45
+ 530              	.LVL50:
+ 531              	.L46:
+ 532              		.loc 1 137 0 is_stmt 0 discriminator 2
+ 533 0006 0134     		adds	r4, r4, #1
+ 534              	.LVL51:
+ 535 0008 E4B2     		uxtb	r4, r4
+ 536              	.LVL52:
+ 537              	.L45:
+ 538              		.loc 1 137 0 discriminator 1
+ 539 000a 032C     		cmp	r4, #3
+ 540 000c 18D8     		bhi	.L49
+ 138:Core/Src/fsm_tasks.c ****         {
+ 139:Core/Src/fsm_tasks.c ****                 if (int_arr[i].fhome_pos)
+ 541              		.loc 1 139 0 is_stmt 1
+ 542 000e 04EB4403 		add	r3, r4, r4, lsl #1
+ 543 0012 9A00     		lsls	r2, r3, #2
+ 544 0014 0B4B     		ldr	r3, .L50
+ 545 0016 1344     		add	r3, r3, r2
+ 546 0018 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 547 001a 002B     		cmp	r3, #0
+ 548 001c F3D0     		beq	.L46
+ 140:Core/Src/fsm_tasks.c ****                 {
+ 141:Core/Src/fsm_tasks.c ****                         motor_arr[i].update_omega = 0;
+ 549              		.loc 1 141 0
+ 550 001e 0A4A     		ldr	r2, .L50+4
+ 551 0020 3423     		movs	r3, #52
+ 552 0022 03FB0423 		mla	r3, r3, r4, r2
+ 553 0026 0022     		movs	r2, #0
+ 554 0028 1A61     		str	r2, [r3, #16]	@ float
+ 142:Core/Src/fsm_tasks.c ****                         // resetAngle(&motor_arr[i]);
+ 143:Core/Src/fsm_tasks.c ****                         motor_arr[i].encoder->htim->Instance->CNT = 0;
+ 555              		.loc 1 143 0
+ 556 002a 1B6B     		ldr	r3, [r3, #48]
+ 557 002c 9B68     		ldr	r3, [r3, #8]
+ 558 002e 1B68     		ldr	r3, [r3]
+ 559 0030 0022     		movs	r2, #0
+ 560 0032 5A62     		str	r2, [r3, #36]
+ 144:Core/Src/fsm_tasks.c ****                         if (i == 0) {
+ 561              		.loc 1 144 0
+ 562 0034 002C     		cmp	r4, #0
+ 563 0036 E6D1     		bne	.L46
+ 145:Core/Src/fsm_tasks.c ****                                 printf("\n\n\n\n\n\n\nHere!!\n\n\n\n\n");
+ 564              		.loc 1 145 0
+ 565 0038 0448     		ldr	r0, .L50+8
+ 566 003a FFF7FEFF 		bl	puts
+ 567              	.LVL53:
+ 568 003e E2E7     		b	.L46
+ 569              	.L49:
+ 570              	.LBE7:
+ 146:Core/Src/fsm_tasks.c ****                         }
+ 147:Core/Src/fsm_tasks.c ****                 }
+ 148:Core/Src/fsm_tasks.c ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 14
+
+
+ 149:Core/Src/fsm_tasks.c ****         // if (blnc_int_arr[2].fhome_pos == 1)
+ 150:Core/Src/fsm_tasks.c ****         // {
+ 151:Core/Src/fsm_tasks.c ****         //         setDutyCycle(&balance_motor, 0);
+ 152:Core/Src/fsm_tasks.c ****         // }
+ 153:Core/Src/fsm_tasks.c **** }
+ 571              		.loc 1 153 0
+ 572 0040 10BD     		pop	{r4, pc}
+ 573              	.LVL54:
+ 574              	.L51:
+ 575 0042 00BF     		.align	2
+ 576              	.L50:
+ 577 0044 00000000 		.word	int_arr
+ 578 0048 00000000 		.word	motor_arr
+ 579 004c 00000000 		.word	.LC0
+ 580              		.cfi_endproc
+ 581              	.LFE132:
+ 583              		.section	.text.homePositionChores,"ax",%progbits
+ 584              		.align	1
+ 585              		.global	homePositionChores
+ 586              		.syntax unified
+ 587              		.thumb
+ 588              		.thumb_func
+ 589              		.fpu fpv4-sp-d16
+ 591              	homePositionChores:
+ 592              	.LFB126:
+   6:Core/Src/fsm_tasks.c ****         setHomePosition();
+ 593              		.loc 1 6 0
+ 594              		.cfi_startproc
+ 595              		@ args = 0, pretend = 0, frame = 0
+ 596              		@ frame_needed = 0, uses_anonymous_args = 0
+ 597              	.LVL55:
+ 598 0000 08B5     		push	{r3, lr}
+ 599              	.LCFI6:
+ 600              		.cfi_def_cfa_offset 8
+ 601              		.cfi_offset 3, -8
+ 602              		.cfi_offset 14, -4
+   7:Core/Src/fsm_tasks.c ****         check_N_Stop();
+ 603              		.loc 1 7 0
+ 604 0002 FFF7FEFF 		bl	setHomePosition
+ 605              	.LVL56:
+   8:Core/Src/fsm_tasks.c **** }
+ 606              		.loc 1 8 0
+ 607 0006 FFF7FEFF 		bl	check_N_Stop
+ 608              	.LVL57:
+   9:Core/Src/fsm_tasks.c **** 
+ 609              		.loc 1 9 0
+ 610 000a 08BD     		pop	{r3, pc}
+ 611              		.cfi_endproc
+ 612              	.LFE126:
+ 614              		.section	.text.updateOmegas,"ax",%progbits
+ 615              		.align	1
+ 616              		.global	updateOmegas
+ 617              		.syntax unified
+ 618              		.thumb
+ 619              		.thumb_func
+ 620              		.fpu fpv4-sp-d16
+ 622              	updateOmegas:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 15
+
+
+ 623              	.LFB133:
+ 154:Core/Src/fsm_tasks.c **** 
+ 155:Core/Src/fsm_tasks.c **** void updateOmegas(void)
+ 156:Core/Src/fsm_tasks.c **** {
+ 624              		.loc 1 156 0
+ 625              		.cfi_startproc
+ 626              		@ args = 0, pretend = 0, frame = 0
+ 627              		@ frame_needed = 0, uses_anonymous_args = 0
+ 628 0000 10B5     		push	{r4, lr}
+ 629              	.LCFI7:
+ 630              		.cfi_def_cfa_offset 8
+ 631              		.cfi_offset 4, -8
+ 632              		.cfi_offset 14, -4
+ 633              	.LVL58:
+ 634              	.LBB8:
+ 157:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 635              		.loc 1 157 0
+ 636 0002 0024     		movs	r4, #0
+ 637 0004 09E0     		b	.L55
+ 638              	.LVL59:
+ 639              	.L56:
+ 158:Core/Src/fsm_tasks.c ****         {
+ 159:Core/Src/fsm_tasks.c ****                 setOmega(&motor_arr[i], motor_arr[i].update_omega);
+ 640              		.loc 1 159 0 discriminator 3
+ 641 0006 064B     		ldr	r3, .L58
+ 642 0008 3420     		movs	r0, #52
+ 643 000a 00FB0430 		mla	r0, r0, r4, r3
+ 644 000e 90ED040A 		vldr.32	s0, [r0, #16]
+ 645 0012 FFF7FEFF 		bl	setOmega
+ 646              	.LVL60:
+ 157:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 647              		.loc 1 157 0 discriminator 3
+ 648 0016 0134     		adds	r4, r4, #1
+ 649              	.LVL61:
+ 650 0018 E4B2     		uxtb	r4, r4
+ 651              	.LVL62:
+ 652              	.L55:
+ 157:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 653              		.loc 1 157 0 is_stmt 0 discriminator 1
+ 654 001a 032C     		cmp	r4, #3
+ 655 001c F3D9     		bls	.L56
+ 656              	.LBE8:
+ 160:Core/Src/fsm_tasks.c ****         }
+ 161:Core/Src/fsm_tasks.c **** }
+ 657              		.loc 1 161 0 is_stmt 1
+ 658 001e 10BD     		pop	{r4, pc}
+ 659              	.LVL63:
+ 660              	.L59:
+ 661              		.align	2
+ 662              	.L58:
+ 663 0020 00000000 		.word	motor_arr
+ 664              		.cfi_endproc
+ 665              	.LFE133:
+ 667              		.section	.text.resetAngles,"ax",%progbits
+ 668              		.align	1
+ 669              		.global	resetAngles
+ 670              		.syntax unified
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 16
+
+
+ 671              		.thumb
+ 672              		.thumb_func
+ 673              		.fpu fpv4-sp-d16
+ 675              	resetAngles:
+ 676              	.LFB134:
+ 162:Core/Src/fsm_tasks.c **** 
+ 163:Core/Src/fsm_tasks.c **** void resetAngles(void)
+ 164:Core/Src/fsm_tasks.c **** {
+ 677              		.loc 1 164 0
+ 678              		.cfi_startproc
+ 679              		@ args = 0, pretend = 0, frame = 0
+ 680              		@ frame_needed = 0, uses_anonymous_args = 0
+ 681 0000 10B5     		push	{r4, lr}
+ 682              	.LCFI8:
+ 683              		.cfi_def_cfa_offset 8
+ 684              		.cfi_offset 4, -8
+ 685              		.cfi_offset 14, -4
+ 686              	.LVL64:
+ 687              	.LBB9:
+ 165:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 688              		.loc 1 165 0
+ 689 0002 0024     		movs	r4, #0
+ 690 0004 07E0     		b	.L61
+ 691              	.LVL65:
+ 692              	.L62:
+ 166:Core/Src/fsm_tasks.c ****         {
+ 167:Core/Src/fsm_tasks.c ****                 resetAngle(&motor_arr[i]);
+ 693              		.loc 1 167 0 discriminator 3
+ 694 0006 3420     		movs	r0, #52
+ 695 0008 044B     		ldr	r3, .L64
+ 696 000a 00FB0430 		mla	r0, r0, r4, r3
+ 697 000e FFF7FEFF 		bl	resetAngle
+ 698              	.LVL66:
+ 165:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 699              		.loc 1 165 0 discriminator 3
+ 700 0012 0134     		adds	r4, r4, #1
+ 701              	.LVL67:
+ 702 0014 E4B2     		uxtb	r4, r4
+ 703              	.LVL68:
+ 704              	.L61:
+ 165:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 705              		.loc 1 165 0 is_stmt 0 discriminator 1
+ 706 0016 032C     		cmp	r4, #3
+ 707 0018 F5D9     		bls	.L62
+ 708              	.LBE9:
+ 168:Core/Src/fsm_tasks.c ****         }
+ 169:Core/Src/fsm_tasks.c **** }
+ 709              		.loc 1 169 0 is_stmt 1
+ 710 001a 10BD     		pop	{r4, pc}
+ 711              	.LVL69:
+ 712              	.L65:
+ 713              		.align	2
+ 714              	.L64:
+ 715 001c 00000000 		.word	motor_arr
+ 716              		.cfi_endproc
+ 717              	.LFE134:
+ 719              		.section	.text.resetPID,"ax",%progbits
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 17
+
+
+ 720              		.align	1
+ 721              		.global	resetPID
+ 722              		.syntax unified
+ 723              		.thumb
+ 724              		.thumb_func
+ 725              		.fpu fpv4-sp-d16
+ 727              	resetPID:
+ 728              	.LFB135:
+ 170:Core/Src/fsm_tasks.c **** 
+ 171:Core/Src/fsm_tasks.c **** void resetPID(void)
+ 172:Core/Src/fsm_tasks.c **** {
+ 729              		.loc 1 172 0
+ 730              		.cfi_startproc
+ 731              		@ args = 0, pretend = 0, frame = 0
+ 732              		@ frame_needed = 0, uses_anonymous_args = 0
+ 733 0000 10B5     		push	{r4, lr}
+ 734              	.LCFI9:
+ 735              		.cfi_def_cfa_offset 8
+ 736              		.cfi_offset 4, -8
+ 737              		.cfi_offset 14, -4
+ 738              	.LVL70:
+ 739              	.LBB10:
+ 173:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 740              		.loc 1 173 0
+ 741 0002 0024     		movs	r4, #0
+ 742 0004 08E0     		b	.L67
+ 743              	.LVL71:
+ 744              	.L68:
+ 174:Core/Src/fsm_tasks.c ****         {
+ 175:Core/Src/fsm_tasks.c ****                 PID_resetParams(&pid_arr[i]);
+ 745              		.loc 1 175 0 discriminator 3
+ 746 0006 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 747 000a D300     		lsls	r3, r2, #3
+ 748 000c 0448     		ldr	r0, .L70
+ 749 000e 1844     		add	r0, r0, r3
+ 750 0010 FFF7FEFF 		bl	PID_resetParams
+ 751              	.LVL72:
+ 173:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 752              		.loc 1 173 0 discriminator 3
+ 753 0014 0134     		adds	r4, r4, #1
+ 754              	.LVL73:
+ 755 0016 E4B2     		uxtb	r4, r4
+ 756              	.LVL74:
+ 757              	.L67:
+ 173:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 758              		.loc 1 173 0 is_stmt 0 discriminator 1
+ 759 0018 032C     		cmp	r4, #3
+ 760 001a F4D9     		bls	.L68
+ 761              	.LBE10:
+ 176:Core/Src/fsm_tasks.c ****         }
+ 177:Core/Src/fsm_tasks.c **** }
+ 762              		.loc 1 177 0 is_stmt 1
+ 763 001c 10BD     		pop	{r4, pc}
+ 764              	.LVL75:
+ 765              	.L71:
+ 766 001e 00BF     		.align	2
+ 767              	.L70:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 18
+
+
+ 768 0020 00000000 		.word	pid_arr
+ 769              		.cfi_endproc
+ 770              	.LFE135:
+ 772              		.section	.text.omegaReset,"ax",%progbits
+ 773              		.align	1
+ 774              		.global	omegaReset
+ 775              		.syntax unified
+ 776              		.thumb
+ 777              		.thumb_func
+ 778              		.fpu fpv4-sp-d16
+ 780              	omegaReset:
+ 781              	.LFB137:
+ 178:Core/Src/fsm_tasks.c **** 
+ 179:Core/Src/fsm_tasks.c **** void stateReset(struct fsmStr *fsm, const enum FSM_States *state)
+ 180:Core/Src/fsm_tasks.c **** {
+ 181:Core/Src/fsm_tasks.c ****         resetPID();
+ 182:Core/Src/fsm_tasks.c ****         resetAngles();
+ 183:Core/Src/fsm_tasks.c ****         omegaReset();
+ 184:Core/Src/fsm_tasks.c ****         resetIntState(fsm, state);
+ 185:Core/Src/fsm_tasks.c ****         feedForwardRestart();
+ 186:Core/Src/fsm_tasks.c **** }
+ 187:Core/Src/fsm_tasks.c **** 
+ 188:Core/Src/fsm_tasks.c **** void omegaReset(void)
+ 189:Core/Src/fsm_tasks.c **** {
+ 782              		.loc 1 189 0
+ 783              		.cfi_startproc
+ 784              		@ args = 0, pretend = 0, frame = 0
+ 785              		@ frame_needed = 0, uses_anonymous_args = 0
+ 786              		@ link register save eliminated.
+ 787              	.LVL76:
+ 788              	.LBB11:
+ 190:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 789              		.loc 1 190 0
+ 790 0000 0023     		movs	r3, #0
+ 791 0002 07E0     		b	.L73
+ 792              	.LVL77:
+ 793              	.L74:
+ 191:Core/Src/fsm_tasks.c ****         {
+ 192:Core/Src/fsm_tasks.c ****                 motor_arr[i].update_omega = 0;
+ 794              		.loc 1 192 0 discriminator 3
+ 795 0004 0549     		ldr	r1, .L75
+ 796 0006 3422     		movs	r2, #52
+ 797 0008 02FB0312 		mla	r2, r2, r3, r1
+ 798 000c 0021     		movs	r1, #0
+ 799 000e 1161     		str	r1, [r2, #16]	@ float
+ 190:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 800              		.loc 1 190 0 discriminator 3
+ 801 0010 0133     		adds	r3, r3, #1
+ 802              	.LVL78:
+ 803 0012 DBB2     		uxtb	r3, r3
+ 804              	.LVL79:
+ 805              	.L73:
+ 190:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 806              		.loc 1 190 0 is_stmt 0 discriminator 1
+ 807 0014 032B     		cmp	r3, #3
+ 808 0016 F5D9     		bls	.L74
+ 809              	.LBE11:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 19
+
+
+ 193:Core/Src/fsm_tasks.c ****         }
+ 194:Core/Src/fsm_tasks.c **** }
+ 810              		.loc 1 194 0 is_stmt 1
+ 811 0018 7047     		bx	lr
+ 812              	.L76:
+ 813 001a 00BF     		.align	2
+ 814              	.L75:
+ 815 001c 00000000 		.word	motor_arr
+ 816              		.cfi_endproc
+ 817              	.LFE137:
+ 819              		.section	.text.feedForwardRestart,"ax",%progbits
+ 820              		.align	1
+ 821              		.global	feedForwardRestart
+ 822              		.syntax unified
+ 823              		.thumb
+ 824              		.thumb_func
+ 825              		.fpu fpv4-sp-d16
+ 827              	feedForwardRestart:
+ 828              	.LFB138:
+ 195:Core/Src/fsm_tasks.c **** 
+ 196:Core/Src/fsm_tasks.c **** void feedForwardRestart(void)
+ 197:Core/Src/fsm_tasks.c **** {
+ 829              		.loc 1 197 0
+ 830              		.cfi_startproc
+ 831              		@ args = 0, pretend = 0, frame = 0
+ 832              		@ frame_needed = 0, uses_anonymous_args = 0
+ 833 0000 10B5     		push	{r4, lr}
+ 834              	.LCFI10:
+ 835              		.cfi_def_cfa_offset 8
+ 836              		.cfi_offset 4, -8
+ 837              		.cfi_offset 14, -4
+ 838              	.LVL80:
+ 839              	.LBB12:
+ 198:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 840              		.loc 1 198 0
+ 841 0002 0024     		movs	r4, #0
+ 842 0004 08E0     		b	.L78
+ 843              	.LVL81:
+ 844              	.L79:
+ 199:Core/Src/fsm_tasks.c ****         {
+ 200:Core/Src/fsm_tasks.c ****                 ffRestart(&ff_arr[i]);
+ 845              		.loc 1 200 0 discriminator 3
+ 846 0006 C4EB0412 		rsb	r2, r4, r4, lsl #4
+ 847 000a 9300     		lsls	r3, r2, #2
+ 848 000c 0448     		ldr	r0, .L81
+ 849 000e 1844     		add	r0, r0, r3
+ 850 0010 FFF7FEFF 		bl	ffRestart
+ 851              	.LVL82:
+ 198:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 852              		.loc 1 198 0 discriminator 3
+ 853 0014 0134     		adds	r4, r4, #1
+ 854              	.LVL83:
+ 855 0016 E4B2     		uxtb	r4, r4
+ 856              	.LVL84:
+ 857              	.L78:
+ 198:Core/Src/fsm_tasks.c ****         for (uint8_t i = 0; i < 4; i++)
+ 858              		.loc 1 198 0 is_stmt 0 discriminator 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 20
+
+
+ 859 0018 032C     		cmp	r4, #3
+ 860 001a F4D9     		bls	.L79
+ 861              	.LBE12:
+ 201:Core/Src/fsm_tasks.c ****         }
+ 202:Core/Src/fsm_tasks.c **** }
+ 862              		.loc 1 202 0 is_stmt 1
+ 863 001c 10BD     		pop	{r4, pc}
+ 864              	.LVL85:
+ 865              	.L82:
+ 866 001e 00BF     		.align	2
+ 867              	.L81:
+ 868 0020 00000000 		.word	ff_arr
+ 869              		.cfi_endproc
+ 870              	.LFE138:
+ 872              		.section	.text.resetIntState,"ax",%progbits
+ 873              		.align	1
+ 874              		.global	resetIntState
+ 875              		.syntax unified
+ 876              		.thumb
+ 877              		.thumb_func
+ 878              		.fpu fpv4-sp-d16
+ 880              	resetIntState:
+ 881              	.LFB139:
+ 203:Core/Src/fsm_tasks.c **** 
+ 204:Core/Src/fsm_tasks.c **** void resetIntState(struct fsmStr *fsm,const enum FSM_States *state)
+ 205:Core/Src/fsm_tasks.c **** {
+ 882              		.loc 1 205 0
+ 883              		.cfi_startproc
+ 884              		@ args = 0, pretend = 0, frame = 0
+ 885              		@ frame_needed = 0, uses_anonymous_args = 0
+ 886              		@ link register save eliminated.
+ 887              	.LVL86:
+ 206:Core/Src/fsm_tasks.c ****         switch(*state)
+ 888              		.loc 1 206 0
+ 889 0000 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 890 0002 013B     		subs	r3, r3, #1
+ 891 0004 032B     		cmp	r3, #3
+ 892 0006 2AD8     		bhi	.L83
+ 893 0008 DFE803F0 		tbb	[pc, r3]
+ 894              	.L86:
+ 895 000c 02       		.byte	(.L85-.L86)/2
+ 896 000d 0C       		.byte	(.L87-.L86)/2
+ 897 000e 16       		.byte	(.L88-.L86)/2
+ 898 000f 20       		.byte	(.L89-.L86)/2
+ 899              		.p2align 1
+ 900              	.L85:
+ 207:Core/Src/fsm_tasks.c ****         {
+ 208:Core/Src/fsm_tasks.c ****                 case HOME_POSITION:
+ 209:Core/Src/fsm_tasks.c ****                         break;
+ 210:Core/Src/fsm_tasks.c **** 
+ 211:Core/Src/fsm_tasks.c **** 
+ 212:Core/Src/fsm_tasks.c ****                 case PHASE_1:
+ 213:Core/Src/fsm_tasks.c ****                         int_arr[0].intState = STATE_B;
+ 901              		.loc 1 213 0
+ 902 0010 134B     		ldr	r3, .L90
+ 903 0012 0122     		movs	r2, #1
+ 904 0014 9A72     		strb	r2, [r3, #10]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 21
+
+
+ 214:Core/Src/fsm_tasks.c ****                         int_arr[1].intState = STATE_A;
+ 905              		.loc 1 214 0
+ 906 0016 0022     		movs	r2, #0
+ 907 0018 9A75     		strb	r2, [r3, #22]
+ 215:Core/Src/fsm_tasks.c ****                         int_arr[2].intState = STATE_A;
+ 908              		.loc 1 215 0
+ 909 001a 83F82220 		strb	r2, [r3, #34]
+ 216:Core/Src/fsm_tasks.c ****                         int_arr[3].intState = STATE_A;
+ 910              		.loc 1 216 0
+ 911 001e 83F82E20 		strb	r2, [r3, #46]
+ 217:Core/Src/fsm_tasks.c ****                         break;
+ 912              		.loc 1 217 0
+ 913 0022 7047     		bx	lr
+ 914              	.L87:
+ 218:Core/Src/fsm_tasks.c **** 
+ 219:Core/Src/fsm_tasks.c ****                 case PHASE_2:
+ 220:Core/Src/fsm_tasks.c ****                         int_arr[0].intState = STATE_A;
+ 915              		.loc 1 220 0
+ 916 0024 0E4B     		ldr	r3, .L90
+ 917 0026 0022     		movs	r2, #0
+ 918 0028 9A72     		strb	r2, [r3, #10]
+ 221:Core/Src/fsm_tasks.c ****                         int_arr[1].intState = STATE_B;
+ 919              		.loc 1 221 0
+ 920 002a 0121     		movs	r1, #1
+ 921              	.LVL87:
+ 922 002c 9975     		strb	r1, [r3, #22]
+ 222:Core/Src/fsm_tasks.c ****                         int_arr[2].intState = STATE_A;
+ 923              		.loc 1 222 0
+ 924 002e 83F82220 		strb	r2, [r3, #34]
+ 223:Core/Src/fsm_tasks.c ****                         int_arr[3].intState = STATE_A;
+ 925              		.loc 1 223 0
+ 926 0032 83F82E20 		strb	r2, [r3, #46]
+ 224:Core/Src/fsm_tasks.c ****                         break;
+ 927              		.loc 1 224 0
+ 928 0036 7047     		bx	lr
+ 929              	.LVL88:
+ 930              	.L88:
+ 225:Core/Src/fsm_tasks.c **** 
+ 226:Core/Src/fsm_tasks.c ****                 case PHASE_3:
+ 227:Core/Src/fsm_tasks.c ****                         int_arr[0].intState = STATE_A;
+ 931              		.loc 1 227 0
+ 932 0038 094B     		ldr	r3, .L90
+ 933 003a 0022     		movs	r2, #0
+ 934 003c 9A72     		strb	r2, [r3, #10]
+ 228:Core/Src/fsm_tasks.c ****                         int_arr[1].intState = STATE_A;
+ 935              		.loc 1 228 0
+ 936 003e 9A75     		strb	r2, [r3, #22]
+ 229:Core/Src/fsm_tasks.c ****                         int_arr[2].intState = STATE_B;
+ 937              		.loc 1 229 0
+ 938 0040 0121     		movs	r1, #1
+ 939              	.LVL89:
+ 940 0042 83F82210 		strb	r1, [r3, #34]
+ 230:Core/Src/fsm_tasks.c ****                         int_arr[3].intState = STATE_A;
+ 941              		.loc 1 230 0
+ 942 0046 83F82E20 		strb	r2, [r3, #46]
+ 231:Core/Src/fsm_tasks.c ****                         break;
+ 943              		.loc 1 231 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 22
+
+
+ 944 004a 7047     		bx	lr
+ 945              	.LVL90:
+ 946              	.L89:
+ 232:Core/Src/fsm_tasks.c **** 
+ 233:Core/Src/fsm_tasks.c ****                 case PHASE_4:
+ 234:Core/Src/fsm_tasks.c ****                         int_arr[0].intState = STATE_A;
+ 947              		.loc 1 234 0
+ 948 004c 044B     		ldr	r3, .L90
+ 949 004e 0022     		movs	r2, #0
+ 950 0050 9A72     		strb	r2, [r3, #10]
+ 235:Core/Src/fsm_tasks.c ****                         int_arr[1].intState = STATE_A;
+ 951              		.loc 1 235 0
+ 952 0052 9A75     		strb	r2, [r3, #22]
+ 236:Core/Src/fsm_tasks.c ****                         int_arr[2].intState = STATE_A;
+ 953              		.loc 1 236 0
+ 954 0054 83F82220 		strb	r2, [r3, #34]
+ 237:Core/Src/fsm_tasks.c ****                         int_arr[3].intState = STATE_B;
+ 955              		.loc 1 237 0
+ 956 0058 0122     		movs	r2, #1
+ 957 005a 83F82E20 		strb	r2, [r3, #46]
+ 958              	.L83:
+ 238:Core/Src/fsm_tasks.c ****                         break;
+ 239:Core/Src/fsm_tasks.c ****         }
+ 240:Core/Src/fsm_tasks.c **** }
+ 959              		.loc 1 240 0
+ 960 005e 7047     		bx	lr
+ 961              	.L91:
+ 962              		.align	2
+ 963              	.L90:
+ 964 0060 00000000 		.word	int_arr
+ 965              		.cfi_endproc
+ 966              	.LFE139:
+ 968              		.section	.text.stateReset,"ax",%progbits
+ 969              		.align	1
+ 970              		.global	stateReset
+ 971              		.syntax unified
+ 972              		.thumb
+ 973              		.thumb_func
+ 974              		.fpu fpv4-sp-d16
+ 976              	stateReset:
+ 977              	.LFB136:
+ 180:Core/Src/fsm_tasks.c ****         resetPID();
+ 978              		.loc 1 180 0
+ 979              		.cfi_startproc
+ 980              		@ args = 0, pretend = 0, frame = 0
+ 981              		@ frame_needed = 0, uses_anonymous_args = 0
+ 982              	.LVL91:
+ 983 0000 38B5     		push	{r3, r4, r5, lr}
+ 984              	.LCFI11:
+ 985              		.cfi_def_cfa_offset 16
+ 986              		.cfi_offset 3, -16
+ 987              		.cfi_offset 4, -12
+ 988              		.cfi_offset 5, -8
+ 989              		.cfi_offset 14, -4
+ 990 0002 0446     		mov	r4, r0
+ 991 0004 0D46     		mov	r5, r1
+ 181:Core/Src/fsm_tasks.c ****         resetAngles();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 23
+
+
+ 992              		.loc 1 181 0
+ 993 0006 FFF7FEFF 		bl	resetPID
+ 994              	.LVL92:
+ 182:Core/Src/fsm_tasks.c ****         omegaReset();
+ 995              		.loc 1 182 0
+ 996 000a FFF7FEFF 		bl	resetAngles
+ 997              	.LVL93:
+ 183:Core/Src/fsm_tasks.c ****         resetIntState(fsm, state);
+ 998              		.loc 1 183 0
+ 999 000e FFF7FEFF 		bl	omegaReset
+ 1000              	.LVL94:
+ 184:Core/Src/fsm_tasks.c ****         feedForwardRestart();
+ 1001              		.loc 1 184 0
+ 1002 0012 2946     		mov	r1, r5
+ 1003 0014 2046     		mov	r0, r4
+ 1004 0016 FFF7FEFF 		bl	resetIntState
+ 1005              	.LVL95:
+ 185:Core/Src/fsm_tasks.c **** }
+ 1006              		.loc 1 185 0
+ 1007 001a FFF7FEFF 		bl	feedForwardRestart
+ 1008              	.LVL96:
+ 186:Core/Src/fsm_tasks.c **** 
+ 1009              		.loc 1 186 0
+ 1010 001e 38BD     		pop	{r3, r4, r5, pc}
+ 1011              		.cfi_endproc
+ 1012              	.LFE136:
+ 1014              		.section	.data.gIs_First,"aw",%progbits
+ 1015              		.set	.LANCHOR0,. + 0
+ 1018              	gIs_First:
+ 1019 0000 01       		.byte	1
+ 1020              		.section	.rodata.check_N_Stop.str1.4,"aMS",%progbits,1
+ 1021              		.align	2
+ 1022              	.LC0:
+ 1023 0000 0A0A0A0A 		.ascii	"\012\012\012\012\012\012\012Here!!\012\012\012\012\000"
+ 1023      0A0A0A48 
+ 1023      65726521 
+ 1023      210A0A0A 
+ 1023      0A00
+ 1024              		.text
+ 1025              	.Letext0:
+ 1026              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1027              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1028              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 1029              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1030              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1031              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1032              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1033              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 1034              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1035              		.file 11 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1036              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1037              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1038              		.file 14 "Core/Inc/feed_forward.h"
+ 1039              		.file 15 "Core/Inc\\periphs/tim.h"
+ 1040              		.file 16 "Core/Inc/pneumatic.h"
+ 1041              		.file 17 "Core/Inc/interrupt.h"
+ 1042              		.file 18 "Core/Inc/encoder.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 24
+
+
+ 1043              		.file 19 "Core/Inc/motor.h"
+ 1044              		.file 20 "Core/Inc/pid.h"
+ 1045              		.file 21 "Core/Inc/fsm.h"
+ 1046              		.file 22 "Core/Inc/robo_init.h"
+ 1047              		.file 23 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fsm_tasks.c
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:18     .text.phaseOneChores:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:25     .text.phaseOneChores:00000000 phaseOneChores
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:133    .text.phaseOneChores:00000094 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:144    .text.phaseTwoChores:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:151    .text.phaseTwoChores:00000000 phaseTwoChores
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:235    .text.phaseTwoChores:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:244    .text.phaseThreeChores:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:251    .text.phaseThreeChores:00000000 phaseThreeChores
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:335    .text.phaseThreeChores:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:344    .text.phaseFourChores:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:351    .text.phaseFourChores:00000000 phaseFourChores
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:435    .text.phaseFourChores:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:444    .text.setHomePosition:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:451    .text.setHomePosition:00000000 setHomePosition
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:500    .text.setHomePosition:00000030 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:507    .text.check_N_Stop:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:514    .text.check_N_Stop:00000000 check_N_Stop
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:577    .text.check_N_Stop:00000044 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:584    .text.homePositionChores:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:591    .text.homePositionChores:00000000 homePositionChores
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:615    .text.updateOmegas:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:622    .text.updateOmegas:00000000 updateOmegas
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:663    .text.updateOmegas:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:668    .text.resetAngles:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:675    .text.resetAngles:00000000 resetAngles
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:715    .text.resetAngles:0000001c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:720    .text.resetPID:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:727    .text.resetPID:00000000 resetPID
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:768    .text.resetPID:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:773    .text.omegaReset:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:780    .text.omegaReset:00000000 omegaReset
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:815    .text.omegaReset:0000001c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:820    .text.feedForwardRestart:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:827    .text.feedForwardRestart:00000000 feedForwardRestart
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:868    .text.feedForwardRestart:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:873    .text.resetIntState:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:880    .text.resetIntState:00000000 resetIntState
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:895    .text.resetIntState:0000000c $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:899    .text.resetIntState:00000010 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:964    .text.resetIntState:00000060 $d
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:969    .text.stateReset:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:976    .text.stateReset:00000000 stateReset
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:1018   .data.gIs_First:00000000 gIs_First
+C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s:1021   .rodata.check_N_Stop.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+ffSetAngle
+getAngle
+getOmega
+ffGenerate
+PID_Compute
+motor_arr
+int_arr
+ff_arr
+pid_arr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccWV8nWk.s 			page 26
+
+
+setDutyCycle
+setDirection
+balance_motor
+puts
+setOmega
+resetAngle
+PID_resetParams
+ffRestart

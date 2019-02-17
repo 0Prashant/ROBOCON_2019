@@ -3,7 +3,7 @@
 #include "utils/pid.h"
 #include <math.h>
 
-const float max_omega[2] = { 8.5, 7};
+const float max_omega[2] = { 8.5, 8};
 
 void update(float set_points[4])
 {
@@ -34,10 +34,10 @@ float gP_Factor = 1;
 
 void pid_Init()
 {
-        gDisc_PID[0].set_PID(1.70005, gI_Factor*1.2808, 0);
-        gDisc_PID[0].set_Limits(12, -12);
-        gDisc_PID[1].set_PID(1.6575, gI_Factor*0.78623, 0);
-        gDisc_PID[1].set_Limits(12, -12);
+        gDisc_PID[0].set_PID(2.45644, 2.9495*gI_Factor, 0);		//2.6196, 6.7405 =5.25
+        gDisc_PID[0].set_Limits(8.5, -8.5);
+        gDisc_PID[1].set_PID(2.6196, 3.7405*gI_Factor, 0);		//2.45644, 2.9495 =6
+        gDisc_PID[1].set_Limits(8, -8);
         gDisc_PID[2].set_PID(0.7336, gI_Factor*10.05, 0);
         gDisc_PID[2].set_Limits(24, -24);
         gDisc_PID[3].set_PID(0.49, gI_Factor*7.615, 0);

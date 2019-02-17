@@ -340,52 +340,52 @@ int main(void)
    while(1) 
 	{
        
-        curr_cnt[0]   = TIM1->CNT;
-        curr_cnt[1]   = TIM2->CNT;    
-        curr_cnt[2]   = TIM3->CNT;    
-        curr_cnt[3]   = TIM4->CNT;    
-        
-        if(_ENCODER_FLAG)
-        {
-            encoder_Init();
-            _ENCODER_FLAG = 0;
-            
-        }
-        
-        get_Angles();  
-       if((HAL_GetTick()- update_tick) > dt_ms)
-        {
-            update_tick   = HAL_GetTick();
-            
-           if(_CALIBRATE_FLAG)
-            {   
-                calculate_setPoints();
-                update_Omegas(update_omega);
-                _PHASE_CHANGE_FLAG = check_Angle(60);
-                
-               // printf("%d",_RAISE_MOTOR_INDEX);
-                printf("%f \t %f \t %f \t %f \n", inst_angle[0], inst_angle[1], inst_angle[2], inst_angle[3] );
-                if(_PHASE_CHANGE_FLAG)
-                {
-                    lower_Leg(&leg_arr[_RAISE_MOTOR_INDEX]);
-                    printf("Phase change flag:%d\n",_PHASE_CHANGE_FLAG);
-                    
-                    _START_LOOP_FLAG = 0;
-                    _PHASE_CHANGE_FLAG = 0;
-                   
-                    _RAISE_MOTOR_INDEX  = (_RAISE_MOTOR_INDEX  + 1) ;
-                    
-                    
-                    reset_Angles();
-    //                printf("%d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n",curr_cnt[0],ref_cnt[0],curr_cnt[1],ref_cnt[1],curr_cnt[2],ref_cnt[2],curr_cnt[3],ref_cnt[3]);
-                    restart();
-                    
-            
-                }
-                 
-            }                
-            
-        }   
+        	curr_cnt[0]   = TIM1->CNT;
+        	curr_cnt[1]   = TIM2->CNT;    
+        	curr_cnt[2]   = TIM3->CNT;    
+        	curr_cnt[3]   = TIM4->CNT;    
+	
+        	if(_ENCODER_FLAG)
+        	{
+        	    encoder_Init();
+        	    _ENCODER_FLAG = 0;
+	
+        	}
+	
+        	get_Angles();  
+       		if((HAL_GetTick()- update_tick) > dt_ms)
+        	{
+        	    update_tick   = HAL_GetTick();
+	
+        		if(_CALIBRATE_FLAG)
+        		{   
+        		     calculate_setPoints();
+        		     update_Omegas(update_omega);
+        		     _PHASE_CHANGE_FLAG = check_Angle(60);
+
+        		    // printf("%d",_RAISE_MOTOR_INDEX);
+        		     printf("%f \t %f \t %f \t %f \n", inst_angle[0], inst_angle[1], inst_angle[2], inst_angle[3] );
+        		     if(_PHASE_CHANGE_FLAG)
+        		     {
+        		         lower_Leg(&leg_arr[_RAISE_MOTOR_INDEX]);
+        		         printf("Phase change flag:%d\n",_PHASE_CHANGE_FLAG);
+
+        		         _START_LOOP_FLAG = 0;
+        		         _PHASE_CHANGE_FLAG = 0;
+
+        		         _RAISE_MOTOR_INDEX  = (_RAISE_MOTOR_INDEX  + 1) ;
+
+
+        		         reset_Angles();
+    //  	  	         printf("%d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n",curr_cnt[0],ref_cnt[0],curr_cnt[1],ref_cnt[1],curr_cnt[2],ref_cnt[2],curr_cnt[3],ref_cnt[3]);
+        		         restart();
+
+
+        		     }
+
+        		}                
+
+        	}   
 	}
 
 	

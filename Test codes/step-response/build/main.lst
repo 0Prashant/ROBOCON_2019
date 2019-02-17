@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
   29:Core/Src/main.cpp ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
   30:Core/Src/main.cpp ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
   31:Core/Src/main.cpp ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 2
 
 
   32:Core/Src/main.cpp ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
   86:Core/Src/main.cpp **** 
   87:Core/Src/main.cpp **** /**
   88:Core/Src/main.cpp ****   * @brief  The application entry point.
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 3
 
 
   89:Core/Src/main.cpp ****   *
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  143:Core/Src/main.cpp ****         printf("Hello World!!\n");
  144:Core/Src/main.cpp ****         // float speed_multiplier = 2;
  145:Core/Src/main.cpp **** 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 4
 
 
  146:Core/Src/main.cpp ****         /* USER CODE END 2 */
@@ -189,8 +189,8 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  151:Core/Src/main.cpp **** 	float omega[2];
  152:Core/Src/main.cpp **** 
  153:Core/Src/main.cpp **** 	//*
- 154:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 65535);
- 155:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 65535);
+ 154:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 25535);
+ 155:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 25535);
  156:Core/Src/main.cpp **** 	/*/
  157:Core/Src/main.cpp **** 	while (1) {
  158:Core/Src/main.cpp **** 		cps[0] = htim3.Instance->CNT;
@@ -201,114 +201,121 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  163:Core/Src/main.cpp **** 	}
  164:Core/Src/main.cpp **** 	/*/ //*/
  165:Core/Src/main.cpp ****         const uint32_t sample_period = 15;
- 166:Core/Src/main.cpp ****         const uint32_t brake_period = 5000;
+ 166:Core/Src/main.cpp ****         const uint32_t brake_period = 3000;
  167:Core/Src/main.cpp ****         uint32_t sample_time = HAL_GetTick();
  168:Core/Src/main.cpp ****         uint32_t brake_time = HAL_GetTick();
  169:Core/Src/main.cpp ****         while (1)
  170:Core/Src/main.cpp ****         {
- 171:Core/Src/main.cpp ****                 /* USER CODE END WHILE */
- 172:Core/Src/main.cpp ****                 /* USER CODE BEGIN 3 */
- 173:Core/Src/main.cpp **** 		if (HAL_GetTick() - sample_time > sample_period) {
- 174:Core/Src/main.cpp **** 			sample_time = HAL_GetTick();
- 175:Core/Src/main.cpp **** 
- 176:Core/Src/main.cpp **** 			cps[0] = htim3.Instance->CNT;
- 177:Core/Src/main.cpp **** 			htim3.Instance->CNT = 0;
- 178:Core/Src/main.cpp **** 			
- 179:Core/Src/main.cpp **** 			cps[1] = htim1.Instance->CNT;
- 180:Core/Src/main.cpp **** 			htim1.Instance->CNT = 0;
- 181:Core/Src/main.cpp **** 
- 182:Core/Src/main.cpp **** 			omega[0] = 2 * PI * cps[0] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
- 183:Core/Src/main.cpp **** 			omega[1] = 2 * PI * cps[1] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
- 184:Core/Src/main.cpp **** 
- 185:Core/Src/main.cpp **** 			printf("%ld, %ld\n", (int32_t)(omega[0]*100), (int32_t)(omega[1]*100));
- 186:Core/Src/main.cpp **** 			// printf("%ld, %ld\n", (int32_t)(cps[0]), (int32_t)(cps[1]));
- 187:Core/Src/main.cpp **** 		}
- 188:Core/Src/main.cpp **** 		if (HAL_GetTick() - brake_time > brake_period) {
- 189:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 0);
- 190:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 0);
- 191:Core/Src/main.cpp **** 			break;
- 192:Core/Src/main.cpp **** 		}
- 193:Core/Src/main.cpp ****         }
- 194:Core/Src/main.cpp ****         // send_AllData();
- 195:Core/Src/main.cpp ****         while(1);
- 196:Core/Src/main.cpp ****         /* USER CODE END 3 */
- 197:Core/Src/main.cpp **** }
- 198:Core/Src/main.cpp **** 
- 199:Core/Src/main.cpp **** /**
- 200:Core/Src/main.cpp ****   * @brief System Clock Configuration
- 201:Core/Src/main.cpp ****   * @retval None
- 202:Core/Src/main.cpp ****   */
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 5
+ 171:Core/Src/main.cpp **** 		
+ 172:Core/Src/main.cpp ****                 /* USER CODE END WHILE */
+ 173:Core/Src/main.cpp ****                 /* USER CODE BEGIN 3 */
+ 174:Core/Src/main.cpp **** 		if (HAL_GetTick() - sample_time > sample_period) {
+ 175:Core/Src/main.cpp **** 			sample_time = HAL_GetTick();
+ 176:Core/Src/main.cpp **** 
+ 177:Core/Src/main.cpp **** 			cps[0] = htim3.Instance->CNT;
+ 178:Core/Src/main.cpp **** 			//htim3.Instance->CNT = 0;
+ 179:Core/Src/main.cpp **** 			
+ 180:Core/Src/main.cpp **** 			cps[1] = htim1.Instance->CNT;
+ 181:Core/Src/main.cpp **** 			//htim1.Instance->CNT = 0;
+ 182:Core/Src/main.cpp **** 
+ 183:Core/Src/main.cpp **** 			omega[0] = 2 * PI * cps[0] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
+ 184:Core/Src/main.cpp **** 			omega[1] = 2 * PI * cps[1] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
+ 185:Core/Src/main.cpp **** 
+ 186:Core/Src/main.cpp **** 			printf("%ld, %ld\n", (int32_t)(cps[0]*100), (int32_t)(cps[1]*100));
+ 187:Core/Src/main.cpp **** 			// printf("%ld, %ld\n", (int32_t)(cps[0]), (int32_t)(cps[1]));
+ 188:Core/Src/main.cpp **** 		}
+ 189:Core/Src/main.cpp **** 		if (HAL_GetTick() - brake_time > brake_period) {
+ 190:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 0);
+ 191:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 0);
+ 192:Core/Src/main.cpp **** 			break;
+ 193:Core/Src/main.cpp **** 		}
+ 194:Core/Src/main.cpp **** 		HAL_Delay(2000);
+ 195:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 196:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+ 197:Core/Src/main.cpp **** 
+ 198:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
+ 199:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+ 200:Core/Src/main.cpp ****         }
+ 201:Core/Src/main.cpp ****         // send_AllData();
+ 202:Core/Src/main.cpp ****         while(1);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 5
 
 
- 203:Core/Src/main.cpp **** void SystemClock_Config(void)
- 204:Core/Src/main.cpp **** {
+ 203:Core/Src/main.cpp ****         /* USER CODE END 3 */
+ 204:Core/Src/main.cpp **** }
  205:Core/Src/main.cpp **** 
- 206:Core/Src/main.cpp ****         RCC_OscInitTypeDef RCC_OscInitStruct;
- 207:Core/Src/main.cpp ****         RCC_ClkInitTypeDef RCC_ClkInitStruct;
- 208:Core/Src/main.cpp **** 
- 209:Core/Src/main.cpp ****         /**Configure the main internal regulator output voltage 
- 210:Core/Src/main.cpp ****     */
- 211:Core/Src/main.cpp ****         __HAL_RCC_PWR_CLK_ENABLE();
+ 206:Core/Src/main.cpp **** /**
+ 207:Core/Src/main.cpp ****   * @brief System Clock Configuration
+ 208:Core/Src/main.cpp ****   * @retval None
+ 209:Core/Src/main.cpp ****   */
+ 210:Core/Src/main.cpp **** void SystemClock_Config(void)
+ 211:Core/Src/main.cpp **** {
  212:Core/Src/main.cpp **** 
- 213:Core/Src/main.cpp ****         __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
- 214:Core/Src/main.cpp **** 
- 215:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
- 216:Core/Src/main.cpp ****     */
- 217:Core/Src/main.cpp ****         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
- 218:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 219:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 220:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 221:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 4;
- 222:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 168;
- 223:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 224:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
- 225:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 226:Core/Src/main.cpp ****         {
- 227:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
- 228:Core/Src/main.cpp ****         }
- 229:Core/Src/main.cpp **** 
- 230:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
- 231:Core/Src/main.cpp ****     */
- 232:Core/Src/main.cpp ****         RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCL
- 233:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 234:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 235:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 236:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 237:Core/Src/main.cpp **** 
- 238:Core/Src/main.cpp ****         if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
- 239:Core/Src/main.cpp ****         {
- 240:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
- 241:Core/Src/main.cpp ****         }
- 242:Core/Src/main.cpp **** 
- 243:Core/Src/main.cpp ****         /**Configure the Systick interrupt time 
- 244:Core/Src/main.cpp ****     */
- 245:Core/Src/main.cpp ****         HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
- 246:Core/Src/main.cpp **** 
- 247:Core/Src/main.cpp ****         /**Configure the Systick 
- 248:Core/Src/main.cpp ****     */
- 249:Core/Src/main.cpp ****         HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
- 250:Core/Src/main.cpp **** 
- 251:Core/Src/main.cpp ****         /* SysTick_IRQn interrupt configuration */
- 252:Core/Src/main.cpp ****         HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
- 253:Core/Src/main.cpp **** }
- 254:Core/Src/main.cpp **** 
- 255:Core/Src/main.cpp **** /* USER CODE BEGIN 4 */
- 256:Core/Src/main.cpp **** 
- 257:Core/Src/main.cpp **** /* USER CODE END 4 */
- 258:Core/Src/main.cpp **** 
- 259:Core/Src/main.cpp **** /**
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 6
+ 213:Core/Src/main.cpp ****         RCC_OscInitTypeDef RCC_OscInitStruct;
+ 214:Core/Src/main.cpp ****         RCC_ClkInitTypeDef RCC_ClkInitStruct;
+ 215:Core/Src/main.cpp **** 
+ 216:Core/Src/main.cpp ****         /**Configure the main internal regulator output voltage 
+ 217:Core/Src/main.cpp ****     */
+ 218:Core/Src/main.cpp ****         __HAL_RCC_PWR_CLK_ENABLE();
+ 219:Core/Src/main.cpp **** 
+ 220:Core/Src/main.cpp ****         __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 221:Core/Src/main.cpp **** 
+ 222:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
+ 223:Core/Src/main.cpp ****     */
+ 224:Core/Src/main.cpp ****         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 225:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 226:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 227:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 228:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 4;
+ 229:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 168;
+ 230:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 231:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
+ 232:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 233:Core/Src/main.cpp ****         {
+ 234:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+ 235:Core/Src/main.cpp ****         }
+ 236:Core/Src/main.cpp **** 
+ 237:Core/Src/main.cpp ****         /**Initializes the CPU, AHB and APB busses clocks 
+ 238:Core/Src/main.cpp ****     */
+ 239:Core/Src/main.cpp ****         RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCL
+ 240:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 241:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 242:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 243:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 244:Core/Src/main.cpp **** 
+ 245:Core/Src/main.cpp ****         if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+ 246:Core/Src/main.cpp ****         {
+ 247:Core/Src/main.cpp ****                 _Error_Handler(__FILE__, __LINE__);
+ 248:Core/Src/main.cpp ****         }
+ 249:Core/Src/main.cpp **** 
+ 250:Core/Src/main.cpp ****         /**Configure the Systick interrupt time 
+ 251:Core/Src/main.cpp ****     */
+ 252:Core/Src/main.cpp ****         HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
+ 253:Core/Src/main.cpp **** 
+ 254:Core/Src/main.cpp ****         /**Configure the Systick 
+ 255:Core/Src/main.cpp ****     */
+ 256:Core/Src/main.cpp ****         HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+ 257:Core/Src/main.cpp **** 
+ 258:Core/Src/main.cpp ****         /* SysTick_IRQn interrupt configuration */
+ 259:Core/Src/main.cpp ****         HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 6
 
 
- 260:Core/Src/main.cpp ****   * @brief  This function is executed in case of error occurrence.
- 261:Core/Src/main.cpp ****   * @param  file: The file name as string.
- 262:Core/Src/main.cpp ****   * @param  line: The line in file as a number.
- 263:Core/Src/main.cpp ****   * @retval None
- 264:Core/Src/main.cpp ****   */
- 265:Core/Src/main.cpp **** void _Error_Handler(const char *file, int line)
- 266:Core/Src/main.cpp **** {
-  28              		.loc 1 266 0
+ 260:Core/Src/main.cpp **** }
+ 261:Core/Src/main.cpp **** 
+ 262:Core/Src/main.cpp **** /* USER CODE BEGIN 4 */
+ 263:Core/Src/main.cpp **** 
+ 264:Core/Src/main.cpp **** /* USER CODE END 4 */
+ 265:Core/Src/main.cpp **** 
+ 266:Core/Src/main.cpp **** /**
+ 267:Core/Src/main.cpp ****   * @brief  This function is executed in case of error occurrence.
+ 268:Core/Src/main.cpp ****   * @param  file: The file name as string.
+ 269:Core/Src/main.cpp ****   * @param  line: The line in file as a number.
+ 270:Core/Src/main.cpp ****   * @retval None
+ 271:Core/Src/main.cpp ****   */
+ 272:Core/Src/main.cpp **** void _Error_Handler(const char *file, int line)
+ 273:Core/Src/main.cpp **** {
+  28              		.loc 1 273 0
   29              		.cfi_startproc
   30              		@ Volatile: function does not return.
   31              		@ args = 0, pretend = 0, frame = 0
@@ -328,13 +335,13 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
   46              		.fpu fpv4-sp-d16
   48              	_Z18SystemClock_Configv:
   49              	.LFB136:
- 204:Core/Src/main.cpp **** 
-  50              		.loc 1 204 0
+ 211:Core/Src/main.cpp **** 
+  50              		.loc 1 211 0
   51              		.cfi_startproc
   52              		@ args = 0, pretend = 0, frame = 80
   53              		@ frame_needed = 0, uses_anonymous_args = 0
- 204:Core/Src/main.cpp **** 
-  54              		.loc 1 204 0
+ 211:Core/Src/main.cpp **** 
+  54              		.loc 1 211 0
   55 0000 00B5     		push	{lr}
   56              	.LCFI0:
   57              		.cfi_def_cfa_offset 4
@@ -343,25 +350,25 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
   60              	.LCFI1:
   61              		.cfi_def_cfa_offset 88
   62              	.LBB2:
- 211:Core/Src/main.cpp **** 
-  63              		.loc 1 211 0
+ 218:Core/Src/main.cpp **** 
+  63              		.loc 1 218 0
   64 0004 0021     		movs	r1, #0
   65 0006 0191     		str	r1, [sp, #4]
   66 0008 2A4B     		ldr	r3, .L9
   67 000a 1A6C     		ldr	r2, [r3, #64]
   68 000c 42F08052 		orr	r2, r2, #268435456
   69 0010 1A64     		str	r2, [r3, #64]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 7
+
+
   70 0012 1B6C     		ldr	r3, [r3, #64]
   71 0014 03F08053 		and	r3, r3, #268435456
   72 0018 0193     		str	r3, [sp, #4]
   73 001a 019B     		ldr	r3, [sp, #4]
   74              	.LBE2:
   75              	.LBB3:
- 213:Core/Src/main.cpp **** 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 7
-
-
-  76              		.loc 1 213 0
+ 220:Core/Src/main.cpp **** 
+  76              		.loc 1 220 0
   77 001c 0291     		str	r1, [sp, #8]
   78 001e 264B     		ldr	r3, .L9+4
   79 0020 1A68     		ldr	r2, [r3]
@@ -372,74 +379,74 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
   84 002e 0293     		str	r3, [sp, #8]
   85 0030 029B     		ldr	r3, [sp, #8]
   86              	.LBE3:
- 217:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  87              		.loc 1 217 0
+ 224:Core/Src/main.cpp ****         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  87              		.loc 1 224 0
   88 0032 0123     		movs	r3, #1
   89 0034 0893     		str	r3, [sp, #32]
- 218:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  90              		.loc 1 218 0
+ 225:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  90              		.loc 1 225 0
   91 0036 4FF48033 		mov	r3, #65536
   92 003a 0993     		str	r3, [sp, #36]
- 219:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  93              		.loc 1 219 0
+ 226:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  93              		.loc 1 226 0
   94 003c 0222     		movs	r2, #2
   95 003e 0E92     		str	r2, [sp, #56]
- 220:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 4;
-  96              		.loc 1 220 0
+ 227:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLM = 4;
+  96              		.loc 1 227 0
   97 0040 4FF48003 		mov	r3, #4194304
   98 0044 0F93     		str	r3, [sp, #60]
- 221:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 168;
-  99              		.loc 1 221 0
+ 228:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLN = 168;
+  99              		.loc 1 228 0
  100 0046 0423     		movs	r3, #4
  101 0048 1093     		str	r3, [sp, #64]
- 222:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 102              		.loc 1 222 0
+ 229:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 102              		.loc 1 229 0
  103 004a A821     		movs	r1, #168
  104 004c 1191     		str	r1, [sp, #68]
- 223:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
- 105              		.loc 1 223 0
+ 230:Core/Src/main.cpp ****         RCC_OscInitStruct.PLL.PLLQ = 4;
+ 105              		.loc 1 230 0
  106 004e 1292     		str	r2, [sp, #72]
- 224:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 107              		.loc 1 224 0
+ 231:Core/Src/main.cpp ****         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 107              		.loc 1 231 0
  108 0050 1393     		str	r3, [sp, #76]
- 225:Core/Src/main.cpp ****         {
- 109              		.loc 1 225 0
+ 232:Core/Src/main.cpp ****         {
+ 109              		.loc 1 232 0
  110 0052 08A8     		add	r0, sp, #32
  111 0054 FFF7FEFF 		bl	HAL_RCC_OscConfig
  112              	.LVL1:
  113 0058 20BB     		cbnz	r0, .L7
- 232:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 114              		.loc 1 232 0
+ 239:Core/Src/main.cpp ****         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 114              		.loc 1 239 0
  115 005a 0F23     		movs	r3, #15
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 8
+
+
  116 005c 0393     		str	r3, [sp, #12]
- 233:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 117              		.loc 1 233 0
+ 240:Core/Src/main.cpp ****         RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 117              		.loc 1 240 0
  118 005e 0223     		movs	r3, #2
  119 0060 0493     		str	r3, [sp, #16]
- 234:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 120              		.loc 1 234 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 8
-
-
+ 241:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 120              		.loc 1 241 0
  121 0062 0023     		movs	r3, #0
  122 0064 0593     		str	r3, [sp, #20]
- 235:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 123              		.loc 1 235 0
+ 242:Core/Src/main.cpp ****         RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 123              		.loc 1 242 0
  124 0066 4FF4A053 		mov	r3, #5120
  125 006a 0693     		str	r3, [sp, #24]
- 236:Core/Src/main.cpp **** 
- 126              		.loc 1 236 0
+ 243:Core/Src/main.cpp **** 
+ 126              		.loc 1 243 0
  127 006c 4FF48053 		mov	r3, #4096
  128 0070 0793     		str	r3, [sp, #28]
- 238:Core/Src/main.cpp ****         {
- 129              		.loc 1 238 0
+ 245:Core/Src/main.cpp ****         {
+ 129              		.loc 1 245 0
  130 0072 0521     		movs	r1, #5
  131 0074 03A8     		add	r0, sp, #12
  132 0076 FFF7FEFF 		bl	HAL_RCC_ClockConfig
  133              	.LVL2:
  134 007a B8B9     		cbnz	r0, .L8
- 245:Core/Src/main.cpp **** 
- 135              		.loc 1 245 0
+ 252:Core/Src/main.cpp **** 
+ 135              		.loc 1 252 0
  136 007c FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
  137              	.LVL3:
  138 0080 0E4B     		ldr	r3, .L9+8
@@ -447,20 +454,20 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  140 0086 8009     		lsrs	r0, r0, #6
  141 0088 FFF7FEFF 		bl	HAL_SYSTICK_Config
  142              	.LVL4:
- 249:Core/Src/main.cpp **** 
- 143              		.loc 1 249 0
+ 256:Core/Src/main.cpp **** 
+ 143              		.loc 1 256 0
  144 008c 0420     		movs	r0, #4
  145 008e FFF7FEFF 		bl	HAL_SYSTICK_CLKSourceConfig
  146              	.LVL5:
- 252:Core/Src/main.cpp **** }
- 147              		.loc 1 252 0
+ 259:Core/Src/main.cpp **** }
+ 147              		.loc 1 259 0
  148 0092 0022     		movs	r2, #0
  149 0094 1146     		mov	r1, r2
  150 0096 4FF0FF30 		mov	r0, #-1
  151 009a FFF7FEFF 		bl	HAL_NVIC_SetPriority
  152              	.LVL6:
- 253:Core/Src/main.cpp **** 
- 153              		.loc 1 253 0
+ 260:Core/Src/main.cpp **** 
+ 153              		.loc 1 260 0
  154 009e 15B0     		add	sp, sp, #84
  155              	.LCFI2:
  156              		.cfi_remember_state
@@ -470,19 +477,19 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  160              	.L7:
  161              	.LCFI3:
  162              		.cfi_restore_state
- 227:Core/Src/main.cpp ****         }
- 163              		.loc 1 227 0
- 164 00a4 E321     		movs	r1, #227
+ 234:Core/Src/main.cpp ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 9
+
+
+ 163              		.loc 1 234 0
+ 164 00a4 EA21     		movs	r1, #234
  165 00a6 0648     		ldr	r0, .L9+12
  166 00a8 FFF7FEFF 		bl	_Error_Handler
  167              	.LVL7:
  168              	.L8:
- 240:Core/Src/main.cpp ****         }
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 9
-
-
- 169              		.loc 1 240 0
- 170 00ac F021     		movs	r1, #240
+ 247:Core/Src/main.cpp ****         }
+ 169              		.loc 1 247 0
+ 170 00ac F721     		movs	r1, #247
  171 00ae 0448     		ldr	r0, .L9+12
  172 00b0 FFF7FEFF 		bl	_Error_Handler
  173              	.LVL8:
@@ -495,442 +502,408 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 1
  180 00c0 00000000 		.word	.LC0
  181              		.cfi_endproc
  182              	.LFE136:
- 184              		.global	__aeabi_i2d
- 185              		.global	__aeabi_dmul
- 186              		.global	__aeabi_ddiv
- 187              		.global	__aeabi_d2f
- 188              		.section	.text.main,"ax",%progbits
- 189              		.align	1
- 190              		.global	main
- 191              		.syntax unified
- 192              		.thumb
- 193              		.thumb_func
- 194              		.fpu fpv4-sp-d16
- 196              	main:
- 197              	.LFB135:
+ 184              		.section	.text.main,"ax",%progbits
+ 185              		.align	1
+ 186              		.global	main
+ 187              		.syntax unified
+ 188              		.thumb
+ 189              		.thumb_func
+ 190              		.fpu fpv4-sp-d16
+ 192              	main:
+ 193              	.LFB135:
   93:Core/Src/main.cpp ****         /* USER CODE BEGIN 1 */
- 198              		.loc 1 93 0
- 199              		.cfi_startproc
- 200              		@ args = 0, pretend = 0, frame = 0
- 201              		@ frame_needed = 0, uses_anonymous_args = 0
- 202 0000 70B5     		push	{r4, r5, r6, lr}
- 203              	.LCFI4:
- 204              		.cfi_def_cfa_offset 16
- 205              		.cfi_offset 4, -16
- 206              		.cfi_offset 5, -12
- 207              		.cfi_offset 6, -8
- 208              		.cfi_offset 14, -4
- 209 0002 2DED028B 		vpush.64	{d8}
- 210              	.LCFI5:
- 211              		.cfi_def_cfa_offset 24
- 212              		.cfi_offset 80, -24
- 213              		.cfi_offset 81, -20
+ 194              		.loc 1 93 0
+ 195              		.cfi_startproc
+ 196              		@ args = 0, pretend = 0, frame = 0
+ 197              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198 0000 70B5     		push	{r4, r5, r6, lr}
+ 199              	.LCFI4:
+ 200              		.cfi_def_cfa_offset 16
+ 201              		.cfi_offset 4, -16
+ 202              		.cfi_offset 5, -12
+ 203              		.cfi_offset 6, -8
+ 204              		.cfi_offset 14, -4
  101:Core/Src/main.cpp **** 
- 214              		.loc 1 101 0
- 215 0006 FFF7FEFF 		bl	HAL_Init
- 216              	.LVL9:
+ 205              		.loc 1 101 0
+ 206 0002 FFF7FEFF 		bl	HAL_Init
+ 207              	.LVL9:
  108:Core/Src/main.cpp **** 
- 217              		.loc 1 108 0
- 218 000a FFF7FEFF 		bl	_Z18SystemClock_Configv
- 219              	.LVL10:
+ 208              		.loc 1 108 0
+ 209 0006 FFF7FEFF 		bl	_Z18SystemClock_Configv
+ 210              	.LVL10:
  115:Core/Src/main.cpp ****         MX_DMA_Init();
- 220              		.loc 1 115 0
- 221 000e FFF7FEFF 		bl	MX_GPIO_Init
- 222              	.LVL11:
+ 211              		.loc 1 115 0
+ 212 000a FFF7FEFF 		bl	MX_GPIO_Init
+ 213              	.LVL11:
  116:Core/Src/main.cpp ****         MX_TIM3_Init();
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 10
+ 214              		.loc 1 116 0
+ 215 000e FFF7FEFF 		bl	MX_DMA_Init
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 10
 
 
- 223              		.loc 1 116 0
- 224 0012 FFF7FEFF 		bl	MX_DMA_Init
- 225              	.LVL12:
+ 216              	.LVL12:
  117:Core/Src/main.cpp ****         MX_TIM2_Init();
- 226              		.loc 1 117 0
- 227 0016 FFF7FEFF 		bl	MX_TIM3_Init
- 228              	.LVL13:
+ 217              		.loc 1 117 0
+ 218 0012 FFF7FEFF 		bl	MX_TIM3_Init
+ 219              	.LVL13:
  118:Core/Src/main.cpp ****         MX_TIM1_Init();
- 229              		.loc 1 118 0
- 230 001a FFF7FEFF 		bl	MX_TIM2_Init
- 231              	.LVL14:
+ 220              		.loc 1 118 0
+ 221 0016 FFF7FEFF 		bl	MX_TIM2_Init
+ 222              	.LVL14:
  119:Core/Src/main.cpp ****         MX_TIM4_Init();
- 232              		.loc 1 119 0
- 233 001e FFF7FEFF 		bl	MX_TIM1_Init
- 234              	.LVL15:
+ 223              		.loc 1 119 0
+ 224 001a FFF7FEFF 		bl	MX_TIM1_Init
+ 225              	.LVL15:
  120:Core/Src/main.cpp ****         MX_TIM8_Init();
- 235              		.loc 1 120 0
- 236 0022 FFF7FEFF 		bl	MX_TIM4_Init
- 237              	.LVL16:
+ 226              		.loc 1 120 0
+ 227 001e FFF7FEFF 		bl	MX_TIM4_Init
+ 228              	.LVL16:
  121:Core/Src/main.cpp ****         MX_USART1_UART_Init();
- 238              		.loc 1 121 0
- 239 0026 FFF7FEFF 		bl	MX_TIM8_Init
- 240              	.LVL17:
+ 229              		.loc 1 121 0
+ 230 0022 FFF7FEFF 		bl	MX_TIM8_Init
+ 231              	.LVL17:
  122:Core/Src/main.cpp ****         MX_USART3_UART_Init();
- 241              		.loc 1 122 0
- 242 002a FFF7FEFF 		bl	MX_USART1_UART_Init
- 243              	.LVL18:
+ 232              		.loc 1 122 0
+ 233 0026 FFF7FEFF 		bl	MX_USART1_UART_Init
+ 234              	.LVL18:
  123:Core/Src/main.cpp ****         MX_ADC1_Init();
- 244              		.loc 1 123 0
- 245 002e FFF7FEFF 		bl	MX_USART3_UART_Init
- 246              	.LVL19:
+ 235              		.loc 1 123 0
+ 236 002a FFF7FEFF 		bl	MX_USART3_UART_Init
+ 237              	.LVL19:
  124:Core/Src/main.cpp ****         /* USER CODE BEGIN 2 */
- 247              		.loc 1 124 0
- 248 0032 FFF7FEFF 		bl	MX_ADC1_Init
- 249              	.LVL20:
+ 238              		.loc 1 124 0
+ 239 002e FFF7FEFF 		bl	MX_ADC1_Init
+ 240              	.LVL20:
  128:Core/Src/main.cpp **** 
- 250              		.loc 1 128 0
- 251 0036 544C     		ldr	r4, .L17+16
- 252 0038 2046     		mov	r0, r4
- 253 003a FFF7FEFF 		bl	HAL_TIM_Base_Start
- 254              	.LVL21:
+ 241              		.loc 1 128 0
+ 242 0032 434C     		ldr	r4, .L18
+ 243 0034 2046     		mov	r0, r4
+ 244 0036 FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 245              	.LVL21:
  130:Core/Src/main.cpp ****         HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
- 255              		.loc 1 130 0
- 256 003e 0021     		movs	r1, #0
- 257 0040 2046     		mov	r0, r4
- 258 0042 FFF7FEFF 		bl	HAL_TIM_PWM_Start
- 259              	.LVL22:
+ 246              		.loc 1 130 0
+ 247 003a 0021     		movs	r1, #0
+ 248 003c 2046     		mov	r0, r4
+ 249 003e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 250              	.LVL22:
  131:Core/Src/main.cpp **** 
- 260              		.loc 1 131 0
- 261 0046 0421     		movs	r1, #4
- 262 0048 2046     		mov	r0, r4
- 263 004a FFF7FEFF 		bl	HAL_TIM_PWM_Start
- 264              	.LVL23:
+ 251              		.loc 1 131 0
+ 252 0042 0421     		movs	r1, #4
+ 253 0044 2046     		mov	r0, r4
+ 254 0046 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 255              	.LVL23:
  133:Core/Src/main.cpp ****         HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
- 265              		.loc 1 133 0
- 266 004e 1821     		movs	r1, #24
- 267 0050 4E48     		ldr	r0, .L17+20
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 11
+ 256              		.loc 1 133 0
+ 257 004a 1821     		movs	r1, #24
+ 258 004c 3D48     		ldr	r0, .L18+4
+ 259 004e FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 260              	.LVL24:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 11
 
 
- 268 0052 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
- 269              	.LVL24:
  134:Core/Src/main.cpp **** 
- 270              		.loc 1 134 0
- 271 0056 1821     		movs	r1, #24
- 272 0058 4D48     		ldr	r0, .L17+24
- 273 005a FFF7FEFF 		bl	HAL_TIM_Encoder_Start
- 274              	.LVL25:
+ 261              		.loc 1 134 0
+ 262 0052 1821     		movs	r1, #24
+ 263 0054 3C48     		ldr	r0, .L18+8
+ 264 0056 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 265              	.LVL25:
  137:Core/Src/main.cpp **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
- 275              		.loc 1 137 0
- 276 005e 4D4D     		ldr	r5, .L17+28
- 277 0060 0022     		movs	r2, #0
- 278 0062 4FF48041 		mov	r1, #16384
- 279 0066 2846     		mov	r0, r5
- 280 0068 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 281              	.LVL26:
+ 266              		.loc 1 137 0
+ 267 005a 3C4D     		ldr	r5, .L18+12
+ 268 005c 0022     		movs	r2, #0
+ 269 005e 4FF48041 		mov	r1, #16384
+ 270 0062 2846     		mov	r0, r5
+ 271 0064 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 272              	.LVL26:
  138:Core/Src/main.cpp **** 	
- 282              		.loc 1 138 0
- 283 006c 0122     		movs	r2, #1
- 284 006e 2021     		movs	r1, #32
- 285 0070 2846     		mov	r0, r5
- 286 0072 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 287              	.LVL27:
+ 273              		.loc 1 138 0
+ 274 0068 0122     		movs	r2, #1
+ 275 006a 2021     		movs	r1, #32
+ 276 006c 2846     		mov	r0, r5
+ 277 006e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 278              	.LVL27:
  140:Core/Src/main.cpp **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
- 288              		.loc 1 140 0
- 289 0076 0122     		movs	r2, #1
- 290 0078 0221     		movs	r1, #2
- 291 007a 2846     		mov	r0, r5
- 292 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 293              	.LVL28:
+ 279              		.loc 1 140 0
+ 280 0072 0122     		movs	r2, #1
+ 281 0074 0221     		movs	r1, #2
+ 282 0076 2846     		mov	r0, r5
+ 283 0078 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 284              	.LVL28:
  141:Core/Src/main.cpp **** 
- 294              		.loc 1 141 0
- 295 0080 0022     		movs	r2, #0
- 296 0082 0821     		movs	r1, #8
- 297 0084 2846     		mov	r0, r5
- 298 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 299              	.LVL29:
+ 285              		.loc 1 141 0
+ 286 007c 0022     		movs	r2, #0
+ 287 007e 0821     		movs	r1, #8
+ 288 0080 2846     		mov	r0, r5
+ 289 0082 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 290              	.LVL29:
  143:Core/Src/main.cpp ****         // float speed_multiplier = 2;
- 300              		.loc 1 143 0
- 301 008a 4348     		ldr	r0, .L17+32
- 302 008c FFF7FEFF 		bl	puts
- 303              	.LVL30:
- 154:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 65535);
- 304              		.loc 1 154 0
- 305 0090 4FF6FF72 		movw	r2, #65535
- 306 0094 0021     		movs	r1, #0
- 307 0096 2046     		mov	r0, r4
- 308 0098 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
- 309              	.LVL31:
+ 291              		.loc 1 143 0
+ 292 0086 3248     		ldr	r0, .L18+16
+ 293 0088 FFF7FEFF 		bl	puts
+ 294              	.LVL30:
+ 154:Core/Src/main.cpp **** 	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 25535);
+ 295              		.loc 1 154 0
+ 296 008c 46F2BF32 		movw	r2, #25535
+ 297 0090 0021     		movs	r1, #0
+ 298 0092 2046     		mov	r0, r4
+ 299 0094 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+ 300              	.LVL31:
  155:Core/Src/main.cpp **** 	/*/
- 310              		.loc 1 155 0
- 311 009c 4FF6FF72 		movw	r2, #65535
- 312 00a0 0421     		movs	r1, #4
- 313 00a2 2046     		mov	r0, r4
- 314 00a4 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
- 315              	.LVL32:
+ 301              		.loc 1 155 0
+ 302 0098 46F2BF32 		movw	r2, #25535
+ 303 009c 0421     		movs	r1, #4
+ 304 009e 2046     		mov	r0, r4
+ 305 00a0 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+ 306              	.LVL32:
  167:Core/Src/main.cpp ****         uint32_t brake_time = HAL_GetTick();
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 12
+ 307              		.loc 1 167 0
+ 308 00a4 FFF7FEFF 		bl	HAL_GetTick
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 12
 
 
- 316              		.loc 1 167 0
- 317 00a8 FFF7FEFF 		bl	HAL_GetTick
- 318              	.LVL33:
- 319 00ac 0546     		mov	r5, r0
- 320              	.LVL34:
+ 309              	.LVL33:
+ 310 00a8 0546     		mov	r5, r0
+ 311              	.LVL34:
  168:Core/Src/main.cpp ****         while (1)
- 321              		.loc 1 168 0
- 322 00ae FFF7FEFF 		bl	HAL_GetTick
- 323              	.LVL35:
- 324 00b2 0646     		mov	r6, r0
- 325              	.LVL36:
- 326 00b4 06E0     		b	.L13
- 327              	.LVL37:
- 328              	.L12:
- 188:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 0);
- 329              		.loc 1 188 0
- 330 00b6 FFF7FEFF 		bl	HAL_GetTick
- 331              	.LVL38:
- 332 00ba 801B     		subs	r0, r0, r6
- 333 00bc 41F28833 		movw	r3, #5000
- 334 00c0 9842     		cmp	r0, r3
- 335 00c2 4DD8     		bhi	.L16
- 336              	.L13:
- 173:Core/Src/main.cpp **** 			sample_time = HAL_GetTick();
- 337              		.loc 1 173 0
- 338 00c4 FFF7FEFF 		bl	HAL_GetTick
- 339              	.LVL39:
- 340 00c8 401B     		subs	r0, r0, r5
- 341 00ca 0F28     		cmp	r0, #15
- 342 00cc F3D9     		bls	.L12
- 174:Core/Src/main.cpp **** 
- 343              		.loc 1 174 0
- 344 00ce FFF7FEFF 		bl	HAL_GetTick
- 345              	.LVL40:
- 346 00d2 0546     		mov	r5, r0
- 347              	.LVL41:
- 176:Core/Src/main.cpp **** 			htim3.Instance->CNT = 0;
- 348              		.loc 1 176 0
- 349 00d4 2D4B     		ldr	r3, .L17+20
- 350 00d6 1B68     		ldr	r3, [r3]
- 351 00d8 586A     		ldr	r0, [r3, #36]
- 352              	.LVL42:
- 177:Core/Src/main.cpp **** 			
- 353              		.loc 1 177 0
- 354 00da 0022     		movs	r2, #0
- 355 00dc 5A62     		str	r2, [r3, #36]
- 179:Core/Src/main.cpp **** 			htim1.Instance->CNT = 0;
- 356              		.loc 1 179 0
- 357 00de 2C4B     		ldr	r3, .L17+24
- 358 00e0 1B68     		ldr	r3, [r3]
- 359 00e2 5C6A     		ldr	r4, [r3, #36]
- 360 00e4 24B2     		sxth	r4, r4
- 180:Core/Src/main.cpp **** 
- 361              		.loc 1 180 0
- 362 00e6 5A62     		str	r2, [r3, #36]
- 182:Core/Src/main.cpp **** 			omega[1] = 2 * PI * cps[1] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
- 363              		.loc 1 182 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 13
+ 312              		.loc 1 168 0
+ 313 00aa FFF7FEFF 		bl	HAL_GetTick
+ 314              	.LVL35:
+ 315 00ae 0646     		mov	r6, r0
+ 316              	.LVL36:
+ 317 00b0 20E0     		b	.L15
+ 318              	.LVL37:
+ 319              	.L12:
+ 189:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 0);
+ 320              		.loc 1 189 0
+ 321 00b2 FFF7FEFF 		bl	HAL_GetTick
+ 322              	.LVL38:
+ 323 00b6 801B     		subs	r0, r0, r6
+ 324 00b8 40F6B833 		movw	r3, #3000
+ 325 00bc 9842     		cmp	r0, r3
+ 326 00be 32D8     		bhi	.L17
+ 194:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+ 327              		.loc 1 194 0
+ 328 00c0 4FF4FA60 		mov	r0, #2000
+ 329 00c4 FFF7FEFF 		bl	HAL_Delay
+ 330              	.LVL39:
+ 195:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+ 331              		.loc 1 195 0
+ 332 00c8 204C     		ldr	r4, .L18+12
+ 333 00ca 0122     		movs	r2, #1
+ 334 00cc 4FF48041 		mov	r1, #16384
+ 335 00d0 2046     		mov	r0, r4
+ 336 00d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 337              	.LVL40:
+ 196:Core/Src/main.cpp **** 
+ 338              		.loc 1 196 0
+ 339 00d6 0022     		movs	r2, #0
+ 340 00d8 2021     		movs	r1, #32
+ 341 00da 2046     		mov	r0, r4
+ 342 00dc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 343              	.LVL41:
+ 198:Core/Src/main.cpp **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+ 344              		.loc 1 198 0
+ 345 00e0 0022     		movs	r2, #0
+ 346 00e2 0221     		movs	r1, #2
+ 347 00e4 2046     		mov	r0, r4
+ 348 00e6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 349              	.LVL42:
+ 199:Core/Src/main.cpp ****         }
+ 350              		.loc 1 199 0
+ 351 00ea 0122     		movs	r2, #1
+ 352 00ec 0821     		movs	r1, #8
+ 353 00ee 2046     		mov	r0, r4
+ 354 00f0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 355              	.LVL43:
+ 356              	.L15:
+ 174:Core/Src/main.cpp **** 			sample_time = HAL_GetTick();
+ 357              		.loc 1 174 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 13
 
 
- 364 00e8 00B2     		sxth	r0, r0
- 365 00ea FFF7FEFF 		bl	__aeabi_i2d
- 366              	.LVL43:
- 367 00ee 22A3     		adr	r3, .L17
- 368 00f0 D3E90023 		ldrd	r2, [r3]
- 369 00f4 FFF7FEFF 		bl	__aeabi_dmul
- 370              	.LVL44:
- 371 00f8 0022     		movs	r2, #0
- 372 00fa 284B     		ldr	r3, .L17+36
- 373 00fc FFF7FEFF 		bl	__aeabi_dmul
- 374              	.LVL45:
- 375 0100 1FA3     		adr	r3, .L17+8
- 376 0102 D3E90023 		ldrd	r2, [r3]
- 377 0106 FFF7FEFF 		bl	__aeabi_ddiv
- 378              	.LVL46:
- 379 010a FFF7FEFF 		bl	__aeabi_d2f
- 380              	.LVL47:
- 381 010e 08EE100A 		vmov	s16, r0
- 183:Core/Src/main.cpp **** 
- 382              		.loc 1 183 0
- 383 0112 2046     		mov	r0, r4
- 384 0114 FFF7FEFF 		bl	__aeabi_i2d
+ 358 00f4 FFF7FEFF 		bl	HAL_GetTick
+ 359              	.LVL44:
+ 360 00f8 401B     		subs	r0, r0, r5
+ 361 00fa 0F28     		cmp	r0, #15
+ 362 00fc D9D9     		bls	.L12
+ 175:Core/Src/main.cpp **** 
+ 363              		.loc 1 175 0
+ 364 00fe FFF7FEFF 		bl	HAL_GetTick
+ 365              	.LVL45:
+ 366 0102 0546     		mov	r5, r0
+ 367              	.LVL46:
+ 177:Core/Src/main.cpp **** 			//htim3.Instance->CNT = 0;
+ 368              		.loc 1 177 0
+ 369 0104 0F4B     		ldr	r3, .L18+4
+ 370 0106 1B68     		ldr	r3, [r3]
+ 371 0108 5B6A     		ldr	r3, [r3, #36]
+ 372 010a 1BB2     		sxth	r3, r3
+ 180:Core/Src/main.cpp **** 			//htim1.Instance->CNT = 0;
+ 373              		.loc 1 180 0
+ 374 010c 0E4A     		ldr	r2, .L18+8
+ 375 010e 1268     		ldr	r2, [r2]
+ 376 0110 526A     		ldr	r2, [r2, #36]
+ 377 0112 12B2     		sxth	r2, r2
+ 186:Core/Src/main.cpp **** 			// printf("%ld, %ld\n", (int32_t)(cps[0]), (int32_t)(cps[1]));
+ 378              		.loc 1 186 0
+ 379 0114 6421     		movs	r1, #100
+ 380 0116 01FB02F2 		mul	r2, r1, r2
+ 381 011a 01FB03F1 		mul	r1, r1, r3
+ 382 011e 0D48     		ldr	r0, .L18+20
+ 383              	.LVL47:
+ 384 0120 FFF7FEFF 		bl	printf
  385              	.LVL48:
- 386 0118 17A3     		adr	r3, .L17
- 387 011a D3E90023 		ldrd	r2, [r3]
- 388 011e FFF7FEFF 		bl	__aeabi_dmul
- 389              	.LVL49:
- 390 0122 0022     		movs	r2, #0
- 391 0124 1D4B     		ldr	r3, .L17+36
- 392 0126 FFF7FEFF 		bl	__aeabi_dmul
- 393              	.LVL50:
- 394 012a 15A3     		adr	r3, .L17+8
- 395 012c D3E90023 		ldrd	r2, [r3]
- 396 0130 FFF7FEFF 		bl	__aeabi_ddiv
- 397              	.LVL51:
- 398 0134 FFF7FEFF 		bl	__aeabi_d2f
- 399              	.LVL52:
- 185:Core/Src/main.cpp **** 			// printf("%ld, %ld\n", (int32_t)(cps[0]), (int32_t)(cps[1]));
- 400              		.loc 1 185 0
- 401 0138 DFED197A 		vldr.32	s15, .L17+40
- 402 013c 28EE278A 		vmul.f32	s16, s16, s15
- 403 0140 07EE100A 		vmov	s14, r0
- 404 0144 67EE277A 		vmul.f32	s15, s14, s15
- 405 0148 FDEEE77A 		vcvt.s32.f32	s15, s15
- 406 014c 17EE902A 		vmov	r2, s15	@ int
- 407 0150 FDEEC87A 		vcvt.s32.f32	s15, s16
- 408 0154 17EE901A 		vmov	r1, s15	@ int
- 409 0158 1248     		ldr	r0, .L17+44
- 410 015a FFF7FEFF 		bl	printf
- 411              	.LVL53:
- 412 015e AAE7     		b	.L12
- 413              	.L16:
- 189:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 0);
- 414              		.loc 1 189 0
- 415 0160 094C     		ldr	r4, .L17+16
- 416 0162 0022     		movs	r2, #0
- 417 0164 1146     		mov	r1, r2
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 14
+ 386 0124 C5E7     		b	.L12
+ 387              	.L17:
+ 190:Core/Src/main.cpp **** 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 0);
+ 388              		.loc 1 190 0
+ 389 0126 064C     		ldr	r4, .L18
+ 390 0128 0022     		movs	r2, #0
+ 391 012a 1146     		mov	r1, r2
+ 392 012c 2046     		mov	r0, r4
+ 393 012e FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+ 394              	.LVL49:
+ 191:Core/Src/main.cpp **** 			break;
+ 395              		.loc 1 191 0
+ 396 0132 0022     		movs	r2, #0
+ 397 0134 0421     		movs	r1, #4
+ 398 0136 2046     		mov	r0, r4
+ 399 0138 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
+ 400              	.LVL50:
+ 401              	.L14:
+ 402 013c FEE7     		b	.L14
+ 403              	.L19:
+ 404 013e 00BF     		.align	2
+ 405              	.L18:
+ 406 0140 00000000 		.word	htim8
+ 407 0144 00000000 		.word	htim3
+ 408 0148 00000000 		.word	htim1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 14
 
 
- 418 0166 2046     		mov	r0, r4
- 419 0168 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
- 420              	.LVL54:
- 190:Core/Src/main.cpp **** 			break;
- 421              		.loc 1 190 0
- 422 016c 0022     		movs	r2, #0
- 423 016e 0421     		movs	r1, #4
- 424 0170 2046     		mov	r0, r4
- 425 0172 FFF7FEFF 		bl	_Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
- 426              	.LVL55:
- 427              	.L14:
- 428 0176 FEE7     		b	.L14
- 429              	.L18:
- 430              		.align	3
- 431              	.L17:
- 432 0178 6F1283C0 		.word	-1065151889
- 433 017c CA211940 		.word	1075388874
- 434 0180 00000000 		.word	0
- 435 0184 80F2C440 		.word	1086648960
- 436 0188 00000000 		.word	htim8
- 437 018c 00000000 		.word	htim3
- 438 0190 00000000 		.word	htim1
- 439 0194 000C0240 		.word	1073875968
- 440 0198 00000000 		.word	.LC1
- 441 019c 00408F40 		.word	1083129856
- 442 01a0 0000C842 		.word	1120403456
- 443 01a4 10000000 		.word	.LC2
- 444              		.cfi_endproc
- 445              	.LFE135:
- 447              		.section	.text.assert_failed,"ax",%progbits
- 448              		.align	1
- 449              		.global	assert_failed
- 450              		.syntax unified
- 451              		.thumb
- 452              		.thumb_func
- 453              		.fpu fpv4-sp-d16
- 455              	assert_failed:
- 456              	.LFB138:
- 267:Core/Src/main.cpp ****         /* USER CODE BEGIN Error_Handler_Debug */
- 268:Core/Src/main.cpp ****         /* User can add his own implementation to report the HAL error return state */
- 269:Core/Src/main.cpp ****         while (1)
- 270:Core/Src/main.cpp ****         {
- 271:Core/Src/main.cpp ****         }
- 272:Core/Src/main.cpp ****         /* USER CODE END Error_Handler_Debug */
- 273:Core/Src/main.cpp **** }
- 274:Core/Src/main.cpp **** 
- 275:Core/Src/main.cpp **** #ifdef USE_FULL_ASSERT
- 276:Core/Src/main.cpp **** /**
- 277:Core/Src/main.cpp ****   * @brief  Reports the name of the source file and the source line number
- 278:Core/Src/main.cpp ****   *         where the assert_param error has occurred.
- 279:Core/Src/main.cpp ****   * @param  file: pointer to the source file name
- 280:Core/Src/main.cpp ****   * @param  line: assert_param error line source number
- 281:Core/Src/main.cpp ****   * @retval None
- 282:Core/Src/main.cpp ****   */
- 283:Core/Src/main.cpp **** void assert_failed(uint8_t *file, uint32_t line)
- 284:Core/Src/main.cpp **** {
- 457              		.loc 1 284 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 15
+ 409 014c 000C0240 		.word	1073875968
+ 410 0150 00000000 		.word	.LC1
+ 411 0154 10000000 		.word	.LC2
+ 412              		.cfi_endproc
+ 413              	.LFE135:
+ 415              		.section	.text.assert_failed,"ax",%progbits
+ 416              		.align	1
+ 417              		.global	assert_failed
+ 418              		.syntax unified
+ 419              		.thumb
+ 420              		.thumb_func
+ 421              		.fpu fpv4-sp-d16
+ 423              	assert_failed:
+ 424              	.LFB138:
+ 274:Core/Src/main.cpp ****         /* USER CODE BEGIN Error_Handler_Debug */
+ 275:Core/Src/main.cpp ****         /* User can add his own implementation to report the HAL error return state */
+ 276:Core/Src/main.cpp ****         while (1)
+ 277:Core/Src/main.cpp ****         {
+ 278:Core/Src/main.cpp ****         }
+ 279:Core/Src/main.cpp ****         /* USER CODE END Error_Handler_Debug */
+ 280:Core/Src/main.cpp **** }
+ 281:Core/Src/main.cpp **** 
+ 282:Core/Src/main.cpp **** #ifdef USE_FULL_ASSERT
+ 283:Core/Src/main.cpp **** /**
+ 284:Core/Src/main.cpp ****   * @brief  Reports the name of the source file and the source line number
+ 285:Core/Src/main.cpp ****   *         where the assert_param error has occurred.
+ 286:Core/Src/main.cpp ****   * @param  file: pointer to the source file name
+ 287:Core/Src/main.cpp ****   * @param  line: assert_param error line source number
+ 288:Core/Src/main.cpp ****   * @retval None
+ 289:Core/Src/main.cpp ****   */
+ 290:Core/Src/main.cpp **** void assert_failed(uint8_t *file, uint32_t line)
+ 291:Core/Src/main.cpp **** {
+ 425              		.loc 1 291 0
+ 426              		.cfi_startproc
+ 427              		@ args = 0, pretend = 0, frame = 0
+ 428              		@ frame_needed = 0, uses_anonymous_args = 0
+ 429              		@ link register save eliminated.
+ 430              	.LVL51:
+ 292:Core/Src/main.cpp ****         /* USER CODE BEGIN 6 */
+ 293:Core/Src/main.cpp ****         /* User can add his own implementation to report the file name and line number,
+ 294:Core/Src/main.cpp ****      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+ 295:Core/Src/main.cpp ****         /* USER CODE END 6 */
+ 296:Core/Src/main.cpp **** }
+ 431              		.loc 1 296 0
+ 432 0000 7047     		bx	lr
+ 433              		.cfi_endproc
+ 434              	.LFE138:
+ 436              		.global	gSendDataFlagReceived
+ 437              		.section	.bss.gSendDataFlagReceived,"aw",%nobits
+ 440              	gSendDataFlagReceived:
+ 441 0000 00       		.space	1
+ 442              		.section	.rodata._Z18SystemClock_Configv.str1.4,"aMS",%progbits,1
+ 443              		.align	2
+ 444              	.LC0:
+ 445 0000 436F7265 		.ascii	"Core/Src/main.cpp\000"
+ 445      2F537263 
+ 445      2F6D6169 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 15
 
 
- 458              		.cfi_startproc
- 459              		@ args = 0, pretend = 0, frame = 0
- 460              		@ frame_needed = 0, uses_anonymous_args = 0
- 461              		@ link register save eliminated.
- 462              	.LVL56:
- 285:Core/Src/main.cpp ****         /* USER CODE BEGIN 6 */
- 286:Core/Src/main.cpp ****         /* User can add his own implementation to report the file name and line number,
- 287:Core/Src/main.cpp ****      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
- 288:Core/Src/main.cpp ****         /* USER CODE END 6 */
- 289:Core/Src/main.cpp **** }
- 463              		.loc 1 289 0
- 464 0000 7047     		bx	lr
- 465              		.cfi_endproc
- 466              	.LFE138:
- 468              		.global	gSendDataFlagReceived
- 469              		.section	.bss.gSendDataFlagReceived,"aw",%nobits
- 472              	gSendDataFlagReceived:
- 473 0000 00       		.space	1
- 474              		.section	.rodata._Z18SystemClock_Configv.str1.4,"aMS",%progbits,1
- 475              		.align	2
- 476              	.LC0:
- 477 0000 436F7265 		.ascii	"Core/Src/main.cpp\000"
- 477      2F537263 
- 477      2F6D6169 
- 477      6E2E6370 
- 477      7000
- 478              		.section	.rodata.main.str1.4,"aMS",%progbits,1
- 479              		.align	2
- 480              	.LC1:
- 481 0000 48656C6C 		.ascii	"Hello World!!\000"
- 481      6F20576F 
- 481      726C6421 
- 481      2100
- 482 000e 0000     		.space	2
- 483              	.LC2:
- 484 0010 256C642C 		.ascii	"%ld, %ld\012\000"
- 484      20256C64 
- 484      0A00
- 485              		.text
- 486              	.Letext0:
- 487              		.file 2 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 488              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 489              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 490              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
- 491              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 492              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 493              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 494              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 495              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 496              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 497              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 498              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 499              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 500              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 501              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 502              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 503              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 16
-
-
- 504              		.file 19 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 505              		.file 20 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 506              		.file 21 "Core/Inc\\periphs/adc.h"
- 507              		.file 22 "Core/Inc\\periphs/tim.h"
- 508              		.file 23 "Core/Inc\\periphs/usart.h"
- 509              		.file 24 "Core/Inc\\devs/wheel.h"
- 510              		.file 25 "Core/Inc/robot/robo_init.h"
- 511              		.file 26 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 512              		.file 27 "Core/Inc\\periphs/gpio.h"
- 513              		.file 28 "Core/Inc\\periphs/dma.h"
- 514              		.file 29 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s 			page 17
+ 445      6E2E6370 
+ 445      7000
+ 446              		.section	.rodata.main.str1.4,"aMS",%progbits,1
+ 447              		.align	2
+ 448              	.LC1:
+ 449 0000 48656C6C 		.ascii	"Hello World!!\000"
+ 449      6F20576F 
+ 449      726C6421 
+ 449      2100
+ 450 000e 0000     		.space	2
+ 451              	.LC2:
+ 452 0010 256C642C 		.ascii	"%ld, %ld\012\000"
+ 452      20256C64 
+ 452      0A00
+ 453              		.text
+ 454              	.Letext0:
+ 455              		.file 2 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 456              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 457              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 458              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 459              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 460              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 461              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 462              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 463              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 464              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 465              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 466              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 467              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 468              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 469              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 470              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 471              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 472              		.file 19 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 473              		.file 20 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 474              		.file 21 "Core/Inc\\periphs/adc.h"
+ 475              		.file 22 "Core/Inc\\periphs/tim.h"
+ 476              		.file 23 "Core/Inc\\periphs/usart.h"
+ 477              		.file 24 "Core/Inc\\devs/wheel.h"
+ 478              		.file 25 "Core/Inc/robot/robo_init.h"
+ 479              		.file 26 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 480              		.file 27 "Core/Inc\\periphs/gpio.h"
+ 481              		.file 28 "Core/Inc\\periphs/dma.h"
+ 482              		.file 29 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:18     .text._Error_Handler:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:25     .text._Error_Handler:00000000 _Error_Handler
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:41     .text._Z18SystemClock_Configv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:48     .text._Z18SystemClock_Configv:00000000 _Z18SystemClock_Configv
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:177    .text._Z18SystemClock_Configv:000000b4 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:189    .text.main:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:196    .text.main:00000000 main
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:432    .text.main:00000178 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:448    .text.assert_failed:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:455    .text.assert_failed:00000000 assert_failed
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:472    .bss.gSendDataFlagReceived:00000000 gSendDataFlagReceived
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:473    .bss.gSendDataFlagReceived:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:475    .rodata._Z18SystemClock_Configv.str1.4:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAfFvjM.s:479    .rodata.main.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:18     .text._Error_Handler:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:25     .text._Error_Handler:00000000 _Error_Handler
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:41     .text._Z18SystemClock_Configv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:48     .text._Z18SystemClock_Configv:00000000 _Z18SystemClock_Configv
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:177    .text._Z18SystemClock_Configv:000000b4 $d
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:185    .text.main:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:192    .text.main:00000000 main
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:406    .text.main:00000140 $d
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:416    .text.assert_failed:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:423    .text.assert_failed:00000000 assert_failed
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:440    .bss.gSendDataFlagReceived:00000000 gSendDataFlagReceived
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:441    .bss.gSendDataFlagReceived:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:443    .rodata._Z18SystemClock_Configv.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccIoGkub.s:447    .rodata.main.str1.4:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_RCC_OscConfig
@@ -939,10 +912,6 @@ HAL_RCC_GetHCLKFreq
 HAL_SYSTICK_Config
 HAL_SYSTICK_CLKSourceConfig
 HAL_NVIC_SetPriority
-__aeabi_i2d
-__aeabi_dmul
-__aeabi_ddiv
-__aeabi_d2f
 HAL_Init
 MX_GPIO_Init
 MX_DMA_Init
@@ -961,6 +930,7 @@ HAL_GPIO_WritePin
 puts
 _Z21set_DutyCycle_PrimaryP17TIM_HandleTypeDefmt
 HAL_GetTick
+HAL_Delay
 printf
 htim8
 htim3

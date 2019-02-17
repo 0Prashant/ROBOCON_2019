@@ -7,7 +7,7 @@
 #include "wheel.h"
 #include <math.h>
 
-const float max_omega1[2]= { 8.5, 7};
+const float max_omega1[2]= { 8.5, 8};
 
 static uint16_t time_period(uint16_t PWM_frequency)
 {

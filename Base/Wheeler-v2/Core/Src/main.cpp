@@ -86,7 +86,7 @@ extern void send_AllData();
   * @brief  The application entry point.
   *
   * @retval None
-  */
+  */ 
 int main(void)
   {
         /* USER CODE BEGIN 1 */
@@ -127,7 +127,7 @@ int main(void)
         printf("Hello World!!\n");
         // float speed_multiplier = 2;
 
-        float set_points[4] = { -4, -4, 0, 0 };
+        float set_points[4] = { -5, -5, 0, 0 };
 
         /* USER CODE END 2 */
 
@@ -135,71 +135,95 @@ int main(void)
         /* USER CODE BEGIN WHILE */
         const uint32_t sampling_period = 15;
         // const uint32_t updating_period = 12;
-        const uint32_t brake_period = 25000;
+        const uint32_t brake_period = 2000;
         uint32_t sample_time = HAL_GetTick();
         // uint32_t update_time = HAL_GetTick();
         uint32_t brake_time = HAL_GetTick();
+	uint8_t n = 5;
+	uint8_t o = 1;
+	uint8_t p = 3;
+	uint8_t q = 1;
+	//uint8_t r = 10;
+	HAL_Delay(3000);
 
+	
         while (1)
         {
-                /* USER CODE END WHILE */
-                /*  if (HAL_GetTick() - update_time > updating_period) {
-                        update_time = HAL_GetTick();
-                        update(set_points);
-                }*/
-
-                if (HAL_GetTick() - sample_time > sampling_period) 
+                if (HAL_GetTick() - sample_time >= sampling_period) 
 		{
-                        sample_time = HAL_GetTick();
-			for(int i=0; i<2; i++)
-			{
-				float _angle = gWheels[i].get_Angle(); 
-				if(i==0)
-				{
-					if((_angle>0) && (_angle<90))
-						gDisc_PID[i].set_PID(1.77932, 20*1.0738, 0);
-					else if((_angle>90) && (_angle<180))
-						gDisc_PID[i].set_PID(2.40851,20*1.4902, 0);
-					else if((_angle>180) && (_angle<270))
-						gDisc_PID[i].set_PID(1.55038,20*1.4667, 0);
-					else
-						gDisc_PID[i].set_PID(1.67138,20*0.7730434, 0);
-					printf("%ld   ", (int32_t)(_angle*1000));			
-				}
-				else
-				{
-					if((_angle>0) && (_angle<90))
-						gDisc_PID[i].set_PID(1.74393,20*0.9668973, 0);
-					else if((_angle>90) && (_angle<180))
-						gDisc_PID[i].set_PID(1.82590,20*0.7767059,0);
-					else if((_angle>180) && (_angle<270))
-						gDisc_PID[i].set_PID(2.52274,20*1.3564, 0);
-					else
-						gDisc_PID[i].set_PID(1.71653,20*0.8160, 0);
-					printf("%ld   ", (int32_t)(_angle*1000));			
-				}
-
-			}
-			printf("\t\t");
-			
+                        sample_time = HAL_GetTick();			
 			tune(set_points, sampling_period);
                 }
-                if (HAL_GetTick() - brake_time > brake_period) 
+		if(HAL_GetTick() - brake_time > brake_period)
 		{
-                        ramp_down(sampling_period);
-                        break;
-                }
+			set_points[0] = 5;
+			set_points[1] = 5;
+		}
+		/*if((gWheels[0].rounds==n) && (gWheels[1].rounds==n))
+		{
+			gWheels[0].rounds = 0;
+			gWheels[1].rounds = 0;
+			break;
+		}*/	
                 /* USER CODE BEGIN 3 */
         }
-        // send_AllData();
-	set_points[0] = 0;
-	set_points[1] = 0;
-        while(1)
+	while(1)
 	{
-		tune(set_points, sampling_period);
+		
 	}
+	/*set_points[0] = 0;
+	set_points[1] = -5;
+        while (1)
+        {
+                if (HAL_GetTick() - sample_time > sampling_period) 
+		{
+                        sample_time = HAL_GetTick();			
+			tune(set_points, sampling_period);
+                }
+		if((gWheels[0].rounds==o) && (gWheels[1].rounds==o))
+		{
+			gWheels[0].rounds = 0;
+			gWheels[1].rounds = 0;
+			break;
+		}	
+        }
+	set_points[0] = -5;
+	set_points[1] = -5;
+        while (1)
+        {
+                if (HAL_GetTick() - sample_time > sampling_period) 
+		{
+                        sample_time = HAL_GetTick();			
+			tune(set_points, sampling_period);
+                }
+		if((gWheels[0].rounds==p) && (gWheels[1].rounds==p))
+		{
+			gWheels[0].rounds = 0;
+			gWheels[1].rounds = 0;
+			break;
+		}	
+        }
+	set_points[0] = 0;
+	set_points[1] = -5;
+        while (1)
+        {
+                if (HAL_GetTick() - sample_time > sampling_period) 
+		{
+                        sample_time = HAL_GetTick();			
+			tune(set_points, sampling_period);
+                }
+		if((gWheels[0].rounds==q) && (gWheels[1].rounds==q))
+		{
+			gWheels[0].rounds = 0;
+			gWheels[1].rounds = 0;
+			break;
+		}	
+        }*/
+	ramp_down(sampling_period);
+        // send_AllData();
         /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration

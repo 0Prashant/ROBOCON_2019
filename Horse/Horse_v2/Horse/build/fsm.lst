@@ -1,0 +1,483 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"fsm.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.startFSM,"ax",%progbits
+  18              		.align	1
+  19              		.global	startFSM
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	startFSM:
+  26              	.LFB126:
+  27              		.file 1 "Core/Src/fsm.c"
+   1:Core/Src/fsm.c **** /*27-1-2019*/
+   2:Core/Src/fsm.c **** // 238.34
+   3:Core/Src/fsm.c **** 
+   4:Core/Src/fsm.c **** #include "fsm.h"
+   5:Core/Src/fsm.c **** #include "fsm_tasks.h"
+   6:Core/Src/fsm.c **** 
+   7:Core/Src/fsm.c **** void startFSM(struct fsmStr *sfsm, enum FSM_States *phase)
+   8:Core/Src/fsm.c **** {
+  28              		.loc 1 8 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40 0002 0546     		mov	r5, r0
+  41 0004 0C46     		mov	r4, r1
+   9:Core/Src/fsm.c ****         switch (*phase)
+  42              		.loc 1 9 0
+  43 0006 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+  44 0008 042B     		cmp	r3, #4
+  45 000a 09D8     		bhi	.L1
+  46 000c DFE803F0 		tbb	[pc, r3]
+  47              	.L4:
+  48 0010 03       		.byte	(.L3-.L4)/2
+  49 0011 1B       		.byte	(.L5-.L4)/2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 2
+
+
+  50 0012 3C       		.byte	(.L6-.L4)/2
+  51 0013 5D       		.byte	(.L7-.L4)/2
+  52 0014 7F       		.byte	(.L8-.L4)/2
+  53 0015 00       		.p2align 1
+  54              	.L3:
+  10:Core/Src/fsm.c ****         {
+  11:Core/Src/fsm.c ****         case HOME_POSITION:
+  12:Core/Src/fsm.c ****                 homePositionChores(sfsm);
+  55              		.loc 1 12 0
+  56 0016 FFF7FEFF 		bl	homePositionChores
+  57              	.LVL1:
+  13:Core/Src/fsm.c ****                 if (checkHomePosition())
+  58              		.loc 1 13 0
+  59 001a FFF7FEFF 		bl	checkHomePosition
+  60              	.LVL2:
+  61 001e 00B9     		cbnz	r0, .L10
+  62              	.LVL3:
+  63              	.L1:
+  14:Core/Src/fsm.c ****                 {
+  15:Core/Src/fsm.c ****                         printf("PHASE_1\n");
+  16:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  17:Core/Src/fsm.c **** 
+  18:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[3], RESET_PNEU);
+  19:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[0], SET_PNEU);
+  20:Core/Src/fsm.c ****                         // *phase = PHASE_1;
+  21:Core/Src/fsm.c ****                 }
+  22:Core/Src/fsm.c ****                 break;
+  23:Core/Src/fsm.c **** 
+  24:Core/Src/fsm.c ****         case PHASE_1:
+  25:Core/Src/fsm.c **** 
+  26:Core/Src/fsm.c ****                 phaseOneChores(sfsm);
+  27:Core/Src/fsm.c ****                 if (checkAngle(0))
+  28:Core/Src/fsm.c ****                 {
+  29:Core/Src/fsm.c ****                         printf("PHASE_2\n");
+  30:Core/Src/fsm.c **** 
+  31:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[0], RESET_PNEU);
+  32:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[1], SET_PNEU);
+  33:Core/Src/fsm.c ****                         *phase = PHASE_2;
+  34:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  35:Core/Src/fsm.c ****                         motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CN
+  36:Core/Src/fsm.c ****                 }
+  37:Core/Src/fsm.c ****                 break;
+  38:Core/Src/fsm.c **** 
+  39:Core/Src/fsm.c ****         case PHASE_2:
+  40:Core/Src/fsm.c **** 
+  41:Core/Src/fsm.c ****                 phaseTwoChores(sfsm);
+  42:Core/Src/fsm.c ****                 if (checkAngle(1))
+  43:Core/Src/fsm.c ****                 {
+  44:Core/Src/fsm.c ****                         printf("PHASE_3\n");
+  45:Core/Src/fsm.c **** 
+  46:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[1], RESET_PNEU);
+  47:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[2], SET_PNEU);
+  48:Core/Src/fsm.c ****                         
+  49:Core/Src/fsm.c ****                         *phase = PHASE_3;
+  50:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  51:Core/Src/fsm.c ****                         motor_arr[1].encoder->last_count = motor_arr[1].encoder->htim->Instance->CN
+  52:Core/Src/fsm.c ****                 }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 3
+
+
+  53:Core/Src/fsm.c ****                 break;
+  54:Core/Src/fsm.c **** 
+  55:Core/Src/fsm.c ****         case PHASE_3:
+  56:Core/Src/fsm.c **** 
+  57:Core/Src/fsm.c ****                 phaseThreeChores(sfsm);
+  58:Core/Src/fsm.c ****                 if (checkAngle(2))
+  59:Core/Src/fsm.c ****                 {
+  60:Core/Src/fsm.c ****                         printf("PHASE_4\n");
+  61:Core/Src/fsm.c **** 
+  62:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[2], RESET_PNEU);
+  63:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[3], SET_PNEU);
+  64:Core/Src/fsm.c ****                         *phase = PHASE_4;
+  65:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  66:Core/Src/fsm.c ****                         motor_arr[2].encoder->last_count = motor_arr[2].encoder->htim->Instance->CN
+  67:Core/Src/fsm.c ****                 }
+  68:Core/Src/fsm.c ****                 break;
+  69:Core/Src/fsm.c **** 
+  70:Core/Src/fsm.c ****         case PHASE_4:
+  71:Core/Src/fsm.c **** 
+  72:Core/Src/fsm.c ****                 phaseFourChores(sfsm);
+  73:Core/Src/fsm.c ****                 if (checkAngle(3))
+  74:Core/Src/fsm.c ****                 {
+  75:Core/Src/fsm.c ****                         printf("PHASE_1\n");
+  76:Core/Src/fsm.c **** 
+  77:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[3], RESET_PNEU);
+  78:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[0], SET_PNEU);
+  79:Core/Src/fsm.c ****                         *phase = PHASE_1;
+  80:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  81:Core/Src/fsm.c ****                         
+  82:Core/Src/fsm.c ****                         motor_arr[3].encoder->last_count = motor_arr[3].encoder->htim->Instance->CN
+  83:Core/Src/fsm.c ****                 }
+  84:Core/Src/fsm.c ****                 break;
+  85:Core/Src/fsm.c ****         }
+  86:Core/Src/fsm.c **** }
+  64              		.loc 1 86 0
+  65 0020 70BD     		pop	{r4, r5, r6, pc}
+  66              	.LVL4:
+  67              	.L10:
+  15:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+  68              		.loc 1 15 0
+  69 0022 4C48     		ldr	r0, .L11
+  70 0024 FFF7FEFF 		bl	puts
+  71              	.LVL5:
+  16:Core/Src/fsm.c **** 
+  72              		.loc 1 16 0
+  73 0028 2146     		mov	r1, r4
+  74 002a 2846     		mov	r0, r5
+  75 002c FFF7FEFF 		bl	stateReset
+  76              	.LVL6:
+  18:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[0], SET_PNEU);
+  77              		.loc 1 18 0
+  78 0030 494C     		ldr	r4, .L11+4
+  79              	.LVL7:
+  80 0032 0121     		movs	r1, #1
+  81 0034 2046     		mov	r0, r4
+  82 0036 FFF7FEFF 		bl	setPneumatic
+  83              	.LVL8:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 4
+
+
+  19:Core/Src/fsm.c ****                         // *phase = PHASE_1;
+  84              		.loc 1 19 0
+  85 003a 0021     		movs	r1, #0
+  86 003c A4F11800 		sub	r0, r4, #24
+  87 0040 FFF7FEFF 		bl	setPneumatic
+  88              	.LVL9:
+  89 0044 ECE7     		b	.L1
+  90              	.LVL10:
+  91              	.L5:
+  26:Core/Src/fsm.c ****                 if (checkAngle(0))
+  92              		.loc 1 26 0
+  93 0046 FFF7FEFF 		bl	phaseOneChores
+  94              	.LVL11:
+  27:Core/Src/fsm.c ****                 {
+  95              		.loc 1 27 0
+  96 004a 0020     		movs	r0, #0
+  97 004c FFF7FEFF 		bl	checkAngle
+  98              	.LVL12:
+  99 0050 0028     		cmp	r0, #0
+ 100 0052 E5D0     		beq	.L1
+  29:Core/Src/fsm.c **** 
+ 101              		.loc 1 29 0
+ 102 0054 4148     		ldr	r0, .L11+8
+ 103 0056 FFF7FEFF 		bl	puts
+ 104              	.LVL13:
+  31:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[1], SET_PNEU);
+ 105              		.loc 1 31 0
+ 106 005a 414E     		ldr	r6, .L11+12
+ 107 005c 0121     		movs	r1, #1
+ 108 005e 3046     		mov	r0, r6
+ 109 0060 FFF7FEFF 		bl	setPneumatic
+ 110              	.LVL14:
+  32:Core/Src/fsm.c ****                         *phase = PHASE_2;
+ 111              		.loc 1 32 0
+ 112 0064 0021     		movs	r1, #0
+ 113 0066 06F10800 		add	r0, r6, #8
+ 114 006a FFF7FEFF 		bl	setPneumatic
+ 115              	.LVL15:
+  33:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+ 116              		.loc 1 33 0
+ 117 006e 0223     		movs	r3, #2
+ 118 0070 2370     		strb	r3, [r4]
+  34:Core/Src/fsm.c ****                         motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CN
+ 119              		.loc 1 34 0
+ 120 0072 2146     		mov	r1, r4
+ 121 0074 2846     		mov	r0, r5
+ 122 0076 FFF7FEFF 		bl	stateReset
+ 123              	.LVL16:
+  35:Core/Src/fsm.c ****                 }
+ 124              		.loc 1 35 0
+ 125 007a 3A4B     		ldr	r3, .L11+16
+ 126 007c 1B6B     		ldr	r3, [r3, #48]
+ 127 007e 9A68     		ldr	r2, [r3, #8]
+ 128 0080 1268     		ldr	r2, [r2]
+ 129 0082 526A     		ldr	r2, [r2, #36]
+ 130 0084 9A80     		strh	r2, [r3, #4]	@ movhi
+ 131 0086 CBE7     		b	.L1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 5
+
+
+ 132              	.LVL17:
+ 133              	.L6:
+  41:Core/Src/fsm.c ****                 if (checkAngle(1))
+ 134              		.loc 1 41 0
+ 135 0088 FFF7FEFF 		bl	phaseTwoChores
+ 136              	.LVL18:
+  42:Core/Src/fsm.c ****                 {
+ 137              		.loc 1 42 0
+ 138 008c 0120     		movs	r0, #1
+ 139 008e FFF7FEFF 		bl	checkAngle
+ 140              	.LVL19:
+ 141 0092 0028     		cmp	r0, #0
+ 142 0094 C4D0     		beq	.L1
+  44:Core/Src/fsm.c **** 
+ 143              		.loc 1 44 0
+ 144 0096 3448     		ldr	r0, .L11+20
+ 145 0098 FFF7FEFF 		bl	puts
+ 146              	.LVL20:
+  46:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[2], SET_PNEU);
+ 147              		.loc 1 46 0
+ 148 009c 334E     		ldr	r6, .L11+24
+ 149 009e 0121     		movs	r1, #1
+ 150 00a0 3046     		mov	r0, r6
+ 151 00a2 FFF7FEFF 		bl	setPneumatic
+ 152              	.LVL21:
+  47:Core/Src/fsm.c ****                         
+ 153              		.loc 1 47 0
+ 154 00a6 0021     		movs	r1, #0
+ 155 00a8 06F10800 		add	r0, r6, #8
+ 156 00ac FFF7FEFF 		bl	setPneumatic
+ 157              	.LVL22:
+  49:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+ 158              		.loc 1 49 0
+ 159 00b0 0323     		movs	r3, #3
+ 160 00b2 2370     		strb	r3, [r4]
+  50:Core/Src/fsm.c ****                         motor_arr[1].encoder->last_count = motor_arr[1].encoder->htim->Instance->CN
+ 161              		.loc 1 50 0
+ 162 00b4 2146     		mov	r1, r4
+ 163 00b6 2846     		mov	r0, r5
+ 164 00b8 FFF7FEFF 		bl	stateReset
+ 165              	.LVL23:
+  51:Core/Src/fsm.c ****                 }
+ 166              		.loc 1 51 0
+ 167 00bc 294B     		ldr	r3, .L11+16
+ 168 00be 5B6E     		ldr	r3, [r3, #100]
+ 169 00c0 9A68     		ldr	r2, [r3, #8]
+ 170 00c2 1268     		ldr	r2, [r2]
+ 171 00c4 526A     		ldr	r2, [r2, #36]
+ 172 00c6 9A80     		strh	r2, [r3, #4]	@ movhi
+ 173 00c8 AAE7     		b	.L1
+ 174              	.LVL24:
+ 175              	.L7:
+  57:Core/Src/fsm.c ****                 if (checkAngle(2))
+ 176              		.loc 1 57 0
+ 177 00ca FFF7FEFF 		bl	phaseThreeChores
+ 178              	.LVL25:
+  58:Core/Src/fsm.c ****                 {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 6
+
+
+ 179              		.loc 1 58 0
+ 180 00ce 0220     		movs	r0, #2
+ 181 00d0 FFF7FEFF 		bl	checkAngle
+ 182              	.LVL26:
+ 183 00d4 0028     		cmp	r0, #0
+ 184 00d6 A3D0     		beq	.L1
+  60:Core/Src/fsm.c **** 
+ 185              		.loc 1 60 0
+ 186 00d8 2548     		ldr	r0, .L11+28
+ 187 00da FFF7FEFF 		bl	puts
+ 188              	.LVL27:
+  62:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[3], SET_PNEU);
+ 189              		.loc 1 62 0
+ 190 00de 254E     		ldr	r6, .L11+32
+ 191 00e0 0121     		movs	r1, #1
+ 192 00e2 3046     		mov	r0, r6
+ 193 00e4 FFF7FEFF 		bl	setPneumatic
+ 194              	.LVL28:
+  63:Core/Src/fsm.c ****                         *phase = PHASE_4;
+ 195              		.loc 1 63 0
+ 196 00e8 0021     		movs	r1, #0
+ 197 00ea 06F10800 		add	r0, r6, #8
+ 198 00ee FFF7FEFF 		bl	setPneumatic
+ 199              	.LVL29:
+  64:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+ 200              		.loc 1 64 0
+ 201 00f2 0423     		movs	r3, #4
+ 202 00f4 2370     		strb	r3, [r4]
+  65:Core/Src/fsm.c ****                         motor_arr[2].encoder->last_count = motor_arr[2].encoder->htim->Instance->CN
+ 203              		.loc 1 65 0
+ 204 00f6 2146     		mov	r1, r4
+ 205 00f8 2846     		mov	r0, r5
+ 206 00fa FFF7FEFF 		bl	stateReset
+ 207              	.LVL30:
+  66:Core/Src/fsm.c ****                 }
+ 208              		.loc 1 66 0
+ 209 00fe 194B     		ldr	r3, .L11+16
+ 210 0100 D3F89830 		ldr	r3, [r3, #152]
+ 211 0104 9A68     		ldr	r2, [r3, #8]
+ 212 0106 1268     		ldr	r2, [r2]
+ 213 0108 526A     		ldr	r2, [r2, #36]
+ 214 010a 9A80     		strh	r2, [r3, #4]	@ movhi
+ 215 010c 88E7     		b	.L1
+ 216              	.LVL31:
+ 217              	.L8:
+  72:Core/Src/fsm.c ****                 if (checkAngle(3))
+ 218              		.loc 1 72 0
+ 219 010e FFF7FEFF 		bl	phaseFourChores
+ 220              	.LVL32:
+  73:Core/Src/fsm.c ****                 {
+ 221              		.loc 1 73 0
+ 222 0112 0320     		movs	r0, #3
+ 223 0114 FFF7FEFF 		bl	checkAngle
+ 224              	.LVL33:
+ 225 0118 0028     		cmp	r0, #0
+ 226 011a 81D0     		beq	.L1
+  75:Core/Src/fsm.c **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 7
+
+
+ 227              		.loc 1 75 0
+ 228 011c 0D48     		ldr	r0, .L11
+ 229 011e FFF7FEFF 		bl	puts
+ 230              	.LVL34:
+  77:Core/Src/fsm.c ****                         setPneumatic(&pneu_arr[0], SET_PNEU);
+ 231              		.loc 1 77 0
+ 232 0122 0D4E     		ldr	r6, .L11+4
+ 233 0124 0121     		movs	r1, #1
+ 234 0126 3046     		mov	r0, r6
+ 235 0128 FFF7FEFF 		bl	setPneumatic
+ 236              	.LVL35:
+  78:Core/Src/fsm.c ****                         *phase = PHASE_1;
+ 237              		.loc 1 78 0
+ 238 012c 0021     		movs	r1, #0
+ 239 012e A6F11800 		sub	r0, r6, #24
+ 240 0132 FFF7FEFF 		bl	setPneumatic
+ 241              	.LVL36:
+  79:Core/Src/fsm.c ****                         stateReset(sfsm, phase);
+ 242              		.loc 1 79 0
+ 243 0136 0123     		movs	r3, #1
+ 244 0138 2370     		strb	r3, [r4]
+  80:Core/Src/fsm.c ****                         
+ 245              		.loc 1 80 0
+ 246 013a 2146     		mov	r1, r4
+ 247 013c 2846     		mov	r0, r5
+ 248 013e FFF7FEFF 		bl	stateReset
+ 249              	.LVL37:
+  82:Core/Src/fsm.c ****                 }
+ 250              		.loc 1 82 0
+ 251 0142 084B     		ldr	r3, .L11+16
+ 252 0144 D3F8CC30 		ldr	r3, [r3, #204]
+ 253 0148 9A68     		ldr	r2, [r3, #8]
+ 254 014a 1268     		ldr	r2, [r2]
+ 255 014c 526A     		ldr	r2, [r2, #36]
+ 256 014e 9A80     		strh	r2, [r3, #4]	@ movhi
+ 257              		.loc 1 86 0
+ 258 0150 66E7     		b	.L1
+ 259              	.L12:
+ 260 0152 00BF     		.align	2
+ 261              	.L11:
+ 262 0154 00000000 		.word	.LC0
+ 263 0158 18000000 		.word	pneu_arr+24
+ 264 015c 08000000 		.word	.LC1
+ 265 0160 00000000 		.word	pneu_arr
+ 266 0164 00000000 		.word	motor_arr
+ 267 0168 10000000 		.word	.LC2
+ 268 016c 08000000 		.word	pneu_arr+8
+ 269 0170 18000000 		.word	.LC3
+ 270 0174 10000000 		.word	pneu_arr+16
+ 271              		.cfi_endproc
+ 272              	.LFE126:
+ 274              		.section	.rodata.startFSM.str1.4,"aMS",%progbits,1
+ 275              		.align	2
+ 276              	.LC0:
+ 277 0000 50484153 		.ascii	"PHASE_1\000"
+ 277      455F3100 
+ 278              	.LC1:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 8
+
+
+ 279 0008 50484153 		.ascii	"PHASE_2\000"
+ 279      455F3200 
+ 280              	.LC2:
+ 281 0010 50484153 		.ascii	"PHASE_3\000"
+ 281      455F3300 
+ 282              	.LC3:
+ 283 0018 50484153 		.ascii	"PHASE_4\000"
+ 283      455F3400 
+ 284              		.text
+ 285              	.Letext0:
+ 286              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 287              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 288              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 289              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 290              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 291              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 292              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 293              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 294              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 295              		.file 11 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 296              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 297              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 298              		.file 14 "Core/Inc\\periphs/tim.h"
+ 299              		.file 15 "Core/Inc/feed_forward.h"
+ 300              		.file 16 "Core/Inc/pneumatic.h"
+ 301              		.file 17 "Core/Inc/interrupt.h"
+ 302              		.file 18 "Core/Inc/encoder.h"
+ 303              		.file 19 "Core/Inc/motor.h"
+ 304              		.file 20 "Core/Inc/pid.h"
+ 305              		.file 21 "Core/Inc/robo_init.h"
+ 306              		.file 22 "Core/Inc/fsm.h"
+ 307              		.file 23 "Core/Inc/fsm_tasks.h"
+ 308              		.file 24 "Core/Inc/check.h"
+ 309              		.file 25 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fsm.c
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:18     .text.startFSM:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:25     .text.startFSM:00000000 startFSM
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:48     .text.startFSM:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:262    .text.startFSM:00000154 $d
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:275    .rodata.startFSM.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:53     .text.startFSM:00000015 $d
+C:\Users\Prashant\AppData\Local\Temp\cc33vfQz.s:53     .text.startFSM:00000016 $t
+
+UNDEFINED SYMBOLS
+homePositionChores
+checkHomePosition
+puts
+stateReset
+setPneumatic
+phaseOneChores
+checkAngle
+phaseTwoChores
+phaseThreeChores
+phaseFourChores
+pneu_arr
+motor_arr

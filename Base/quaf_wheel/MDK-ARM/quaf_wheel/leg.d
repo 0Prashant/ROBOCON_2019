@@ -32,3 +32,10 @@ quaf_wheel\leg.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 quaf_wheel\leg.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 quaf_wheel\leg.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 quaf_wheel\leg.o: ../Core/Inc/tim.h
+quaf_wheel\leg.o: ../Core/Inc/robo_init.h
+quaf_wheel\leg.o: ../Core/Inc/gpio.h
+quaf_wheel\leg.o: ../Core/Inc/motionProfile.h
+quaf_wheel\leg.o: ../Core/Inc/horse.h
+quaf_wheel\leg.o: ../Core/Inc/leg.h
+quaf_wheel\leg.o: ../Core/Inc/pid.h
+quaf_wheel\leg.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

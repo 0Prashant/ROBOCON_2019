@@ -35,6 +35,7 @@ quaf_wheel\robo_init.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 quaf_wheel\robo_init.o: ../Core/Inc/gpio.h
 quaf_wheel\robo_init.o: ../Core/Inc/motionProfile.h
 quaf_wheel\robo_init.o: ../Core/Inc/horse.h
-quaf_wheel\robo_init.o: ../Core/Inc/robo_init.h
 quaf_wheel\robo_init.o: ../Core/Inc/leg.h
+quaf_wheel\robo_init.o: ../Core/Inc/robo_init.h
+quaf_wheel\robo_init.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 quaf_wheel\robo_init.o: ../Core/Inc/pid.h

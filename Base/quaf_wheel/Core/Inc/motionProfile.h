@@ -33,10 +33,15 @@ struct Trap_struct
     enum Status status;
 };
 
+/*
+EDITS:
+- Time or angle check 
+*/
+
 void  motionProfile_resetParams(struct Trap_struct *t); // reset the index for next generation (if any)
 void  motionProfile_Init(struct Trap_struct *t, float _max_omega, float _max_angle, float _percent_div, float _dt);
 float motionProfile_Generate(struct Trap_struct *st ,float curr_angle); /* t = current time in milliseconds */
 void motionProfile_setAngle(struct Trap_struct *st, float _max_angle);
 void motionProfile_restart(struct Trap_struct *t);
-void motionProfile_resetAngle(struct Trap_struct *t, int mode_flag);
+
 #endif // _GENERATE_PROFILE_H

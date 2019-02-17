@@ -36,7 +36,9 @@ quaf_wheel\main.o: ../Core/Inc/gpio.h
 quaf_wheel\main.o: ../Core/Inc/robo_init.h
 quaf_wheel\main.o: ../Core/Inc/motionProfile.h
 quaf_wheel\main.o: ../Core/Inc/horse.h
-quaf_wheel\main.o: ../Core/Inc/robo_init.h
 quaf_wheel\main.o: ../Core/Inc/leg.h
+quaf_wheel\main.o: ../Core/Inc/robo_init.h
+quaf_wheel\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 quaf_wheel\main.o: ../Core/Inc/pid.h
 quaf_wheel\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+quaf_wheel\main.o: ../Core/Inc/gait.h

@@ -151,8 +151,8 @@ int main(void)
 	float omega[2];
 
 	//*
-	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 65535);
-	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 65535);
+	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_1, 25535);
+	set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 25535);
 	/*/
 	while (1) {
 		cps[0] = htim3.Instance->CNT;
@@ -163,26 +163,27 @@ int main(void)
 	}
 	/*/ //*/
         const uint32_t sample_period = 15;
-        const uint32_t brake_period = 5000;
+        const uint32_t brake_period = 3000;
         uint32_t sample_time = HAL_GetTick();
         uint32_t brake_time = HAL_GetTick();
         while (1)
         {
+		
                 /* USER CODE END WHILE */
                 /* USER CODE BEGIN 3 */
 		if (HAL_GetTick() - sample_time > sample_period) {
 			sample_time = HAL_GetTick();
 
 			cps[0] = htim3.Instance->CNT;
-			htim3.Instance->CNT = 0;
+			//htim3.Instance->CNT = 0;
 			
 			cps[1] = htim1.Instance->CNT;
-			htim1.Instance->CNT = 0;
+			//htim1.Instance->CNT = 0;
 
 			omega[0] = 2 * PI * cps[0] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
 			omega[1] = 2 * PI * cps[1] * 1000 / ((float)sample_period * CYTRON_ENCODER_PPR);
 
-			printf("%ld, %ld\n", (int32_t)(omega[0]*100), (int32_t)(omega[1]*100));
+			printf("%ld, %ld\n", (int32_t)(cps[0]*100), (int32_t)(cps[1]*100));
 			// printf("%ld, %ld\n", (int32_t)(cps[0]), (int32_t)(cps[1]));
 		}
 		if (HAL_GetTick() - brake_time > brake_period) {
@@ -190,6 +191,12 @@ int main(void)
 			set_DutyCycle_Primary(&htim8, TIM_CHANNEL_2, 0);
 			break;
 		}
+		HAL_Delay(2000);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
         }
         // send_AllData();
         while(1);

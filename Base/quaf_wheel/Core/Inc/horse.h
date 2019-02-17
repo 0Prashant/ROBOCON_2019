@@ -1,6 +1,7 @@
 #ifndef _HORSE_H_
 #define _HORSE_H_
 
+/*
 #include "motionProfile.h"
 #include "robo_init.h"
 #include "leg.h"
@@ -18,7 +19,7 @@ void horse_calibrate(void);
 void goto_homePosition(struct Leg_str *leg);
 void raiseLeg(struct Leg_str *leg); 
 //void lowerLeg(struct Leg_str *leg);
-void horse_Gallop(void);
+void horse_Gallop(void);*/
 
 #endif /*_HORSE_H_*/
 
