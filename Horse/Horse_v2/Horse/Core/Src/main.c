@@ -133,35 +133,10 @@ int main(void)
         /* USER CODE BEGIN WHILE */
         uint8_t switch_pressed = 0;
 
-        /*
-        while(1) {
-                setPneumatic(&pneu_arr[0], SET_PNEU);
-                // HAL_Delay(1000);
-                // setPneumatic(&pneu_arr[0], RESET_PNEU);
-                // HAL_Delay(1000);
-                
-                // setPneumatic(&pneu_arr[1], SET_PNEU);
-                // HAL_Delay(1000);
-                // setPneumatic(&pneu_arr[1], RESET_PNEU);
-                // HAL_Delay(1000);
-                
-                // setPneumatic(&pneu_arr[2], SET_PNEU);
-                // HAL_Delay(1000);
-                // setPneumatic(&pneu_arr[2], RESET_PNEU);
-                // HAL_Delay(1000);
-                
-                setPneumatic(&pneu_arr[3], SET_PNEU);
-                // HAL_Delay(1000);
-                // setPneumatic(&pneu_arr[3], RESET_PNEU);
-                // HAL_Delay(1000);
-        }
-        */
         while (1)
         {
 		
-		// setDutyCycle(&balance_motor,65535);
-		// setDirection(&balance_motor,DIR_ANTICLOCKWISE);
-                if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) && !switch_pressed)
+		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) && !switch_pressed)
                 {
                         switch_pressed = 1;
                         for (uint8_t i = 0; i < 0; i++)
@@ -176,12 +151,6 @@ int main(void)
                         update_tick = HAL_GetTick();
                         startFSM(&fsm, &phase);
                         updateOmegas();
-                //        /* for (uint8_t i = 0; i < 4; i++)
-                //         {
-                //                 printf("%ld \t", (int32_t)(motor_arr[i].update_omega * 1000));
-                //         }
-                //         printf("\n");
-                //         */
                 }
                 /* USER CODE END WHILE */
 

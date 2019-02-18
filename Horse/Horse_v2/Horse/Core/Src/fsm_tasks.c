@@ -6,7 +6,6 @@ void homePositionChores(struct fsmStr *fsm)
 {
         setHomePosition();
         check_N_Stop();
-	
 }
 
 static uint8_t gIs_First = 1;
@@ -124,7 +123,7 @@ void phaseFourChores(struct fsmStr *fsm)
 
 void setHomePosition(void)
 {
-        setDutyCycle(&balance_motor, 65535);
+        setDutyCycle(&balance_motor, 49191);
         setDirection(&balance_motor, DIR_CLOCKWISE);
 
         for (uint8_t i = 0; i < 4; i++)

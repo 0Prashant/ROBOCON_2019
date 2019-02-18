@@ -52,6 +52,7 @@ void interruptInit(void)
                 int_arr[i].fhome_pos = 0;
                 int_arr[i].fangle_reset = 0;
                 int_arr[i].intState = STATE_HOME;
+		blnc_int_arr[i].intState = STATE_HOME;
         }
 }
 

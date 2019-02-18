@@ -52,29 +52,44 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
                         int_arr[3].fhome_pos = 1;
                 }
         }
-        /*
+        
     if (GPIO_PIN == blnc_int_arr[0].int_pin)
     {
-        //printf("A\n");
-        blnc_int_arr[0].fhome_pos = 1; 
+	if(blnc_int_arr[2].fhome_pos)
+	{
+		setDutyCycle(&balance_motor, 0);
+	}    
+        printf("A\n");
     }
     
     if (GPIO_PIN == blnc_int_arr[1].int_pin)
     {
-        //printf("B\n");
-        blnc_int_arr[1].fhome_pos = 1;
+        if(blnc_int_arr[2].fhome_pos)
+	{
+		setDutyCycle(&balance_motor, 0);
+	}
+	printf("B\n");
     }
     
     if (GPIO_PIN == blnc_int_arr[2].int_pin)
     {
         blnc_int_arr[2].fhome_pos = 1;
-        printf("C\n");
+        if(blnc_int_arr[2].fhome_pos)
+	{
+		setDutyCycle(&balance_motor, 0);
+	}
+	printf("C\n");
     }
     
-    if (GPIO_PIN == blnc_int_arr[3].int_pin)
+   if (GPIO_PIN == blnc_int_arr[3].int_pin)
     {
-        blnc_int_arr[3].fhome_pos = 1;
+	
         printf("D\n");
+	
+	if(blnc_int_arr[2].fhome_pos)
+	{
+		setDutyCycle(&balance_motor, 0);
+	}
     }
-     */
+     
 }

@@ -1,0 +1,1960 @@
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"processor.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN11Robo_StatesD2Ev,"axG",%progbits,_ZN11Robo_StatesD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN11Robo_StatesD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN11Robo_StatesD2Ev:
+  26              	.LFB486:
+  27              		.file 1 "Core/Inc/parts/processor/robo_states.h"
+   1:Core/Inc/parts/processor/robo_states.h **** /*
+   2:Core/Inc/parts/processor/robo_states.h ****  * robo_states.h
+   3:Core/Inc/parts/processor/robo_states.h ****  *
+   4:Core/Inc/parts/processor/robo_states.h ****  * Created : 1/9/2019
+   5:Core/Inc/parts/processor/robo_states.h ****  *  Author : n-is
+   6:Core/Inc/parts/processor/robo_states.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/parts/processor/robo_states.h ****  */
+   8:Core/Inc/parts/processor/robo_states.h **** 
+   9:Core/Inc/parts/processor/robo_states.h **** #ifndef _ROBO_STATES_H_
+  10:Core/Inc/parts/processor/robo_states.h **** #define _ROBO_STATES_H_
+  11:Core/Inc/parts/processor/robo_states.h **** 
+  12:Core/Inc/parts/processor/robo_states.h **** #include "state_sensor.h"
+  13:Core/Inc/parts/processor/robo_states.h **** #include "vec2.h"
+  14:Core/Inc/parts/processor/robo_states.h **** #include "vec4.h"
+  15:Core/Inc/parts/processor/robo_states.h **** 
+  16:Core/Inc/parts/processor/robo_states.h **** enum class Field
+  17:Core/Inc/parts/processor/robo_states.h **** {
+  18:Core/Inc/parts/processor/robo_states.h ****         FIELD_A,
+  19:Core/Inc/parts/processor/robo_states.h ****         FIELD_B,
+  20:Core/Inc/parts/processor/robo_states.h ****         FIELD_C,
+  21:Core/Inc/parts/processor/robo_states.h ****         FIELD_D,
+  22:Core/Inc/parts/processor/robo_states.h ****         FIELD_E,
+  23:Core/Inc/parts/processor/robo_states.h ****         FIELD_F,
+  24:Core/Inc/parts/processor/robo_states.h ****         FIELD_G,
+  25:Core/Inc/parts/processor/robo_states.h ****         FIELD_H,
+  26:Core/Inc/parts/processor/robo_states.h ****         FIELD_I,
+  27:Core/Inc/parts/processor/robo_states.h ****         FIELD_J,
+  28:Core/Inc/parts/processor/robo_states.h ****         FIELD_K,
+  29:Core/Inc/parts/processor/robo_states.h ****         FIELD_L
+  30:Core/Inc/parts/processor/robo_states.h **** };
+  31:Core/Inc/parts/processor/robo_states.h **** 
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 2
+
+
+  32:Core/Inc/parts/processor/robo_states.h **** struct State_Vars
+  33:Core/Inc/parts/processor/robo_states.h **** {
+  34:Core/Inc/parts/processor/robo_states.h ****         Field id;
+  35:Core/Inc/parts/processor/robo_states.h **** 
+  36:Core/Inc/parts/processor/robo_states.h ****         Vec2<float> centre;
+  37:Core/Inc/parts/processor/robo_states.h ****         Vec2<float> upper_bounds;
+  38:Core/Inc/parts/processor/robo_states.h ****         Vec2<float> lower_bounds;
+  39:Core/Inc/parts/processor/robo_states.h **** 
+  40:Core/Inc/parts/processor/robo_states.h ****         float last_limit;
+  41:Core/Inc/parts/processor/robo_states.h ****         float ramping_factor;
+  42:Core/Inc/parts/processor/robo_states.h ****         float first_limit;
+  43:Core/Inc/parts/processor/robo_states.h **** };
+  44:Core/Inc/parts/processor/robo_states.h **** 
+  45:Core/Inc/parts/processor/robo_states.h **** class Robo_States
+  46:Core/Inc/parts/processor/robo_states.h **** {
+  47:Core/Inc/parts/processor/robo_states.h **** public:
+  48:Core/Inc/parts/processor/robo_states.h ****         Robo_States(State_Vars *sv, Robo_States *next);
+  49:Core/Inc/parts/processor/robo_states.h ****         Robo_States(Robo_States &&) = default;
+  50:Core/Inc/parts/processor/robo_states.h **** 
+  51:Core/Inc/parts/processor/robo_states.h ****         Robo_States(const Robo_States &) = default;
+  52:Core/Inc/parts/processor/robo_states.h ****         Robo_States &operator=(Robo_States &&) = default;
+  53:Core/Inc/parts/processor/robo_states.h ****         Robo_States &operator=(const Robo_States &) = default;
+  54:Core/Inc/parts/processor/robo_states.h ****         ~Robo_States() { }
+  28              		.loc 1 54 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 54 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE486:
+  39              		.weak	_ZN11Robo_StatesD1Ev
+  40              		.thumb_set _ZN11Robo_StatesD1Ev,_ZN11Robo_StatesD2Ev
+  41              		.section	.text._ZN9ProcessorD2Ev,"axG",%progbits,_ZN9ProcessorD5Ev,comdat
+  42              		.align	1
+  43              		.weak	_ZN9ProcessorD2Ev
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN9ProcessorD2Ev:
+  50              	.LFB492:
+  51              		.file 2 "Core/Inc/parts/processor.h"
+   1:Core/Inc/parts/processor.h **** /*
+   2:Core/Inc/parts/processor.h ****  * processor.h
+   3:Core/Inc/parts/processor.h ****  *
+   4:Core/Inc/parts/processor.h ****  * Created : 1/9/2019
+   5:Core/Inc/parts/processor.h ****  *  Author : n-is
+   6:Core/Inc/parts/processor.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/parts/processor.h ****  */
+   8:Core/Inc/parts/processor.h **** 
+   9:Core/Inc/parts/processor.h **** #ifndef _PROCESSOR_H_
+  10:Core/Inc/parts/processor.h **** #define _PROCESSOR_H_
+  11:Core/Inc/parts/processor.h **** 
+  12:Core/Inc/parts/processor.h **** #include "state_sensor.h"
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 3
+
+
+  13:Core/Inc/parts/processor.h **** #include "robo_states.h"
+  14:Core/Inc/parts/processor.h **** 
+  15:Core/Inc/parts/processor.h **** class Processor
+  16:Core/Inc/parts/processor.h **** {
+  17:Core/Inc/parts/processor.h **** public:
+  18:Core/Inc/parts/processor.h ****         Processor(Processor &&) = default;
+  19:Core/Inc/parts/processor.h ****         Processor(const Processor &) = default;
+  20:Core/Inc/parts/processor.h ****         Processor &operator=(Processor &&) = default;
+  21:Core/Inc/parts/processor.h ****         Processor &operator=(const Processor &) = default;
+  22:Core/Inc/parts/processor.h ****         ~Processor() { }
+  52              		.loc 2 22 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  58              		.loc 2 22 0
+  59 0000 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE492:
+  63              		.weak	_ZN9ProcessorD1Ev
+  64              		.thumb_set _ZN9ProcessorD1Ev,_ZN9ProcessorD2Ev
+  65              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+  66              		.align	1
+  67              		.syntax unified
+  68              		.thumb
+  69              		.thumb_func
+  70              		.fpu fpv4-sp-d16
+  72              	_Z41__static_initialization_and_destruction_0ii:
+  73              	.LFB519:
+  74              		.file 3 "Core/Src/parts/processor.cpp"
+   1:Core/Src/parts/processor.cpp **** /*
+   2:Core/Src/parts/processor.cpp ****  * processor.cpp
+   3:Core/Src/parts/processor.cpp ****  *
+   4:Core/Src/parts/processor.cpp ****  * Created : 1/9/2019
+   5:Core/Src/parts/processor.cpp ****  *  Author : n-is
+   6:Core/Src/parts/processor.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/parts/processor.cpp ****  */
+   8:Core/Src/parts/processor.cpp **** 
+   9:Core/Src/parts/processor.cpp **** #include "processor.h"
+  10:Core/Src/parts/processor.cpp **** 
+  11:Core/Src/parts/processor.cpp **** extern State_Vars gStateA_Data;
+  12:Core/Src/parts/processor.cpp **** extern State_Vars gStateB_Data;
+  13:Core/Src/parts/processor.cpp **** extern State_Vars gStateC_Data;
+  14:Core/Src/parts/processor.cpp **** extern State_Vars gStateD_Data;
+  15:Core/Src/parts/processor.cpp **** extern State_Vars gStateE_Data;
+  16:Core/Src/parts/processor.cpp **** extern State_Vars gStateF_Data;
+  17:Core/Src/parts/processor.cpp **** extern State_Vars gStateG_Data;
+  18:Core/Src/parts/processor.cpp **** extern State_Vars gStateH_Data;
+  19:Core/Src/parts/processor.cpp **** extern State_Vars gStateI_Data;
+  20:Core/Src/parts/processor.cpp **** extern State_Vars gStateJ_Data;
+  21:Core/Src/parts/processor.cpp **** extern State_Vars gStateK_Data;
+  22:Core/Src/parts/processor.cpp **** extern State_Vars gStateL_Data;
+  23:Core/Src/parts/processor.cpp **** 
+  24:Core/Src/parts/processor.cpp **** extern Robo_States gStateA;
+  25:Core/Src/parts/processor.cpp **** extern Robo_States gStateB;
+  26:Core/Src/parts/processor.cpp **** extern Robo_States gStateC;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 4
+
+
+  27:Core/Src/parts/processor.cpp **** extern Robo_States gStateD;
+  28:Core/Src/parts/processor.cpp **** extern Robo_States gStateE;
+  29:Core/Src/parts/processor.cpp **** extern Robo_States gStateF;
+  30:Core/Src/parts/processor.cpp **** extern Robo_States gStateG;
+  31:Core/Src/parts/processor.cpp **** extern Robo_States gStateH;
+  32:Core/Src/parts/processor.cpp **** extern Robo_States gStateI;
+  33:Core/Src/parts/processor.cpp **** extern Robo_States gStateJ;
+  34:Core/Src/parts/processor.cpp **** extern Robo_States gStateK;
+  35:Core/Src/parts/processor.cpp **** extern Robo_States gStateL;
+  36:Core/Src/parts/processor.cpp **** 
+  37:Core/Src/parts/processor.cpp **** Robo_States gStateA(&gStateA_Data, &gStateB);
+  38:Core/Src/parts/processor.cpp **** Robo_States gStateB(&gStateB_Data, &gStateC);
+  39:Core/Src/parts/processor.cpp **** Robo_States gStateC(&gStateC_Data, &gStateD);
+  40:Core/Src/parts/processor.cpp **** Robo_States gStateD(&gStateD_Data, &gStateE);
+  41:Core/Src/parts/processor.cpp **** Robo_States gStateE(&gStateE_Data, &gStateF);
+  42:Core/Src/parts/processor.cpp **** Robo_States gStateF(&gStateF_Data, &gStateG);
+  43:Core/Src/parts/processor.cpp **** Robo_States gStateG(&gStateG_Data, &gStateH);
+  44:Core/Src/parts/processor.cpp **** Robo_States gStateH(&gStateH_Data, &gStateI);
+  45:Core/Src/parts/processor.cpp **** Robo_States gStateI(&gStateI_Data, &gStateI);
+  46:Core/Src/parts/processor.cpp **** 
+  47:Core/Src/parts/processor.cpp **** Robo_States gStateJ(&gStateJ_Data, &gStateK);
+  48:Core/Src/parts/processor.cpp **** Robo_States gStateK(&gStateK_Data, &gStateL);
+  49:Core/Src/parts/processor.cpp **** Robo_States gStateL(&gStateL_Data, &gStateL);
+  50:Core/Src/parts/processor.cpp **** 
+  51:Core/Src/parts/processor.cpp **** void init_GameField();
+  52:Core/Src/parts/processor.cpp **** 
+  53:Core/Src/parts/processor.cpp **** Processor& Processor::get_Instance(State_Sensor *sen)
+  54:Core/Src/parts/processor.cpp **** {
+  55:Core/Src/parts/processor.cpp ****         static Processor sRobo_CPU;
+  56:Core/Src/parts/processor.cpp ****         
+  57:Core/Src/parts/processor.cpp ****         init_GameField();
+  58:Core/Src/parts/processor.cpp **** 
+  59:Core/Src/parts/processor.cpp ****         sRobo_CPU.curr_state_ = &gStateA;
+  60:Core/Src/parts/processor.cpp ****         sRobo_CPU.sensor_ = sen;
+  61:Core/Src/parts/processor.cpp ****         
+  62:Core/Src/parts/processor.cpp ****         return sRobo_CPU;
+  63:Core/Src/parts/processor.cpp **** }
+  64:Core/Src/parts/processor.cpp **** 
+  65:Core/Src/parts/processor.cpp **** int Processor::init(uint32_t dt_millis)
+  66:Core/Src/parts/processor.cpp **** {
+  67:Core/Src/parts/processor.cpp ****         return 0;
+  68:Core/Src/parts/processor.cpp **** }
+  69:Core/Src/parts/processor.cpp **** 
+  70:Core/Src/parts/processor.cpp **** static float gFirstHeading = 0;
+  71:Core/Src/parts/processor.cpp **** 
+  72:Core/Src/parts/processor.cpp **** Vec3<float> Processor::process(Vec3<float> state, State_Vars *robot_state_vars_, uint32_t dt_millis
+  73:Core/Src/parts/processor.cpp **** {
+  74:Core/Src/parts/processor.cpp ****         Vec3<float> vel(0, 0, 0);
+  75:Core/Src/parts/processor.cpp **** 
+  76:Core/Src/parts/processor.cpp ****         if (is_first_) {
+  77:Core/Src/parts/processor.cpp ****                 gFirstHeading = state.getZ();
+  78:Core/Src/parts/processor.cpp ****                 is_first_ = false;
+  79:Core/Src/parts/processor.cpp ****         }
+  80:Core/Src/parts/processor.cpp ****         else {
+  81:Core/Src/parts/processor.cpp ****                 // Vec3<float> s(1703, 1483, 115);
+  82:Core/Src/parts/processor.cpp ****                 if (curr_state_->nextStateReached(state)) {
+  83:Core/Src/parts/processor.cpp ****                         printf("Here!!");
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 5
+
+
+  84:Core/Src/parts/processor.cpp ****                         update_State();
+  85:Core/Src/parts/processor.cpp ****                         sensor_->change_Sensors(curr_state_->get_ID());
+  86:Core/Src/parts/processor.cpp ****                 }
+  87:Core/Src/parts/processor.cpp **** 
+  88:Core/Src/parts/processor.cpp ****                 float v = curr_state_->calc_RoboVelocity();
+  89:Core/Src/parts/processor.cpp ****                 float theta = curr_state_->calc_AngleOfAttack(state, v, dt_millis);
+  90:Core/Src/parts/processor.cpp **** 
+  91:Core/Src/parts/processor.cpp ****                 // printf("%d\n", (int16_t)(theta*57.3));
+  92:Core/Src/parts/processor.cpp **** 
+  93:Core/Src/parts/processor.cpp ****                 // Vec3<float> del_state = state - first_state_;
+  94:Core/Src/parts/processor.cpp ****                 // float phi = del_state.getZ();
+  95:Core/Src/parts/processor.cpp ****                 float phi = state.getZ() - gFirstHeading;
+  96:Core/Src/parts/processor.cpp **** 
+  97:Core/Src/parts/processor.cpp ****                 // printf("%d\n", (int16_t)(phi));
+  98:Core/Src/parts/processor.cpp **** 
+  99:Core/Src/parts/processor.cpp ****                 phi /= (float)57.3;
+ 100:Core/Src/parts/processor.cpp ****                 phi = atan2(sin(phi), cos(phi));
+ 101:Core/Src/parts/processor.cpp **** 
+ 102:Core/Src/parts/processor.cpp ****                 float vx = v*sin(theta)*cos(phi);
+ 103:Core/Src/parts/processor.cpp ****                 float vy = v*cos(theta)*cos(phi);
+ 104:Core/Src/parts/processor.cpp ****                 float rw = (phi)*0.3;
+ 105:Core/Src/parts/processor.cpp **** 
+ 106:Core/Src/parts/processor.cpp ****                 vel.set_Values(vx, vy, rw);
+ 107:Core/Src/parts/processor.cpp ****         }
+ 108:Core/Src/parts/processor.cpp **** 
+ 109:Core/Src/parts/processor.cpp ****         robot_state_vars_ = curr_state_->get_State();
+ 110:Core/Src/parts/processor.cpp **** 
+ 111:Core/Src/parts/processor.cpp ****         return vel;
+ 112:Core/Src/parts/processor.cpp **** }
+ 113:Core/Src/parts/processor.cpp **** 
+ 114:Core/Src/parts/processor.cpp **** void Processor::update_State()
+ 115:Core/Src/parts/processor.cpp **** {
+ 116:Core/Src/parts/processor.cpp ****         curr_state_ = curr_state_->get_NextState();
+ 117:Core/Src/parts/processor.cpp **** }
+  75              		.loc 3 117 0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              	.LVL2:
+  80 0000 0128     		cmp	r0, #1
+  81 0002 00D0     		beq	.L9
+  82 0004 7047     		bx	lr
+  83              	.L9:
+  84              		.loc 3 117 0 is_stmt 0 discriminator 1
+  85 0006 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  86              	.LCFI0:
+  87              		.cfi_def_cfa_offset 24
+  88              		.cfi_offset 3, -24
+  89              		.cfi_offset 4, -20
+  90              		.cfi_offset 5, -16
+  91              		.cfi_offset 6, -12
+  92              		.cfi_offset 7, -8
+  93              		.cfi_offset 14, -4
+  94              		.loc 3 117 0 is_stmt 1 discriminator 1
+  95 0008 4FF6FF73 		movw	r3, #65535
+  96 000c 9942     		cmp	r1, r3
+  97 000e 00D0     		beq	.L10
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 6
+
+
+  98              	.LVL3:
+  99              	.L3:
+ 100              		.loc 3 117 0 is_stmt 0
+ 101 0010 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 102              	.LVL4:
+ 103              	.L10:
+  37:Core/Src/parts/processor.cpp **** Robo_States gStateB(&gStateB_Data, &gStateC);
+ 104              		.loc 3 37 0 is_stmt 1
+ 105 0012 434F     		ldr	r7, .L11
+ 106 0014 434E     		ldr	r6, .L11+4
+ 107 0016 3A46     		mov	r2, r7
+ 108 0018 4349     		ldr	r1, .L11+8
+ 109              	.LVL5:
+ 110 001a 3046     		mov	r0, r6
+ 111              	.LVL6:
+ 112 001c FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 113              	.LVL7:
+ 114 0020 424D     		ldr	r5, .L11+12
+ 115 0022 434C     		ldr	r4, .L11+16
+ 116 0024 2A46     		mov	r2, r5
+ 117 0026 2146     		mov	r1, r4
+ 118 0028 3046     		mov	r0, r6
+ 119 002a FFF7FEFF 		bl	__aeabi_atexit
+ 120              	.LVL8:
+  38:Core/Src/parts/processor.cpp **** Robo_States gStateC(&gStateC_Data, &gStateD);
+ 121              		.loc 3 38 0
+ 122 002e 414E     		ldr	r6, .L11+20
+ 123 0030 3246     		mov	r2, r6
+ 124 0032 4149     		ldr	r1, .L11+24
+ 125 0034 3846     		mov	r0, r7
+ 126 0036 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 127              	.LVL9:
+ 128 003a 2A46     		mov	r2, r5
+ 129 003c 2146     		mov	r1, r4
+ 130 003e 3846     		mov	r0, r7
+ 131 0040 FFF7FEFF 		bl	__aeabi_atexit
+ 132              	.LVL10:
+  39:Core/Src/parts/processor.cpp **** Robo_States gStateD(&gStateD_Data, &gStateE);
+ 133              		.loc 3 39 0
+ 134 0044 3D4F     		ldr	r7, .L11+28
+ 135 0046 3A46     		mov	r2, r7
+ 136 0048 3D49     		ldr	r1, .L11+32
+ 137 004a 3046     		mov	r0, r6
+ 138 004c FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 139              	.LVL11:
+ 140 0050 2A46     		mov	r2, r5
+ 141 0052 2146     		mov	r1, r4
+ 142 0054 3046     		mov	r0, r6
+ 143 0056 FFF7FEFF 		bl	__aeabi_atexit
+ 144              	.LVL12:
+  40:Core/Src/parts/processor.cpp **** Robo_States gStateE(&gStateE_Data, &gStateF);
+ 145              		.loc 3 40 0
+ 146 005a 3A4E     		ldr	r6, .L11+36
+ 147 005c 3246     		mov	r2, r6
+ 148 005e 3A49     		ldr	r1, .L11+40
+ 149 0060 3846     		mov	r0, r7
+ 150 0062 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 7
+
+
+ 151              	.LVL13:
+ 152 0066 2A46     		mov	r2, r5
+ 153 0068 2146     		mov	r1, r4
+ 154 006a 3846     		mov	r0, r7
+ 155 006c FFF7FEFF 		bl	__aeabi_atexit
+ 156              	.LVL14:
+  41:Core/Src/parts/processor.cpp **** Robo_States gStateF(&gStateF_Data, &gStateG);
+ 157              		.loc 3 41 0
+ 158 0070 364F     		ldr	r7, .L11+44
+ 159 0072 3A46     		mov	r2, r7
+ 160 0074 3649     		ldr	r1, .L11+48
+ 161 0076 3046     		mov	r0, r6
+ 162 0078 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 163              	.LVL15:
+ 164 007c 2A46     		mov	r2, r5
+ 165 007e 2146     		mov	r1, r4
+ 166 0080 3046     		mov	r0, r6
+ 167 0082 FFF7FEFF 		bl	__aeabi_atexit
+ 168              	.LVL16:
+  42:Core/Src/parts/processor.cpp **** Robo_States gStateG(&gStateG_Data, &gStateH);
+ 169              		.loc 3 42 0
+ 170 0086 334E     		ldr	r6, .L11+52
+ 171 0088 3246     		mov	r2, r6
+ 172 008a 3349     		ldr	r1, .L11+56
+ 173 008c 3846     		mov	r0, r7
+ 174 008e FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 175              	.LVL17:
+ 176 0092 2A46     		mov	r2, r5
+ 177 0094 2146     		mov	r1, r4
+ 178 0096 3846     		mov	r0, r7
+ 179 0098 FFF7FEFF 		bl	__aeabi_atexit
+ 180              	.LVL18:
+  43:Core/Src/parts/processor.cpp **** Robo_States gStateH(&gStateH_Data, &gStateI);
+ 181              		.loc 3 43 0
+ 182 009c 2F4F     		ldr	r7, .L11+60
+ 183 009e 3A46     		mov	r2, r7
+ 184 00a0 2F49     		ldr	r1, .L11+64
+ 185 00a2 3046     		mov	r0, r6
+ 186 00a4 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 187              	.LVL19:
+ 188 00a8 2A46     		mov	r2, r5
+ 189 00aa 2146     		mov	r1, r4
+ 190 00ac 3046     		mov	r0, r6
+ 191 00ae FFF7FEFF 		bl	__aeabi_atexit
+ 192              	.LVL20:
+  44:Core/Src/parts/processor.cpp **** Robo_States gStateI(&gStateI_Data, &gStateI);
+ 193              		.loc 3 44 0
+ 194 00b2 2C4E     		ldr	r6, .L11+68
+ 195 00b4 3246     		mov	r2, r6
+ 196 00b6 2C49     		ldr	r1, .L11+72
+ 197 00b8 3846     		mov	r0, r7
+ 198 00ba FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 199              	.LVL21:
+ 200 00be 2A46     		mov	r2, r5
+ 201 00c0 2146     		mov	r1, r4
+ 202 00c2 3846     		mov	r0, r7
+ 203 00c4 FFF7FEFF 		bl	__aeabi_atexit
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 8
+
+
+ 204              	.LVL22:
+  45:Core/Src/parts/processor.cpp **** 
+ 205              		.loc 3 45 0
+ 206 00c8 3246     		mov	r2, r6
+ 207 00ca 2849     		ldr	r1, .L11+76
+ 208 00cc 3046     		mov	r0, r6
+ 209 00ce FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 210              	.LVL23:
+ 211 00d2 2A46     		mov	r2, r5
+ 212 00d4 2146     		mov	r1, r4
+ 213 00d6 3046     		mov	r0, r6
+ 214 00d8 FFF7FEFF 		bl	__aeabi_atexit
+ 215              	.LVL24:
+  47:Core/Src/parts/processor.cpp **** Robo_States gStateK(&gStateK_Data, &gStateL);
+ 216              		.loc 3 47 0
+ 217 00dc 244F     		ldr	r7, .L11+80
+ 218 00de 254E     		ldr	r6, .L11+84
+ 219 00e0 3A46     		mov	r2, r7
+ 220 00e2 2549     		ldr	r1, .L11+88
+ 221 00e4 3046     		mov	r0, r6
+ 222 00e6 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 223              	.LVL25:
+ 224 00ea 2A46     		mov	r2, r5
+ 225 00ec 2146     		mov	r1, r4
+ 226 00ee 3046     		mov	r0, r6
+ 227 00f0 FFF7FEFF 		bl	__aeabi_atexit
+ 228              	.LVL26:
+  48:Core/Src/parts/processor.cpp **** Robo_States gStateL(&gStateL_Data, &gStateL);
+ 229              		.loc 3 48 0
+ 230 00f4 214E     		ldr	r6, .L11+92
+ 231 00f6 3246     		mov	r2, r6
+ 232 00f8 2149     		ldr	r1, .L11+96
+ 233 00fa 3846     		mov	r0, r7
+ 234 00fc FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 235              	.LVL27:
+ 236 0100 2A46     		mov	r2, r5
+ 237 0102 2146     		mov	r1, r4
+ 238 0104 3846     		mov	r0, r7
+ 239 0106 FFF7FEFF 		bl	__aeabi_atexit
+ 240              	.LVL28:
+  49:Core/Src/parts/processor.cpp **** 
+ 241              		.loc 3 49 0
+ 242 010a 3246     		mov	r2, r6
+ 243 010c 1D49     		ldr	r1, .L11+100
+ 244 010e 3046     		mov	r0, r6
+ 245 0110 FFF7FEFF 		bl	_ZN11Robo_StatesC1EP10State_VarsPS_
+ 246              	.LVL29:
+ 247 0114 2A46     		mov	r2, r5
+ 248 0116 2146     		mov	r1, r4
+ 249 0118 3046     		mov	r0, r6
+ 250 011a FFF7FEFF 		bl	__aeabi_atexit
+ 251              	.LVL30:
+ 252              		.loc 3 117 0
+ 253 011e 77E7     		b	.L3
+ 254              	.L12:
+ 255              		.align	2
+ 256              	.L11:
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 9
+
+
+ 257 0120 00000000 		.word	.LANCHOR0
+ 258 0124 00000000 		.word	.LANCHOR1
+ 259 0128 00000000 		.word	gStateA_Data
+ 260 012c 00000000 		.word	__dso_handle
+ 261 0130 00000000 		.word	_ZN11Robo_StatesD1Ev
+ 262 0134 00000000 		.word	.LANCHOR2
+ 263 0138 00000000 		.word	gStateB_Data
+ 264 013c 00000000 		.word	.LANCHOR3
+ 265 0140 00000000 		.word	gStateC_Data
+ 266 0144 00000000 		.word	.LANCHOR4
+ 267 0148 00000000 		.word	gStateD_Data
+ 268 014c 00000000 		.word	.LANCHOR5
+ 269 0150 00000000 		.word	gStateE_Data
+ 270 0154 00000000 		.word	.LANCHOR6
+ 271 0158 00000000 		.word	gStateF_Data
+ 272 015c 00000000 		.word	.LANCHOR7
+ 273 0160 00000000 		.word	gStateG_Data
+ 274 0164 00000000 		.word	.LANCHOR8
+ 275 0168 00000000 		.word	gStateH_Data
+ 276 016c 00000000 		.word	gStateI_Data
+ 277 0170 00000000 		.word	.LANCHOR9
+ 278 0174 00000000 		.word	.LANCHOR10
+ 279 0178 00000000 		.word	gStateJ_Data
+ 280 017c 00000000 		.word	.LANCHOR11
+ 281 0180 00000000 		.word	gStateK_Data
+ 282 0184 00000000 		.word	gStateL_Data
+ 283              		.cfi_endproc
+ 284              	.LFE519:
+ 286              		.section	.text._ZN9Processor12get_InstanceEP12State_Sensor,"ax",%progbits
+ 287              		.align	1
+ 288              		.global	_ZN9Processor12get_InstanceEP12State_Sensor
+ 289              		.syntax unified
+ 290              		.thumb
+ 291              		.thumb_func
+ 292              		.fpu fpv4-sp-d16
+ 294              	_ZN9Processor12get_InstanceEP12State_Sensor:
+ 295              	.LFB497:
+  54:Core/Src/parts/processor.cpp ****         static Processor sRobo_CPU;
+ 296              		.loc 3 54 0
+ 297              		.cfi_startproc
+ 298              		@ args = 0, pretend = 0, frame = 0
+ 299              		@ frame_needed = 0, uses_anonymous_args = 0
+ 300              	.LVL31:
+ 301 0000 38B5     		push	{r3, r4, r5, lr}
+ 302              	.LCFI1:
+ 303              		.cfi_def_cfa_offset 16
+ 304              		.cfi_offset 3, -16
+ 305              		.cfi_offset 4, -12
+ 306              		.cfi_offset 5, -8
+ 307              		.cfi_offset 14, -4
+ 308 0002 0446     		mov	r4, r0
+  55:Core/Src/parts/processor.cpp ****         
+ 309              		.loc 3 55 0
+ 310 0004 114B     		ldr	r3, .L17
+ 311 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 312 0008 BFF35B8F 		dmb	ish
+ 313 000c 13F0010F 		tst	r3, #1
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 10
+
+
+ 314 0010 06D0     		beq	.L16
+ 315              	.LVL32:
+ 316              	.L14:
+  57:Core/Src/parts/processor.cpp **** 
+ 317              		.loc 3 57 0
+ 318 0012 FFF7FEFF 		bl	_Z14init_GameFieldv
+ 319              	.LVL33:
+  59:Core/Src/parts/processor.cpp ****         sRobo_CPU.sensor_ = sen;
+ 320              		.loc 3 59 0
+ 321 0016 0E48     		ldr	r0, .L17+4
+ 322 0018 0E4B     		ldr	r3, .L17+8
+ 323 001a 0360     		str	r3, [r0]
+  60:Core/Src/parts/processor.cpp ****         
+ 324              		.loc 3 60 0
+ 325 001c 4460     		str	r4, [r0, #4]
+  63:Core/Src/parts/processor.cpp **** 
+ 326              		.loc 3 63 0
+ 327 001e 38BD     		pop	{r3, r4, r5, pc}
+ 328              	.LVL34:
+ 329              	.L16:
+  55:Core/Src/parts/processor.cpp ****         
+ 330              		.loc 3 55 0 discriminator 1
+ 331 0020 0A48     		ldr	r0, .L17
+ 332              	.LVL35:
+ 333 0022 FFF7FEFF 		bl	__cxa_guard_acquire
+ 334              	.LVL36:
+ 335 0026 0028     		cmp	r0, #0
+ 336 0028 F3D0     		beq	.L14
+ 337              	.LVL37:
+ 338              	.LBB107:
+ 339              	.LBB108:
+ 340              	.LBB109:
+ 341              	.LBB110:
+ 342              	.LBB111:
+ 343              	.LBB112:
+ 344              	.LBB113:
+ 345              	.LBB114:
+ 346              		.file 4 "Core/Inc/utils\\math/vec3.h"
+   1:Core/Inc/utils\math/vec3.h **** /*
+   2:Core/Inc/utils\math/vec3.h ****  * vec3.h
+   3:Core/Inc/utils\math/vec3.h ****  * 
+   4:Core/Inc/utils\math/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils\math/vec3.h ****  *  Author : n-is
+   6:Core/Inc/utils\math/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils\math/vec3.h ****  */
+   8:Core/Inc/utils\math/vec3.h **** 
+   9:Core/Inc/utils\math/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc/utils\math/vec3.h **** #define _VEC3_H_
+  11:Core/Inc/utils\math/vec3.h **** 
+  12:Core/Inc/utils\math/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils\math/vec3.h **** #include "main.h"
+  14:Core/Inc/utils\math/vec3.h **** 
+  15:Core/Inc/utils\math/vec3.h **** template <typename T>
+  16:Core/Inc/utils\math/vec3.h **** void swap_Element(T &first, T &second)
+  17:Core/Inc/utils\math/vec3.h **** {
+  18:Core/Inc/utils\math/vec3.h ****         T temp = first;
+  19:Core/Inc/utils\math/vec3.h ****         first = second;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 11
+
+
+  20:Core/Inc/utils\math/vec3.h ****         second = temp;
+  21:Core/Inc/utils\math/vec3.h **** }
+  22:Core/Inc/utils\math/vec3.h **** 
+  23:Core/Inc/utils\math/vec3.h **** template <class T>
+  24:Core/Inc/utils\math/vec3.h **** class Vec3
+  25:Core/Inc/utils\math/vec3.h **** {
+  26:Core/Inc/utils\math/vec3.h **** public:
+  27:Core/Inc/utils\math/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  28:Core/Inc/utils\math/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  29:Core/Inc/utils\math/vec3.h **** 
+  30:Core/Inc/utils\math/vec3.h ****         Vec3(Vec3 &&) = default;
+  31:Core/Inc/utils\math/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  32:Core/Inc/utils\math/vec3.h ****         ~Vec3() { }
+  33:Core/Inc/utils\math/vec3.h **** 
+  34:Core/Inc/utils\math/vec3.h ****         T getX() const { return x_; }
+  35:Core/Inc/utils\math/vec3.h ****         T getY() const { return y_; }
+  36:Core/Inc/utils\math/vec3.h ****         T getZ() const { return z_; }
+  37:Core/Inc/utils\math/vec3.h ****         void setX(T x) { x_ = x; }
+ 347              		.loc 4 37 0 discriminator 2
+ 348 002a 094D     		ldr	r5, .L17+4
+ 349 002c 0023     		movs	r3, #0
+ 350 002e EB60     		str	r3, [r5, #12]	@ float
+ 351              	.LVL38:
+ 352              	.LBE114:
+ 353              	.LBE113:
+ 354              	.LBB115:
+ 355              	.LBB116:
+  38:Core/Inc/utils\math/vec3.h ****         void setY(T y) { y_ = y; }
+ 356              		.loc 4 38 0 discriminator 2
+ 357 0030 2B61     		str	r3, [r5, #16]	@ float
+ 358              	.LVL39:
+ 359              	.LBE116:
+ 360              	.LBE115:
+ 361              	.LBB117:
+ 362              	.LBB118:
+  39:Core/Inc/utils\math/vec3.h ****         void setZ(T z) { z_ = z; }
+ 363              		.loc 4 39 0 discriminator 2
+ 364 0032 6B61     		str	r3, [r5, #20]	@ float
+ 365              	.LVL40:
+ 366              	.LBE118:
+ 367              	.LBE117:
+ 368              	.LBE112:
+ 369              	.LBE111:
+ 370              	.LBE110:
+  23:Core/Inc/parts/processor.h **** 
+  24:Core/Inc/parts/processor.h ****         static Processor& get_Instance(State_Sensor *sen);
+  25:Core/Inc/parts/processor.h ****         
+  26:Core/Inc/parts/processor.h ****         int init(uint32_t dt_millis);
+  27:Core/Inc/parts/processor.h ****         Vec3<float> process(Vec3<float> state, State_Vars *robot_state_vars_, uint32_t dt_millis);
+  28:Core/Inc/parts/processor.h **** 
+  29:Core/Inc/parts/processor.h **** private:
+  30:Core/Inc/parts/processor.h ****         Robo_States *curr_state_;
+  31:Core/Inc/parts/processor.h ****         State_Sensor *sensor_;
+  32:Core/Inc/parts/processor.h ****         bool is_first_;
+  33:Core/Inc/parts/processor.h ****         Vec3<float> first_state_;
+  34:Core/Inc/parts/processor.h ****         
+  35:Core/Inc/parts/processor.h ****         Processor() { is_first_ = true; }
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 12
+
+
+ 371              		.loc 2 35 0 discriminator 2
+ 372 0034 0123     		movs	r3, #1
+ 373 0036 2B72     		strb	r3, [r5, #8]
+ 374              	.LVL41:
+ 375              	.LBE109:
+ 376              	.LBE108:
+ 377              	.LBE107:
+  55:Core/Src/parts/processor.cpp ****         
+ 378              		.loc 3 55 0 discriminator 2
+ 379 0038 0448     		ldr	r0, .L17
+ 380 003a FFF7FEFF 		bl	__cxa_guard_release
+ 381              	.LVL42:
+ 382 003e 064A     		ldr	r2, .L17+12
+ 383 0040 0649     		ldr	r1, .L17+16
+ 384 0042 2846     		mov	r0, r5
+ 385 0044 FFF7FEFF 		bl	__aeabi_atexit
+ 386              	.LVL43:
+ 387 0048 E3E7     		b	.L14
+ 388              	.L18:
+ 389 004a 00BF     		.align	2
+ 390              	.L17:
+ 391 004c 00000000 		.word	.LANCHOR12
+ 392 0050 00000000 		.word	.LANCHOR13
+ 393 0054 00000000 		.word	.LANCHOR1
+ 394 0058 00000000 		.word	__dso_handle
+ 395 005c 00000000 		.word	_ZN9ProcessorD1Ev
+ 396              		.cfi_endproc
+ 397              	.LFE497:
+ 399              		.section	.text._ZN9Processor4initEm,"ax",%progbits
+ 400              		.align	1
+ 401              		.global	_ZN9Processor4initEm
+ 402              		.syntax unified
+ 403              		.thumb
+ 404              		.thumb_func
+ 405              		.fpu fpv4-sp-d16
+ 407              	_ZN9Processor4initEm:
+ 408              	.LFB498:
+  66:Core/Src/parts/processor.cpp ****         return 0;
+ 409              		.loc 3 66 0
+ 410              		.cfi_startproc
+ 411              		@ args = 0, pretend = 0, frame = 0
+ 412              		@ frame_needed = 0, uses_anonymous_args = 0
+ 413              		@ link register save eliminated.
+ 414              	.LVL44:
+  68:Core/Src/parts/processor.cpp **** 
+ 415              		.loc 3 68 0
+ 416 0000 0020     		movs	r0, #0
+ 417              	.LVL45:
+ 418 0002 7047     		bx	lr
+ 419              		.cfi_endproc
+ 420              	.LFE498:
+ 422              		.section	.text._ZN9Processor12update_StateEv,"ax",%progbits
+ 423              		.align	1
+ 424              		.global	_ZN9Processor12update_StateEv
+ 425              		.syntax unified
+ 426              		.thumb
+ 427              		.thumb_func
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 13
+
+
+ 428              		.fpu fpv4-sp-d16
+ 430              	_ZN9Processor12update_StateEv:
+ 431              	.LFB500:
+ 115:Core/Src/parts/processor.cpp ****         curr_state_ = curr_state_->get_NextState();
+ 432              		.loc 3 115 0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436              		@ link register save eliminated.
+ 437              	.LVL46:
+ 116:Core/Src/parts/processor.cpp **** }
+ 438              		.loc 3 116 0
+ 439 0000 0368     		ldr	r3, [r0]
+ 440              	.LVL47:
+ 441              	.LBB119:
+ 442              	.LBB120:
+  55:Core/Inc/parts/processor/robo_states.h **** 
+  56:Core/Inc/parts/processor/robo_states.h ****         float calc_RoboVelocity();
+  57:Core/Inc/parts/processor/robo_states.h ****         float calc_AngleOfAttack(Vec3<float> state, float v, uint32_t dt_millis);
+  58:Core/Inc/parts/processor/robo_states.h ****         bool nextStateReached(Vec3<float> state);
+  59:Core/Inc/parts/processor/robo_states.h **** 
+  60:Core/Inc/parts/processor/robo_states.h ****         Robo_States* get_NextState() { return next_state_; }
+ 443              		.loc 1 60 0
+ 444 0002 5B68     		ldr	r3, [r3, #4]
+ 445              	.LVL48:
+ 446              	.LBE120:
+ 447              	.LBE119:
+ 116:Core/Src/parts/processor.cpp **** }
+ 448              		.loc 3 116 0
+ 449 0004 0360     		str	r3, [r0]
+ 450              		.loc 3 117 0
+ 451 0006 7047     		bx	lr
+ 452              		.cfi_endproc
+ 453              	.LFE500:
+ 455              		.global	__aeabi_f2d
+ 456              		.global	__aeabi_dmul
+ 457              		.global	__aeabi_d2f
+ 458              		.section	.text._ZN9Processor7processE4Vec3IfEP10State_Varsm,"ax",%progbits
+ 459              		.align	1
+ 460              		.global	_ZN9Processor7processE4Vec3IfEP10State_Varsm
+ 461              		.syntax unified
+ 462              		.thumb
+ 463              		.thumb_func
+ 464              		.fpu fpv4-sp-d16
+ 466              	_ZN9Processor7processE4Vec3IfEP10State_Varsm:
+ 467              	.LFB499:
+  73:Core/Src/parts/processor.cpp ****         Vec3<float> vel(0, 0, 0);
+ 468              		.loc 3 73 0
+ 469              		.cfi_startproc
+ 470              		@ args = 4, pretend = 0, frame = 24
+ 471              		@ frame_needed = 0, uses_anonymous_args = 0
+ 472              	.LVL49:
+ 473 0000 70B5     		push	{r4, r5, r6, lr}
+ 474              	.LCFI2:
+ 475              		.cfi_def_cfa_offset 16
+ 476              		.cfi_offset 4, -16
+ 477              		.cfi_offset 5, -12
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 14
+
+
+ 478              		.cfi_offset 6, -8
+ 479              		.cfi_offset 14, -4
+ 480 0002 2DED068B 		vpush.64	{d8, d9, d10}
+ 481              	.LCFI3:
+ 482              		.cfi_def_cfa_offset 40
+ 483              		.cfi_offset 80, -40
+ 484              		.cfi_offset 81, -36
+ 485              		.cfi_offset 82, -32
+ 486              		.cfi_offset 83, -28
+ 487              		.cfi_offset 84, -24
+ 488              		.cfi_offset 85, -20
+ 489 0006 86B0     		sub	sp, sp, #24
+ 490              	.LCFI4:
+ 491              		.cfi_def_cfa_offset 64
+ 492 0008 0446     		mov	r4, r0
+ 493 000a 0E46     		mov	r6, r1
+ 494 000c 1546     		mov	r5, r2
+ 495              	.LVL50:
+ 496              	.LBB121:
+ 497              	.LBB122:
+ 498              	.LBB123:
+ 499              	.LBB124:
+  37:Core/Inc/utils\math/vec3.h ****         void setY(T y) { y_ = y; }
+ 500              		.loc 4 37 0
+ 501 000e 0023     		movs	r3, #0
+ 502              	.LVL51:
+ 503 0010 0360     		str	r3, [r0]	@ float
+ 504              	.LVL52:
+ 505              	.LBE124:
+ 506              	.LBE123:
+ 507              	.LBB125:
+ 508              	.LBB126:
+  38:Core/Inc/utils\math/vec3.h ****         void setZ(T z) { z_ = z; }
+ 509              		.loc 4 38 0
+ 510 0012 4360     		str	r3, [r0, #4]	@ float
+ 511              	.LVL53:
+ 512              	.LBE126:
+ 513              	.LBE125:
+ 514              	.LBB127:
+ 515              	.LBB128:
+ 516              		.loc 4 39 0
+ 517 0014 8360     		str	r3, [r0, #8]	@ float
+ 518              	.LVL54:
+ 519              	.LBE128:
+ 520              	.LBE127:
+ 521              	.LBE122:
+ 522              	.LBE121:
+ 523              	.LBB129:
+  76:Core/Src/parts/processor.cpp ****                 gFirstHeading = state.getZ();
+ 524              		.loc 3 76 0
+ 525 0016 0B7A     		ldrb	r3, [r1, #8]	@ zero_extendqisi2
+ 526 0018 4BB1     		cbz	r3, .L22
+ 527              	.LVL55:
+ 528              	.LBB130:
+ 529              	.LBB131:
+  36:Core/Inc/utils\math/vec3.h ****         void setX(T x) { x_ = x; }
+ 530              		.loc 4 36 0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 15
+
+
+ 531 001a 9268     		ldr	r2, [r2, #8]	@ float
+ 532              	.LVL56:
+ 533              	.LBE131:
+ 534              	.LBE130:
+  77:Core/Src/parts/processor.cpp ****                 is_first_ = false;
+ 535              		.loc 3 77 0
+ 536 001c 3E4B     		ldr	r3, .L27+8
+ 537 001e 1A60     		str	r2, [r3]	@ float
+  78:Core/Src/parts/processor.cpp ****         }
+ 538              		.loc 3 78 0
+ 539 0020 0023     		movs	r3, #0
+ 540 0022 0B72     		strb	r3, [r1, #8]
+ 541              	.LVL57:
+ 542              	.L21:
+ 543              	.LBE129:
+ 112:Core/Src/parts/processor.cpp **** 
+ 544              		.loc 3 112 0
+ 545 0024 2046     		mov	r0, r4
+ 546 0026 06B0     		add	sp, sp, #24
+ 547              	.LCFI5:
+ 548              		.cfi_remember_state
+ 549              		.cfi_def_cfa_offset 40
+ 550              		@ sp needed
+ 551 0028 BDEC068B 		vldm	sp!, {d8-d10}
+ 552              	.LCFI6:
+ 553              		.cfi_restore 84
+ 554              		.cfi_restore 85
+ 555              		.cfi_restore 82
+ 556              		.cfi_restore 83
+ 557              		.cfi_restore 80
+ 558              		.cfi_restore 81
+ 559              		.cfi_def_cfa_offset 16
+ 560 002c 70BD     		pop	{r4, r5, r6, pc}
+ 561              	.LVL58:
+ 562              	.L22:
+ 563              	.LCFI7:
+ 564              		.cfi_restore_state
+ 565              	.LBB163:
+ 566              	.LBB132:
+ 567              	.LBB133:
+ 568              	.LBB134:
+ 569              	.LBB135:
+  40:Core/Inc/utils\math/vec3.h **** 
+  41:Core/Inc/utils\math/vec3.h ****         void set_Values(T x, T y, T z) {
+  42:Core/Inc/utils\math/vec3.h ****                 setX(x);
+  43:Core/Inc/utils\math/vec3.h ****                 setY(y);
+  44:Core/Inc/utils\math/vec3.h ****                 setZ(z);
+  45:Core/Inc/utils\math/vec3.h ****         }
+  46:Core/Inc/utils\math/vec3.h **** 
+  47:Core/Inc/utils\math/vec3.h **** 
+  48:Core/Inc/utils\math/vec3.h ****         Vec3 mult_EW(float num) {
+  49:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(*this);
+  50:Core/Inc/utils\math/vec3.h ****                 temp.x_ *= num;
+  51:Core/Inc/utils\math/vec3.h ****                 temp.y_ *= num;
+  52:Core/Inc/utils\math/vec3.h ****                 temp.z_ *= num;
+  53:Core/Inc/utils\math/vec3.h **** 
+  54:Core/Inc/utils\math/vec3.h ****                 return temp;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 16
+
+
+  55:Core/Inc/utils\math/vec3.h ****         }
+  56:Core/Inc/utils\math/vec3.h **** 
+  57:Core/Inc/utils\math/vec3.h ****         template <typename T1>
+  58:Core/Inc/utils\math/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  59:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(v);
+  60:Core/Inc/utils\math/vec3.h ****                 temp.x_ *= x_;
+  61:Core/Inc/utils\math/vec3.h ****                 temp.y_ *= y_;
+  62:Core/Inc/utils\math/vec3.h ****                 temp.z_ *= z_;
+  63:Core/Inc/utils\math/vec3.h **** 
+  64:Core/Inc/utils\math/vec3.h ****                 return temp;
+  65:Core/Inc/utils\math/vec3.h ****         }
+  66:Core/Inc/utils\math/vec3.h **** 
+  67:Core/Inc/utils\math/vec3.h **** 
+  68:Core/Inc/utils\math/vec3.h ****         Vec3 add_EW(float num) {
+  69:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(*this);
+  70:Core/Inc/utils\math/vec3.h ****                 temp.x_ += num;
+  71:Core/Inc/utils\math/vec3.h ****                 temp.y_ += num;
+  72:Core/Inc/utils\math/vec3.h ****                 temp.z_ += num;
+  73:Core/Inc/utils\math/vec3.h **** 
+  74:Core/Inc/utils\math/vec3.h ****                 return temp;
+  75:Core/Inc/utils\math/vec3.h ****         }
+  76:Core/Inc/utils\math/vec3.h **** 
+  77:Core/Inc/utils\math/vec3.h ****         template <typename T1>
+  78:Core/Inc/utils\math/vec3.h ****         Vec3 add_EW(Vec3<T1> v) {
+  79:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(v);
+  80:Core/Inc/utils\math/vec3.h ****                 temp.x_ += x_;
+  81:Core/Inc/utils\math/vec3.h ****                 temp.y_ += y_;
+  82:Core/Inc/utils\math/vec3.h ****                 temp.z_ += z_;
+  83:Core/Inc/utils\math/vec3.h **** 
+  84:Core/Inc/utils\math/vec3.h ****                 return temp;
+  85:Core/Inc/utils\math/vec3.h ****         }
+  86:Core/Inc/utils\math/vec3.h **** 
+  87:Core/Inc/utils\math/vec3.h **** 
+  88:Core/Inc/utils\math/vec3.h ****         Vec3 sub_EW(float num) {
+  89:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(*this);
+  90:Core/Inc/utils\math/vec3.h ****                 temp.x_ -= num;
+  91:Core/Inc/utils\math/vec3.h ****                 temp.y_ -= num;
+  92:Core/Inc/utils\math/vec3.h ****                 temp.z_ -= num;
+  93:Core/Inc/utils\math/vec3.h **** 
+  94:Core/Inc/utils\math/vec3.h ****                 return temp;
+  95:Core/Inc/utils\math/vec3.h ****         }
+  96:Core/Inc/utils\math/vec3.h **** 
+  97:Core/Inc/utils\math/vec3.h ****         template <typename T1>
+  98:Core/Inc/utils\math/vec3.h ****         Vec3 sub_EW(Vec3<T1> v) {
+  99:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(v);
+ 100:Core/Inc/utils\math/vec3.h ****                 temp.x_ -= x_;
+ 101:Core/Inc/utils\math/vec3.h ****                 temp.y_ -= y_;
+ 102:Core/Inc/utils\math/vec3.h ****                 temp.z_ -= z_;
+ 103:Core/Inc/utils\math/vec3.h **** 
+ 104:Core/Inc/utils\math/vec3.h ****                 return temp;
+ 105:Core/Inc/utils\math/vec3.h ****         }
+ 106:Core/Inc/utils\math/vec3.h **** 
+ 107:Core/Inc/utils\math/vec3.h **** 
+ 108:Core/Inc/utils\math/vec3.h ****         Vec3 div_EW(float num) {
+ 109:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(*this);
+ 110:Core/Inc/utils\math/vec3.h ****                 temp.x_ /= (float)num;
+ 111:Core/Inc/utils\math/vec3.h ****                 temp.y_ /= (float)num;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 17
+
+
+ 112:Core/Inc/utils\math/vec3.h ****                 temp.z_ /= (float)num;
+ 113:Core/Inc/utils\math/vec3.h **** 
+ 114:Core/Inc/utils\math/vec3.h ****                 return temp;
+ 115:Core/Inc/utils\math/vec3.h ****         }
+ 116:Core/Inc/utils\math/vec3.h **** 
+ 117:Core/Inc/utils\math/vec3.h ****         template <typename T1>
+ 118:Core/Inc/utils\math/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+ 119:Core/Inc/utils\math/vec3.h ****                 Vec3 temp(*this);
+ 120:Core/Inc/utils\math/vec3.h ****                 temp.x_ /= (float)v.x_;
+ 121:Core/Inc/utils\math/vec3.h ****                 temp.y_ /= (float)v.y_;
+ 122:Core/Inc/utils\math/vec3.h ****                 temp.z_ /= (float)v.z_;
+ 123:Core/Inc/utils\math/vec3.h **** 
+ 124:Core/Inc/utils\math/vec3.h ****                 return temp;
+ 125:Core/Inc/utils\math/vec3.h ****         }
+ 126:Core/Inc/utils\math/vec3.h **** 
+ 127:Core/Inc/utils\math/vec3.h ****         
+ 128:Core/Inc/utils\math/vec3.h ****         Vec3(const Vec3 &v) {
+ 129:Core/Inc/utils\math/vec3.h ****                 x_ = v.x_;
+ 570              		.loc 4 129 0
+ 571 002e 1368     		ldr	r3, [r2]	@ float
+ 572 0030 0093     		str	r3, [sp]	@ float
+ 130:Core/Inc/utils\math/vec3.h ****                 y_ = v.y_;
+ 573              		.loc 4 130 0
+ 574 0032 5368     		ldr	r3, [r2, #4]	@ float
+ 575 0034 0193     		str	r3, [sp, #4]	@ float
+ 131:Core/Inc/utils\math/vec3.h ****                 z_ = v.z_;
+ 576              		.loc 4 131 0
+ 577 0036 9368     		ldr	r3, [r2, #8]	@ float
+ 578 0038 0293     		str	r3, [sp, #8]	@ float
+ 579              	.LVL59:
+ 580              	.LBE135:
+ 581              	.LBE134:
+ 582              	.LBE133:
+  82:Core/Src/parts/processor.cpp ****                         printf("Here!!");
+ 583              		.loc 3 82 0
+ 584 003a 6946     		mov	r1, sp
+ 585              	.LVL60:
+ 586 003c 3068     		ldr	r0, [r6]
+ 587              	.LVL61:
+ 588 003e FFF7FEFF 		bl	_ZN11Robo_States16nextStateReachedE4Vec3IfE
+ 589              	.LVL62:
+ 590 0042 0028     		cmp	r0, #0
+ 591 0044 55D1     		bne	.L26
+ 592              	.L24:
+  88:Core/Src/parts/processor.cpp ****                 float theta = curr_state_->calc_AngleOfAttack(state, v, dt_millis);
+ 593              		.loc 3 88 0
+ 594 0046 3068     		ldr	r0, [r6]
+ 595 0048 FFF7FEFF 		bl	_ZN11Robo_States17calc_RoboVelocityEv
+ 596              	.LVL63:
+ 597 004c B0EE408A 		vmov.f32	s16, s0
+ 598              	.LVL64:
+  89:Core/Src/parts/processor.cpp **** 
+ 599              		.loc 3 89 0
+ 600 0050 3068     		ldr	r0, [r6]
+ 601              	.LVL65:
+ 602              	.LBB136:
+ 603              	.LBB137:
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 18
+
+
+ 604              	.LBB138:
+ 129:Core/Inc/utils\math/vec3.h ****                 y_ = v.y_;
+ 605              		.loc 4 129 0
+ 606 0052 2B68     		ldr	r3, [r5]	@ float
+ 607 0054 0393     		str	r3, [sp, #12]	@ float
+ 130:Core/Inc/utils\math/vec3.h ****                 z_ = v.z_;
+ 608              		.loc 4 130 0
+ 609 0056 6B68     		ldr	r3, [r5, #4]	@ float
+ 610 0058 0493     		str	r3, [sp, #16]	@ float
+ 611              		.loc 4 131 0
+ 612 005a AB68     		ldr	r3, [r5, #8]	@ float
+ 613 005c 0593     		str	r3, [sp, #20]	@ float
+ 614              	.LVL66:
+ 615              	.LBE138:
+ 616              	.LBE137:
+ 617              	.LBE136:
+  89:Core/Src/parts/processor.cpp **** 
+ 618              		.loc 3 89 0
+ 619 005e 109A     		ldr	r2, [sp, #64]
+ 620 0060 03A9     		add	r1, sp, #12
+ 621 0062 FFF7FEFF 		bl	_ZN11Robo_States18calc_AngleOfAttackE4Vec3IfEfm
+ 622              	.LVL67:
+ 623 0066 B0EE40AA 		vmov.f32	s20, s0
+ 624              	.LVL68:
+ 625              	.LBB139:
+ 626              	.LBB140:
+  36:Core/Inc/utils\math/vec3.h ****         void setX(T x) { x_ = x; }
+ 627              		.loc 4 36 0
+ 628 006a D5ED027A 		vldr.32	s15, [r5, #8]
+ 629              	.LVL69:
+ 630              	.LBE140:
+ 631              	.LBE139:
+  95:Core/Src/parts/processor.cpp **** 
+ 632              		.loc 3 95 0
+ 633 006e 2A4B     		ldr	r3, .L27+8
+ 634 0070 93ED007A 		vldr.32	s14, [r3]
+ 635 0074 77EEC77A 		vsub.f32	s15, s15, s14
+ 636              	.LVL70:
+  99:Core/Src/parts/processor.cpp ****                 phi = atan2(sin(phi), cos(phi));
+ 637              		.loc 3 99 0
+ 638 0078 9FED287A 		vldr.32	s14, .L27+12
+ 639 007c C7EE878A 		vdiv.f32	s17, s15, s14
+ 640              	.LVL71:
+ 641              	.LBB141:
+ 642              	.LBB142:
+ 643              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+   1:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // -*- C++ -*- C forwarding header.
+   2:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+   3:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Copyright (C) 1997-2017 Free Software Foundation, Inc.
+   4:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+   5:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This file is part of the GNU ISO C++ Library.  This library is free
+   6:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // software; you can redistribute it and/or modify it under the
+   7:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // terms of the GNU General Public License as published by the
+   8:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Free Software Foundation; either version 3, or (at your option)
+   9:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // any later version.
+  10:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  11:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This library is distributed in the hope that it will be useful,
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 19
+
+
+  12:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  13:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  14:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // GNU General Public License for more details.
+  15:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  16:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Under Section 7 of GPL version 3, you are granted additional
+  17:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // permissions described in the GCC Runtime Library Exception, version
+  18:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // 3.1, as published by the Free Software Foundation.
+  19:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  20:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // You should have received a copy of the GNU General Public License and
+  21:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // a copy of the GCC Runtime Library Exception along with this program;
+  22:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+  23:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // <http://www.gnu.org/licenses/>.
+  24:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  25:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** /** @file include/cmath
+  26:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is a Standard C++ Library file.  You should @c \#include this file
+  27:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  in your programs, rather than any of the @a *.h implementation files.
+  28:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *
+  29:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is the C++ version of the Standard C Library header @c math.h,
+  30:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  and its contents are (mostly) the same as that header, but are all
+  31:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  contained in the namespace @c std (except for names which are defined
+  32:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  as macros in C).
+  33:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  */
+  34:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  35:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+  36:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // ISO C++ 14882: 26.5  C library
+  37:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
+  38:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  39:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #pragma GCC system_header
+  40:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  41:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/c++config.h>
+  42:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/cpp_type_traits.h>
+  43:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <ext/type_traits.h>
+  44:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+  45:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include_next <math.h>
+  46:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+  47:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/std_abs.h>
+  48:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  49:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef _GLIBCXX_CMATH
+  50:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_CMATH 1
+  51:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  52:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Get rid of those macros defined in <math.h> in lieu of real functions.
+  53:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef div
+  54:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef acos
+  55:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef asin
+  56:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan
+  57:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan2
+  58:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ceil
+  59:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cos
+  60:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cosh
+  61:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef exp
+  62:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fabs
+  63:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef floor
+  64:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fmod
+  65:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef frexp
+  66:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ldexp
+  67:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log
+  68:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log10
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 20
+
+
+  69:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef modf
+  70:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef pow
+  71:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sin
+  72:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sinh
+  73:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sqrt
+  74:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tan
+  75:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tanh
+  76:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  77:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** extern "C++"
+  78:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
+  79:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** namespace std _GLIBCXX_VISIBILITY(default)
+  80:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
+  81:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** _GLIBCXX_BEGIN_NAMESPACE_VERSION
+  82:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  83:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::acos;
+  84:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  85:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+  86:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+  87:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(float __x)
+  88:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosf(__x); }
+  89:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  90:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+  91:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(long double __x)
+  92:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosl(__x); }
+  93:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+  94:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+  95:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+  96:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+  97:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+  98:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+  99:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     acos(_Tp __x)
+ 100:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_acos(__x); }
+ 101:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 102:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::asin;
+ 103:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 104:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 105:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 106:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(float __x)
+ 107:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinf(__x); }
+ 108:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 109:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 110:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(long double __x)
+ 111:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinl(__x); }
+ 112:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 113:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 114:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 115:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 116:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 117:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 118:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     asin(_Tp __x)
+ 119:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_asin(__x); }
+ 120:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 121:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan;
+ 122:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 123:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 124:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 125:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(float __x)
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 21
+
+
+ 126:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanf(__x); }
+ 127:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 128:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 129:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(long double __x)
+ 130:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanl(__x); }
+ 131:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 132:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 133:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 134:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 135:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 136:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 137:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan(_Tp __x)
+ 138:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_atan(__x); }
+ 139:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 140:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan2;
+ 141:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 142:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 143:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 144:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(float __y, float __x)
+ 145:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2f(__y, __x); }
+ 146:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 147:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 148:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(long double __y, long double __x)
+ 149:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2l(__y, __x); }
+ 150:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 151:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 152:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 153:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 154:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 155:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan2(_Tp __y, _Up __x)
+ 156:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 157:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 158:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return atan2(__type(__y), __type(__x));
+ 159:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 160:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 161:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::ceil;
+ 162:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 163:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 164:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 165:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(float __x)
+ 166:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceilf(__x); }
+ 167:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 168:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 169:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(long double __x)
+ 170:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceill(__x); }
+ 171:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 172:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 173:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 174:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 175:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 176:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 177:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     ceil(_Tp __x)
+ 178:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_ceil(__x); }
+ 179:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 180:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::cos;
+ 181:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 182:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 22
+
+
+ 183:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 184:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cos(float __x)
+ 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_cosf(__x); }
+ 186:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 187:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 188:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cos(long double __x)
+ 189:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_cosl(__x); }
+ 190:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 191:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 192:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 193:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 194:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 195:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 196:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     cos(_Tp __x)
+ 197:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_cos(__x); }
+ 198:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 199:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::cosh;
+ 200:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 201:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 202:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 203:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cosh(float __x)
+ 204:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_coshf(__x); }
+ 205:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 206:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 207:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cosh(long double __x)
+ 208:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_coshl(__x); }
+ 209:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 210:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 211:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 212:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 213:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 214:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 215:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     cosh(_Tp __x)
+ 216:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_cosh(__x); }
+ 217:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 218:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::exp;
+ 219:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 220:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 221:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 222:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   exp(float __x)
+ 223:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_expf(__x); }
+ 224:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 225:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 226:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   exp(long double __x)
+ 227:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_expl(__x); }
+ 228:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 229:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 230:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 231:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 232:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 233:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 234:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     exp(_Tp __x)
+ 235:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_exp(__x); }
+ 236:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 237:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::fabs;
+ 238:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 239:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 23
+
+
+ 240:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 241:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fabs(float __x)
+ 242:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fabsf(__x); }
+ 243:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 244:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 245:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fabs(long double __x)
+ 246:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fabsl(__x); }
+ 247:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 248:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 249:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 250:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 251:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 252:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 253:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     fabs(_Tp __x)
+ 254:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_fabs(__x); }
+ 255:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 256:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::floor;
+ 257:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 258:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 259:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 260:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   floor(float __x)
+ 261:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_floorf(__x); }
+ 262:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 263:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 264:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   floor(long double __x)
+ 265:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_floorl(__x); }
+ 266:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 267:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 268:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 269:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 270:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 271:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 272:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     floor(_Tp __x)
+ 273:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_floor(__x); }
+ 274:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 275:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::fmod;
+ 276:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 277:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 278:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 279:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fmod(float __x, float __y)
+ 280:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fmodf(__x, __y); }
+ 281:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 282:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 283:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   fmod(long double __x, long double __y)
+ 284:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_fmodl(__x, __y); }
+ 285:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 286:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 287:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 288:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 289:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 290:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     fmod(_Tp __x, _Up __y)
+ 291:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 292:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 293:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return fmod(__type(__x), __type(__y));
+ 294:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 295:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 296:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::frexp;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 24
+
+
+ 297:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 298:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 299:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 300:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   frexp(float __x, int* __exp)
+ 301:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_frexpf(__x, __exp); }
+ 302:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 303:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 304:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   frexp(long double __x, int* __exp)
+ 305:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_frexpl(__x, __exp); }
+ 306:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 307:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 308:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 309:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 310:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 311:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 312:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     frexp(_Tp __x, int* __exp)
+ 313:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_frexp(__x, __exp); }
+ 314:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 315:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::ldexp;
+ 316:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 317:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 318:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 319:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ldexp(float __x, int __exp)
+ 320:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ldexpf(__x, __exp); }
+ 321:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 322:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 323:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ldexp(long double __x, int __exp)
+ 324:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ldexpl(__x, __exp); }
+ 325:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 326:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 327:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 328:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 329:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 330:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 331:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     ldexp(_Tp __x, int __exp)
+ 332:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_ldexp(__x, __exp); }
+ 333:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 334:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::log;
+ 335:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 336:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 337:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 338:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log(float __x)
+ 339:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_logf(__x); }
+ 340:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 341:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 342:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log(long double __x)
+ 343:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_logl(__x); }
+ 344:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 345:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 346:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 347:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 348:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
+ 349:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 350:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     log(_Tp __x)
+ 351:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_log(__x); }
+ 352:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 353:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::log10;
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 25
+
+
+ 354:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 355:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 356:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 357:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log10(float __x)
+ 358:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_log10f(__x); }
+ 359:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 360:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 361:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   log10(long double __x)
+ 362:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_log10l(__x); }
+ 363:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 364:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 365:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
+ 366:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 367:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
+ 368:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
+ 369:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     log10(_Tp __x)
+ 370:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_log10(__x); }
+ 371:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 372:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::modf;
+ 373:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 374:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 375:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 376:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   modf(float __x, float* __iptr)
+ 377:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_modff(__x, __iptr); }
+ 378:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 379:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 380:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   modf(long double __x, long double* __iptr)
+ 381:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_modfl(__x, __iptr); }
+ 382:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 383:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 384:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::pow;
+ 385:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 386:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 387:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 388:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(float __x, float __y)
+ 389:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powf(__x, __y); }
+ 390:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 391:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
+ 392:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(long double __x, long double __y)
+ 393:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powl(__x, __y); }
+ 394:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 395:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #if __cplusplus < 201103L
+ 396:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   // _GLIBCXX_RESOLVE_LIB_DEFECTS
+ 397:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   // DR 550. What should the return type of pow(float,int) be?
+ 398:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline double
+ 399:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(double __x, int __i)
+ 400:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powi(__x, __i); }
+ 401:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 402:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline float
+ 403:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(float __x, int __n)
+ 404:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powif(__x, __n); }
+ 405:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 406:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline long double
+ 407:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   pow(long double __x, int __n)
+ 408:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_powil(__x, __n); }
+ 409:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ 410:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 26
+
+
+ 411:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 412:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
+ 413:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
+ 414:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
+ 415:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     pow(_Tp __x, _Up __y)
+ 416:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
+ 417:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+ 418:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return pow(__type(__x), __type(__y));
+ 419:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
+ 420:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 421:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::sin;
+ 422:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 423:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
+ 424:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
+ 425:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   sin(float __x)
+ 426:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_sinf(__x); }
+ 644              		.loc 5 426 0
+ 645 0080 B0EE680A 		vmov.f32	s0, s17
+ 646              	.LVL72:
+ 647 0084 FFF7FEFF 		bl	sinf
+ 648              	.LVL73:
+ 649 0088 B0EE409A 		vmov.f32	s18, s0
+ 650              	.LVL74:
+ 651              	.LBE142:
+ 652              	.LBE141:
+ 653              	.LBB143:
+ 654              	.LBB144:
+ 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 655              		.loc 5 185 0
+ 656 008c B0EE680A 		vmov.f32	s0, s17
+ 657 0090 FFF7FEFF 		bl	cosf
+ 658              	.LVL75:
+ 659              	.LBE144:
+ 660              	.LBE143:
+ 661              	.LBB145:
+ 662              	.LBB146:
+ 145:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 663              		.loc 5 145 0
+ 664 0094 F0EE400A 		vmov.f32	s1, s0
+ 665 0098 B0EE490A 		vmov.f32	s0, s18
+ 666 009c FFF7FEFF 		bl	atan2f
+ 667              	.LVL76:
+ 668 00a0 B0EE409A 		vmov.f32	s18, s0
+ 669              	.LVL77:
+ 670              	.LBE146:
+ 671              	.LBE145:
+ 672              	.LBB147:
+ 673              	.LBB148:
+ 674              		.loc 5 426 0
+ 675 00a4 B0EE4A0A 		vmov.f32	s0, s20
+ 676              	.LVL78:
+ 677 00a8 FFF7FEFF 		bl	sinf
+ 678              	.LVL79:
+ 679              	.LBE148:
+ 680              	.LBE147:
+ 102:Core/Src/parts/processor.cpp ****                 float vy = v*cos(theta)*cos(phi);
+ 681              		.loc 3 102 0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 27
+
+
+ 682 00ac 68EE008A 		vmul.f32	s17, s16, s0
+ 683              	.LVL80:
+ 684              	.LBB149:
+ 685              	.LBB150:
+ 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 686              		.loc 5 185 0
+ 687 00b0 B0EE490A 		vmov.f32	s0, s18
+ 688 00b4 FFF7FEFF 		bl	cosf
+ 689              	.LVL81:
+ 690 00b8 F0EE409A 		vmov.f32	s19, s0
+ 691              	.LVL82:
+ 692              	.LBE150:
+ 693              	.LBE149:
+ 102:Core/Src/parts/processor.cpp ****                 float vy = v*cos(theta)*cos(phi);
+ 694              		.loc 3 102 0
+ 695 00bc 68EE808A 		vmul.f32	s17, s17, s0
+ 696              	.LVL83:
+ 697              	.LBB151:
+ 698              	.LBB152:
+ 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
+ 699              		.loc 5 185 0
+ 700 00c0 B0EE4A0A 		vmov.f32	s0, s20
+ 701 00c4 FFF7FEFF 		bl	cosf
+ 702              	.LVL84:
+ 703              	.LBE152:
+ 704              	.LBE151:
+ 103:Core/Src/parts/processor.cpp ****                 float rw = (phi)*0.3;
+ 705              		.loc 3 103 0
+ 706 00c8 28EE008A 		vmul.f32	s16, s16, s0
+ 707              	.LVL85:
+ 708 00cc 28EE298A 		vmul.f32	s16, s16, s19
+ 709              	.LVL86:
+ 104:Core/Src/parts/processor.cpp **** 
+ 710              		.loc 3 104 0
+ 711 00d0 19EE100A 		vmov	r0, s18
+ 712 00d4 FFF7FEFF 		bl	__aeabi_f2d
+ 713              	.LVL87:
+ 714 00d8 0DA3     		adr	r3, .L27
+ 715 00da D3E90023 		ldrd	r2, [r3]
+ 716 00de FFF7FEFF 		bl	__aeabi_dmul
+ 717              	.LVL88:
+ 718 00e2 FFF7FEFF 		bl	__aeabi_d2f
+ 719              	.LVL89:
+ 720              	.LBB153:
+ 721              	.LBB154:
+ 722              	.LBB155:
+  37:Core/Inc/utils\math/vec3.h ****         void setY(T y) { y_ = y; }
+ 723              		.loc 4 37 0
+ 724 00e6 C4ED008A 		vstr.32	s17, [r4]
+ 725              	.LVL90:
+ 726              	.LBE155:
+ 727              	.LBE154:
+ 728              	.LBB156:
+ 729              	.LBB157:
+  38:Core/Inc/utils\math/vec3.h ****         void setZ(T z) { z_ = z; }
+ 730              		.loc 4 38 0
+ 731 00ea 84ED018A 		vstr.32	s16, [r4, #4]
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 28
+
+
+ 732              	.LVL91:
+ 733              	.LBE157:
+ 734              	.LBE156:
+ 735              	.LBB158:
+ 736              	.LBB159:
+  39:Core/Inc/utils\math/vec3.h **** 
+ 737              		.loc 4 39 0
+ 738 00ee A060     		str	r0, [r4, #8]	@ float
+ 739              	.LVL92:
+ 740              	.LBE159:
+ 741              	.LBE158:
+ 742              	.LBE153:
+ 743              	.LBE132:
+ 744              	.LBE163:
+ 111:Core/Src/parts/processor.cpp **** }
+ 745              		.loc 3 111 0
+ 746 00f0 98E7     		b	.L21
+ 747              	.LVL93:
+ 748              	.L26:
+ 749              	.LBB164:
+ 750              	.LBB162:
+  83:Core/Src/parts/processor.cpp ****                         update_State();
+ 751              		.loc 3 83 0
+ 752 00f2 0B48     		ldr	r0, .L27+16
+ 753 00f4 FFF7FEFF 		bl	printf
+ 754              	.LVL94:
+  84:Core/Src/parts/processor.cpp ****                         sensor_->change_Sensors(curr_state_->get_ID());
+ 755              		.loc 3 84 0
+ 756 00f8 3046     		mov	r0, r6
+ 757 00fa FFF7FEFF 		bl	_ZN9Processor12update_StateEv
+ 758              	.LVL95:
+  85:Core/Src/parts/processor.cpp ****                 }
+ 759              		.loc 3 85 0
+ 760 00fe 3368     		ldr	r3, [r6]
+ 761              	.LVL96:
+ 762              	.LBB160:
+ 763              	.LBB161:
+  61:Core/Inc/parts/processor/robo_states.h ****         Field get_ID() { return sv_->id; }
+ 764              		.loc 1 61 0
+ 765 0100 1B68     		ldr	r3, [r3]
+ 766              	.LVL97:
+ 767              	.LBE161:
+ 768              	.LBE160:
+  85:Core/Src/parts/processor.cpp ****                 }
+ 769              		.loc 3 85 0
+ 770 0102 1968     		ldr	r1, [r3]
+ 771 0104 7068     		ldr	r0, [r6, #4]
+ 772 0106 FFF7FEFF 		bl	_ZN12State_Sensor14change_SensorsE5Field
+ 773              	.LVL98:
+ 774 010a 9CE7     		b	.L24
+ 775              	.L28:
+ 776 010c AFF30080 		.align	3
+ 777              	.L27:
+ 778 0110 33333333 		.word	858993459
+ 779 0114 3333D33F 		.word	1070805811
+ 780 0118 00000000 		.word	.LANCHOR14
+ 781 011c 33336542 		.word	1113928499
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 29
+
+
+ 782 0120 00000000 		.word	.LC0
+ 783              	.LBE162:
+ 784              	.LBE164:
+ 785              		.cfi_endproc
+ 786              	.LFE499:
+ 788              		.section	.text._GLOBAL__sub_I_gStateA,"ax",%progbits
+ 789              		.align	1
+ 790              		.syntax unified
+ 791              		.thumb
+ 792              		.thumb_func
+ 793              		.fpu fpv4-sp-d16
+ 795              	_GLOBAL__sub_I_gStateA:
+ 796              	.LFB520:
+ 797              		.loc 3 117 0
+ 798              		.cfi_startproc
+ 799              		@ args = 0, pretend = 0, frame = 0
+ 800              		@ frame_needed = 0, uses_anonymous_args = 0
+ 801 0000 08B5     		push	{r3, lr}
+ 802              	.LCFI8:
+ 803              		.cfi_def_cfa_offset 8
+ 804              		.cfi_offset 3, -8
+ 805              		.cfi_offset 14, -4
+ 806              		.loc 3 117 0
+ 807 0002 4FF6FF71 		movw	r1, #65535
+ 808 0006 0120     		movs	r0, #1
+ 809 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 810              	.LVL99:
+ 811 000c 08BD     		pop	{r3, pc}
+ 812              		.cfi_endproc
+ 813              	.LFE520:
+ 815              		.section	.init_array,"aw",%init_array
+ 816              		.align	2
+ 817 0000 00000000 		.word	_GLOBAL__sub_I_gStateA(target1)
+ 818              		.global	gStateL
+ 819              		.global	gStateK
+ 820              		.global	gStateJ
+ 821              		.global	gStateI
+ 822              		.global	gStateH
+ 823              		.global	gStateG
+ 824              		.global	gStateF
+ 825              		.global	gStateE
+ 826              		.global	gStateD
+ 827              		.global	gStateC
+ 828              		.global	gStateB
+ 829              		.global	gStateA
+ 830              		.section	.bss._ZGVZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU,"aw",%nobits
+ 831              		.align	2
+ 832              		.set	.LANCHOR12,. + 0
+ 835              	_ZGVZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:
+ 836 0000 00000000 		.space	4
+ 837              		.section	.bss._ZL13gFirstHeading,"aw",%nobits
+ 838              		.align	2
+ 839              		.set	.LANCHOR14,. + 0
+ 842              	_ZL13gFirstHeading:
+ 843 0000 00000000 		.space	4
+ 844              		.section	.bss._ZZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU,"aw",%nobits
+ 845              		.align	2
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 30
+
+
+ 846              		.set	.LANCHOR13,. + 0
+ 849              	_ZZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:
+ 850 0000 00000000 		.space	24
+ 850      00000000 
+ 850      00000000 
+ 850      00000000 
+ 850      00000000 
+ 851              		.section	.bss.gStateA,"aw",%nobits
+ 852              		.align	2
+ 853              		.set	.LANCHOR1,. + 0
+ 856              	gStateA:
+ 857 0000 00000000 		.space	12
+ 857      00000000 
+ 857      00000000 
+ 858              		.section	.bss.gStateB,"aw",%nobits
+ 859              		.align	2
+ 860              		.set	.LANCHOR0,. + 0
+ 863              	gStateB:
+ 864 0000 00000000 		.space	12
+ 864      00000000 
+ 864      00000000 
+ 865              		.section	.bss.gStateC,"aw",%nobits
+ 866              		.align	2
+ 867              		.set	.LANCHOR2,. + 0
+ 870              	gStateC:
+ 871 0000 00000000 		.space	12
+ 871      00000000 
+ 871      00000000 
+ 872              		.section	.bss.gStateD,"aw",%nobits
+ 873              		.align	2
+ 874              		.set	.LANCHOR3,. + 0
+ 877              	gStateD:
+ 878 0000 00000000 		.space	12
+ 878      00000000 
+ 878      00000000 
+ 879              		.section	.bss.gStateE,"aw",%nobits
+ 880              		.align	2
+ 881              		.set	.LANCHOR4,. + 0
+ 884              	gStateE:
+ 885 0000 00000000 		.space	12
+ 885      00000000 
+ 885      00000000 
+ 886              		.section	.bss.gStateF,"aw",%nobits
+ 887              		.align	2
+ 888              		.set	.LANCHOR5,. + 0
+ 891              	gStateF:
+ 892 0000 00000000 		.space	12
+ 892      00000000 
+ 892      00000000 
+ 893              		.section	.bss.gStateG,"aw",%nobits
+ 894              		.align	2
+ 895              		.set	.LANCHOR6,. + 0
+ 898              	gStateG:
+ 899 0000 00000000 		.space	12
+ 899      00000000 
+ 899      00000000 
+ 900              		.section	.bss.gStateH,"aw",%nobits
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 31
+
+
+ 901              		.align	2
+ 902              		.set	.LANCHOR7,. + 0
+ 905              	gStateH:
+ 906 0000 00000000 		.space	12
+ 906      00000000 
+ 906      00000000 
+ 907              		.section	.bss.gStateI,"aw",%nobits
+ 908              		.align	2
+ 909              		.set	.LANCHOR8,. + 0
+ 912              	gStateI:
+ 913 0000 00000000 		.space	12
+ 913      00000000 
+ 913      00000000 
+ 914              		.section	.bss.gStateJ,"aw",%nobits
+ 915              		.align	2
+ 916              		.set	.LANCHOR10,. + 0
+ 919              	gStateJ:
+ 920 0000 00000000 		.space	12
+ 920      00000000 
+ 920      00000000 
+ 921              		.section	.bss.gStateK,"aw",%nobits
+ 922              		.align	2
+ 923              		.set	.LANCHOR9,. + 0
+ 926              	gStateK:
+ 927 0000 00000000 		.space	12
+ 927      00000000 
+ 927      00000000 
+ 928              		.section	.bss.gStateL,"aw",%nobits
+ 929              		.align	2
+ 930              		.set	.LANCHOR11,. + 0
+ 933              	gStateL:
+ 934 0000 00000000 		.space	12
+ 934      00000000 
+ 934      00000000 
+ 935              		.section	.rodata._ZN9Processor7processE4Vec3IfEP10State_Varsm.str1.4,"aMS",%progbits,1
+ 936              		.align	2
+ 937              	.LC0:
+ 938 0000 48657265 		.ascii	"Here!!\000"
+ 938      212100
+ 939              		.text
+ 940              	.Letext0:
+ 941              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 942              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 943              		.file 8 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core_cm4
+ 944              		.file 9 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/STM32F
+ 945              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 946              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 947              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 948              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 949              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 950              		.file 15 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 951              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 952              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 953              		.file 18 "Core/Inc/utils\\math/mat.h"
+ 954              		.file 19 "Core/Inc/utils\\filter/kalman.h"
+ 955              		.file 20 "Core/Inc/parts/sensors/position_sensor.h"
+ 956              		.file 21 "Core/Inc/parts/state_sensor.h"
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 32
+
+
+ 957              		.file 22 "Core/Inc/utils\\math/vec2.h"
+ 958              		.file 23 "<built-in>"
+ 959              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 33
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 processor.cpp
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:18     .text._ZN11Robo_StatesD2Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:25     .text._ZN11Robo_StatesD2Ev:00000000 _ZN11Robo_StatesD2Ev
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:25     .text._ZN11Robo_StatesD2Ev:00000000 _ZN11Robo_StatesD1Ev
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:42     .text._ZN9ProcessorD2Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:49     .text._ZN9ProcessorD2Ev:00000000 _ZN9ProcessorD2Ev
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:49     .text._ZN9ProcessorD2Ev:00000000 _ZN9ProcessorD1Ev
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:66     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:72     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:257    .text._Z41__static_initialization_and_destruction_0ii:00000120 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:287    .text._ZN9Processor12get_InstanceEP12State_Sensor:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:294    .text._ZN9Processor12get_InstanceEP12State_Sensor:00000000 _ZN9Processor12get_InstanceEP12State_Sensor
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:391    .text._ZN9Processor12get_InstanceEP12State_Sensor:0000004c $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:400    .text._ZN9Processor4initEm:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:407    .text._ZN9Processor4initEm:00000000 _ZN9Processor4initEm
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:423    .text._ZN9Processor12update_StateEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:430    .text._ZN9Processor12update_StateEv:00000000 _ZN9Processor12update_StateEv
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:459    .text._ZN9Processor7processE4Vec3IfEP10State_Varsm:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:466    .text._ZN9Processor7processE4Vec3IfEP10State_Varsm:00000000 _ZN9Processor7processE4Vec3IfEP10State_Varsm
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:778    .text._ZN9Processor7processE4Vec3IfEP10State_Varsm:00000110 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:789    .text._GLOBAL__sub_I_gStateA:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:795    .text._GLOBAL__sub_I_gStateA:00000000 _GLOBAL__sub_I_gStateA
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:816    .init_array:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:933    .bss.gStateL:00000000 gStateL
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:926    .bss.gStateK:00000000 gStateK
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:919    .bss.gStateJ:00000000 gStateJ
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:912    .bss.gStateI:00000000 gStateI
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:905    .bss.gStateH:00000000 gStateH
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:898    .bss.gStateG:00000000 gStateG
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:891    .bss.gStateF:00000000 gStateF
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:884    .bss.gStateE:00000000 gStateE
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:877    .bss.gStateD:00000000 gStateD
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:870    .bss.gStateC:00000000 gStateC
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:863    .bss.gStateB:00000000 gStateB
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:856    .bss.gStateA:00000000 gStateA
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:831    .bss._ZGVZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:835    .bss._ZGVZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:00000000 _ZGVZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:838    .bss._ZL13gFirstHeading:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:842    .bss._ZL13gFirstHeading:00000000 _ZL13gFirstHeading
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:845    .bss._ZZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:849    .bss._ZZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU:00000000 _ZZN9Processor12get_InstanceEP12State_SensorE9sRobo_CPU
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:852    .bss.gStateA:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:859    .bss.gStateB:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:866    .bss.gStateC:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:873    .bss.gStateD:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:880    .bss.gStateE:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:887    .bss.gStateF:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:894    .bss.gStateG:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:901    .bss.gStateH:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:908    .bss.gStateI:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:915    .bss.gStateJ:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:922    .bss.gStateK:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:929    .bss.gStateL:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cceIepBL.s:936    .rodata._ZN9Processor7processE4Vec3IfEP10State_Varsm.str1.4:00000000 $d
+                           .group:00000000 _ZN11Robo_StatesD5Ev
+                           .group:00000000 _ZN9ProcessorD5Ev
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cceIepBL.s 			page 34
+
+
+
+UNDEFINED SYMBOLS
+_ZN11Robo_StatesC1EP10State_VarsPS_
+__aeabi_atexit
+gStateA_Data
+__dso_handle
+gStateB_Data
+gStateC_Data
+gStateD_Data
+gStateE_Data
+gStateF_Data
+gStateG_Data
+gStateH_Data
+gStateI_Data
+gStateJ_Data
+gStateK_Data
+gStateL_Data
+_Z14init_GameFieldv
+__cxa_guard_acquire
+__cxa_guard_release
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+_ZN11Robo_States16nextStateReachedE4Vec3IfE
+_ZN11Robo_States17calc_RoboVelocityEv
+_ZN11Robo_States18calc_AngleOfAttackE4Vec3IfEfm
+sinf
+cosf
+atan2f
+printf
+_ZN12State_Sensor14change_SensorsE5Field

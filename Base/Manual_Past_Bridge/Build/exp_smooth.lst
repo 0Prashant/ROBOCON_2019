@@ -1,0 +1,395 @@
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"exp_smooth.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN10Exp_SmoothD2Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN10Exp_SmoothD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN10Exp_SmoothD2Ev:
+  26              	.LFB156:
+  27              		.file 1 "Core/Inc/utils\\filter/smoothing_algorithm.h"
+   1:Core/Inc/utils\filter/smoothing_algorithm.h **** 
+   2:Core/Inc/utils\filter/smoothing_algorithm.h **** #ifndef _SMOOTHING_ALGORITHM_H_
+   3:Core/Inc/utils\filter/smoothing_algorithm.h **** #define _SMOOTHING_ALGORITHM_H_
+   4:Core/Inc/utils\filter/smoothing_algorithm.h **** 
+   5:Core/Inc/utils\filter/smoothing_algorithm.h **** #include "vec3.h"
+   6:Core/Inc/utils\filter/smoothing_algorithm.h **** 
+   7:Core/Inc/utils\filter/smoothing_algorithm.h **** class Smoothing_Algorithm
+   8:Core/Inc/utils\filter/smoothing_algorithm.h **** {
+   9:Core/Inc/utils\filter/smoothing_algorithm.h **** public:
+  10:Core/Inc/utils\filter/smoothing_algorithm.h ****         virtual float smooth(const float &input) = 0;
+  11:Core/Inc/utils\filter/smoothing_algorithm.h ****         virtual ~Smoothing_Algorithm() { }
+  12:Core/Inc/utils\filter/smoothing_algorithm.h **** };
+  13:Core/Inc/utils\filter/smoothing_algorithm.h **** 
+  14:Core/Inc/utils\filter/smoothing_algorithm.h **** class Exp_Smooth : public Smoothing_Algorithm
+  15:Core/Inc/utils\filter/smoothing_algorithm.h **** {
+  16:Core/Inc/utils\filter/smoothing_algorithm.h **** public:
+  17:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth();
+  18:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth(float alpha);
+  19:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth(Exp_Smooth &&) = default;
+  20:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth(const Exp_Smooth &) = default;
+  21:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth &operator=(Exp_Smooth &&) = default;
+  22:Core/Inc/utils\filter/smoothing_algorithm.h ****         Exp_Smooth &operator=(const Exp_Smooth &) = default;
+  23:Core/Inc/utils\filter/smoothing_algorithm.h ****         ~Exp_Smooth() { }
+  28              		.loc 1 23 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 23 0
+  35 0000 7047     		bx	lr
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 2
+
+
+  36              		.cfi_endproc
+  37              	.LFE156:
+  39              		.weak	_ZN10Exp_SmoothD1Ev
+  40              		.thumb_set _ZN10Exp_SmoothD1Ev,_ZN10Exp_SmoothD2Ev
+  41              		.section	.text._ZN10Exp_Smooth6smoothERKf,"ax",%progbits
+  42              		.align	1
+  43              		.global	_ZN10Exp_Smooth6smoothERKf
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN10Exp_Smooth6smoothERKf:
+  50              	.LFB169:
+  51              		.file 2 "Core/Src/utils/filter/exp_smooth.cpp"
+   1:Core/Src/utils/filter/exp_smooth.cpp **** /*
+   2:Core/Src/utils/filter/exp_smooth.cpp ****  * exp_smooth.cpp
+   3:Core/Src/utils/filter/exp_smooth.cpp ****  * 
+   4:Core/Src/utils/filter/exp_smooth.cpp ****  * Created : 11/9/2018
+   5:Core/Src/utils/filter/exp_smooth.cpp ****  *  Author : n-is
+   6:Core/Src/utils/filter/exp_smooth.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/utils/filter/exp_smooth.cpp ****  */
+   8:Core/Src/utils/filter/exp_smooth.cpp **** 
+   9:Core/Src/utils/filter/exp_smooth.cpp **** #include "smoothing_algorithm.h"
+  10:Core/Src/utils/filter/exp_smooth.cpp **** 
+  11:Core/Src/utils/filter/exp_smooth.cpp **** //* Exponential Smoothing Implementation
+  12:Core/Src/utils/filter/exp_smooth.cpp **** Exp_Smooth::Exp_Smooth()
+  13:Core/Src/utils/filter/exp_smooth.cpp **** {
+  14:Core/Src/utils/filter/exp_smooth.cpp ****         alpha_ = 1;
+  15:Core/Src/utils/filter/exp_smooth.cpp ****         is_first_ = true;
+  16:Core/Src/utils/filter/exp_smooth.cpp **** }
+  17:Core/Src/utils/filter/exp_smooth.cpp **** 
+  18:Core/Src/utils/filter/exp_smooth.cpp **** Exp_Smooth::Exp_Smooth(float alpha)
+  19:Core/Src/utils/filter/exp_smooth.cpp **** {
+  20:Core/Src/utils/filter/exp_smooth.cpp ****         alpha_ = alpha;
+  21:Core/Src/utils/filter/exp_smooth.cpp ****         is_first_ = true;
+  22:Core/Src/utils/filter/exp_smooth.cpp **** }
+  23:Core/Src/utils/filter/exp_smooth.cpp **** 
+  24:Core/Src/utils/filter/exp_smooth.cpp **** float Exp_Smooth::smooth(const float &input)
+  25:Core/Src/utils/filter/exp_smooth.cpp **** {
+  52              		.loc 2 25 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  58              	.LBB21:
+  26:Core/Src/utils/filter/exp_smooth.cpp ****         if (is_first_) {
+  59              		.loc 2 26 0
+  60 0000 037B     		ldrb	r3, [r0, #12]	@ zero_extendqisi2
+  61 0002 83B9     		cbnz	r3, .L5
+  62              	.LBB22:
+  27:Core/Src/utils/filter/exp_smooth.cpp ****                 is_first_ = false;
+  28:Core/Src/utils/filter/exp_smooth.cpp ****                 last_output_ = input;
+  29:Core/Src/utils/filter/exp_smooth.cpp ****         }
+  30:Core/Src/utils/filter/exp_smooth.cpp ****         else {
+  31:Core/Src/utils/filter/exp_smooth.cpp ****                 float residue = input - last_output_;
+  63              		.loc 2 31 0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 3
+
+
+  64 0004 91ED007A 		vldr.32	s14, [r1]
+  65 0008 D0ED017A 		vldr.32	s15, [r0, #4]
+  66 000c 77EE676A 		vsub.f32	s13, s14, s15
+  67              	.LVL2:
+  32:Core/Src/utils/filter/exp_smooth.cpp ****                 residue *= alpha_;
+  68              		.loc 2 32 0
+  69 0010 90ED027A 		vldr.32	s14, [r0, #8]
+  70 0014 27EE267A 		vmul.f32	s14, s14, s13
+  71              	.LVL3:
+  33:Core/Src/utils/filter/exp_smooth.cpp ****                 last_output_ += residue;
+  72              		.loc 2 33 0
+  73 0018 77EE877A 		vadd.f32	s15, s15, s14
+  74 001c C0ED017A 		vstr.32	s15, [r0, #4]
+  75              	.LVL4:
+  76              	.L4:
+  77              	.LBE22:
+  78              	.LBE21:
+  34:Core/Src/utils/filter/exp_smooth.cpp ****         }
+  35:Core/Src/utils/filter/exp_smooth.cpp ****         return last_output_;
+  36:Core/Src/utils/filter/exp_smooth.cpp **** }
+  79              		.loc 2 36 0
+  80 0020 90ED010A 		vldr.32	s0, [r0, #4]
+  81 0024 7047     		bx	lr
+  82              	.L5:
+  83              	.LBB23:
+  27:Core/Src/utils/filter/exp_smooth.cpp ****                 last_output_ = input;
+  84              		.loc 2 27 0
+  85 0026 0023     		movs	r3, #0
+  86 0028 0373     		strb	r3, [r0, #12]
+  28:Core/Src/utils/filter/exp_smooth.cpp ****         }
+  87              		.loc 2 28 0
+  88 002a 0B68     		ldr	r3, [r1]	@ float
+  89 002c 4360     		str	r3, [r0, #4]	@ float
+  90 002e F7E7     		b	.L4
+  91              	.LBE23:
+  92              		.cfi_endproc
+  93              	.LFE169:
+  95              		.section	.text._ZN10Exp_SmoothD0Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+  96              		.align	1
+  97              		.weak	_ZN10Exp_SmoothD0Ev
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 101              		.fpu fpv4-sp-d16
+ 103              	_ZN10Exp_SmoothD0Ev:
+ 104              	.LFB158:
+ 105              		.loc 1 23 0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              	.LVL5:
+ 110 0000 10B5     		push	{r4, lr}
+ 111              	.LCFI0:
+ 112              		.cfi_def_cfa_offset 8
+ 113              		.cfi_offset 4, -8
+ 114              		.cfi_offset 14, -4
+ 115 0002 0446     		mov	r4, r0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 4
+
+
+ 116              		.loc 1 23 0
+ 117 0004 1021     		movs	r1, #16
+ 118 0006 FFF7FEFF 		bl	_ZdlPvj
+ 119              	.LVL6:
+ 120 000a 2046     		mov	r0, r4
+ 121 000c 10BD     		pop	{r4, pc}
+ 122              		.cfi_endproc
+ 123              	.LFE158:
+ 125              		.section	.text._ZN10Exp_SmoothC2Ev,"ax",%progbits
+ 126              		.align	1
+ 127              		.global	_ZN10Exp_SmoothC2Ev
+ 128              		.syntax unified
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.fpu fpv4-sp-d16
+ 133              	_ZN10Exp_SmoothC2Ev:
+ 134              	.LFB164:
+  12:Core/Src/utils/filter/exp_smooth.cpp **** {
+ 135              		.loc 2 12 0
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 0, uses_anonymous_args = 0
+ 139              		@ link register save eliminated.
+ 140              	.LVL7:
+ 141              	.LBB24:
+  12:Core/Src/utils/filter/exp_smooth.cpp **** {
+ 142              		.loc 2 12 0
+ 143 0000 034A     		ldr	r2, .L9
+ 144 0002 0260     		str	r2, [r0]
+  14:Core/Src/utils/filter/exp_smooth.cpp ****         is_first_ = true;
+ 145              		.loc 2 14 0
+ 146 0004 4FF07E52 		mov	r2, #1065353216
+ 147 0008 8260     		str	r2, [r0, #8]	@ float
+  15:Core/Src/utils/filter/exp_smooth.cpp **** }
+ 148              		.loc 2 15 0
+ 149 000a 0122     		movs	r2, #1
+ 150 000c 0273     		strb	r2, [r0, #12]
+ 151              	.LBE24:
+  16:Core/Src/utils/filter/exp_smooth.cpp **** 
+ 152              		.loc 2 16 0
+ 153 000e 7047     		bx	lr
+ 154              	.L10:
+ 155              		.align	2
+ 156              	.L9:
+ 157 0010 08000000 		.word	.LANCHOR0+8
+ 158              		.cfi_endproc
+ 159              	.LFE164:
+ 161              		.global	_ZN10Exp_SmoothC1Ev
+ 162              		.thumb_set _ZN10Exp_SmoothC1Ev,_ZN10Exp_SmoothC2Ev
+ 163              		.section	.text._ZN10Exp_SmoothC2Ef,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	_ZN10Exp_SmoothC2Ef
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 169              		.fpu fpv4-sp-d16
+ 171              	_ZN10Exp_SmoothC2Ef:
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 5
+
+
+ 172              	.LFB167:
+  18:Core/Src/utils/filter/exp_smooth.cpp **** {
+ 173              		.loc 2 18 0
+ 174              		.cfi_startproc
+ 175              		@ args = 0, pretend = 0, frame = 0
+ 176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 177              		@ link register save eliminated.
+ 178              	.LVL8:
+ 179              	.LBB25:
+  18:Core/Src/utils/filter/exp_smooth.cpp **** {
+ 180              		.loc 2 18 0
+ 181 0000 034A     		ldr	r2, .L12
+ 182 0002 0260     		str	r2, [r0]
+  20:Core/Src/utils/filter/exp_smooth.cpp ****         is_first_ = true;
+ 183              		.loc 2 20 0
+ 184 0004 80ED020A 		vstr.32	s0, [r0, #8]
+  21:Core/Src/utils/filter/exp_smooth.cpp **** }
+ 185              		.loc 2 21 0
+ 186 0008 0122     		movs	r2, #1
+ 187 000a 0273     		strb	r2, [r0, #12]
+ 188              	.LBE25:
+  22:Core/Src/utils/filter/exp_smooth.cpp **** 
+ 189              		.loc 2 22 0
+ 190 000c 7047     		bx	lr
+ 191              	.L13:
+ 192 000e 00BF     		.align	2
+ 193              	.L12:
+ 194 0010 08000000 		.word	.LANCHOR0+8
+ 195              		.cfi_endproc
+ 196              	.LFE167:
+ 198              		.global	_ZN10Exp_SmoothC1Ef
+ 199              		.thumb_set _ZN10Exp_SmoothC1Ef,_ZN10Exp_SmoothC2Ef
+ 200              		.section	.text._ZN10Exp_Smooth5clearEv,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	_ZN10Exp_Smooth5clearEv
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 206              		.fpu fpv4-sp-d16
+ 208              	_ZN10Exp_Smooth5clearEv:
+ 209              	.LFB170:
+  37:Core/Src/utils/filter/exp_smooth.cpp **** 
+  38:Core/Src/utils/filter/exp_smooth.cpp **** void Exp_Smooth::clear()
+  39:Core/Src/utils/filter/exp_smooth.cpp **** {
+ 210              		.loc 2 39 0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		@ link register save eliminated.
+ 215              	.LVL9:
+  40:Core/Src/utils/filter/exp_smooth.cpp ****         is_first_ = true;
+ 216              		.loc 2 40 0
+ 217 0000 0123     		movs	r3, #1
+ 218 0002 0373     		strb	r3, [r0, #12]
+  41:Core/Src/utils/filter/exp_smooth.cpp **** }
+ 219              		.loc 2 41 0
+ 220 0004 7047     		bx	lr
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 6
+
+
+ 221              		.cfi_endproc
+ 222              	.LFE170:
+ 224              		.weak	_ZTS19Smoothing_Algorithm
+ 225              		.section	.rodata._ZTS19Smoothing_Algorithm,"aG",%progbits,_ZTS19Smoothing_Algorithm,comdat
+ 226              		.align	2
+ 229              	_ZTS19Smoothing_Algorithm:
+ 230 0000 3139536D 		.ascii	"19Smoothing_Algorithm\000"
+ 230      6F6F7468 
+ 230      696E675F 
+ 230      416C676F 
+ 230      72697468 
+ 231              		.weak	_ZTI19Smoothing_Algorithm
+ 232              		.section	.rodata._ZTI19Smoothing_Algorithm,"aG",%progbits,_ZTI19Smoothing_Algorithm,comdat
+ 233              		.align	2
+ 236              	_ZTI19Smoothing_Algorithm:
+ 237 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 238 0004 00000000 		.word	_ZTS19Smoothing_Algorithm
+ 239              		.global	_ZTS10Exp_Smooth
+ 240              		.global	_ZTI10Exp_Smooth
+ 241              		.global	_ZTV10Exp_Smooth
+ 242              		.section	.rodata._ZTI10Exp_Smooth,"a",%progbits
+ 243              		.align	2
+ 246              	_ZTI10Exp_Smooth:
+ 247 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 248 0004 00000000 		.word	_ZTS10Exp_Smooth
+ 249 0008 00000000 		.word	_ZTI19Smoothing_Algorithm
+ 250              		.section	.rodata._ZTS10Exp_Smooth,"a",%progbits
+ 251              		.align	2
+ 254              	_ZTS10Exp_Smooth:
+ 255 0000 31304578 		.ascii	"10Exp_Smooth\000"
+ 255      705F536D 
+ 255      6F6F7468 
+ 255      00
+ 256              		.section	.rodata._ZTV10Exp_Smooth,"a",%progbits
+ 257              		.align	2
+ 258              		.set	.LANCHOR0,. + 0
+ 261              	_ZTV10Exp_Smooth:
+ 262 0000 00000000 		.word	0
+ 263 0004 00000000 		.word	_ZTI10Exp_Smooth
+ 264 0008 00000000 		.word	_ZN10Exp_Smooth6smoothERKf
+ 265 000c 00000000 		.word	_ZN10Exp_SmoothD1Ev
+ 266 0010 00000000 		.word	_ZN10Exp_SmoothD0Ev
+ 267              		.text
+ 268              	.Letext0:
+ 269              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 270              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 271              		.file 5 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core_cm4
+ 272              		.file 6 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/STM32F
+ 273              		.file 7 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/STM32F
+ 274              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 275              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 276              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 277              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 278              		.file 12 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/
+ARM GAS  C:\Users\073be\AppData\Local\Temp\cci86FnK.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 exp_smooth.cpp
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:18     .text._ZN10Exp_SmoothD2Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD2Ev
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD1Ev
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:42     .text._ZN10Exp_Smooth6smoothERKf:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:49     .text._ZN10Exp_Smooth6smoothERKf:00000000 _ZN10Exp_Smooth6smoothERKf
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:96     .text._ZN10Exp_SmoothD0Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:103    .text._ZN10Exp_SmoothD0Ev:00000000 _ZN10Exp_SmoothD0Ev
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:126    .text._ZN10Exp_SmoothC2Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:133    .text._ZN10Exp_SmoothC2Ev:00000000 _ZN10Exp_SmoothC2Ev
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:157    .text._ZN10Exp_SmoothC2Ev:00000010 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:133    .text._ZN10Exp_SmoothC2Ev:00000000 _ZN10Exp_SmoothC1Ev
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:164    .text._ZN10Exp_SmoothC2Ef:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:171    .text._ZN10Exp_SmoothC2Ef:00000000 _ZN10Exp_SmoothC2Ef
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:194    .text._ZN10Exp_SmoothC2Ef:00000010 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:171    .text._ZN10Exp_SmoothC2Ef:00000000 _ZN10Exp_SmoothC1Ef
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:201    .text._ZN10Exp_Smooth5clearEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:208    .text._ZN10Exp_Smooth5clearEv:00000000 _ZN10Exp_Smooth5clearEv
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:229    .rodata._ZTS19Smoothing_Algorithm:00000000 _ZTS19Smoothing_Algorithm
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:226    .rodata._ZTS19Smoothing_Algorithm:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:236    .rodata._ZTI19Smoothing_Algorithm:00000000 _ZTI19Smoothing_Algorithm
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:233    .rodata._ZTI19Smoothing_Algorithm:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:254    .rodata._ZTS10Exp_Smooth:00000000 _ZTS10Exp_Smooth
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:246    .rodata._ZTI10Exp_Smooth:00000000 _ZTI10Exp_Smooth
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:261    .rodata._ZTV10Exp_Smooth:00000000 _ZTV10Exp_Smooth
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:243    .rodata._ZTI10Exp_Smooth:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:251    .rodata._ZTS10Exp_Smooth:00000000 $d
+C:\Users\073be\AppData\Local\Temp\cci86FnK.s:257    .rodata._ZTV10Exp_Smooth:00000000 $d
+                           .group:00000000 _ZN10Exp_SmoothD5Ev
+
+UNDEFINED SYMBOLS
+_ZdlPvj
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

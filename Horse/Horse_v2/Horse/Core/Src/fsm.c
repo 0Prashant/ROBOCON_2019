@@ -30,9 +30,11 @@ void startFSM(struct fsmStr *sfsm, enum FSM_States *phase)
 
                         setPneumatic(&pneu_arr[0], RESET_PNEU);
                         setPneumatic(&pneu_arr[1], SET_PNEU);
-                        *phase = PHASE_2;
+
+			*phase = PHASE_2;
                         stateReset(sfsm, phase);
                         motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CNT;
+
                 }
                 break;
 
