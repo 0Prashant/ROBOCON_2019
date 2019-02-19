@@ -6,6 +6,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "blnc_motor.h"
 
 extern "C" void StartDefaultTask(void const *argument);
 extern "C" void MotorThread(void const *argument);
@@ -82,11 +83,12 @@ void PneumaticThread(void const *argument)
 void MovingMassThread(void const *argument)
 {
         /* USER CODE BEGIN MovingMassThread */
-
+	balance_init();
         /* Infinite loop */
         for (;;)
         {
                 printf("Hello from MovingMass Thread!!\n");
+		check_N_run();
                 osDelay(20);
         }
         /* USER CODE END MovingMassThread */

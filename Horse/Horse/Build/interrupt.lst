@@ -1,0 +1,279 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"interrupt.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_GPIO_EXTI_Callback
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	HAL_GPIO_EXTI_Callback:
+  26              	.LFB132:
+  27              		.file 1 "Core/Src/interrupt.cpp"
+   1:Core/Src/interrupt.cpp **** /*1-27-2019*/
+   2:Core/Src/interrupt.cpp **** 
+   3:Core/Src/interrupt.cpp **** #include "interrupt.h"
+   4:Core/Src/interrupt.cpp **** #include "robo_init.h"
+   5:Core/Src/interrupt.cpp **** #include "blnc_motor.h"
+   6:Core/Src/interrupt.cpp **** 
+   7:Core/Src/interrupt.cpp **** extern struct Blnc balance;
+   8:Core/Src/interrupt.cpp **** 
+   9:Core/Src/interrupt.cpp **** extern State gRobo_State;
+  10:Core/Src/interrupt.cpp **** 
+  11:Core/Src/interrupt.cpp **** 
+  12:Core/Src/interrupt.cpp **** // gRobo_State.get_ID() -> giv
+  13:Core/Src/interrupt.cpp **** 
+  14:Core/Src/interrupt.cpp **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
+  15:Core/Src/interrupt.cpp **** {       if(GPIO_PIN == GPIO_PIN_0)	//blnc_motor_chA_Pin
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 0446     		mov	r4, r0
+  41              		.loc 1 15 0
+  42 0004 0128     		cmp	r0, #1
+  43 0006 13D0     		beq	.L9
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 2
+
+
+  44              	.LVL1:
+  45              	.L2:
+  16:Core/Src/interrupt.cpp ****         {
+  17:Core/Src/interrupt.cpp ****                 if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 0)	//blnc_motor_chB_Port-pin
+  18:Core/Src/interrupt.cpp ****                 {
+  19:Core/Src/interrupt.cpp ****                         balance.motor.encoder->count--;
+  20:Core/Src/interrupt.cpp ****                 }
+  21:Core/Src/interrupt.cpp ****                 else
+  22:Core/Src/interrupt.cpp ****                 {
+  23:Core/Src/interrupt.cpp ****                         balance.motor.encoder->count++;
+  24:Core/Src/interrupt.cpp ****                 }
+  25:Core/Src/interrupt.cpp **** 
+  26:Core/Src/interrupt.cpp ****         } 
+  27:Core/Src/interrupt.cpp **** 	if (GPIO_PIN == balance.interrupt[0].int_pin)
+  46              		.loc 1 27 0
+  47 0008 1F4B     		ldr	r3, .L14
+  48 000a 9B8F     		ldrh	r3, [r3, #60]
+  49 000c A342     		cmp	r3, r4
+  50 000e 22D0     		beq	.L10
+  51              	.L4:
+  28:Core/Src/interrupt.cpp **** 	{
+  29:Core/Src/interrupt.cpp **** 		if(gRobo_State.get_ID() == State_ID::WS3)
+  30:Core/Src/interrupt.cpp **** 		{
+  31:Core/Src/interrupt.cpp **** 			setDutyCycle(&balance.motor, 0);
+  32:Core/Src/interrupt.cpp **** 			setDirection(&balance.motor, DIR_BRAKE);
+  33:Core/Src/interrupt.cpp **** 		}    
+  34:Core/Src/interrupt.cpp ****         	printf("A\n");
+  35:Core/Src/interrupt.cpp ****     	}
+  36:Core/Src/interrupt.cpp ****    	if (GPIO_PIN == balance.interrupt[1].int_pin)
+  52              		.loc 1 36 0
+  53 0010 1D4B     		ldr	r3, .L14
+  54 0012 B3F84830 		ldrh	r3, [r3, #72]
+  55 0016 A342     		cmp	r3, r4
+  56 0018 21D0     		beq	.L11
+  57              	.L5:
+  37:Core/Src/interrupt.cpp ****    	{
+  38:Core/Src/interrupt.cpp ****    		if(gRobo_State.get_ID() == State_ID::WS4)	
+  39:Core/Src/interrupt.cpp **** 		{	
+  40:Core/Src/interrupt.cpp **** 			setDutyCycle(&balance.motor, 0);	
+  41:Core/Src/interrupt.cpp **** 			setDirection(&balance.motor, DIR_BRAKE);
+  42:Core/Src/interrupt.cpp **** 		}	
+  43:Core/Src/interrupt.cpp **** 		printf("B\n");
+  44:Core/Src/interrupt.cpp ****    	}
+  45:Core/Src/interrupt.cpp ****    	if (GPIO_PIN == balance.interrupt[2].int_pin)
+  58              		.loc 1 45 0
+  59 001a 1B4B     		ldr	r3, .L14
+  60 001c B3F85430 		ldrh	r3, [r3, #84]
+  61 0020 A342     		cmp	r3, r4
+  62 0022 20D0     		beq	.L12
+  63              	.L6:
+  46:Core/Src/interrupt.cpp ****    	{
+  47:Core/Src/interrupt.cpp ****    		if((gRobo_State.get_ID()==State_ID::HOME) || (gRobo_State.get_ID()==State_ID::WS1))	
+  48:Core/Src/interrupt.cpp **** 		{	
+  49:Core/Src/interrupt.cpp **** 			setDutyCycle(&balance.motor, 0);
+  50:Core/Src/interrupt.cpp **** 			setDirection(&balance.motor, DIR_BRAKE);	
+  51:Core/Src/interrupt.cpp **** 		}	
+  52:Core/Src/interrupt.cpp **** 		printf("C\n");
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 3
+
+
+  53:Core/Src/interrupt.cpp ****    	}
+  54:Core/Src/interrupt.cpp **** 	
+  55:Core/Src/interrupt.cpp ****    	if (GPIO_PIN == balance.interrupt[3].int_pin)
+  64              		.loc 1 55 0
+  65 0024 184B     		ldr	r3, .L14
+  66 0026 B3F86030 		ldrh	r3, [r3, #96]
+  67 002a A342     		cmp	r3, r4
+  68 002c 28D0     		beq	.L13
+  69              	.L1:
+  56:Core/Src/interrupt.cpp ****    	{	
+  57:Core/Src/interrupt.cpp ****    		printf("D\n");	
+  58:Core/Src/interrupt.cpp **** 		if(gRobo_State.get_ID() == State_ID::WS2)	
+  59:Core/Src/interrupt.cpp **** 		{
+  60:Core/Src/interrupt.cpp **** 			setDutyCycle(&balance.motor, 0);
+  61:Core/Src/interrupt.cpp **** 			setDirection(&balance.motor, DIR_BRAKE);
+  62:Core/Src/interrupt.cpp **** 		}
+  63:Core/Src/interrupt.cpp ****     	}     
+  64:Core/Src/interrupt.cpp **** }
+  70              		.loc 1 64 0
+  71 002e 38BD     		pop	{r3, r4, r5, pc}
+  72              	.LVL2:
+  73              	.L9:
+  17:Core/Src/interrupt.cpp ****                 {
+  74              		.loc 1 17 0
+  75 0030 0121     		movs	r1, #1
+  76 0032 1648     		ldr	r0, .L14+4
+  77              	.LVL3:
+  78 0034 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  79              	.LVL4:
+  80 0038 30B9     		cbnz	r0, .L3
+  19:Core/Src/interrupt.cpp ****                 }
+  81              		.loc 1 19 0
+  82 003a 134B     		ldr	r3, .L14
+  83 003c 1A6B     		ldr	r2, [r3, #48]
+  84 003e B2F90630 		ldrsh	r3, [r2, #6]
+  85 0042 013B     		subs	r3, r3, #1
+  86 0044 D380     		strh	r3, [r2, #6]	@ movhi
+  87 0046 DFE7     		b	.L2
+  88              	.L3:
+  23:Core/Src/interrupt.cpp ****                 }
+  89              		.loc 1 23 0
+  90 0048 0F4B     		ldr	r3, .L14
+  91 004a 1A6B     		ldr	r2, [r3, #48]
+  92 004c B2F90630 		ldrsh	r3, [r2, #6]
+  93 0050 0133     		adds	r3, r3, #1
+  94 0052 D380     		strh	r3, [r2, #6]	@ movhi
+  95 0054 D8E7     		b	.L2
+  96              	.L10:
+  34:Core/Src/interrupt.cpp ****     	}
+  97              		.loc 1 34 0
+  98 0056 0E48     		ldr	r0, .L14+8
+  99 0058 FFF7FEFF 		bl	puts
+ 100              	.LVL5:
+ 101 005c D8E7     		b	.L4
+ 102              	.L11:
+  43:Core/Src/interrupt.cpp ****    	}
+ 103              		.loc 1 43 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 4
+
+
+ 104 005e 0D48     		ldr	r0, .L14+12
+ 105 0060 FFF7FEFF 		bl	puts
+ 106              	.LVL6:
+ 107 0064 D9E7     		b	.L5
+ 108              	.L12:
+  49:Core/Src/interrupt.cpp **** 			setDirection(&balance.motor, DIR_BRAKE);	
+ 109              		.loc 1 49 0 discriminator 3
+ 110 0066 084D     		ldr	r5, .L14
+ 111 0068 0021     		movs	r1, #0
+ 112 006a 2846     		mov	r0, r5
+ 113 006c FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 114              	.LVL7:
+  50:Core/Src/interrupt.cpp **** 		}	
+ 115              		.loc 1 50 0 discriminator 3
+ 116 0070 0321     		movs	r1, #3
+ 117 0072 2846     		mov	r0, r5
+ 118 0074 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 119              	.LVL8:
+  52:Core/Src/interrupt.cpp ****    	}
+ 120              		.loc 1 52 0 discriminator 3
+ 121 0078 0748     		ldr	r0, .L14+16
+ 122 007a FFF7FEFF 		bl	puts
+ 123              	.LVL9:
+ 124 007e D1E7     		b	.L6
+ 125              	.L13:
+  57:Core/Src/interrupt.cpp **** 		if(gRobo_State.get_ID() == State_ID::WS2)	
+ 126              		.loc 1 57 0
+ 127 0080 0648     		ldr	r0, .L14+20
+ 128 0082 FFF7FEFF 		bl	puts
+ 129              	.LVL10:
+ 130              		.loc 1 64 0
+ 131 0086 D2E7     		b	.L1
+ 132              	.L15:
+ 133              		.align	2
+ 134              	.L14:
+ 135 0088 00000000 		.word	balance
+ 136 008c 00000240 		.word	1073872896
+ 137 0090 00000000 		.word	.LC0
+ 138 0094 04000000 		.word	.LC1
+ 139 0098 08000000 		.word	.LC2
+ 140 009c 0C000000 		.word	.LC3
+ 141              		.cfi_endproc
+ 142              	.LFE132:
+ 144              		.section	.rodata.HAL_GPIO_EXTI_Callback.str1.4,"aMS",%progbits,1
+ 145              		.align	2
+ 146              	.LC0:
+ 147 0000 4100     		.ascii	"A\000"
+ 148 0002 0000     		.space	2
+ 149              	.LC1:
+ 150 0004 4200     		.ascii	"B\000"
+ 151 0006 0000     		.space	2
+ 152              	.LC2:
+ 153 0008 4300     		.ascii	"C\000"
+ 154 000a 0000     		.space	2
+ 155              	.LC3:
+ 156 000c 4400     		.ascii	"D\000"
+ 157              		.text
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 5
+
+
+ 158              	.Letext0:
+ 159              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 160              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 161              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 162              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 163              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 164              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 165              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 166              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 167              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 168              		.file 11 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 169              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 170              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 171              		.file 14 "Core/Inc/interrupt.h"
+ 172              		.file 15 "Core/Inc/periphs/tim.h"
+ 173              		.file 16 "Core/Inc/encoder.h"
+ 174              		.file 17 "Core/Inc/motor.h"
+ 175              		.file 18 "Core/Inc/pid.h"
+ 176              		.file 19 "Core/Inc/blnc_motor.h"
+ 177              		.file 20 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 interrupt.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s:18     .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s:25     .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s:135    .text.HAL_GPIO_EXTI_Callback:00000088 $d
+C:\Users\Prashant\AppData\Local\Temp\ccsQf5Ty.s:145    .rodata.HAL_GPIO_EXTI_Callback.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_ReadPin
+puts
+_Z12setDutyCycleP8motorStrt
+_Z12setDirectionP8motorStr14motorDirection
+balance
