@@ -1,27 +1,28 @@
 #include "blnc_motor.h"
 
 struct Blnc balance;
-
 State gRobo_State;
+State_ID gcurrent_position = State_ID::WS1;
+uint16_t bvel = 45000;
 
 void balance_init(void)
 {
 	/******Initializing Interrupts******/
 	balance.interrupt[0].int_port = GPIOA;
-	balance.interrupt[1].int_port = GPIOA;
-	balance.interrupt[2].int_port = GPIOA;
-	balance.interrupt[3].int_port = GPIOA;
 	balance.interrupt[0].int_pin = GPIO_PIN_14;
+	balance.interrupt[1].int_port = GPIOB;
         balance.interrupt[1].int_pin = GPIO_PIN_15;
+	balance.interrupt[2].int_port = GPIOC;
         balance.interrupt[2].int_pin = GPIO_PIN_7;
+	balance.interrupt[3].int_port = GPIOE;
         balance.interrupt[3].int_pin = GPIO_PIN_3;
 
 	/******Initializing Motor******/
 	balance.motor.dir1_port = GPIOA;
 	balance.motor.dir1_pin = GPIO_PIN_3;
 	balance.motor.dir2_port = GPIOA;
-	balance.motor.dir2_pin = GPIO_PIN_3;
-	balance.motor.channel = TIM_CHANNEL_1;
+	balance.motor.dir2_pin = GPIO_PIN_4;
+	balance.motor.channel = TIM_CHANNEL_3;
 	balance.motor.update_omega = 0;
 	balance.motor.htim = &htim5;
 	HAL_TIM_Base_Start(balance.motor.htim);
@@ -46,37 +47,41 @@ void balance_init(void)
 
 void check_N_run(void)
 {
-	switch (gRobo_State.get_ID())
+	if(gcurrent_position != gRobo_State.get_ID())
 	{
-		case State_ID::HOME:
+		switch (gRobo_State.get_ID())
 		{
-			setDutyCycle(&balance.motor, 0);	
-			setDirection(&balance.motor, DIR_BRAKE);
-			break;
+			case State_ID::HOME:
+			{
+				setDutyCycle(&balance.motor, bvel);	
+				setDirection(&balance.motor, DIR_CLOCKWISE);
+				break;
+			}
+			case State_ID::WS1:
+			{
+				setDutyCycle(&balance.motor, bvel);	
+				setDirection(&balance.motor, DIR_CLOCKWISE);
+				break;
+			}
+			case State_ID::WS2:
+			{
+				setDutyCycle(&balance.motor, bvel);	
+				setDirection(&balance.motor, DIR_CLOCKWISE);
+				break;
+			}
+			case State_ID::WS3:
+			{
+				setDutyCycle(&balance.motor, bvel);	
+				setDirection(&balance.motor, DIR_CLOCKWISE);
+				break;
+			}
+			case State_ID::WS4:
+			{
+				setDutyCycle(&balance.motor, bvel);	
+				setDirection(&balance.motor, DIR_CLOCKWISE);
+				break;
+			}
 		}
-		case State_ID::WS1:
-		{
-			setDutyCycle(&balance.motor, 0);	
-			setDirection(&balance.motor, DIR_BRAKE);
-			break;
-		}
-		case State_ID::WS2:
-		{
-			setDutyCycle(&balance.motor, 0);	
-			setDirection(&balance.motor, DIR_BRAKE);
-			break;
-		}
-		case State_ID::WS3:
-		{
-			setDutyCycle(&balance.motor, 0);	
-			setDirection(&balance.motor, DIR_BRAKE);
-			break;
-		}
-		case State_ID::WS4:
-		{
-			setDutyCycle(&balance.motor, 0);	
-			setDirection(&balance.motor, DIR_BRAKE);
-			break;
-		}
-	}
+		printf("%d\n", bvel);
+	}	
 }

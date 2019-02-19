@@ -12,9 +12,10 @@ extern "C" void StartDefaultTask(void const *argument);
 extern "C" void MotorThread(void const *argument);
 extern "C" void PneumaticThread(void const *argument);
 extern "C" void MovingMassThread(void const *argument);
-
+extern struct Blnc balance;
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
+ * 
   * @brief  Function implementing the defaultTask thread.
   * @param  argument: Not used 
   * @retval None
@@ -27,8 +28,8 @@ void StartDefaultTask(void const *argument)
         /* Infinite loop */
         for (;;)
         {
-                printf("Hello from Default Thread!!\n");
-                osDelay(100);
+        //        printf("Hello from Default Thread!!\n");
+                osDelay(200);
         }
         /* USER CODE END StartDefaultTask */
 }
@@ -47,8 +48,8 @@ void MotorThread(void const *argument)
         /* Infinite loop */
         for (;;)
         {
-                printf("Hello from Motor Thread!!\n");
-                osDelay(10);
+                //printf("Hello from Motor Thread!!\n");
+                osDelay(200);
         }
         /* USER CODE END MotorThread */
 }
@@ -67,8 +68,8 @@ void PneumaticThread(void const *argument)
         /* Infinite loop */
         for (;;)
         {
-                printf("Hello from Pnematic Thread!!\n");
-                osDelay(20);
+                //printf("Hello from Pnematic Thread!!\n");
+                osDelay(200);
         }
         /* USER CODE END PneumaticThread */
 }
@@ -87,9 +88,11 @@ void MovingMassThread(void const *argument)
         /* Infinite loop */
         for (;;)
         {
-                printf("Hello from MovingMass Thread!!\n");
+                printf("Hello from MovingMass Thread!!\t");
 		check_N_run();
-                osDelay(20);
+                // setDutyCycle(&balance.motor, 40000);	
+		// setDirection(&balance.motor, DIR_CLOCKWISE);
+		osDelay(200);
         }
         /* USER CODE END MovingMassThread */
 }
