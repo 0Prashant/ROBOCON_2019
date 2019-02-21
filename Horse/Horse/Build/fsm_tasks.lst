@@ -1,0 +1,1469 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"fsm_tasks.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Z14phaseOneChoresP6fsmStr,"ax",%progbits
+  18              		.align	1
+  19              		.global	_Z14phaseOneChoresP6fsmStr
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_Z14phaseOneChoresP6fsmStr:
+  26              	.LFB137:
+  27              		.file 1 "Core/Src/robot/fsm_tasks.cpp"
+   1:Core/Src/robot/fsm_tasks.cpp **** /*28-1-2019*/
+   2:Core/Src/robot/fsm_tasks.cpp **** 
+   3:Core/Src/robot/fsm_tasks.cpp **** #include "fsm_tasks.h"
+   4:Core/Src/robot/fsm_tasks.cpp **** #include "robo_states.h"
+   5:Core/Src/robot/fsm_tasks.cpp **** 
+   6:Core/Src/robot/fsm_tasks.cpp **** #define SINGLE_ANGLE    (40)
+   7:Core/Src/robot/fsm_tasks.cpp **** 
+   8:Core/Src/robot/fsm_tasks.cpp **** extern State gHorse_State;
+   9:Core/Src/robot/fsm_tasks.cpp **** 
+  10:Core/Src/robot/fsm_tasks.cpp **** void homePositionChores(struct fsmStr *fsm)
+  11:Core/Src/robot/fsm_tasks.cpp **** {
+  12:Core/Src/robot/fsm_tasks.cpp ****         setHomePosition();
+  13:Core/Src/robot/fsm_tasks.cpp ****         check_N_Stop();
+  14:Core/Src/robot/fsm_tasks.cpp **** }
+  15:Core/Src/robot/fsm_tasks.cpp **** 
+  16:Core/Src/robot/fsm_tasks.cpp **** static uint8_t gIs_First = 1;
+  17:Core/Src/robot/fsm_tasks.cpp **** void phaseOneChores(struct fsmStr *fsm)
+  18:Core/Src/robot/fsm_tasks.cpp **** {
+  28              		.loc 1 18 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40              	.LVL1:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 2
+
+
+  41              	.LBB2:
+  19:Core/Src/robot/fsm_tasks.cpp ****         uint8_t motor_index = 0;
+  20:Core/Src/robot/fsm_tasks.cpp ****         float set_point = 0;
+  21:Core/Src/robot/fsm_tasks.cpp **** 
+  22:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+  42              		.loc 1 22 0
+  43 0002 0024     		movs	r4, #0
+  44 0004 14E0     		b	.L6
+  45              	.LVL2:
+  46              	.L3:
+  23:Core/Src/robot/fsm_tasks.cpp ****         {
+  24:Core/Src/robot/fsm_tasks.cpp ****                 if (i != motor_index)
+  25:Core/Src/robot/fsm_tasks.cpp ****                 {
+  26:Core/Src/robot/fsm_tasks.cpp ****                         ffSetAngle(&ff_arr[i], SINGLE_ANGLE);
+  27:Core/Src/robot/fsm_tasks.cpp ****                         getAngle(&motor_arr[i]);
+  28:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+  29:Core/Src/robot/fsm_tasks.cpp **** 
+  30:Core/Src/robot/fsm_tasks.cpp ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  31:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  32:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+  33:Core/Src/robot/fsm_tasks.cpp ****                                                                 motor_arr[i].omega,
+  34:Core/Src/robot/fsm_tasks.cpp ****                                                                 dt_ms);
+  35:Core/Src/robot/fsm_tasks.cpp ****                 }
+  36:Core/Src/robot/fsm_tasks.cpp ****                 else if (i == motor_index)
+  37:Core/Src/robot/fsm_tasks.cpp ****                 {
+  38:Core/Src/robot/fsm_tasks.cpp ****                         if (gIs_First) {
+  47              		.loc 1 38 0
+  48 0006 234B     		ldr	r3, .L8
+  49 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  50 000a 002B     		cmp	r3, #0
+  51 000c 3AD0     		beq	.L5
+  39:Core/Src/robot/fsm_tasks.cpp ****                                 motor_arr[i].update_omega = 0;
+  52              		.loc 1 39 0
+  53 000e 224A     		ldr	r2, .L8+4
+  54 0010 3423     		movs	r3, #52
+  55 0012 03FB0423 		mla	r3, r3, r4, r2
+  56 0016 0022     		movs	r2, #0
+  57 0018 1A61     		str	r2, [r3, #16]	@ float
+  40:Core/Src/robot/fsm_tasks.cpp ****                                 int_arr[i].intState = STATE_A;
+  58              		.loc 1 40 0
+  59 001a 04EB4403 		add	r3, r4, r4, lsl #1
+  60 001e 9A00     		lsls	r2, r3, #2
+  61 0020 1E4B     		ldr	r3, .L8+8
+  62 0022 1344     		add	r3, r3, r2
+  63 0024 0022     		movs	r2, #0
+  64 0026 9A72     		strb	r2, [r3, #10]
+  41:Core/Src/robot/fsm_tasks.cpp ****                                 gIs_First = 0;
+  65              		.loc 1 41 0
+  66 0028 1A4B     		ldr	r3, .L8
+  67 002a 1A70     		strb	r2, [r3]
+  68              	.L4:
+  22:Core/Src/robot/fsm_tasks.cpp ****         {
+  69              		.loc 1 22 0 discriminator 2
+  70 002c 0134     		adds	r4, r4, #1
+  71              	.LVL3:
+  72 002e E4B2     		uxtb	r4, r4
+  73              	.LVL4:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 3
+
+
+  74              	.L6:
+  22:Core/Src/robot/fsm_tasks.cpp ****         {
+  75              		.loc 1 22 0 is_stmt 0 discriminator 1
+  76 0030 032C     		cmp	r4, #3
+  77 0032 2ED8     		bhi	.L1
+  24:Core/Src/robot/fsm_tasks.cpp ****                 {
+  78              		.loc 1 24 0 is_stmt 1
+  79 0034 002C     		cmp	r4, #0
+  80 0036 E6D0     		beq	.L3
+  26:Core/Src/robot/fsm_tasks.cpp ****                         getAngle(&motor_arr[i]);
+  81              		.loc 1 26 0
+  82 0038 C4EB0413 		rsb	r3, r4, r4, lsl #4
+  83 003c 9E00     		lsls	r6, r3, #2
+  84 003e 184B     		ldr	r3, .L8+12
+  85 0040 1E44     		add	r6, r6, r3
+  86 0042 9FED180A 		vldr.32	s0, .L8+16
+  87 0046 3046     		mov	r0, r6
+  88 0048 FFF7FEFF 		bl	_Z10ffSetAngleP7feedStrf
+  89              	.LVL5:
+  27:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+  90              		.loc 1 27 0
+  91 004c 3425     		movs	r5, #52
+  92 004e 124B     		ldr	r3, .L8+4
+  93 0050 05FB0435 		mla	r5, r5, r4, r3
+  94 0054 2846     		mov	r0, r5
+  95 0056 FFF7FEFF 		bl	_Z8getAngleP8motorStr
+  96              	.LVL6:
+  28:Core/Src/robot/fsm_tasks.cpp **** 
+  97              		.loc 1 28 0
+  98 005a 2846     		mov	r0, r5
+  99 005c FFF7FEFF 		bl	_Z8getOmegaP8motorStr
+ 100              	.LVL7:
+  30:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 101              		.loc 1 30 0
+ 102 0060 95ED010A 		vldr.32	s0, [r5, #4]
+ 103 0064 3046     		mov	r0, r6
+ 104 0066 FFF7FEFF 		bl	_Z10ffGenerateP7feedStrf
+ 105              	.LVL8:
+  31:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+ 106              		.loc 1 31 0
+ 107 006a C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 108 006e D300     		lsls	r3, r2, #3
+ 109 0070 0A21     		movs	r1, #10
+ 110 0072 D5ED000A 		vldr.32	s1, [r5]
+ 111 0076 0C48     		ldr	r0, .L8+20
+ 112 0078 1844     		add	r0, r0, r3
+ 113 007a FFF7FEFF 		bl	_Z11PID_ComputeP6pidStrfft
+ 114              	.LVL9:
+ 115 007e 85ED040A 		vstr.32	s0, [r5, #16]
+ 116 0082 D3E7     		b	.L4
+ 117              	.L5:
+  42:Core/Src/robot/fsm_tasks.cpp ****                         }
+  43:Core/Src/robot/fsm_tasks.cpp ****                         else {
+  44:Core/Src/robot/fsm_tasks.cpp ****                                 motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 118              		.loc 1 44 0
+ 119 0084 044A     		ldr	r2, .L8+4
+ 120 0086 3423     		movs	r3, #52
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 4
+
+
+ 121 0088 03FB0423 		mla	r3, r3, r4, r2
+ 122 008c 074A     		ldr	r2, .L8+24
+ 123 008e 1A61     		str	r2, [r3, #16]	@ float
+ 124 0090 CCE7     		b	.L4
+ 125              	.L1:
+ 126              	.LBE2:
+  45:Core/Src/robot/fsm_tasks.cpp ****                         }
+  46:Core/Src/robot/fsm_tasks.cpp ****                 }
+  47:Core/Src/robot/fsm_tasks.cpp ****         }
+  48:Core/Src/robot/fsm_tasks.cpp **** }
+ 127              		.loc 1 48 0
+ 128 0092 70BD     		pop	{r4, r5, r6, pc}
+ 129              	.LVL10:
+ 130              	.L9:
+ 131              		.align	2
+ 132              	.L8:
+ 133 0094 00000000 		.word	.LANCHOR0
+ 134 0098 00000000 		.word	motor_arr
+ 135 009c 00000000 		.word	int_arr
+ 136 00a0 00000000 		.word	ff_arr
+ 137 00a4 00002042 		.word	1109393408
+ 138 00a8 00000000 		.word	pid_arr
+ 139 00ac 000040C0 		.word	-1069547520
+ 140              		.cfi_endproc
+ 141              	.LFE137:
+ 143              		.section	.text._Z14phaseTwoChoresP6fsmStr,"ax",%progbits
+ 144              		.align	1
+ 145              		.global	_Z14phaseTwoChoresP6fsmStr
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.fpu fpv4-sp-d16
+ 151              	_Z14phaseTwoChoresP6fsmStr:
+ 152              	.LFB138:
+  49:Core/Src/robot/fsm_tasks.cpp **** 
+  50:Core/Src/robot/fsm_tasks.cpp **** void phaseTwoChores(struct fsmStr *fsm)
+  51:Core/Src/robot/fsm_tasks.cpp **** {
+ 153              		.loc 1 51 0
+ 154              		.cfi_startproc
+ 155              		@ args = 0, pretend = 0, frame = 0
+ 156              		@ frame_needed = 0, uses_anonymous_args = 0
+ 157              	.LVL11:
+ 158 0000 70B5     		push	{r4, r5, r6, lr}
+ 159              	.LCFI1:
+ 160              		.cfi_def_cfa_offset 16
+ 161              		.cfi_offset 4, -16
+ 162              		.cfi_offset 5, -12
+ 163              		.cfi_offset 6, -8
+ 164              		.cfi_offset 14, -4
+ 165              	.LVL12:
+ 166              	.LBB3:
+  52:Core/Src/robot/fsm_tasks.cpp ****         uint8_t motor_index = 1;
+  53:Core/Src/robot/fsm_tasks.cpp ****         float set_point = 0;
+  54:Core/Src/robot/fsm_tasks.cpp **** 
+  55:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 167              		.loc 1 55 0
+ 168 0002 0024     		movs	r4, #0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 5
+
+
+ 169 0004 07E0     		b	.L14
+ 170              	.LVL13:
+ 171              	.L12:
+  56:Core/Src/robot/fsm_tasks.cpp ****         {
+  57:Core/Src/robot/fsm_tasks.cpp ****                 if (i != motor_index)
+  58:Core/Src/robot/fsm_tasks.cpp ****                 {
+  59:Core/Src/robot/fsm_tasks.cpp ****                         ffSetAngle(&ff_arr[i], SINGLE_ANGLE);
+  60:Core/Src/robot/fsm_tasks.cpp **** 
+  61:Core/Src/robot/fsm_tasks.cpp ****                         getAngle(&motor_arr[i]);
+  62:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+  63:Core/Src/robot/fsm_tasks.cpp **** 
+  64:Core/Src/robot/fsm_tasks.cpp ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  65:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  66:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+  67:Core/Src/robot/fsm_tasks.cpp ****                                                                 motor_arr[i].omega,
+  68:Core/Src/robot/fsm_tasks.cpp ****                                                                 dt_ms);
+  69:Core/Src/robot/fsm_tasks.cpp ****                 }
+  70:Core/Src/robot/fsm_tasks.cpp ****                 else {
+  71:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 172              		.loc 1 71 0
+ 173 0006 194A     		ldr	r2, .L16
+ 174 0008 3423     		movs	r3, #52
+ 175 000a 03FB0423 		mla	r3, r3, r4, r2
+ 176 000e 184A     		ldr	r2, .L16+4
+ 177 0010 1A61     		str	r2, [r3, #16]	@ float
+ 178              	.L13:
+  55:Core/Src/robot/fsm_tasks.cpp ****         {
+ 179              		.loc 1 55 0 discriminator 2
+ 180 0012 0134     		adds	r4, r4, #1
+ 181              	.LVL14:
+ 182 0014 E4B2     		uxtb	r4, r4
+ 183              	.LVL15:
+ 184              	.L14:
+  55:Core/Src/robot/fsm_tasks.cpp ****         {
+ 185              		.loc 1 55 0 is_stmt 0 discriminator 1
+ 186 0016 032C     		cmp	r4, #3
+ 187 0018 27D8     		bhi	.L10
+  57:Core/Src/robot/fsm_tasks.cpp ****                 {
+ 188              		.loc 1 57 0 is_stmt 1
+ 189 001a 012C     		cmp	r4, #1
+ 190 001c F3D0     		beq	.L12
+  59:Core/Src/robot/fsm_tasks.cpp **** 
+ 191              		.loc 1 59 0
+ 192 001e C4EB0413 		rsb	r3, r4, r4, lsl #4
+ 193 0022 9E00     		lsls	r6, r3, #2
+ 194 0024 134B     		ldr	r3, .L16+8
+ 195 0026 1E44     		add	r6, r6, r3
+ 196 0028 9FED130A 		vldr.32	s0, .L16+12
+ 197 002c 3046     		mov	r0, r6
+ 198 002e FFF7FEFF 		bl	_Z10ffSetAngleP7feedStrf
+ 199              	.LVL16:
+  61:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+ 200              		.loc 1 61 0
+ 201 0032 3425     		movs	r5, #52
+ 202 0034 0D4B     		ldr	r3, .L16
+ 203 0036 05FB0435 		mla	r5, r5, r4, r3
+ 204 003a 2846     		mov	r0, r5
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 6
+
+
+ 205 003c FFF7FEFF 		bl	_Z8getAngleP8motorStr
+ 206              	.LVL17:
+  62:Core/Src/robot/fsm_tasks.cpp **** 
+ 207              		.loc 1 62 0
+ 208 0040 2846     		mov	r0, r5
+ 209 0042 FFF7FEFF 		bl	_Z8getOmegaP8motorStr
+ 210              	.LVL18:
+  64:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 211              		.loc 1 64 0
+ 212 0046 95ED010A 		vldr.32	s0, [r5, #4]
+ 213 004a 3046     		mov	r0, r6
+ 214 004c FFF7FEFF 		bl	_Z10ffGenerateP7feedStrf
+ 215              	.LVL19:
+  65:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+ 216              		.loc 1 65 0
+ 217 0050 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 218 0054 D300     		lsls	r3, r2, #3
+ 219 0056 0A21     		movs	r1, #10
+ 220 0058 D5ED000A 		vldr.32	s1, [r5]
+ 221 005c 0748     		ldr	r0, .L16+16
+ 222 005e 1844     		add	r0, r0, r3
+ 223 0060 FFF7FEFF 		bl	_Z11PID_ComputeP6pidStrfft
+ 224              	.LVL20:
+ 225 0064 85ED040A 		vstr.32	s0, [r5, #16]
+ 226 0068 D3E7     		b	.L13
+ 227              	.L10:
+ 228              	.LBE3:
+  72:Core/Src/robot/fsm_tasks.cpp ****                 }
+  73:Core/Src/robot/fsm_tasks.cpp ****         }
+  74:Core/Src/robot/fsm_tasks.cpp **** }
+ 229              		.loc 1 74 0
+ 230 006a 70BD     		pop	{r4, r5, r6, pc}
+ 231              	.LVL21:
+ 232              	.L17:
+ 233              		.align	2
+ 234              	.L16:
+ 235 006c 00000000 		.word	motor_arr
+ 236 0070 000040C0 		.word	-1069547520
+ 237 0074 00000000 		.word	ff_arr
+ 238 0078 00002042 		.word	1109393408
+ 239 007c 00000000 		.word	pid_arr
+ 240              		.cfi_endproc
+ 241              	.LFE138:
+ 243              		.section	.text._Z16phaseThreeChoresP6fsmStr,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	_Z16phaseThreeChoresP6fsmStr
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 249              		.fpu fpv4-sp-d16
+ 251              	_Z16phaseThreeChoresP6fsmStr:
+ 252              	.LFB139:
+  75:Core/Src/robot/fsm_tasks.cpp **** 
+  76:Core/Src/robot/fsm_tasks.cpp **** void phaseThreeChores(struct fsmStr *fsm)
+  77:Core/Src/robot/fsm_tasks.cpp **** {
+ 253              		.loc 1 77 0
+ 254              		.cfi_startproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 7
+
+
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257              	.LVL22:
+ 258 0000 70B5     		push	{r4, r5, r6, lr}
+ 259              	.LCFI2:
+ 260              		.cfi_def_cfa_offset 16
+ 261              		.cfi_offset 4, -16
+ 262              		.cfi_offset 5, -12
+ 263              		.cfi_offset 6, -8
+ 264              		.cfi_offset 14, -4
+ 265              	.LVL23:
+ 266              	.LBB4:
+  78:Core/Src/robot/fsm_tasks.cpp ****         uint8_t motor_index = 2;
+  79:Core/Src/robot/fsm_tasks.cpp ****         float set_point;
+  80:Core/Src/robot/fsm_tasks.cpp **** 
+  81:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 267              		.loc 1 81 0
+ 268 0002 0024     		movs	r4, #0
+ 269 0004 07E0     		b	.L22
+ 270              	.LVL24:
+ 271              	.L20:
+  82:Core/Src/robot/fsm_tasks.cpp ****         {
+  83:Core/Src/robot/fsm_tasks.cpp ****                 if (i != motor_index)
+  84:Core/Src/robot/fsm_tasks.cpp ****                 {
+  85:Core/Src/robot/fsm_tasks.cpp ****                         ffSetAngle(&ff_arr[i], SINGLE_ANGLE);
+  86:Core/Src/robot/fsm_tasks.cpp **** 
+  87:Core/Src/robot/fsm_tasks.cpp ****                         getAngle(&motor_arr[i]);
+  88:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+  89:Core/Src/robot/fsm_tasks.cpp **** 
+  90:Core/Src/robot/fsm_tasks.cpp ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+  91:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+  92:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+  93:Core/Src/robot/fsm_tasks.cpp ****                                                                 motor_arr[i].omega,
+  94:Core/Src/robot/fsm_tasks.cpp ****                                                                 dt_ms);
+  95:Core/Src/robot/fsm_tasks.cpp ****                 }
+  96:Core/Src/robot/fsm_tasks.cpp ****                 else {
+  97:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 272              		.loc 1 97 0
+ 273 0006 194A     		ldr	r2, .L24
+ 274 0008 3423     		movs	r3, #52
+ 275 000a 03FB0423 		mla	r3, r3, r4, r2
+ 276 000e 184A     		ldr	r2, .L24+4
+ 277 0010 1A61     		str	r2, [r3, #16]	@ float
+ 278              	.L21:
+  81:Core/Src/robot/fsm_tasks.cpp ****         {
+ 279              		.loc 1 81 0 discriminator 2
+ 280 0012 0134     		adds	r4, r4, #1
+ 281              	.LVL25:
+ 282 0014 E4B2     		uxtb	r4, r4
+ 283              	.LVL26:
+ 284              	.L22:
+  81:Core/Src/robot/fsm_tasks.cpp ****         {
+ 285              		.loc 1 81 0 is_stmt 0 discriminator 1
+ 286 0016 032C     		cmp	r4, #3
+ 287 0018 27D8     		bhi	.L18
+  83:Core/Src/robot/fsm_tasks.cpp ****                 {
+ 288              		.loc 1 83 0 is_stmt 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 8
+
+
+ 289 001a 022C     		cmp	r4, #2
+ 290 001c F3D0     		beq	.L20
+  85:Core/Src/robot/fsm_tasks.cpp **** 
+ 291              		.loc 1 85 0
+ 292 001e C4EB0413 		rsb	r3, r4, r4, lsl #4
+ 293 0022 9E00     		lsls	r6, r3, #2
+ 294 0024 134B     		ldr	r3, .L24+8
+ 295 0026 1E44     		add	r6, r6, r3
+ 296 0028 9FED130A 		vldr.32	s0, .L24+12
+ 297 002c 3046     		mov	r0, r6
+ 298 002e FFF7FEFF 		bl	_Z10ffSetAngleP7feedStrf
+ 299              	.LVL27:
+  87:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+ 300              		.loc 1 87 0
+ 301 0032 3425     		movs	r5, #52
+ 302 0034 0D4B     		ldr	r3, .L24
+ 303 0036 05FB0435 		mla	r5, r5, r4, r3
+ 304 003a 2846     		mov	r0, r5
+ 305 003c FFF7FEFF 		bl	_Z8getAngleP8motorStr
+ 306              	.LVL28:
+  88:Core/Src/robot/fsm_tasks.cpp **** 
+ 307              		.loc 1 88 0
+ 308 0040 2846     		mov	r0, r5
+ 309 0042 FFF7FEFF 		bl	_Z8getOmegaP8motorStr
+ 310              	.LVL29:
+  90:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 311              		.loc 1 90 0
+ 312 0046 95ED010A 		vldr.32	s0, [r5, #4]
+ 313 004a 3046     		mov	r0, r6
+ 314 004c FFF7FEFF 		bl	_Z10ffGenerateP7feedStrf
+ 315              	.LVL30:
+  91:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+ 316              		.loc 1 91 0
+ 317 0050 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 318 0054 D300     		lsls	r3, r2, #3
+ 319 0056 0A21     		movs	r1, #10
+ 320 0058 D5ED000A 		vldr.32	s1, [r5]
+ 321 005c 0748     		ldr	r0, .L24+16
+ 322 005e 1844     		add	r0, r0, r3
+ 323 0060 FFF7FEFF 		bl	_Z11PID_ComputeP6pidStrfft
+ 324              	.LVL31:
+ 325 0064 85ED040A 		vstr.32	s0, [r5, #16]
+ 326 0068 D3E7     		b	.L21
+ 327              	.L18:
+ 328              	.LBE4:
+  98:Core/Src/robot/fsm_tasks.cpp ****                 }
+  99:Core/Src/robot/fsm_tasks.cpp ****         }
+ 100:Core/Src/robot/fsm_tasks.cpp **** }
+ 329              		.loc 1 100 0
+ 330 006a 70BD     		pop	{r4, r5, r6, pc}
+ 331              	.LVL32:
+ 332              	.L25:
+ 333              		.align	2
+ 334              	.L24:
+ 335 006c 00000000 		.word	motor_arr
+ 336 0070 000040C0 		.word	-1069547520
+ 337 0074 00000000 		.word	ff_arr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 9
+
+
+ 338 0078 00002042 		.word	1109393408
+ 339 007c 00000000 		.word	pid_arr
+ 340              		.cfi_endproc
+ 341              	.LFE139:
+ 343              		.section	.text._Z15phaseFourChoresP6fsmStr,"ax",%progbits
+ 344              		.align	1
+ 345              		.global	_Z15phaseFourChoresP6fsmStr
+ 346              		.syntax unified
+ 347              		.thumb
+ 348              		.thumb_func
+ 349              		.fpu fpv4-sp-d16
+ 351              	_Z15phaseFourChoresP6fsmStr:
+ 352              	.LFB140:
+ 101:Core/Src/robot/fsm_tasks.cpp **** 
+ 102:Core/Src/robot/fsm_tasks.cpp **** void phaseFourChores(struct fsmStr *fsm)
+ 103:Core/Src/robot/fsm_tasks.cpp **** {
+ 353              		.loc 1 103 0
+ 354              		.cfi_startproc
+ 355              		@ args = 0, pretend = 0, frame = 0
+ 356              		@ frame_needed = 0, uses_anonymous_args = 0
+ 357              	.LVL33:
+ 358 0000 70B5     		push	{r4, r5, r6, lr}
+ 359              	.LCFI3:
+ 360              		.cfi_def_cfa_offset 16
+ 361              		.cfi_offset 4, -16
+ 362              		.cfi_offset 5, -12
+ 363              		.cfi_offset 6, -8
+ 364              		.cfi_offset 14, -4
+ 365              	.LVL34:
+ 366              	.LBB5:
+ 104:Core/Src/robot/fsm_tasks.cpp ****         uint8_t motor_index = 3;
+ 105:Core/Src/robot/fsm_tasks.cpp ****         float set_point;
+ 106:Core/Src/robot/fsm_tasks.cpp **** 
+ 107:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 367              		.loc 1 107 0
+ 368 0002 0024     		movs	r4, #0
+ 369 0004 07E0     		b	.L30
+ 370              	.LVL35:
+ 371              	.L28:
+ 108:Core/Src/robot/fsm_tasks.cpp ****         {
+ 109:Core/Src/robot/fsm_tasks.cpp ****                 if (i != motor_index)
+ 110:Core/Src/robot/fsm_tasks.cpp ****                 {
+ 111:Core/Src/robot/fsm_tasks.cpp **** 
+ 112:Core/Src/robot/fsm_tasks.cpp ****                         ffSetAngle(&ff_arr[i], SINGLE_ANGLE);
+ 113:Core/Src/robot/fsm_tasks.cpp **** 
+ 114:Core/Src/robot/fsm_tasks.cpp ****                         getAngle(&motor_arr[i]);
+ 115:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+ 116:Core/Src/robot/fsm_tasks.cpp **** 
+ 117:Core/Src/robot/fsm_tasks.cpp ****                         set_point = ffGenerate(&ff_arr[i], motor_arr[i].angle);
+ 118:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 119:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+ 120:Core/Src/robot/fsm_tasks.cpp ****                                                                 motor_arr[i].omega,
+ 121:Core/Src/robot/fsm_tasks.cpp ****                                                                 dt_ms);
+ 122:Core/Src/robot/fsm_tasks.cpp ****                 }
+ 123:Core/Src/robot/fsm_tasks.cpp ****                 else {
+ 124:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 372              		.loc 1 124 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 10
+
+
+ 373 0006 194A     		ldr	r2, .L32
+ 374 0008 3423     		movs	r3, #52
+ 375 000a 03FB0423 		mla	r3, r3, r4, r2
+ 376 000e 184A     		ldr	r2, .L32+4
+ 377 0010 1A61     		str	r2, [r3, #16]	@ float
+ 378              	.L29:
+ 107:Core/Src/robot/fsm_tasks.cpp ****         {
+ 379              		.loc 1 107 0 discriminator 2
+ 380 0012 0134     		adds	r4, r4, #1
+ 381              	.LVL36:
+ 382 0014 E4B2     		uxtb	r4, r4
+ 383              	.LVL37:
+ 384              	.L30:
+ 107:Core/Src/robot/fsm_tasks.cpp ****         {
+ 385              		.loc 1 107 0 is_stmt 0 discriminator 1
+ 386 0016 032C     		cmp	r4, #3
+ 387 0018 26D8     		bhi	.L26
+ 109:Core/Src/robot/fsm_tasks.cpp ****                 {
+ 388              		.loc 1 109 0 is_stmt 1
+ 389 001a F4D0     		beq	.L28
+ 112:Core/Src/robot/fsm_tasks.cpp **** 
+ 390              		.loc 1 112 0
+ 391 001c C4EB0413 		rsb	r3, r4, r4, lsl #4
+ 392 0020 9E00     		lsls	r6, r3, #2
+ 393 0022 144B     		ldr	r3, .L32+8
+ 394 0024 1E44     		add	r6, r6, r3
+ 395 0026 9FED140A 		vldr.32	s0, .L32+12
+ 396 002a 3046     		mov	r0, r6
+ 397 002c FFF7FEFF 		bl	_Z10ffSetAngleP7feedStrf
+ 398              	.LVL38:
+ 114:Core/Src/robot/fsm_tasks.cpp ****                         getOmega(&motor_arr[i]);
+ 399              		.loc 1 114 0
+ 400 0030 3425     		movs	r5, #52
+ 401 0032 0E4B     		ldr	r3, .L32
+ 402 0034 05FB0435 		mla	r5, r5, r4, r3
+ 403 0038 2846     		mov	r0, r5
+ 404 003a FFF7FEFF 		bl	_Z8getAngleP8motorStr
+ 405              	.LVL39:
+ 115:Core/Src/robot/fsm_tasks.cpp **** 
+ 406              		.loc 1 115 0
+ 407 003e 2846     		mov	r0, r5
+ 408 0040 FFF7FEFF 		bl	_Z8getOmegaP8motorStr
+ 409              	.LVL40:
+ 117:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = PID_Compute(&pid_arr[i],
+ 410              		.loc 1 117 0
+ 411 0044 95ED010A 		vldr.32	s0, [r5, #4]
+ 412 0048 3046     		mov	r0, r6
+ 413 004a FFF7FEFF 		bl	_Z10ffGenerateP7feedStrf
+ 414              	.LVL41:
+ 118:Core/Src/robot/fsm_tasks.cpp ****                                                                 set_point,
+ 415              		.loc 1 118 0
+ 416 004e C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 417 0052 D300     		lsls	r3, r2, #3
+ 418 0054 0A21     		movs	r1, #10
+ 419 0056 D5ED000A 		vldr.32	s1, [r5]
+ 420 005a 0848     		ldr	r0, .L32+16
+ 421 005c 1844     		add	r0, r0, r3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 11
+
+
+ 422 005e FFF7FEFF 		bl	_Z11PID_ComputeP6pidStrfft
+ 423              	.LVL42:
+ 424 0062 85ED040A 		vstr.32	s0, [r5, #16]
+ 425 0066 D4E7     		b	.L29
+ 426              	.L26:
+ 427              	.LBE5:
+ 125:Core/Src/robot/fsm_tasks.cpp ****                 }
+ 126:Core/Src/robot/fsm_tasks.cpp ****         }
+ 127:Core/Src/robot/fsm_tasks.cpp **** }
+ 428              		.loc 1 127 0
+ 429 0068 70BD     		pop	{r4, r5, r6, pc}
+ 430              	.LVL43:
+ 431              	.L33:
+ 432 006a 00BF     		.align	2
+ 433              	.L32:
+ 434 006c 00000000 		.word	motor_arr
+ 435 0070 000040C0 		.word	-1069547520
+ 436 0074 00000000 		.word	ff_arr
+ 437 0078 00002042 		.word	1109393408
+ 438 007c 00000000 		.word	pid_arr
+ 439              		.cfi_endproc
+ 440              	.LFE140:
+ 442              		.section	.text._Z15setHomePositionv,"ax",%progbits
+ 443              		.align	1
+ 444              		.global	_Z15setHomePositionv
+ 445              		.syntax unified
+ 446              		.thumb
+ 447              		.thumb_func
+ 448              		.fpu fpv4-sp-d16
+ 450              	_Z15setHomePositionv:
+ 451              	.LFB141:
+ 128:Core/Src/robot/fsm_tasks.cpp **** 
+ 129:Core/Src/robot/fsm_tasks.cpp **** void setHomePosition(void)
+ 130:Core/Src/robot/fsm_tasks.cpp **** {
+ 452              		.loc 1 130 0
+ 453              		.cfi_startproc
+ 454              		@ args = 0, pretend = 0, frame = 0
+ 455              		@ frame_needed = 0, uses_anonymous_args = 0
+ 456 0000 10B5     		push	{r4, lr}
+ 457              	.LCFI4:
+ 458              		.cfi_def_cfa_offset 8
+ 459              		.cfi_offset 4, -8
+ 460              		.cfi_offset 14, -4
+ 131:Core/Src/robot/fsm_tasks.cpp ****         setDutyCycle(&balance_motor, 65535);
+ 461              		.loc 1 131 0
+ 462 0002 0B4C     		ldr	r4, .L38
+ 463 0004 4FF6FF71 		movw	r1, #65535
+ 464 0008 2046     		mov	r0, r4
+ 465 000a FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 466              	.LVL44:
+ 132:Core/Src/robot/fsm_tasks.cpp ****         setDirection(&balance_motor, DIR_ANTICLOCKWISE);
+ 467              		.loc 1 132 0
+ 468 000e 0121     		movs	r1, #1
+ 469 0010 2046     		mov	r0, r4
+ 470 0012 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 471              	.LVL45:
+ 472              	.LBB6:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 12
+
+
+ 133:Core/Src/robot/fsm_tasks.cpp **** 
+ 134:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 473              		.loc 1 134 0
+ 474 0016 0023     		movs	r3, #0
+ 475              	.LVL46:
+ 476              	.L36:
+ 477              		.loc 1 134 0 is_stmt 0 discriminator 3
+ 478 0018 032B     		cmp	r3, #3
+ 479 001a 08D8     		bhi	.L34
+ 135:Core/Src/robot/fsm_tasks.cpp ****         {
+ 136:Core/Src/robot/fsm_tasks.cpp ****                 motor_arr[i].update_omega = HOME_POSITION_OMEGA;
+ 480              		.loc 1 136 0 is_stmt 1 discriminator 2
+ 481 001c 0549     		ldr	r1, .L38+4
+ 482 001e 3422     		movs	r2, #52
+ 483 0020 02FB0312 		mla	r2, r2, r3, r1
+ 484 0024 0449     		ldr	r1, .L38+8
+ 485 0026 1161     		str	r1, [r2, #16]	@ float
+ 134:Core/Src/robot/fsm_tasks.cpp ****         {
+ 486              		.loc 1 134 0 discriminator 2
+ 487 0028 0133     		adds	r3, r3, #1
+ 488              	.LVL47:
+ 489 002a DBB2     		uxtb	r3, r3
+ 490              	.LVL48:
+ 491 002c F4E7     		b	.L36
+ 492              	.L34:
+ 493              	.LBE6:
+ 137:Core/Src/robot/fsm_tasks.cpp ****         }
+ 138:Core/Src/robot/fsm_tasks.cpp **** }
+ 494              		.loc 1 138 0
+ 495 002e 10BD     		pop	{r4, pc}
+ 496              	.L39:
+ 497              		.align	2
+ 498              	.L38:
+ 499 0030 00000000 		.word	balance_motor
+ 500 0034 00000000 		.word	motor_arr
+ 501 0038 000040C0 		.word	-1069547520
+ 502              		.cfi_endproc
+ 503              	.LFE141:
+ 505              		.section	.text._Z12check_N_Stopv,"ax",%progbits
+ 506              		.align	1
+ 507              		.global	_Z12check_N_Stopv
+ 508              		.syntax unified
+ 509              		.thumb
+ 510              		.thumb_func
+ 511              		.fpu fpv4-sp-d16
+ 513              	_Z12check_N_Stopv:
+ 514              	.LFB142:
+ 139:Core/Src/robot/fsm_tasks.cpp **** 
+ 140:Core/Src/robot/fsm_tasks.cpp **** void check_N_Stop(void)
+ 141:Core/Src/robot/fsm_tasks.cpp **** {
+ 515              		.loc 1 141 0
+ 516              		.cfi_startproc
+ 517              		@ args = 0, pretend = 0, frame = 0
+ 518              		@ frame_needed = 0, uses_anonymous_args = 0
+ 519 0000 10B5     		push	{r4, lr}
+ 520              	.LCFI5:
+ 521              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 13
+
+
+ 522              		.cfi_offset 4, -8
+ 523              		.cfi_offset 14, -4
+ 524              	.LVL49:
+ 525              	.LBB7:
+ 142:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 526              		.loc 1 142 0
+ 527 0002 0024     		movs	r4, #0
+ 528 0004 01E0     		b	.L43
+ 529              	.LVL50:
+ 530              	.L42:
+ 531              		.loc 1 142 0 is_stmt 0 discriminator 2
+ 532 0006 0134     		adds	r4, r4, #1
+ 533              	.LVL51:
+ 534 0008 E4B2     		uxtb	r4, r4
+ 535              	.LVL52:
+ 536              	.L43:
+ 537              		.loc 1 142 0 discriminator 1
+ 538 000a 032C     		cmp	r4, #3
+ 539 000c 18D8     		bhi	.L40
+ 143:Core/Src/robot/fsm_tasks.cpp ****         {
+ 144:Core/Src/robot/fsm_tasks.cpp ****                 if (int_arr[i].fhome_pos)
+ 540              		.loc 1 144 0 is_stmt 1
+ 541 000e 04EB4403 		add	r3, r4, r4, lsl #1
+ 542 0012 9A00     		lsls	r2, r3, #2
+ 543 0014 0B4B     		ldr	r3, .L45
+ 544 0016 1344     		add	r3, r3, r2
+ 545 0018 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 546 001a 002B     		cmp	r3, #0
+ 547 001c F3D0     		beq	.L42
+ 145:Core/Src/robot/fsm_tasks.cpp ****                 {
+ 146:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].update_omega = 0;
+ 548              		.loc 1 146 0
+ 549 001e 0A4A     		ldr	r2, .L45+4
+ 550 0020 3423     		movs	r3, #52
+ 551 0022 03FB0423 		mla	r3, r3, r4, r2
+ 552 0026 0022     		movs	r2, #0
+ 553 0028 1A61     		str	r2, [r3, #16]	@ float
+ 147:Core/Src/robot/fsm_tasks.cpp ****                         // resetAngle(&motor_arr[i]);
+ 148:Core/Src/robot/fsm_tasks.cpp ****                         motor_arr[i].encoder->htim->Instance->CNT = 0;
+ 554              		.loc 1 148 0
+ 555 002a 1B6B     		ldr	r3, [r3, #48]
+ 556 002c DB68     		ldr	r3, [r3, #12]
+ 557 002e 1B68     		ldr	r3, [r3]
+ 558 0030 0022     		movs	r2, #0
+ 559 0032 5A62     		str	r2, [r3, #36]
+ 149:Core/Src/robot/fsm_tasks.cpp ****                         if (i == 0) {
+ 560              		.loc 1 149 0
+ 561 0034 002C     		cmp	r4, #0
+ 562 0036 E6D1     		bne	.L42
+ 150:Core/Src/robot/fsm_tasks.cpp ****                                 printf("\n\n\n\n\n\n\nHere!!\n\n\n\n\n");
+ 563              		.loc 1 150 0
+ 564 0038 0448     		ldr	r0, .L45+8
+ 565 003a FFF7FEFF 		bl	puts
+ 566              	.LVL53:
+ 567 003e E2E7     		b	.L42
+ 568              	.L40:
+ 569              	.LBE7:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 14
+
+
+ 151:Core/Src/robot/fsm_tasks.cpp ****                         }
+ 152:Core/Src/robot/fsm_tasks.cpp ****                 }
+ 153:Core/Src/robot/fsm_tasks.cpp ****         }
+ 154:Core/Src/robot/fsm_tasks.cpp ****         // if (blnc_int_arr[2].fhome_pos == 1)
+ 155:Core/Src/robot/fsm_tasks.cpp ****         // {
+ 156:Core/Src/robot/fsm_tasks.cpp ****         //         setDutyCycle(&balance_motor, 0);
+ 157:Core/Src/robot/fsm_tasks.cpp ****         // }
+ 158:Core/Src/robot/fsm_tasks.cpp **** }
+ 570              		.loc 1 158 0
+ 571 0040 10BD     		pop	{r4, pc}
+ 572              	.LVL54:
+ 573              	.L46:
+ 574 0042 00BF     		.align	2
+ 575              	.L45:
+ 576 0044 00000000 		.word	int_arr
+ 577 0048 00000000 		.word	motor_arr
+ 578 004c 00000000 		.word	.LC0
+ 579              		.cfi_endproc
+ 580              	.LFE142:
+ 582              		.section	.text._Z18homePositionChoresP6fsmStr,"ax",%progbits
+ 583              		.align	1
+ 584              		.global	_Z18homePositionChoresP6fsmStr
+ 585              		.syntax unified
+ 586              		.thumb
+ 587              		.thumb_func
+ 588              		.fpu fpv4-sp-d16
+ 590              	_Z18homePositionChoresP6fsmStr:
+ 591              	.LFB136:
+  11:Core/Src/robot/fsm_tasks.cpp ****         setHomePosition();
+ 592              		.loc 1 11 0
+ 593              		.cfi_startproc
+ 594              		@ args = 0, pretend = 0, frame = 0
+ 595              		@ frame_needed = 0, uses_anonymous_args = 0
+ 596              	.LVL55:
+ 597 0000 08B5     		push	{r3, lr}
+ 598              	.LCFI6:
+ 599              		.cfi_def_cfa_offset 8
+ 600              		.cfi_offset 3, -8
+ 601              		.cfi_offset 14, -4
+  12:Core/Src/robot/fsm_tasks.cpp ****         check_N_Stop();
+ 602              		.loc 1 12 0
+ 603 0002 FFF7FEFF 		bl	_Z15setHomePositionv
+ 604              	.LVL56:
+  13:Core/Src/robot/fsm_tasks.cpp **** }
+ 605              		.loc 1 13 0
+ 606 0006 FFF7FEFF 		bl	_Z12check_N_Stopv
+ 607              	.LVL57:
+  14:Core/Src/robot/fsm_tasks.cpp **** 
+ 608              		.loc 1 14 0
+ 609 000a 08BD     		pop	{r3, pc}
+ 610              		.cfi_endproc
+ 611              	.LFE136:
+ 613              		.section	.text._Z12updateOmegasv,"ax",%progbits
+ 614              		.align	1
+ 615              		.global	_Z12updateOmegasv
+ 616              		.syntax unified
+ 617              		.thumb
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 15
+
+
+ 618              		.thumb_func
+ 619              		.fpu fpv4-sp-d16
+ 621              	_Z12updateOmegasv:
+ 622              	.LFB143:
+ 159:Core/Src/robot/fsm_tasks.cpp **** 
+ 160:Core/Src/robot/fsm_tasks.cpp **** void updateOmegas(void)
+ 161:Core/Src/robot/fsm_tasks.cpp **** {
+ 623              		.loc 1 161 0
+ 624              		.cfi_startproc
+ 625              		@ args = 0, pretend = 0, frame = 0
+ 626              		@ frame_needed = 0, uses_anonymous_args = 0
+ 627 0000 10B5     		push	{r4, lr}
+ 628              	.LCFI7:
+ 629              		.cfi_def_cfa_offset 8
+ 630              		.cfi_offset 4, -8
+ 631              		.cfi_offset 14, -4
+ 632              	.LVL58:
+ 633              	.LBB8:
+ 162:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 634              		.loc 1 162 0
+ 635 0002 0024     		movs	r4, #0
+ 636              	.LVL59:
+ 637              	.L51:
+ 638              		.loc 1 162 0 is_stmt 0 discriminator 3
+ 639 0004 032C     		cmp	r4, #3
+ 640 0006 0AD8     		bhi	.L49
+ 163:Core/Src/robot/fsm_tasks.cpp ****         {
+ 164:Core/Src/robot/fsm_tasks.cpp ****                 setOmega(&motor_arr[i], motor_arr[i].update_omega);
+ 641              		.loc 1 164 0 is_stmt 1 discriminator 2
+ 642 0008 054B     		ldr	r3, .L53
+ 643 000a 3420     		movs	r0, #52
+ 644 000c 00FB0430 		mla	r0, r0, r4, r3
+ 645 0010 90ED040A 		vldr.32	s0, [r0, #16]
+ 646 0014 FFF7FEFF 		bl	_Z8setOmegaP8motorStrf
+ 647              	.LVL60:
+ 162:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 648              		.loc 1 162 0 discriminator 2
+ 649 0018 0134     		adds	r4, r4, #1
+ 650              	.LVL61:
+ 651 001a E4B2     		uxtb	r4, r4
+ 652              	.LVL62:
+ 653 001c F2E7     		b	.L51
+ 654              	.L49:
+ 655              	.LBE8:
+ 165:Core/Src/robot/fsm_tasks.cpp ****         }
+ 166:Core/Src/robot/fsm_tasks.cpp **** }
+ 656              		.loc 1 166 0
+ 657 001e 10BD     		pop	{r4, pc}
+ 658              	.LVL63:
+ 659              	.L54:
+ 660              		.align	2
+ 661              	.L53:
+ 662 0020 00000000 		.word	motor_arr
+ 663              		.cfi_endproc
+ 664              	.LFE143:
+ 666              		.section	.text._Z11resetAnglesv,"ax",%progbits
+ 667              		.align	1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 16
+
+
+ 668              		.global	_Z11resetAnglesv
+ 669              		.syntax unified
+ 670              		.thumb
+ 671              		.thumb_func
+ 672              		.fpu fpv4-sp-d16
+ 674              	_Z11resetAnglesv:
+ 675              	.LFB144:
+ 167:Core/Src/robot/fsm_tasks.cpp **** 
+ 168:Core/Src/robot/fsm_tasks.cpp **** void resetAngles(void)
+ 169:Core/Src/robot/fsm_tasks.cpp **** {
+ 676              		.loc 1 169 0
+ 677              		.cfi_startproc
+ 678              		@ args = 0, pretend = 0, frame = 0
+ 679              		@ frame_needed = 0, uses_anonymous_args = 0
+ 680 0000 10B5     		push	{r4, lr}
+ 681              	.LCFI8:
+ 682              		.cfi_def_cfa_offset 8
+ 683              		.cfi_offset 4, -8
+ 684              		.cfi_offset 14, -4
+ 685              	.LVL64:
+ 686              	.LBB9:
+ 170:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 687              		.loc 1 170 0
+ 688 0002 0024     		movs	r4, #0
+ 689              	.LVL65:
+ 690              	.L57:
+ 691              		.loc 1 170 0 is_stmt 0 discriminator 3
+ 692 0004 032C     		cmp	r4, #3
+ 693 0006 08D8     		bhi	.L55
+ 171:Core/Src/robot/fsm_tasks.cpp ****         {
+ 172:Core/Src/robot/fsm_tasks.cpp ****                 resetAngle(&motor_arr[i]);
+ 694              		.loc 1 172 0 is_stmt 1 discriminator 2
+ 695 0008 3420     		movs	r0, #52
+ 696 000a 044B     		ldr	r3, .L59
+ 697 000c 00FB0430 		mla	r0, r0, r4, r3
+ 698 0010 FFF7FEFF 		bl	_Z10resetAngleP8motorStr
+ 699              	.LVL66:
+ 170:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 700              		.loc 1 170 0 discriminator 2
+ 701 0014 0134     		adds	r4, r4, #1
+ 702              	.LVL67:
+ 703 0016 E4B2     		uxtb	r4, r4
+ 704              	.LVL68:
+ 705 0018 F4E7     		b	.L57
+ 706              	.L55:
+ 707              	.LBE9:
+ 173:Core/Src/robot/fsm_tasks.cpp ****         }
+ 174:Core/Src/robot/fsm_tasks.cpp **** }
+ 708              		.loc 1 174 0
+ 709 001a 10BD     		pop	{r4, pc}
+ 710              	.LVL69:
+ 711              	.L60:
+ 712              		.align	2
+ 713              	.L59:
+ 714 001c 00000000 		.word	motor_arr
+ 715              		.cfi_endproc
+ 716              	.LFE144:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 17
+
+
+ 718              		.section	.text._Z8resetPIDv,"ax",%progbits
+ 719              		.align	1
+ 720              		.global	_Z8resetPIDv
+ 721              		.syntax unified
+ 722              		.thumb
+ 723              		.thumb_func
+ 724              		.fpu fpv4-sp-d16
+ 726              	_Z8resetPIDv:
+ 727              	.LFB145:
+ 175:Core/Src/robot/fsm_tasks.cpp **** 
+ 176:Core/Src/robot/fsm_tasks.cpp **** void resetPID(void)
+ 177:Core/Src/robot/fsm_tasks.cpp **** {
+ 728              		.loc 1 177 0
+ 729              		.cfi_startproc
+ 730              		@ args = 0, pretend = 0, frame = 0
+ 731              		@ frame_needed = 0, uses_anonymous_args = 0
+ 732 0000 10B5     		push	{r4, lr}
+ 733              	.LCFI9:
+ 734              		.cfi_def_cfa_offset 8
+ 735              		.cfi_offset 4, -8
+ 736              		.cfi_offset 14, -4
+ 737              	.LVL70:
+ 738              	.LBB10:
+ 178:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 739              		.loc 1 178 0
+ 740 0002 0024     		movs	r4, #0
+ 741              	.LVL71:
+ 742              	.L63:
+ 743              		.loc 1 178 0 is_stmt 0 discriminator 3
+ 744 0004 032C     		cmp	r4, #3
+ 745 0006 09D8     		bhi	.L61
+ 179:Core/Src/robot/fsm_tasks.cpp ****         {
+ 180:Core/Src/robot/fsm_tasks.cpp ****                 PID_resetParams(&pid_arr[i]);
+ 746              		.loc 1 180 0 is_stmt 1 discriminator 2
+ 747 0008 C4EBC402 		rsb	r2, r4, r4, lsl #3
+ 748 000c D300     		lsls	r3, r2, #3
+ 749 000e 0448     		ldr	r0, .L65
+ 750 0010 1844     		add	r0, r0, r3
+ 751 0012 FFF7FEFF 		bl	_Z15PID_resetParamsP6pidStr
+ 752              	.LVL72:
+ 178:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 753              		.loc 1 178 0 discriminator 2
+ 754 0016 0134     		adds	r4, r4, #1
+ 755              	.LVL73:
+ 756 0018 E4B2     		uxtb	r4, r4
+ 757              	.LVL74:
+ 758 001a F3E7     		b	.L63
+ 759              	.L61:
+ 760              	.LBE10:
+ 181:Core/Src/robot/fsm_tasks.cpp ****         }
+ 182:Core/Src/robot/fsm_tasks.cpp **** }
+ 761              		.loc 1 182 0
+ 762 001c 10BD     		pop	{r4, pc}
+ 763              	.LVL75:
+ 764              	.L66:
+ 765 001e 00BF     		.align	2
+ 766              	.L65:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 18
+
+
+ 767 0020 00000000 		.word	pid_arr
+ 768              		.cfi_endproc
+ 769              	.LFE145:
+ 771              		.section	.text._Z10omegaResetv,"ax",%progbits
+ 772              		.align	1
+ 773              		.global	_Z10omegaResetv
+ 774              		.syntax unified
+ 775              		.thumb
+ 776              		.thumb_func
+ 777              		.fpu fpv4-sp-d16
+ 779              	_Z10omegaResetv:
+ 780              	.LFB147:
+ 183:Core/Src/robot/fsm_tasks.cpp **** 
+ 184:Core/Src/robot/fsm_tasks.cpp **** void stateReset()
+ 185:Core/Src/robot/fsm_tasks.cpp **** {
+ 186:Core/Src/robot/fsm_tasks.cpp ****         resetPID();
+ 187:Core/Src/robot/fsm_tasks.cpp ****         resetAngles();
+ 188:Core/Src/robot/fsm_tasks.cpp ****         omegaReset();
+ 189:Core/Src/robot/fsm_tasks.cpp ****         resetIntState();
+ 190:Core/Src/robot/fsm_tasks.cpp ****         feedForwardRestart();
+ 191:Core/Src/robot/fsm_tasks.cpp **** }
+ 192:Core/Src/robot/fsm_tasks.cpp **** 
+ 193:Core/Src/robot/fsm_tasks.cpp **** void omegaReset(void)
+ 194:Core/Src/robot/fsm_tasks.cpp **** {
+ 781              		.loc 1 194 0
+ 782              		.cfi_startproc
+ 783              		@ args = 0, pretend = 0, frame = 0
+ 784              		@ frame_needed = 0, uses_anonymous_args = 0
+ 785              		@ link register save eliminated.
+ 786              	.LVL76:
+ 787              	.LBB11:
+ 195:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 788              		.loc 1 195 0
+ 789 0000 0023     		movs	r3, #0
+ 790              	.LVL77:
+ 791              	.L69:
+ 792              		.loc 1 195 0 is_stmt 0 discriminator 3
+ 793 0002 032B     		cmp	r3, #3
+ 794 0004 08D8     		bhi	.L67
+ 196:Core/Src/robot/fsm_tasks.cpp ****         {
+ 197:Core/Src/robot/fsm_tasks.cpp ****                 motor_arr[i].update_omega = 0;
+ 795              		.loc 1 197 0 is_stmt 1 discriminator 2
+ 796 0006 0549     		ldr	r1, .L70
+ 797 0008 3422     		movs	r2, #52
+ 798 000a 02FB0312 		mla	r2, r2, r3, r1
+ 799 000e 0021     		movs	r1, #0
+ 800 0010 1161     		str	r1, [r2, #16]	@ float
+ 195:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 801              		.loc 1 195 0 discriminator 2
+ 802 0012 0133     		adds	r3, r3, #1
+ 803              	.LVL78:
+ 804 0014 DBB2     		uxtb	r3, r3
+ 805              	.LVL79:
+ 806 0016 F4E7     		b	.L69
+ 807              	.L67:
+ 808              	.LBE11:
+ 198:Core/Src/robot/fsm_tasks.cpp ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 19
+
+
+ 199:Core/Src/robot/fsm_tasks.cpp **** }
+ 809              		.loc 1 199 0
+ 810 0018 7047     		bx	lr
+ 811              	.L71:
+ 812 001a 00BF     		.align	2
+ 813              	.L70:
+ 814 001c 00000000 		.word	motor_arr
+ 815              		.cfi_endproc
+ 816              	.LFE147:
+ 818              		.section	.text._Z18feedForwardRestartv,"ax",%progbits
+ 819              		.align	1
+ 820              		.global	_Z18feedForwardRestartv
+ 821              		.syntax unified
+ 822              		.thumb
+ 823              		.thumb_func
+ 824              		.fpu fpv4-sp-d16
+ 826              	_Z18feedForwardRestartv:
+ 827              	.LFB148:
+ 200:Core/Src/robot/fsm_tasks.cpp **** 
+ 201:Core/Src/robot/fsm_tasks.cpp **** void feedForwardRestart(void)
+ 202:Core/Src/robot/fsm_tasks.cpp **** {
+ 828              		.loc 1 202 0
+ 829              		.cfi_startproc
+ 830              		@ args = 0, pretend = 0, frame = 0
+ 831              		@ frame_needed = 0, uses_anonymous_args = 0
+ 832 0000 10B5     		push	{r4, lr}
+ 833              	.LCFI10:
+ 834              		.cfi_def_cfa_offset 8
+ 835              		.cfi_offset 4, -8
+ 836              		.cfi_offset 14, -4
+ 837              	.LVL80:
+ 838              	.LBB12:
+ 203:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 839              		.loc 1 203 0
+ 840 0002 0024     		movs	r4, #0
+ 841              	.LVL81:
+ 842              	.L74:
+ 843              		.loc 1 203 0 is_stmt 0 discriminator 3
+ 844 0004 032C     		cmp	r4, #3
+ 845 0006 09D8     		bhi	.L72
+ 204:Core/Src/robot/fsm_tasks.cpp ****         {
+ 205:Core/Src/robot/fsm_tasks.cpp ****                 ffRestart(&ff_arr[i]);
+ 846              		.loc 1 205 0 is_stmt 1 discriminator 2
+ 847 0008 C4EB0412 		rsb	r2, r4, r4, lsl #4
+ 848 000c 9300     		lsls	r3, r2, #2
+ 849 000e 0448     		ldr	r0, .L76
+ 850 0010 1844     		add	r0, r0, r3
+ 851 0012 FFF7FEFF 		bl	_Z9ffRestartP7feedStr
+ 852              	.LVL82:
+ 203:Core/Src/robot/fsm_tasks.cpp ****         for (uint8_t i = 0; i < 4; i++)
+ 853              		.loc 1 203 0 discriminator 2
+ 854 0016 0134     		adds	r4, r4, #1
+ 855              	.LVL83:
+ 856 0018 E4B2     		uxtb	r4, r4
+ 857              	.LVL84:
+ 858 001a F3E7     		b	.L74
+ 859              	.L72:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 20
+
+
+ 860              	.LBE12:
+ 206:Core/Src/robot/fsm_tasks.cpp ****         }
+ 207:Core/Src/robot/fsm_tasks.cpp **** }
+ 861              		.loc 1 207 0
+ 862 001c 10BD     		pop	{r4, pc}
+ 863              	.LVL85:
+ 864              	.L77:
+ 865 001e 00BF     		.align	2
+ 866              	.L76:
+ 867 0020 00000000 		.word	ff_arr
+ 868              		.cfi_endproc
+ 869              	.LFE148:
+ 871              		.section	.text._Z13resetIntStatev,"ax",%progbits
+ 872              		.align	1
+ 873              		.global	_Z13resetIntStatev
+ 874              		.syntax unified
+ 875              		.thumb
+ 876              		.thumb_func
+ 877              		.fpu fpv4-sp-d16
+ 879              	_Z13resetIntStatev:
+ 880              	.LFB149:
+ 208:Core/Src/robot/fsm_tasks.cpp **** 
+ 209:Core/Src/robot/fsm_tasks.cpp **** void resetIntState()
+ 210:Core/Src/robot/fsm_tasks.cpp **** {
+ 881              		.loc 1 210 0
+ 882              		.cfi_startproc
+ 883              		@ args = 0, pretend = 0, frame = 0
+ 884              		@ frame_needed = 0, uses_anonymous_args = 0
+ 885 0000 08B5     		push	{r3, lr}
+ 886              	.LCFI11:
+ 887              		.cfi_def_cfa_offset 8
+ 888              		.cfi_offset 3, -8
+ 889              		.cfi_offset 14, -4
+ 211:Core/Src/robot/fsm_tasks.cpp ****         switch(gHorse_State.get_ID())
+ 890              		.loc 1 211 0
+ 891 0002 1948     		ldr	r0, .L86
+ 892 0004 FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 893              	.LVL86:
+ 894 0008 0138     		subs	r0, r0, #1
+ 895 000a 0328     		cmp	r0, #3
+ 896 000c 0CD8     		bhi	.L78
+ 897 000e DFE800F0 		tbb	[pc, r0]
+ 898              	.L81:
+ 899 0012 02       		.byte	(.L80-.L81)/2
+ 900 0013 0C       		.byte	(.L82-.L81)/2
+ 901 0014 16       		.byte	(.L83-.L81)/2
+ 902 0015 20       		.byte	(.L84-.L81)/2
+ 903              		.p2align 1
+ 904              	.L80:
+ 212:Core/Src/robot/fsm_tasks.cpp ****         {
+ 213:Core/Src/robot/fsm_tasks.cpp ****                 case State_ID::HOME:
+ 214:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 215:Core/Src/robot/fsm_tasks.cpp **** 
+ 216:Core/Src/robot/fsm_tasks.cpp **** 
+ 217:Core/Src/robot/fsm_tasks.cpp ****                 case State_ID::WS1:
+ 218:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[0].intState = STATE_B;
+ 905              		.loc 1 218 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 21
+
+
+ 906 0016 154B     		ldr	r3, .L86+4
+ 907 0018 0122     		movs	r2, #1
+ 908 001a 9A72     		strb	r2, [r3, #10]
+ 219:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_A;
+ 909              		.loc 1 219 0
+ 910 001c 0022     		movs	r2, #0
+ 911 001e 9A75     		strb	r2, [r3, #22]
+ 220:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_A;
+ 912              		.loc 1 220 0
+ 913 0020 83F82220 		strb	r2, [r3, #34]
+ 221:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_A;
+ 914              		.loc 1 221 0
+ 915 0024 83F82E20 		strb	r2, [r3, #46]
+ 916              	.L78:
+ 222:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 223:Core/Src/robot/fsm_tasks.cpp **** 
+ 224:Core/Src/robot/fsm_tasks.cpp ****                 case State_ID::WS2:
+ 225:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[0].intState = STATE_A;
+ 226:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_B;
+ 227:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_A;
+ 228:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_A;
+ 229:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 230:Core/Src/robot/fsm_tasks.cpp **** 
+ 231:Core/Src/robot/fsm_tasks.cpp ****                 case State_ID::WS3:
+ 232:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[0].intState = STATE_A;
+ 233:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_A;
+ 234:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_B;
+ 235:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_A;
+ 236:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 237:Core/Src/robot/fsm_tasks.cpp **** 
+ 238:Core/Src/robot/fsm_tasks.cpp ****                 case State_ID::WS4:
+ 239:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[0].intState = STATE_A;
+ 240:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_A;
+ 241:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_A;
+ 242:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_B;
+ 243:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 244:Core/Src/robot/fsm_tasks.cpp ****         }
+ 245:Core/Src/robot/fsm_tasks.cpp **** }
+ 917              		.loc 1 245 0
+ 918 0028 08BD     		pop	{r3, pc}
+ 919              	.L82:
+ 225:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_B;
+ 920              		.loc 1 225 0
+ 921 002a 104B     		ldr	r3, .L86+4
+ 922 002c 0022     		movs	r2, #0
+ 923 002e 9A72     		strb	r2, [r3, #10]
+ 226:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_A;
+ 924              		.loc 1 226 0
+ 925 0030 0121     		movs	r1, #1
+ 926 0032 9975     		strb	r1, [r3, #22]
+ 227:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_A;
+ 927              		.loc 1 227 0
+ 928 0034 83F82220 		strb	r2, [r3, #34]
+ 228:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 929              		.loc 1 228 0
+ 930 0038 83F82E20 		strb	r2, [r3, #46]
+ 229:Core/Src/robot/fsm_tasks.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 22
+
+
+ 931              		.loc 1 229 0
+ 932 003c F4E7     		b	.L78
+ 933              	.L83:
+ 232:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_A;
+ 934              		.loc 1 232 0
+ 935 003e 0B4B     		ldr	r3, .L86+4
+ 936 0040 0022     		movs	r2, #0
+ 937 0042 9A72     		strb	r2, [r3, #10]
+ 233:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_B;
+ 938              		.loc 1 233 0
+ 939 0044 9A75     		strb	r2, [r3, #22]
+ 234:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_A;
+ 940              		.loc 1 234 0
+ 941 0046 0121     		movs	r1, #1
+ 942 0048 83F82210 		strb	r1, [r3, #34]
+ 235:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 943              		.loc 1 235 0
+ 944 004c 83F82E20 		strb	r2, [r3, #46]
+ 236:Core/Src/robot/fsm_tasks.cpp **** 
+ 945              		.loc 1 236 0
+ 946 0050 EAE7     		b	.L78
+ 947              	.L84:
+ 239:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[1].intState = STATE_A;
+ 948              		.loc 1 239 0
+ 949 0052 064B     		ldr	r3, .L86+4
+ 950 0054 0022     		movs	r2, #0
+ 951 0056 9A72     		strb	r2, [r3, #10]
+ 240:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[2].intState = STATE_A;
+ 952              		.loc 1 240 0
+ 953 0058 9A75     		strb	r2, [r3, #22]
+ 241:Core/Src/robot/fsm_tasks.cpp ****                         int_arr[3].intState = STATE_B;
+ 954              		.loc 1 241 0
+ 955 005a 83F82220 		strb	r2, [r3, #34]
+ 242:Core/Src/robot/fsm_tasks.cpp ****                         break;
+ 956              		.loc 1 242 0
+ 957 005e 0122     		movs	r2, #1
+ 958 0060 83F82E20 		strb	r2, [r3, #46]
+ 959              		.loc 1 245 0
+ 960 0064 E0E7     		b	.L78
+ 961              	.L87:
+ 962 0066 00BF     		.align	2
+ 963              	.L86:
+ 964 0068 00000000 		.word	gHorse_State
+ 965 006c 00000000 		.word	int_arr
+ 966              		.cfi_endproc
+ 967              	.LFE149:
+ 969              		.section	.text._Z10stateResetv,"ax",%progbits
+ 970              		.align	1
+ 971              		.global	_Z10stateResetv
+ 972              		.syntax unified
+ 973              		.thumb
+ 974              		.thumb_func
+ 975              		.fpu fpv4-sp-d16
+ 977              	_Z10stateResetv:
+ 978              	.LFB146:
+ 185:Core/Src/robot/fsm_tasks.cpp ****         resetPID();
+ 979              		.loc 1 185 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 23
+
+
+ 980              		.cfi_startproc
+ 981              		@ args = 0, pretend = 0, frame = 0
+ 982              		@ frame_needed = 0, uses_anonymous_args = 0
+ 983 0000 08B5     		push	{r3, lr}
+ 984              	.LCFI12:
+ 985              		.cfi_def_cfa_offset 8
+ 986              		.cfi_offset 3, -8
+ 987              		.cfi_offset 14, -4
+ 186:Core/Src/robot/fsm_tasks.cpp ****         resetAngles();
+ 988              		.loc 1 186 0
+ 989 0002 FFF7FEFF 		bl	_Z8resetPIDv
+ 990              	.LVL87:
+ 187:Core/Src/robot/fsm_tasks.cpp ****         omegaReset();
+ 991              		.loc 1 187 0
+ 992 0006 FFF7FEFF 		bl	_Z11resetAnglesv
+ 993              	.LVL88:
+ 188:Core/Src/robot/fsm_tasks.cpp ****         resetIntState();
+ 994              		.loc 1 188 0
+ 995 000a FFF7FEFF 		bl	_Z10omegaResetv
+ 996              	.LVL89:
+ 189:Core/Src/robot/fsm_tasks.cpp ****         feedForwardRestart();
+ 997              		.loc 1 189 0
+ 998 000e FFF7FEFF 		bl	_Z13resetIntStatev
+ 999              	.LVL90:
+ 190:Core/Src/robot/fsm_tasks.cpp **** }
+ 1000              		.loc 1 190 0
+ 1001 0012 FFF7FEFF 		bl	_Z18feedForwardRestartv
+ 1002              	.LVL91:
+ 191:Core/Src/robot/fsm_tasks.cpp **** 
+ 1003              		.loc 1 191 0
+ 1004 0016 08BD     		pop	{r3, pc}
+ 1005              		.cfi_endproc
+ 1006              	.LFE146:
+ 1008              		.section	.data._ZL9gIs_First,"aw",%progbits
+ 1009              		.set	.LANCHOR0,. + 0
+ 1012              	_ZL9gIs_First:
+ 1013 0000 01       		.byte	1
+ 1014              		.section	.rodata._Z12check_N_Stopv.str1.4,"aMS",%progbits,1
+ 1015              		.align	2
+ 1016              	.LC0:
+ 1017 0000 0A0A0A0A 		.ascii	"\012\012\012\012\012\012\012Here!!\012\012\012\012\000"
+ 1017      0A0A0A48 
+ 1017      65726521 
+ 1017      210A0A0A 
+ 1017      0A00
+ 1018              		.text
+ 1019              	.Letext0:
+ 1020              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1021              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1022              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 1023              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 1024              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 1025              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 1026              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1027              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1028              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1029              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 24
+
+
+ 1030              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 1031              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 1032              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 1033              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 1034              		.file 16 "Core/Inc/robot/feed_forward.h"
+ 1035              		.file 17 "Core/Inc/periphs/tim.h"
+ 1036              		.file 18 "Core/Inc/robot/interrupt.h"
+ 1037              		.file 19 "Core/Inc/devs/encoder.h"
+ 1038              		.file 20 "Core/Inc/devs/motor.h"
+ 1039              		.file 21 "Core/Inc/utils/pid.h"
+ 1040              		.file 22 "Core/Inc/robot/fsm.h"
+ 1041              		.file 23 "Core/Inc/robot/robo_init.h"
+ 1042              		.file 24 "Core/Inc/robot/robo_states.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fsm_tasks.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:18     .text._Z14phaseOneChoresP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:25     .text._Z14phaseOneChoresP6fsmStr:00000000 _Z14phaseOneChoresP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:133    .text._Z14phaseOneChoresP6fsmStr:00000094 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:144    .text._Z14phaseTwoChoresP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:151    .text._Z14phaseTwoChoresP6fsmStr:00000000 _Z14phaseTwoChoresP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:235    .text._Z14phaseTwoChoresP6fsmStr:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:244    .text._Z16phaseThreeChoresP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:251    .text._Z16phaseThreeChoresP6fsmStr:00000000 _Z16phaseThreeChoresP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:335    .text._Z16phaseThreeChoresP6fsmStr:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:344    .text._Z15phaseFourChoresP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:351    .text._Z15phaseFourChoresP6fsmStr:00000000 _Z15phaseFourChoresP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:434    .text._Z15phaseFourChoresP6fsmStr:0000006c $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:443    .text._Z15setHomePositionv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:450    .text._Z15setHomePositionv:00000000 _Z15setHomePositionv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:499    .text._Z15setHomePositionv:00000030 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:506    .text._Z12check_N_Stopv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:513    .text._Z12check_N_Stopv:00000000 _Z12check_N_Stopv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:576    .text._Z12check_N_Stopv:00000044 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:583    .text._Z18homePositionChoresP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:590    .text._Z18homePositionChoresP6fsmStr:00000000 _Z18homePositionChoresP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:614    .text._Z12updateOmegasv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:621    .text._Z12updateOmegasv:00000000 _Z12updateOmegasv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:662    .text._Z12updateOmegasv:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:667    .text._Z11resetAnglesv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:674    .text._Z11resetAnglesv:00000000 _Z11resetAnglesv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:714    .text._Z11resetAnglesv:0000001c $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:719    .text._Z8resetPIDv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:726    .text._Z8resetPIDv:00000000 _Z8resetPIDv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:767    .text._Z8resetPIDv:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:772    .text._Z10omegaResetv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:779    .text._Z10omegaResetv:00000000 _Z10omegaResetv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:814    .text._Z10omegaResetv:0000001c $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:819    .text._Z18feedForwardRestartv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:826    .text._Z18feedForwardRestartv:00000000 _Z18feedForwardRestartv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:867    .text._Z18feedForwardRestartv:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:872    .text._Z13resetIntStatev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:879    .text._Z13resetIntStatev:00000000 _Z13resetIntStatev
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:899    .text._Z13resetIntStatev:00000012 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:903    .text._Z13resetIntStatev:00000016 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:964    .text._Z13resetIntStatev:00000068 $d
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:970    .text._Z10stateResetv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:977    .text._Z10stateResetv:00000000 _Z10stateResetv
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:1012   .data._ZL9gIs_First:00000000 _ZL9gIs_First
+C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s:1015   .rodata._Z12check_N_Stopv.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+_Z10ffSetAngleP7feedStrf
+_Z8getAngleP8motorStr
+_Z8getOmegaP8motorStr
+_Z10ffGenerateP7feedStrf
+_Z11PID_ComputeP6pidStrfft
+motor_arr
+int_arr
+ff_arr
+pid_arr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCXBfzU.s 			page 26
+
+
+_Z12setDutyCycleP8motorStrt
+_Z12setDirectionP8motorStr14motorDirection
+balance_motor
+puts
+_Z8setOmegaP8motorStrf
+_Z10resetAngleP8motorStr
+_Z15PID_resetParamsP6pidStr
+_Z9ffRestartP7feedStr
+_ZN5State6get_IDEv
+gHorse_State

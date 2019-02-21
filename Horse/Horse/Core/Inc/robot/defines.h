@@ -9,6 +9,6 @@
 #define PPR_VIET_MOTOR          250
 #define dt_ms                   10  // Sample time 
 #define dt_secs                 0.01 
-#define HOME_POSITION_OMEGA     -4
+#define HOME_POSITION_OMEGA     -3
 
 #endif /*defines.h*/

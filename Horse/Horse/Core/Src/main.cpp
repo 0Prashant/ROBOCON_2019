@@ -102,7 +102,7 @@ int main(void)
         /* USER CODE BEGIN 1 */
 
         /* USER CODE END 1 */
-
+ 
         /* MCU Configuration--------------------------------------------------------*/
 
         /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -226,8 +226,14 @@ void Error_Handler(void)
 {
         /* USER CODE BEGIN Error_Handler_Debug */
         /* User can add his own implementation to report the HAL error return state */
-
+        _Error_Handler(__FILE__, __LINE__);
         /* USER CODE END Error_Handler_Debug */
+}
+void _Error_Handler(const char *file, size_t line)
+{
+        while(1) {
+
+        }
 }
 
 #ifdef USE_FULL_ASSERT

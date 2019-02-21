@@ -1,0 +1,398 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"fsm.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Z8startFSMP6fsmStr,"ax",%progbits
+  18              		.align	1
+  19              		.global	_Z8startFSMP6fsmStr
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_Z8startFSMP6fsmStr:
+  26              	.LFB136:
+  27              		.file 1 "Core/Src/robot/fsm.cpp"
+   1:Core/Src/robot/fsm.cpp **** /*27-1-2019*/
+   2:Core/Src/robot/fsm.cpp **** // 238.34
+   3:Core/Src/robot/fsm.cpp **** 
+   4:Core/Src/robot/fsm.cpp **** #include "fsm.h"
+   5:Core/Src/robot/fsm.cpp **** #include "fsm_tasks.h"
+   6:Core/Src/robot/fsm.cpp **** #include "robo_states.h"
+   7:Core/Src/robot/fsm.cpp **** 
+   8:Core/Src/robot/fsm.cpp **** extern State gHorse_State;
+   9:Core/Src/robot/fsm.cpp **** 
+  10:Core/Src/robot/fsm.cpp **** void startFSM(struct fsmStr *sfsm)
+  11:Core/Src/robot/fsm.cpp **** {
+  28              		.loc 1 11 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0446     		mov	r4, r0
+  12:Core/Src/robot/fsm.cpp ****         switch (gHorse_State.get_ID())
+  39              		.loc 1 12 0
+  40 0004 3A48     		ldr	r0, .L11
+  41              	.LVL1:
+  42 0006 FFF7FEFF 		bl	_ZN5State6get_IDEv
+  43              	.LVL2:
+  44 000a 0428     		cmp	r0, #4
+  45 000c 0AD8     		bhi	.L1
+  46 000e DFE800F0 		tbb	[pc, r0]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 2
+
+
+  47              	.L4:
+  48 0012 03       		.byte	(.L3-.L4)/2
+  49 0013 10       		.byte	(.L5-.L4)/2
+  50 0014 27       		.byte	(.L6-.L4)/2
+  51 0015 3E       		.byte	(.L7-.L4)/2
+  52 0016 56       		.byte	(.L8-.L4)/2
+  53 0017 00       		.p2align 1
+  54              	.L3:
+  13:Core/Src/robot/fsm.cpp ****         {
+  14:Core/Src/robot/fsm.cpp ****         case State_ID::HOME:
+  15:Core/Src/robot/fsm.cpp ****                 homePositionChores(sfsm);
+  55              		.loc 1 15 0
+  56 0018 2046     		mov	r0, r4
+  57 001a FFF7FEFF 		bl	_Z18homePositionChoresP6fsmStr
+  58              	.LVL3:
+  16:Core/Src/robot/fsm.cpp ****                 if (checkHomePosition())
+  59              		.loc 1 16 0
+  60 001e FFF7FEFF 		bl	_Z17checkHomePositionv
+  61              	.LVL4:
+  62 0022 00B9     		cbnz	r0, .L10
+  63              	.L1:
+  17:Core/Src/robot/fsm.cpp ****                 {
+  18:Core/Src/robot/fsm.cpp ****                         printf("PHASE_1\n");
+  19:Core/Src/robot/fsm.cpp ****                         stateReset();
+  20:Core/Src/robot/fsm.cpp ****                 }
+  21:Core/Src/robot/fsm.cpp ****                 break;
+  22:Core/Src/robot/fsm.cpp **** 
+  23:Core/Src/robot/fsm.cpp ****         case State_ID::WS1:
+  24:Core/Src/robot/fsm.cpp **** 
+  25:Core/Src/robot/fsm.cpp ****                 phaseOneChores(sfsm);
+  26:Core/Src/robot/fsm.cpp ****                 if (checkAngle(0))
+  27:Core/Src/robot/fsm.cpp ****                 {
+  28:Core/Src/robot/fsm.cpp ****                         printf("PHASE_2\n");
+  29:Core/Src/robot/fsm.cpp ****                         
+  30:Core/Src/robot/fsm.cpp ****                         gHorse_State.update_State();
+  31:Core/Src/robot/fsm.cpp ****                         stateReset();
+  32:Core/Src/robot/fsm.cpp **** 
+  33:Core/Src/robot/fsm.cpp ****                         motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CN
+  34:Core/Src/robot/fsm.cpp ****                 }
+  35:Core/Src/robot/fsm.cpp ****                 break;
+  36:Core/Src/robot/fsm.cpp **** 
+  37:Core/Src/robot/fsm.cpp ****         case State_ID::WS2:
+  38:Core/Src/robot/fsm.cpp **** 
+  39:Core/Src/robot/fsm.cpp ****                 phaseTwoChores(sfsm);
+  40:Core/Src/robot/fsm.cpp ****                 if (checkAngle(1))
+  41:Core/Src/robot/fsm.cpp ****                 {
+  42:Core/Src/robot/fsm.cpp ****                         printf("PHASE_3\n");
+  43:Core/Src/robot/fsm.cpp ****                         
+  44:Core/Src/robot/fsm.cpp ****                         gHorse_State.update_State();
+  45:Core/Src/robot/fsm.cpp ****                         stateReset();
+  46:Core/Src/robot/fsm.cpp **** 
+  47:Core/Src/robot/fsm.cpp ****                         motor_arr[1].encoder->last_count = motor_arr[1].encoder->htim->Instance->CN
+  48:Core/Src/robot/fsm.cpp ****                 }
+  49:Core/Src/robot/fsm.cpp ****                 break;
+  50:Core/Src/robot/fsm.cpp **** 
+  51:Core/Src/robot/fsm.cpp ****         case State_ID::WS3:
+  52:Core/Src/robot/fsm.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 3
+
+
+  53:Core/Src/robot/fsm.cpp ****                 phaseThreeChores(sfsm);
+  54:Core/Src/robot/fsm.cpp ****                 if (checkAngle(2))
+  55:Core/Src/robot/fsm.cpp ****                 {
+  56:Core/Src/robot/fsm.cpp ****                         printf("PHASE_4\n");
+  57:Core/Src/robot/fsm.cpp **** 
+  58:Core/Src/robot/fsm.cpp ****                         gHorse_State.update_State();
+  59:Core/Src/robot/fsm.cpp ****                         stateReset();
+  60:Core/Src/robot/fsm.cpp **** 
+  61:Core/Src/robot/fsm.cpp ****                         motor_arr[2].encoder->last_count = motor_arr[2].encoder->htim->Instance->CN
+  62:Core/Src/robot/fsm.cpp ****                 }
+  63:Core/Src/robot/fsm.cpp ****                 break;
+  64:Core/Src/robot/fsm.cpp **** 
+  65:Core/Src/robot/fsm.cpp ****         case State_ID::WS4:
+  66:Core/Src/robot/fsm.cpp **** 
+  67:Core/Src/robot/fsm.cpp ****                 phaseFourChores(sfsm);
+  68:Core/Src/robot/fsm.cpp ****                 if (checkAngle(3))
+  69:Core/Src/robot/fsm.cpp ****                 {
+  70:Core/Src/robot/fsm.cpp ****                         printf("PHASE_1\n");
+  71:Core/Src/robot/fsm.cpp ****                         
+  72:Core/Src/robot/fsm.cpp ****                         gHorse_State.update_State();
+  73:Core/Src/robot/fsm.cpp ****                         stateReset();
+  74:Core/Src/robot/fsm.cpp ****                         
+  75:Core/Src/robot/fsm.cpp ****                         motor_arr[3].encoder->last_count = motor_arr[3].encoder->htim->Instance->CN
+  76:Core/Src/robot/fsm.cpp ****                 }
+  77:Core/Src/robot/fsm.cpp ****                 break;
+  78:Core/Src/robot/fsm.cpp ****         }
+  79:Core/Src/robot/fsm.cpp **** }
+  64              		.loc 1 79 0
+  65 0024 10BD     		pop	{r4, pc}
+  66              	.LVL5:
+  67              	.L10:
+  18:Core/Src/robot/fsm.cpp ****                         stateReset();
+  68              		.loc 1 18 0
+  69 0026 3348     		ldr	r0, .L11+4
+  70 0028 FFF7FEFF 		bl	puts
+  71              	.LVL6:
+  19:Core/Src/robot/fsm.cpp ****                 }
+  72              		.loc 1 19 0
+  73 002c FFF7FEFF 		bl	_Z10stateResetv
+  74              	.LVL7:
+  75 0030 F8E7     		b	.L1
+  76              	.L5:
+  25:Core/Src/robot/fsm.cpp ****                 if (checkAngle(0))
+  77              		.loc 1 25 0
+  78 0032 2046     		mov	r0, r4
+  79 0034 FFF7FEFF 		bl	_Z14phaseOneChoresP6fsmStr
+  80              	.LVL8:
+  26:Core/Src/robot/fsm.cpp ****                 {
+  81              		.loc 1 26 0
+  82 0038 0020     		movs	r0, #0
+  83 003a FFF7FEFF 		bl	_Z10checkAnglei
+  84              	.LVL9:
+  85 003e 0028     		cmp	r0, #0
+  86 0040 F0D0     		beq	.L1
+  28:Core/Src/robot/fsm.cpp ****                         
+  87              		.loc 1 28 0
+  88 0042 2D48     		ldr	r0, .L11+8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 4
+
+
+  89 0044 FFF7FEFF 		bl	puts
+  90              	.LVL10:
+  30:Core/Src/robot/fsm.cpp ****                         stateReset();
+  91              		.loc 1 30 0
+  92 0048 2948     		ldr	r0, .L11
+  93 004a FFF7FEFF 		bl	_ZN5State12update_StateEv
+  94              	.LVL11:
+  31:Core/Src/robot/fsm.cpp **** 
+  95              		.loc 1 31 0
+  96 004e FFF7FEFF 		bl	_Z10stateResetv
+  97              	.LVL12:
+  33:Core/Src/robot/fsm.cpp ****                 }
+  98              		.loc 1 33 0
+  99 0052 2A4B     		ldr	r3, .L11+12
+ 100 0054 1B6B     		ldr	r3, [r3, #48]
+ 101 0056 DA68     		ldr	r2, [r3, #12]
+ 102 0058 1268     		ldr	r2, [r2]
+ 103 005a 526A     		ldr	r2, [r2, #36]
+ 104 005c 9A80     		strh	r2, [r3, #4]	@ movhi
+ 105 005e E1E7     		b	.L1
+ 106              	.L6:
+  39:Core/Src/robot/fsm.cpp ****                 if (checkAngle(1))
+ 107              		.loc 1 39 0
+ 108 0060 2046     		mov	r0, r4
+ 109 0062 FFF7FEFF 		bl	_Z14phaseTwoChoresP6fsmStr
+ 110              	.LVL13:
+  40:Core/Src/robot/fsm.cpp ****                 {
+ 111              		.loc 1 40 0
+ 112 0066 0120     		movs	r0, #1
+ 113 0068 FFF7FEFF 		bl	_Z10checkAnglei
+ 114              	.LVL14:
+ 115 006c 0028     		cmp	r0, #0
+ 116 006e D9D0     		beq	.L1
+  42:Core/Src/robot/fsm.cpp ****                         
+ 117              		.loc 1 42 0
+ 118 0070 2348     		ldr	r0, .L11+16
+ 119 0072 FFF7FEFF 		bl	puts
+ 120              	.LVL15:
+  44:Core/Src/robot/fsm.cpp ****                         stateReset();
+ 121              		.loc 1 44 0
+ 122 0076 1E48     		ldr	r0, .L11
+ 123 0078 FFF7FEFF 		bl	_ZN5State12update_StateEv
+ 124              	.LVL16:
+  45:Core/Src/robot/fsm.cpp **** 
+ 125              		.loc 1 45 0
+ 126 007c FFF7FEFF 		bl	_Z10stateResetv
+ 127              	.LVL17:
+  47:Core/Src/robot/fsm.cpp ****                 }
+ 128              		.loc 1 47 0
+ 129 0080 1E4B     		ldr	r3, .L11+12
+ 130 0082 5B6E     		ldr	r3, [r3, #100]
+ 131 0084 DA68     		ldr	r2, [r3, #12]
+ 132 0086 1268     		ldr	r2, [r2]
+ 133 0088 526A     		ldr	r2, [r2, #36]
+ 134 008a 9A80     		strh	r2, [r3, #4]	@ movhi
+ 135 008c CAE7     		b	.L1
+ 136              	.L7:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 5
+
+
+  53:Core/Src/robot/fsm.cpp ****                 if (checkAngle(2))
+ 137              		.loc 1 53 0
+ 138 008e 2046     		mov	r0, r4
+ 139 0090 FFF7FEFF 		bl	_Z16phaseThreeChoresP6fsmStr
+ 140              	.LVL18:
+  54:Core/Src/robot/fsm.cpp ****                 {
+ 141              		.loc 1 54 0
+ 142 0094 0220     		movs	r0, #2
+ 143 0096 FFF7FEFF 		bl	_Z10checkAnglei
+ 144              	.LVL19:
+ 145 009a 0028     		cmp	r0, #0
+ 146 009c C2D0     		beq	.L1
+  56:Core/Src/robot/fsm.cpp **** 
+ 147              		.loc 1 56 0
+ 148 009e 1948     		ldr	r0, .L11+20
+ 149 00a0 FFF7FEFF 		bl	puts
+ 150              	.LVL20:
+  58:Core/Src/robot/fsm.cpp ****                         stateReset();
+ 151              		.loc 1 58 0
+ 152 00a4 1248     		ldr	r0, .L11
+ 153 00a6 FFF7FEFF 		bl	_ZN5State12update_StateEv
+ 154              	.LVL21:
+  59:Core/Src/robot/fsm.cpp **** 
+ 155              		.loc 1 59 0
+ 156 00aa FFF7FEFF 		bl	_Z10stateResetv
+ 157              	.LVL22:
+  61:Core/Src/robot/fsm.cpp ****                 }
+ 158              		.loc 1 61 0
+ 159 00ae 134B     		ldr	r3, .L11+12
+ 160 00b0 D3F89830 		ldr	r3, [r3, #152]
+ 161 00b4 DA68     		ldr	r2, [r3, #12]
+ 162 00b6 1268     		ldr	r2, [r2]
+ 163 00b8 526A     		ldr	r2, [r2, #36]
+ 164 00ba 9A80     		strh	r2, [r3, #4]	@ movhi
+ 165 00bc B2E7     		b	.L1
+ 166              	.L8:
+  67:Core/Src/robot/fsm.cpp ****                 if (checkAngle(3))
+ 167              		.loc 1 67 0
+ 168 00be 2046     		mov	r0, r4
+ 169 00c0 FFF7FEFF 		bl	_Z15phaseFourChoresP6fsmStr
+ 170              	.LVL23:
+  68:Core/Src/robot/fsm.cpp ****                 {
+ 171              		.loc 1 68 0
+ 172 00c4 0320     		movs	r0, #3
+ 173 00c6 FFF7FEFF 		bl	_Z10checkAnglei
+ 174              	.LVL24:
+ 175 00ca 0028     		cmp	r0, #0
+ 176 00cc AAD0     		beq	.L1
+  70:Core/Src/robot/fsm.cpp ****                         
+ 177              		.loc 1 70 0
+ 178 00ce 0948     		ldr	r0, .L11+4
+ 179 00d0 FFF7FEFF 		bl	puts
+ 180              	.LVL25:
+  72:Core/Src/robot/fsm.cpp ****                         stateReset();
+ 181              		.loc 1 72 0
+ 182 00d4 0648     		ldr	r0, .L11
+ 183 00d6 FFF7FEFF 		bl	_ZN5State12update_StateEv
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 6
+
+
+ 184              	.LVL26:
+  73:Core/Src/robot/fsm.cpp ****                         
+ 185              		.loc 1 73 0
+ 186 00da FFF7FEFF 		bl	_Z10stateResetv
+ 187              	.LVL27:
+  75:Core/Src/robot/fsm.cpp ****                 }
+ 188              		.loc 1 75 0
+ 189 00de 074B     		ldr	r3, .L11+12
+ 190 00e0 D3F8CC30 		ldr	r3, [r3, #204]
+ 191 00e4 DA68     		ldr	r2, [r3, #12]
+ 192 00e6 1268     		ldr	r2, [r2]
+ 193 00e8 526A     		ldr	r2, [r2, #36]
+ 194 00ea 9A80     		strh	r2, [r3, #4]	@ movhi
+ 195              		.loc 1 79 0
+ 196 00ec 9AE7     		b	.L1
+ 197              	.L12:
+ 198 00ee 00BF     		.align	2
+ 199              	.L11:
+ 200 00f0 00000000 		.word	gHorse_State
+ 201 00f4 00000000 		.word	.LC0
+ 202 00f8 08000000 		.word	.LC1
+ 203 00fc 00000000 		.word	motor_arr
+ 204 0100 10000000 		.word	.LC2
+ 205 0104 18000000 		.word	.LC3
+ 206              		.cfi_endproc
+ 207              	.LFE136:
+ 209              		.section	.rodata._Z8startFSMP6fsmStr.str1.4,"aMS",%progbits,1
+ 210              		.align	2
+ 211              	.LC0:
+ 212 0000 50484153 		.ascii	"PHASE_1\000"
+ 212      455F3100 
+ 213              	.LC1:
+ 214 0008 50484153 		.ascii	"PHASE_2\000"
+ 214      455F3200 
+ 215              	.LC2:
+ 216 0010 50484153 		.ascii	"PHASE_3\000"
+ 216      455F3300 
+ 217              	.LC3:
+ 218 0018 50484153 		.ascii	"PHASE_4\000"
+ 218      455F3400 
+ 219              		.text
+ 220              	.Letext0:
+ 221              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 222              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 223              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 224              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 225              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 226              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 227              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 228              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 229              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 230              		.file 11 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 231              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 232              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 233              		.file 14 "Core/Inc/periphs/tim.h"
+ 234              		.file 15 "Core/Inc/robot/feed_forward.h"
+ 235              		.file 16 "Core/Inc/robot/interrupt.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 7
+
+
+ 236              		.file 17 "Core/Inc/devs/encoder.h"
+ 237              		.file 18 "Core/Inc/devs/motor.h"
+ 238              		.file 19 "Core/Inc/utils/pid.h"
+ 239              		.file 20 "Core/Inc/robot/robo_init.h"
+ 240              		.file 21 "Core/Inc/robot/fsm.h"
+ 241              		.file 22 "Core/Inc/robot/robo_states.h"
+ 242              		.file 23 "Core/Inc/robot/fsm_tasks.h"
+ 243              		.file 24 "Core/Inc/robot/check.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fsm.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:18     .text._Z8startFSMP6fsmStr:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:25     .text._Z8startFSMP6fsmStr:00000000 _Z8startFSMP6fsmStr
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:48     .text._Z8startFSMP6fsmStr:00000012 $d
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:200    .text._Z8startFSMP6fsmStr:000000f0 $d
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:210    .rodata._Z8startFSMP6fsmStr.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:53     .text._Z8startFSMP6fsmStr:00000017 $d
+C:\Users\Prashant\AppData\Local\Temp\ccZwXwpB.s:53     .text._Z8startFSMP6fsmStr:00000018 $t
+
+UNDEFINED SYMBOLS
+_ZN5State6get_IDEv
+_Z18homePositionChoresP6fsmStr
+_Z17checkHomePositionv
+puts
+_Z10stateResetv
+_Z14phaseOneChoresP6fsmStr
+_Z10checkAnglei
+_ZN5State12update_StateEv
+_Z14phaseTwoChoresP6fsmStr
+_Z16phaseThreeChoresP6fsmStr
+_Z15phaseFourChoresP6fsmStr
+gHorse_State
+motor_arr

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -17,550 +17,449 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.section	.text._ZN5StateD2Ev,"axG",%progbits,_ZN5StateD5Ev,comdat
+  17              		.section	.text._Z12balance_Initv,"ax",%progbits
   18              		.align	1
-  19              		.weak	_ZN5StateD2Ev
+  19              		.global	_Z12balance_Initv
   20              		.syntax unified
   21              		.thumb
   22              		.thumb_func
   23              		.fpu fpv4-sp-d16
-  25              	_ZN5StateD2Ev:
-  26              	.LFB128:
-  27              		.file 1 "Core/Inc/blnc_motor.h"
-   1:Core/Inc/blnc_motor.h **** #ifndef _BLNC_MOTOR
-   2:Core/Inc/blnc_motor.h **** #define  _BLNC_MOTOR
-   3:Core/Inc/blnc_motor.h **** 
-   4:Core/Inc/blnc_motor.h **** #include "motor.h"
-   5:Core/Inc/blnc_motor.h **** #include "encoder.h"
-   6:Core/Inc/blnc_motor.h **** #include "pid.h"
-   7:Core/Inc/blnc_motor.h **** #include "interrupt.h"
-   8:Core/Inc/blnc_motor.h **** 
-   9:Core/Inc/blnc_motor.h **** enum class State_ID {HOME, WS1, WS2, WS3, WS4};
-  10:Core/Inc/blnc_motor.h **** class State
-  11:Core/Inc/blnc_motor.h **** {
-  12:Core/Inc/blnc_motor.h **** public:
-  13:Core/Inc/blnc_motor.h **** 	State() { }
-  14:Core/Inc/blnc_motor.h **** 	State(State &&) = default;
-  15:Core/Inc/blnc_motor.h **** 	State(const State &) = default;
-  16:Core/Inc/blnc_motor.h **** 	State &operator=(State &&) = default;
-  17:Core/Inc/blnc_motor.h **** 	State &operator=(const State &) = default;
-  18:Core/Inc/blnc_motor.h **** 	~State() { }
-  28              		.loc 1 18 0
+  25              	_Z12balance_Initv:
+  26              	.LFB136:
+  27              		.file 1 "Core/Src/devs/blnc_motor.cpp"
+   1:Core/Src/devs/blnc_motor.cpp **** #include "blnc_motor.h"
+   2:Core/Src/devs/blnc_motor.cpp **** #include "robo_states.h"
+   3:Core/Src/devs/blnc_motor.cpp **** 
+   4:Core/Src/devs/blnc_motor.cpp **** extern State gHorse_State;
+   5:Core/Src/devs/blnc_motor.cpp **** extern State_ID gCurrent_Position;
+   6:Core/Src/devs/blnc_motor.cpp **** 
+   7:Core/Src/devs/blnc_motor.cpp **** struct Blnc gBallet;
+   8:Core/Src/devs/blnc_motor.cpp **** uint16_t bvel = 45000;
+   9:Core/Src/devs/blnc_motor.cpp **** 
+  10:Core/Src/devs/blnc_motor.cpp **** void balance_Init(void)
+  11:Core/Src/devs/blnc_motor.cpp **** {
+  28              		.loc 1 11 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
-  32              		@ link register save eliminated.
-  33              	.LVL0:
-  34              		.loc 1 18 0
-  35 0000 7047     		bx	lr
-  36              		.cfi_endproc
-  37              	.LFE128:
-  39              		.weak	_ZN5StateD1Ev
-  40              		.thumb_set _ZN5StateD1Ev,_ZN5StateD2Ev
-  41              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 2
+  32 0000 38B5     		push	{r3, r4, r5, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 3, -16
+  36              		.cfi_offset 4, -12
+  37              		.cfi_offset 5, -8
+  38              		.cfi_offset 14, -4
+  12:Core/Src/devs/blnc_motor.cpp **** 	/******Initializing Interrupts******/
+  13:Core/Src/devs/blnc_motor.cpp **** 	gBallet.interrupt[0].int_port = GPIOA;
+  39              		.loc 1 13 0
+  40 0002 2D4C     		ldr	r4, .L3+16
+  41 0004 2D4A     		ldr	r2, .L3+20
+  42 0006 A263     		str	r2, [r4, #56]
+  14:Core/Src/devs/blnc_motor.cpp **** 	gBallet.interrupt[0].int_pin = GPIO_PIN_14;
+  43              		.loc 1 14 0
+  44 0008 4FF48043 		mov	r3, #16384
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 2
 
 
-  42              		.align	1
-  43              		.syntax unified
-  44              		.thumb
-  45              		.thumb_func
-  46              		.fpu fpv4-sp-d16
-  48              	_Z41__static_initialization_and_destruction_0ii:
-  49              	.LFB134:
-  50              		.file 2 "Core/Src/blnc_motor.cpp"
-   1:Core/Src/blnc_motor.cpp **** #include "blnc_motor.h"
-   2:Core/Src/blnc_motor.cpp **** 
-   3:Core/Src/blnc_motor.cpp **** struct Blnc balance;
-   4:Core/Src/blnc_motor.cpp **** State gRobo_State;
-   5:Core/Src/blnc_motor.cpp **** State_ID gcurrent_position = State_ID::WS1;
-   6:Core/Src/blnc_motor.cpp **** uint16_t bvel = 45000;
-   7:Core/Src/blnc_motor.cpp **** 
-   8:Core/Src/blnc_motor.cpp **** void balance_init(void)
-   9:Core/Src/blnc_motor.cpp **** {
-  10:Core/Src/blnc_motor.cpp **** 	/******Initializing Interrupts******/
-  11:Core/Src/blnc_motor.cpp **** 	balance.interrupt[0].int_port = GPIOA;
-  12:Core/Src/blnc_motor.cpp **** 	balance.interrupt[0].int_pin = GPIO_PIN_14;
-  13:Core/Src/blnc_motor.cpp **** 	balance.interrupt[1].int_port = GPIOB;
-  14:Core/Src/blnc_motor.cpp ****         balance.interrupt[1].int_pin = GPIO_PIN_15;
-  15:Core/Src/blnc_motor.cpp **** 	balance.interrupt[2].int_port = GPIOC;
-  16:Core/Src/blnc_motor.cpp ****         balance.interrupt[2].int_pin = GPIO_PIN_7;
-  17:Core/Src/blnc_motor.cpp **** 	balance.interrupt[3].int_port = GPIOE;
-  18:Core/Src/blnc_motor.cpp ****         balance.interrupt[3].int_pin = GPIO_PIN_3;
-  19:Core/Src/blnc_motor.cpp **** 
-  20:Core/Src/blnc_motor.cpp **** 	/******Initializing Motor******/
-  21:Core/Src/blnc_motor.cpp **** 	balance.motor.dir1_port = GPIOA;
-  22:Core/Src/blnc_motor.cpp **** 	balance.motor.dir1_pin = GPIO_PIN_3;
-  23:Core/Src/blnc_motor.cpp **** 	balance.motor.dir2_port = GPIOA;
-  24:Core/Src/blnc_motor.cpp **** 	balance.motor.dir2_pin = GPIO_PIN_4;
-  25:Core/Src/blnc_motor.cpp **** 	balance.motor.channel = TIM_CHANNEL_3;
-  26:Core/Src/blnc_motor.cpp **** 	balance.motor.update_omega = 0;
-  27:Core/Src/blnc_motor.cpp **** 	balance.motor.htim = &htim5;
-  28:Core/Src/blnc_motor.cpp **** 	HAL_TIM_Base_Start(balance.motor.htim);
-  29:Core/Src/blnc_motor.cpp ****         HAL_TIM_PWM_Start(balance.motor.htim, balance.motor.channel);
-  30:Core/Src/blnc_motor.cpp **** 
-  31:Core/Src/blnc_motor.cpp **** 	/******Initializing Encoder******/
-  32:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->ref_count = 0;
-  33:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->last_count = 0;
-  34:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->ppr = 79;
-  35:Core/Src/blnc_motor.cpp **** 
-  36:Core/Src/blnc_motor.cpp **** 	/******Initializing PID******/
-  37:Core/Src/blnc_motor.cpp **** 	PID_Init(&balance.pid);
-  38:Core/Src/blnc_motor.cpp **** 	balance.pid.max_output = 12;
-  39:Core/Src/blnc_motor.cpp **** 	balance.pid.min_output = -12;
-  40:Core/Src/blnc_motor.cpp **** 	balance.pid.kp = 0.3;
-  41:Core/Src/blnc_motor.cpp **** 	balance.pid.ki = 0.02;
-  42:Core/Src/blnc_motor.cpp **** 	balance.pid.last_error = 0;
-  43:Core/Src/blnc_motor.cpp **** 	balance.pid.output = 0;
-  44:Core/Src/blnc_motor.cpp **** 	balance.pid.previous_error = 0;
-  45:Core/Src/blnc_motor.cpp **** 	balance.pid.last_output = 0;
-  46:Core/Src/blnc_motor.cpp **** }
-  47:Core/Src/blnc_motor.cpp **** 
-  48:Core/Src/blnc_motor.cpp **** void check_N_run(void)
-  49:Core/Src/blnc_motor.cpp **** {
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 3
+  45 000c A387     		strh	r3, [r4, #60]	@ movhi
+  15:Core/Src/devs/blnc_motor.cpp **** 	gBallet.interrupt[1].int_port = GPIOB;
+  46              		.loc 1 15 0
+  47 000e 03F18043 		add	r3, r3, #1073741824
+  48 0012 03F5E233 		add	r3, r3, #115712
+  49 0016 6364     		str	r3, [r4, #68]
+  16:Core/Src/devs/blnc_motor.cpp ****         gBallet.interrupt[1].int_pin = GPIO_PIN_15;
+  50              		.loc 1 16 0
+  51 0018 4FF40043 		mov	r3, #32768
+  52 001c A4F84830 		strh	r3, [r4, #72]	@ movhi
+  17:Core/Src/devs/blnc_motor.cpp **** 	gBallet.interrupt[2].int_port = GPIOC;
+  53              		.loc 1 17 0
+  54 0020 03F18043 		add	r3, r3, #1073741824
+  55 0024 03F5C433 		add	r3, r3, #100352
+  56 0028 2365     		str	r3, [r4, #80]
+  18:Core/Src/devs/blnc_motor.cpp ****         gBallet.interrupt[2].int_pin = GPIO_PIN_7;
+  57              		.loc 1 18 0
+  58 002a 8023     		movs	r3, #128
+  59 002c A4F85430 		strh	r3, [r4, #84]	@ movhi
+  19:Core/Src/devs/blnc_motor.cpp **** 	gBallet.interrupt[3].int_port = GPIOE;
+  60              		.loc 1 19 0
+  61 0030 234B     		ldr	r3, .L3+24
+  62 0032 E365     		str	r3, [r4, #92]
+  20:Core/Src/devs/blnc_motor.cpp ****         gBallet.interrupt[3].int_pin = GPIO_PIN_3;
+  63              		.loc 1 20 0
+  64 0034 0823     		movs	r3, #8
+  65 0036 A4F86030 		strh	r3, [r4, #96]	@ movhi
+  21:Core/Src/devs/blnc_motor.cpp **** 
+  22:Core/Src/devs/blnc_motor.cpp **** 	/******Initializing Motor******/
+  23:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.dir1_port = GPIOA;
+  66              		.loc 1 23 0
+  67 003a A261     		str	r2, [r4, #24]
+  24:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.dir1_pin = GPIO_PIN_3;
+  68              		.loc 1 24 0
+  69 003c A383     		strh	r3, [r4, #28]	@ movhi
+  25:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.dir2_port = GPIOA;
+  70              		.loc 1 25 0
+  71 003e 2262     		str	r2, [r4, #32]
+  26:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.dir2_pin = GPIO_PIN_4;
+  72              		.loc 1 26 0
+  73 0040 1022     		movs	r2, #16
+  74 0042 A284     		strh	r2, [r4, #36]	@ movhi
+  27:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.channel = TIM_CHANNEL_3;
+  75              		.loc 1 27 0
+  76 0044 E362     		str	r3, [r4, #44]
+  28:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.update_omega = 0;
+  77              		.loc 1 28 0
+  78 0046 0025     		movs	r5, #0
+  79 0048 2561     		str	r5, [r4, #16]	@ float
+  29:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.htim = &htim5;
+  80              		.loc 1 29 0
+  81 004a 1E48     		ldr	r0, .L3+28
+  82 004c A062     		str	r0, [r4, #40]
+  30:Core/Src/devs/blnc_motor.cpp **** 	HAL_TIM_Base_Start(gBallet.motor.htim);
+  83              		.loc 1 30 0
+  84 004e FFF7FEFF 		bl	HAL_TIM_Base_Start
+  85              	.LVL0:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 3
 
 
-  50:Core/Src/blnc_motor.cpp **** 	if(gcurrent_position != gRobo_State.get_ID())
-  51:Core/Src/blnc_motor.cpp **** 	{
-  52:Core/Src/blnc_motor.cpp **** 		switch (gRobo_State.get_ID())
-  53:Core/Src/blnc_motor.cpp **** 		{
-  54:Core/Src/blnc_motor.cpp **** 			case State_ID::HOME:
-  55:Core/Src/blnc_motor.cpp **** 			{
-  56:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
-  57:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
-  58:Core/Src/blnc_motor.cpp **** 				break;
-  59:Core/Src/blnc_motor.cpp **** 			}
-  60:Core/Src/blnc_motor.cpp **** 			case State_ID::WS1:
-  61:Core/Src/blnc_motor.cpp **** 			{
-  62:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
-  63:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
-  64:Core/Src/blnc_motor.cpp **** 				break;
-  65:Core/Src/blnc_motor.cpp **** 			}
-  66:Core/Src/blnc_motor.cpp **** 			case State_ID::WS2:
-  67:Core/Src/blnc_motor.cpp **** 			{
-  68:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
-  69:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
-  70:Core/Src/blnc_motor.cpp **** 				break;
-  71:Core/Src/blnc_motor.cpp **** 			}
-  72:Core/Src/blnc_motor.cpp **** 			case State_ID::WS3:
-  73:Core/Src/blnc_motor.cpp **** 			{
-  74:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
-  75:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
-  76:Core/Src/blnc_motor.cpp **** 				break;
-  77:Core/Src/blnc_motor.cpp **** 			}
-  78:Core/Src/blnc_motor.cpp **** 			case State_ID::WS4:
-  79:Core/Src/blnc_motor.cpp **** 			{
-  80:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
-  81:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
-  82:Core/Src/blnc_motor.cpp **** 				break;
-  83:Core/Src/blnc_motor.cpp **** 			}
-  84:Core/Src/blnc_motor.cpp **** 		}
-  85:Core/Src/blnc_motor.cpp **** 		printf("%d\n", bvel);
-  86:Core/Src/blnc_motor.cpp **** 	}	
-  87:Core/Src/blnc_motor.cpp **** }...
-  51              		.loc 2 87 0
-  52              		.cfi_startproc
-  53              		@ args = 0, pretend = 0, frame = 0
-  54              		@ frame_needed = 0, uses_anonymous_args = 0
-  55              	.LVL1:
-  56 0000 0128     		cmp	r0, #1
-  57 0002 00D0     		beq	.L8
-  58 0004 7047     		bx	lr
-  59              	.L8:
-  60              		.loc 2 87 0 is_stmt 0 discriminator 1
-  61 0006 08B5     		push	{r3, lr}
-  62              	.LCFI0:
-  63              		.cfi_def_cfa_offset 8
-  64              		.cfi_offset 3, -8
-  65              		.cfi_offset 14, -4
-  66              		.loc 2 87 0 is_stmt 1 discriminator 1
-  67 0008 4FF6FF73 		movw	r3, #65535
-  68 000c 9942     		cmp	r1, r3
-  69 000e 00D0     		beq	.L9
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 4
+  31:Core/Src/devs/blnc_motor.cpp ****         HAL_TIM_PWM_Start(gBallet.motor.htim, gBallet.motor.channel);
+  86              		.loc 1 31 0
+  87 0052 E16A     		ldr	r1, [r4, #44]
+  88 0054 A06A     		ldr	r0, [r4, #40]
+  89 0056 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  90              	.LVL1:
+  32:Core/Src/devs/blnc_motor.cpp **** 
+  33:Core/Src/devs/blnc_motor.cpp **** 	/******Initializing Encoder******/
+  34:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.encoder->count = 0;
+  91              		.loc 1 34 0
+  92 005a 226B     		ldr	r2, [r4, #48]
+  93 005c 0023     		movs	r3, #0
+  94 005e 9360     		str	r3, [r2, #8]
+  35:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.encoder->ref_count = 0;
+  95              		.loc 1 35 0
+  96 0060 226B     		ldr	r2, [r4, #48]
+  97 0062 5380     		strh	r3, [r2, #2]	@ movhi
+  36:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.encoder->last_count = 0;
+  98              		.loc 1 36 0
+  99 0064 226B     		ldr	r2, [r4, #48]
+ 100 0066 9380     		strh	r3, [r2, #4]	@ movhi
+  37:Core/Src/devs/blnc_motor.cpp **** 	gBallet.motor.encoder->ppr = 79;
+ 101              		.loc 1 37 0
+ 102 0068 236B     		ldr	r3, [r4, #48]
+ 103 006a 4F22     		movs	r2, #79
+ 104 006c 1A80     		strh	r2, [r3]	@ movhi
+  38:Core/Src/devs/blnc_motor.cpp **** 
+  39:Core/Src/devs/blnc_motor.cpp **** 	/******Initializing PID******/
+  40:Core/Src/devs/blnc_motor.cpp **** 	PID_Init(&gBallet.pid);
+ 105              		.loc 1 40 0
+ 106 006e 04F16800 		add	r0, r4, #104
+ 107 0072 FFF7FEFF 		bl	_Z8PID_InitP6pidStr
+ 108              	.LVL2:
+  41:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.max_output = 12;
+ 109              		.loc 1 41 0
+ 110 0076 144B     		ldr	r3, .L3+32
+ 111 0078 C4F88830 		str	r3, [r4, #136]	@ float
+  42:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.min_output = -12;
+ 112              		.loc 1 42 0
+ 113 007c 134B     		ldr	r3, .L3+36
+ 114 007e C4F88C30 		str	r3, [r4, #140]	@ float
+  43:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.kp = 0.3;
+ 115              		.loc 1 43 0
+ 116 0082 09A3     		adr	r3, .L3
+ 117 0084 D3E90023 		ldrd	r2, [r3]
+ 118 0088 C4E91A23 		strd	r2, [r4, #104]
+  44:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.ki = 0.02;
+ 119              		.loc 1 44 0
+ 120 008c 08A3     		adr	r3, .L3+8
+ 121 008e D3E90023 		ldrd	r2, [r3]
+ 122 0092 C4E91C23 		strd	r2, [r4, #112]
+  45:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.last_error = 0;
+ 123              		.loc 1 45 0
+ 124 0096 C4F89450 		str	r5, [r4, #148]	@ float
+  46:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.output = 0;
+ 125              		.loc 1 46 0
+ 126 009a C4F88450 		str	r5, [r4, #132]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 4
 
 
-  70              	.LVL2:
-  71              	.L2:
-  72              		.loc 2 87 0 is_stmt 0
-  73 0010 08BD     		pop	{r3, pc}
-  74              	.LVL3:
-  75              	.L9:
-   4:Core/Src/blnc_motor.cpp **** State gRobo_State;
-  76              		.loc 2 4 0 is_stmt 1
-  77 0012 034A     		ldr	r2, .L10
-  78 0014 0349     		ldr	r1, .L10+4
-  79              	.LVL4:
-  80 0016 0448     		ldr	r0, .L10+8
-  81              	.LVL5:
-  82 0018 FFF7FEFF 		bl	__aeabi_atexit
-  83              	.LVL6:
-  84              		.loc 2 87 0
-  85 001c F8E7     		b	.L2
-  86              	.L11:
-  87 001e 00BF     		.align	2
-  88              	.L10:
-  89 0020 00000000 		.word	__dso_handle
-  90 0024 00000000 		.word	_ZN5StateD1Ev
-  91 0028 00000000 		.word	.LANCHOR0
-  92              		.cfi_endproc
-  93              	.LFE134:
-  95              		.section	.text._Z12balance_initv,"ax",%progbits
-  96              		.align	1
-  97              		.global	_Z12balance_initv
-  98              		.syntax unified
-  99              		.thumb
- 100              		.thumb_func
- 101              		.fpu fpv4-sp-d16
- 103              	_Z12balance_initv:
- 104              	.LFB132:
-   9:Core/Src/blnc_motor.cpp **** {
- 105              		.loc 2 9 0
- 106              		.cfi_startproc
- 107              		@ args = 0, pretend = 0, frame = 0
- 108              		@ frame_needed = 0, uses_anonymous_args = 0
- 109 0000 38B5     		push	{r3, r4, r5, lr}
- 110              	.LCFI1:
- 111              		.cfi_def_cfa_offset 16
- 112              		.cfi_offset 3, -16
- 113              		.cfi_offset 4, -12
- 114              		.cfi_offset 5, -8
- 115              		.cfi_offset 14, -4
-  11:Core/Src/blnc_motor.cpp **** 	balance.interrupt[0].int_port = GPIOA;
- 116              		.loc 2 11 0
- 117 0002 2D4C     		ldr	r4, .L14+16
- 118 0004 2D4A     		ldr	r2, .L14+20
- 119 0006 A263     		str	r2, [r4, #56]
-  12:Core/Src/blnc_motor.cpp **** 	balance.interrupt[0].int_pin = GPIO_PIN_14;
- 120              		.loc 2 12 0
- 121 0008 4FF48043 		mov	r3, #16384
- 122 000c A387     		strh	r3, [r4, #60]	@ movhi
-  13:Core/Src/blnc_motor.cpp **** 	balance.interrupt[1].int_port = GPIOB;
- 123              		.loc 2 13 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 5
+  47:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.previous_error = 0;
+ 127              		.loc 1 47 0
+ 128 009e C4F89850 		str	r5, [r4, #152]	@ float
+  48:Core/Src/devs/blnc_motor.cpp **** 	gBallet.pid.last_output = 0;
+ 129              		.loc 1 48 0
+ 130 00a2 C4F89050 		str	r5, [r4, #144]	@ float
+  49:Core/Src/devs/blnc_motor.cpp **** }
+ 131              		.loc 1 49 0
+ 132 00a6 38BD     		pop	{r3, r4, r5, pc}
+ 133              	.L4:
+ 134              		.align	3
+ 135              	.L3:
+ 136 00a8 33333333 		.word	858993459
+ 137 00ac 3333D33F 		.word	1070805811
+ 138 00b0 7B14AE47 		.word	1202590843
+ 139 00b4 E17A943F 		.word	1066695393
+ 140 00b8 00000000 		.word	.LANCHOR0
+ 141 00bc 00000240 		.word	1073872896
+ 142 00c0 00100240 		.word	1073876992
+ 143 00c4 00000000 		.word	htim5
+ 144 00c8 00004041 		.word	1094713344
+ 145 00cc 000040C1 		.word	-1052770304
+ 146              		.cfi_endproc
+ 147              	.LFE136:
+ 149              		.section	.text._Z12balance_Loopv,"ax",%progbits
+ 150              		.align	1
+ 151              		.global	_Z12balance_Loopv
+ 152              		.syntax unified
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.fpu fpv4-sp-d16
+ 157              	_Z12balance_Loopv:
+ 158              	.LFB137:
+  50:Core/Src/devs/blnc_motor.cpp **** 
+  51:Core/Src/devs/blnc_motor.cpp **** void balance_Loop(void)
+  52:Core/Src/devs/blnc_motor.cpp **** {
+ 159              		.loc 1 52 0
+ 160              		.cfi_startproc
+ 161              		@ args = 0, pretend = 0, frame = 0
+ 162              		@ frame_needed = 0, uses_anonymous_args = 0
+ 163 0000 10B5     		push	{r4, lr}
+ 164              	.LCFI1:
+ 165              		.cfi_def_cfa_offset 8
+ 166              		.cfi_offset 4, -8
+ 167              		.cfi_offset 14, -4
+  53:Core/Src/devs/blnc_motor.cpp **** 	// printf("%ld\n", (gBallet.motor.encoder->count));
+  54:Core/Src/devs/blnc_motor.cpp **** 	if(gCurrent_Position != gHorse_State.get_ID())
+ 168              		.loc 1 54 0
+ 169 0002 2448     		ldr	r0, .L14
+ 170 0004 FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 171              	.LVL3:
+ 172 0008 234B     		ldr	r3, .L14+4
+ 173 000a 1B68     		ldr	r3, [r3]
+ 174 000c 9842     		cmp	r0, r3
+ 175 000e 13D0     		beq	.L5
+  55:Core/Src/devs/blnc_motor.cpp **** 	{
+  56:Core/Src/devs/blnc_motor.cpp **** 		switch (gHorse_State.get_ID())
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 5
 
 
- 124 000e 03F18043 		add	r3, r3, #1073741824
- 125 0012 03F5E233 		add	r3, r3, #115712
- 126 0016 6364     		str	r3, [r4, #68]
-  14:Core/Src/blnc_motor.cpp ****         balance.interrupt[1].int_pin = GPIO_PIN_15;
- 127              		.loc 2 14 0
- 128 0018 4FF40043 		mov	r3, #32768
- 129 001c A4F84830 		strh	r3, [r4, #72]	@ movhi
-  15:Core/Src/blnc_motor.cpp **** 	balance.interrupt[2].int_port = GPIOC;
- 130              		.loc 2 15 0
- 131 0020 03F18043 		add	r3, r3, #1073741824
- 132 0024 03F5C433 		add	r3, r3, #100352
- 133 0028 2365     		str	r3, [r4, #80]
-  16:Core/Src/blnc_motor.cpp ****         balance.interrupt[2].int_pin = GPIO_PIN_7;
- 134              		.loc 2 16 0
- 135 002a 8023     		movs	r3, #128
- 136 002c A4F85430 		strh	r3, [r4, #84]	@ movhi
-  17:Core/Src/blnc_motor.cpp **** 	balance.interrupt[3].int_port = GPIOE;
- 137              		.loc 2 17 0
- 138 0030 234B     		ldr	r3, .L14+24
- 139 0032 E365     		str	r3, [r4, #92]
-  18:Core/Src/blnc_motor.cpp ****         balance.interrupt[3].int_pin = GPIO_PIN_3;
- 140              		.loc 2 18 0
- 141 0034 0823     		movs	r3, #8
- 142 0036 A4F86030 		strh	r3, [r4, #96]	@ movhi
-  21:Core/Src/blnc_motor.cpp **** 	balance.motor.dir1_port = GPIOA;
- 143              		.loc 2 21 0
- 144 003a A261     		str	r2, [r4, #24]
-  22:Core/Src/blnc_motor.cpp **** 	balance.motor.dir1_pin = GPIO_PIN_3;
- 145              		.loc 2 22 0
- 146 003c A383     		strh	r3, [r4, #28]	@ movhi
-  23:Core/Src/blnc_motor.cpp **** 	balance.motor.dir2_port = GPIOA;
- 147              		.loc 2 23 0
- 148 003e 2262     		str	r2, [r4, #32]
-  24:Core/Src/blnc_motor.cpp **** 	balance.motor.dir2_pin = GPIO_PIN_4;
- 149              		.loc 2 24 0
- 150 0040 1022     		movs	r2, #16
- 151 0042 A284     		strh	r2, [r4, #36]	@ movhi
-  25:Core/Src/blnc_motor.cpp **** 	balance.motor.channel = TIM_CHANNEL_3;
- 152              		.loc 2 25 0
- 153 0044 E362     		str	r3, [r4, #44]
-  26:Core/Src/blnc_motor.cpp **** 	balance.motor.update_omega = 0;
- 154              		.loc 2 26 0
- 155 0046 0025     		movs	r5, #0
- 156 0048 2561     		str	r5, [r4, #16]	@ float
-  27:Core/Src/blnc_motor.cpp **** 	balance.motor.htim = &htim5;
- 157              		.loc 2 27 0
- 158 004a 1E48     		ldr	r0, .L14+28
- 159 004c A062     		str	r0, [r4, #40]
-  28:Core/Src/blnc_motor.cpp **** 	HAL_TIM_Base_Start(balance.motor.htim);
- 160              		.loc 2 28 0
- 161 004e FFF7FEFF 		bl	HAL_TIM_Base_Start
- 162              	.LVL7:
-  29:Core/Src/blnc_motor.cpp ****         HAL_TIM_PWM_Start(balance.motor.htim, balance.motor.channel);
- 163              		.loc 2 29 0
- 164 0052 E16A     		ldr	r1, [r4, #44]
- 165 0054 A06A     		ldr	r0, [r4, #40]
- 166 0056 FFF7FEFF 		bl	HAL_TIM_PWM_Start
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 6
+ 176              		.loc 1 56 0
+ 177 0010 2048     		ldr	r0, .L14
+ 178 0012 FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 179              	.LVL4:
+ 180 0016 0428     		cmp	r0, #4
+ 181 0018 0ED8     		bhi	.L5
+ 182 001a DFE800F0 		tbb	[pc, r0]
+ 183              	.L8:
+ 184 001e 03       		.byte	(.L7-.L8)/2
+ 185 001f 0E       		.byte	(.L9-.L8)/2
+ 186 0020 19       		.byte	(.L10-.L8)/2
+ 187 0021 24       		.byte	(.L11-.L8)/2
+ 188 0022 2F       		.byte	(.L12-.L8)/2
+ 189 0023 00       		.p2align 1
+ 190              	.L7:
+  57:Core/Src/devs/blnc_motor.cpp **** 		{
+  58:Core/Src/devs/blnc_motor.cpp **** 			case State_ID::HOME:
+  59:Core/Src/devs/blnc_motor.cpp **** 			{
+  60:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+ 191              		.loc 1 60 0
+ 192 0024 1D4C     		ldr	r4, .L14+8
+ 193 0026 1E4B     		ldr	r3, .L14+12
+ 194 0028 1988     		ldrh	r1, [r3]
+ 195 002a 2046     		mov	r0, r4
+ 196 002c FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 197              	.LVL5:
+  61:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ 198              		.loc 1 61 0
+ 199 0030 0021     		movs	r1, #0
+ 200 0032 2046     		mov	r0, r4
+ 201 0034 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 202              	.LVL6:
+ 203              	.L5:
+  62:Core/Src/devs/blnc_motor.cpp **** 				break;
+  63:Core/Src/devs/blnc_motor.cpp **** 			}
+  64:Core/Src/devs/blnc_motor.cpp **** 			case State_ID::WS1:
+  65:Core/Src/devs/blnc_motor.cpp **** 			{
+  66:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+  67:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+  68:Core/Src/devs/blnc_motor.cpp **** 				break;
+  69:Core/Src/devs/blnc_motor.cpp **** 			}
+  70:Core/Src/devs/blnc_motor.cpp **** 			case State_ID::WS2:
+  71:Core/Src/devs/blnc_motor.cpp **** 			{
+  72:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+  73:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+  74:Core/Src/devs/blnc_motor.cpp **** 				break;
+  75:Core/Src/devs/blnc_motor.cpp **** 			}
+  76:Core/Src/devs/blnc_motor.cpp **** 			case State_ID::WS3:
+  77:Core/Src/devs/blnc_motor.cpp **** 			{
+  78:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+  79:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+  80:Core/Src/devs/blnc_motor.cpp **** 				break;
+  81:Core/Src/devs/blnc_motor.cpp **** 			}
+  82:Core/Src/devs/blnc_motor.cpp **** 			case State_ID::WS4:
+  83:Core/Src/devs/blnc_motor.cpp **** 			{
+  84:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+  85:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 6
 
 
- 167              	.LVL8:
-  32:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->ref_count = 0;
- 168              		.loc 2 32 0
- 169 005a 226B     		ldr	r2, [r4, #48]
- 170 005c 0023     		movs	r3, #0
- 171 005e 5380     		strh	r3, [r2, #2]	@ movhi
-  33:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->last_count = 0;
- 172              		.loc 2 33 0
- 173 0060 226B     		ldr	r2, [r4, #48]
- 174 0062 9380     		strh	r3, [r2, #4]	@ movhi
-  34:Core/Src/blnc_motor.cpp **** 	balance.motor.encoder->ppr = 79;
- 175              		.loc 2 34 0
- 176 0064 236B     		ldr	r3, [r4, #48]
- 177 0066 4F22     		movs	r2, #79
- 178 0068 1A80     		strh	r2, [r3]	@ movhi
-  37:Core/Src/blnc_motor.cpp **** 	PID_Init(&balance.pid);
- 179              		.loc 2 37 0
- 180 006a 04F16800 		add	r0, r4, #104
- 181 006e FFF7FEFF 		bl	_Z8PID_InitP6pidStr
- 182              	.LVL9:
-  38:Core/Src/blnc_motor.cpp **** 	balance.pid.max_output = 12;
- 183              		.loc 2 38 0
- 184 0072 154B     		ldr	r3, .L14+32
- 185 0074 C4F88830 		str	r3, [r4, #136]	@ float
-  39:Core/Src/blnc_motor.cpp **** 	balance.pid.min_output = -12;
- 186              		.loc 2 39 0
- 187 0078 144B     		ldr	r3, .L14+36
- 188 007a C4F88C30 		str	r3, [r4, #140]	@ float
-  40:Core/Src/blnc_motor.cpp **** 	balance.pid.kp = 0.3;
- 189              		.loc 2 40 0
- 190 007e 0AA3     		adr	r3, .L14
- 191 0080 D3E90023 		ldrd	r2, [r3]
- 192 0084 C4E91A23 		strd	r2, [r4, #104]
-  41:Core/Src/blnc_motor.cpp **** 	balance.pid.ki = 0.02;
- 193              		.loc 2 41 0
- 194 0088 09A3     		adr	r3, .L14+8
- 195 008a D3E90023 		ldrd	r2, [r3]
- 196 008e C4E91C23 		strd	r2, [r4, #112]
-  42:Core/Src/blnc_motor.cpp **** 	balance.pid.last_error = 0;
- 197              		.loc 2 42 0
- 198 0092 C4F89450 		str	r5, [r4, #148]	@ float
-  43:Core/Src/blnc_motor.cpp **** 	balance.pid.output = 0;
- 199              		.loc 2 43 0
- 200 0096 C4F88450 		str	r5, [r4, #132]	@ float
-  44:Core/Src/blnc_motor.cpp **** 	balance.pid.previous_error = 0;
- 201              		.loc 2 44 0
- 202 009a C4F89850 		str	r5, [r4, #152]	@ float
-  45:Core/Src/blnc_motor.cpp **** 	balance.pid.last_output = 0;
- 203              		.loc 2 45 0
- 204 009e C4F89050 		str	r5, [r4, #144]	@ float
-  46:Core/Src/blnc_motor.cpp **** }
- 205              		.loc 2 46 0
- 206 00a2 38BD     		pop	{r3, r4, r5, pc}
- 207              	.L15:
- 208 00a4 AFF30080 		.align	3
- 209              	.L14:
- 210 00a8 33333333 		.word	858993459
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 7
+  86:Core/Src/devs/blnc_motor.cpp **** 				break;
+  87:Core/Src/devs/blnc_motor.cpp **** 			}
+  88:Core/Src/devs/blnc_motor.cpp **** 		}
+  89:Core/Src/devs/blnc_motor.cpp **** 		//printf("%d\n", bvel);
+  90:Core/Src/devs/blnc_motor.cpp **** 	}	
+  91:Core/Src/devs/blnc_motor.cpp **** }...
+ 204              		.loc 1 91 0
+ 205 0038 10BD     		pop	{r4, pc}
+ 206              	.L9:
+  66:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+ 207              		.loc 1 66 0
+ 208 003a 184C     		ldr	r4, .L14+8
+ 209 003c 184B     		ldr	r3, .L14+12
+ 210 003e 1988     		ldrh	r1, [r3]
+ 211 0040 2046     		mov	r0, r4
+ 212 0042 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 213              	.LVL7:
+  67:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ 214              		.loc 1 67 0
+ 215 0046 0021     		movs	r1, #0
+ 216 0048 2046     		mov	r0, r4
+ 217 004a FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 218              	.LVL8:
+  68:Core/Src/devs/blnc_motor.cpp **** 				break;
+ 219              		.loc 1 68 0
+ 220 004e F3E7     		b	.L5
+ 221              	.L10:
+  72:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+ 222              		.loc 1 72 0
+ 223 0050 124C     		ldr	r4, .L14+8
+ 224 0052 134B     		ldr	r3, .L14+12
+ 225 0054 1988     		ldrh	r1, [r3]
+ 226 0056 2046     		mov	r0, r4
+ 227 0058 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 228              	.LVL9:
+  73:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ 229              		.loc 1 73 0
+ 230 005c 0021     		movs	r1, #0
+ 231 005e 2046     		mov	r0, r4
+ 232 0060 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 233              	.LVL10:
+  74:Core/Src/devs/blnc_motor.cpp **** 				break;
+ 234              		.loc 1 74 0
+ 235 0064 E8E7     		b	.L5
+ 236              	.L11:
+  78:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+ 237              		.loc 1 78 0
+ 238 0066 0D4C     		ldr	r4, .L14+8
+ 239 0068 0D4B     		ldr	r3, .L14+12
+ 240 006a 1988     		ldrh	r1, [r3]
+ 241 006c 2046     		mov	r0, r4
+ 242 006e FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 243              	.LVL11:
+  79:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ 244              		.loc 1 79 0
+ 245 0072 0021     		movs	r1, #0
+ 246 0074 2046     		mov	r0, r4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 7
 
 
- 211 00ac 3333D33F 		.word	1070805811
- 212 00b0 7B14AE47 		.word	1202590843
- 213 00b4 E17A943F 		.word	1066695393
- 214 00b8 00000000 		.word	.LANCHOR1
- 215 00bc 00000240 		.word	1073872896
- 216 00c0 00100240 		.word	1073876992
- 217 00c4 00000000 		.word	htim5
- 218 00c8 00004041 		.word	1094713344
- 219 00cc 000040C1 		.word	-1052770304
- 220              		.cfi_endproc
- 221              	.LFE132:
- 223              		.section	.text._Z11check_N_runv,"ax",%progbits
- 224              		.align	1
- 225              		.global	_Z11check_N_runv
- 226              		.syntax unified
- 227              		.thumb
- 228              		.thumb_func
- 229              		.fpu fpv4-sp-d16
- 231              	_Z11check_N_runv:
- 232              	.LFB133:
-  49:Core/Src/blnc_motor.cpp **** {
- 233              		.loc 2 49 0
- 234              		.cfi_startproc
- 235              		@ args = 0, pretend = 0, frame = 0
- 236              		@ frame_needed = 0, uses_anonymous_args = 0
- 237 0000 38B5     		push	{r3, r4, r5, lr}
- 238              	.LCFI2:
- 239              		.cfi_def_cfa_offset 16
- 240              		.cfi_offset 3, -16
- 241              		.cfi_offset 4, -12
- 242              		.cfi_offset 5, -8
- 243              		.cfi_offset 14, -4
- 244              	.LVL10:
-  50:Core/Src/blnc_motor.cpp **** 	if(gcurrent_position != gRobo_State.get_ID())
- 245              		.loc 2 50 0
- 246 0002 094B     		ldr	r3, .L20
- 247 0004 1B68     		ldr	r3, [r3]
- 248 0006 03B9     		cbnz	r3, .L19
- 249              	.L16:
- 250              		.loc 2 87 0
- 251 0008 38BD     		pop	{r3, r4, r5, pc}
- 252              	.L19:
- 253              	.LVL11:
-  56:Core/Src/blnc_motor.cpp **** 				setDutyCycle(&balance.motor, bvel);	
- 254              		.loc 2 56 0
- 255 000a 084C     		ldr	r4, .L20+4
- 256 000c 084D     		ldr	r5, .L20+8
- 257 000e 2188     		ldrh	r1, [r4]
- 258 0010 2846     		mov	r0, r5
- 259 0012 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
- 260              	.LVL12:
-  57:Core/Src/blnc_motor.cpp **** 				setDirection(&balance.motor, DIR_CLOCKWISE);
- 261              		.loc 2 57 0
- 262 0016 0021     		movs	r1, #0
- 263 0018 2846     		mov	r0, r5
- 264 001a FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
- 265              	.LVL13:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 8
+ 247 0076 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 248              	.LVL12:
+  80:Core/Src/devs/blnc_motor.cpp **** 				break;
+ 249              		.loc 1 80 0
+ 250 007a DDE7     		b	.L5
+ 251              	.L12:
+  84:Core/Src/devs/blnc_motor.cpp **** 				setDutyCycle(&gBallet.motor, bvel);	
+ 252              		.loc 1 84 0
+ 253 007c 074C     		ldr	r4, .L14+8
+ 254 007e 084B     		ldr	r3, .L14+12
+ 255 0080 1988     		ldrh	r1, [r3]
+ 256 0082 2046     		mov	r0, r4
+ 257 0084 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 258              	.LVL13:
+  85:Core/Src/devs/blnc_motor.cpp **** 				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+ 259              		.loc 1 85 0
+ 260 0088 0021     		movs	r1, #0
+ 261 008a 2046     		mov	r0, r4
+ 262 008c FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 263              	.LVL14:
+ 264              		.loc 1 91 0
+ 265 0090 D2E7     		b	.L5
+ 266              	.L15:
+ 267 0092 00BF     		.align	2
+ 268              	.L14:
+ 269 0094 00000000 		.word	gHorse_State
+ 270 0098 00000000 		.word	gCurrent_Position
+ 271 009c 00000000 		.word	.LANCHOR0
+ 272 00a0 00000000 		.word	.LANCHOR1
+ 273              		.cfi_endproc
+ 274              	.LFE137:
+ 276              		.global	bvel
+ 277              		.global	gBallet
+ 278              		.section	.bss.gBallet,"aw",%nobits
+ 279              		.align	3
+ 280              		.set	.LANCHOR0,. + 0
+ 283              	gBallet:
+ 284 0000 00000000 		.space	160
+ 284      00000000 
+ 284      00000000 
+ 284      00000000 
+ 284      00000000 
+ 285              		.section	.data.bvel,"aw",%progbits
+ 286              		.align	1
+ 287              		.set	.LANCHOR1,. + 0
+ 290              	bvel:
+ 291 0000 C8AF     		.short	-20536
+ 292              		.text
+ 293              	.Letext0:
+ 294              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 295              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 296              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 297              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 298              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 299              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 300              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 301              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 8
 
 
-  85:Core/Src/blnc_motor.cpp **** 		printf("%d\n", bvel);
- 266              		.loc 2 85 0
- 267 001e 2188     		ldrh	r1, [r4]
- 268 0020 0448     		ldr	r0, .L20+12
- 269 0022 FFF7FEFF 		bl	printf
- 270              	.LVL14:
- 271              		.loc 2 87 0
- 272 0026 EFE7     		b	.L16
- 273              	.L21:
- 274              		.align	2
- 275              	.L20:
- 276 0028 00000000 		.word	.LANCHOR2
- 277 002c 00000000 		.word	.LANCHOR3
- 278 0030 00000000 		.word	.LANCHOR1
- 279 0034 00000000 		.word	.LC0
- 280              		.cfi_endproc
- 281              	.LFE133:
- 283              		.section	.text._GLOBAL__sub_I_balance,"ax",%progbits
- 284              		.align	1
- 285              		.syntax unified
- 286              		.thumb
- 287              		.thumb_func
- 288              		.fpu fpv4-sp-d16
- 290              	_GLOBAL__sub_I_balance:
- 291              	.LFB135:
- 292              		.loc 2 87 0
- 293              		.cfi_startproc
- 294              		@ args = 0, pretend = 0, frame = 0
- 295              		@ frame_needed = 0, uses_anonymous_args = 0
- 296 0000 08B5     		push	{r3, lr}
- 297              	.LCFI3:
- 298              		.cfi_def_cfa_offset 8
- 299              		.cfi_offset 3, -8
- 300              		.cfi_offset 14, -4
- 301              		.loc 2 87 0
- 302 0002 4FF6FF71 		movw	r1, #65535
- 303 0006 0120     		movs	r0, #1
- 304 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
- 305              	.LVL15:
- 306 000c 08BD     		pop	{r3, pc}
- 307              		.cfi_endproc
- 308              	.LFE135:
- 310              		.section	.init_array,"aw",%init_array
- 311              		.align	2
- 312 0000 00000000 		.word	_GLOBAL__sub_I_balance(target1)
- 313              		.global	bvel
- 314              		.global	gcurrent_position
- 315              		.global	gRobo_State
- 316              		.global	balance
- 317              		.section	.bss.balance,"aw",%nobits
- 318              		.align	3
- 319              		.set	.LANCHOR1,. + 0
- 322              	balance:
- 323 0000 00000000 		.space	160
- 323      00000000 
- 323      00000000 
- 323      00000000 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 9
-
-
- 323      00000000 
- 324              		.section	.bss.gRobo_State,"aw",%nobits
- 325              		.align	2
- 326              		.set	.LANCHOR0,. + 0
- 329              	gRobo_State:
- 330 0000 00       		.space	1
- 331              		.section	.data.bvel,"aw",%progbits
- 332              		.align	1
- 333              		.set	.LANCHOR3,. + 0
- 336              	bvel:
- 337 0000 C8AF     		.short	-20536
- 338              		.section	.data.gcurrent_position,"aw",%progbits
- 339              		.align	2
- 340              		.set	.LANCHOR2,. + 0
- 343              	gcurrent_position:
- 344 0000 01000000 		.word	1
- 345              		.section	.rodata._Z11check_N_runv.str1.4,"aMS",%progbits,1
- 346              		.align	2
- 347              	.LC0:
- 348 0000 25640A00 		.ascii	"%d\012\000"
- 349              		.text
- 350              	.Letext0:
- 351              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 352              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 353              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
- 354              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 355              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 356              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
- 357              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 358              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 359              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 360              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 361              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 362              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 363              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 364              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
- 365              		.file 17 "Core/Inc/periphs/tim.h"
- 366              		.file 18 "Core/Inc/encoder.h"
- 367              		.file 19 "Core/Inc/motor.h"
- 368              		.file 20 "Core/Inc/pid.h"
- 369              		.file 21 "Core/Inc/interrupt.h"
- 370              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s 			page 10
+ 302              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 303              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 304              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 305              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 306              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 307              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 308              		.file 16 "Core/Inc/periphs/tim.h"
+ 309              		.file 17 "Core/Inc/devs/encoder.h"
+ 310              		.file 18 "Core/Inc/devs/motor.h"
+ 311              		.file 19 "Core/Inc/robot/interrupt.h"
+ 312              		.file 20 "Core/Inc/utils/pid.h"
+ 313              		.file 21 "Core/Inc/devs/blnc_motor.h"
+ 314              		.file 22 "Core/Inc/robot/robo_states.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 blnc_motor.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:18     .text._ZN5StateD2Ev:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD2Ev
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD1Ev
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:42     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:48     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:89     .text._Z41__static_initialization_and_destruction_0ii:00000020 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:96     .text._Z12balance_initv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:103    .text._Z12balance_initv:00000000 _Z12balance_initv
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:210    .text._Z12balance_initv:000000a8 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:224    .text._Z11check_N_runv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:231    .text._Z11check_N_runv:00000000 _Z11check_N_runv
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:276    .text._Z11check_N_runv:00000028 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:284    .text._GLOBAL__sub_I_balance:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:290    .text._GLOBAL__sub_I_balance:00000000 _GLOBAL__sub_I_balance
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:311    .init_array:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:336    .data.bvel:00000000 bvel
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:343    .data.gcurrent_position:00000000 gcurrent_position
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:329    .bss.gRobo_State:00000000 gRobo_State
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:322    .bss.balance:00000000 balance
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:318    .bss.balance:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:325    .bss.gRobo_State:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:332    .data.bvel:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:339    .data.gcurrent_position:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccsORnQg.s:346    .rodata._Z11check_N_runv.str1.4:00000000 $d
-                           .group:00000000 _ZN5StateD5Ev
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:18     .text._Z12balance_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:25     .text._Z12balance_Initv:00000000 _Z12balance_Initv
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:136    .text._Z12balance_Initv:000000a8 $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:150    .text._Z12balance_Loopv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:157    .text._Z12balance_Loopv:00000000 _Z12balance_Loopv
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:184    .text._Z12balance_Loopv:0000001e $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:269    .text._Z12balance_Loopv:00000094 $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:290    .data.bvel:00000000 bvel
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:283    .bss.gBallet:00000000 gBallet
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:279    .bss.gBallet:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:286    .data.bvel:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:189    .text._Z12balance_Loopv:00000023 $d
+C:\Users\Prashant\AppData\Local\Temp\ccTo4I14.s:189    .text._Z12balance_Loopv:00000024 $t
 
 UNDEFINED SYMBOLS
-__aeabi_atexit
-__dso_handle
 HAL_TIM_Base_Start
 HAL_TIM_PWM_Start
 _Z8PID_InitP6pidStr
 htim5
+_ZN5State6get_IDEv
 _Z12setDutyCycleP8motorStrt
 _Z12setDirectionP8motorStr14motorDirection
-printf
+gHorse_State
+gCurrent_Position

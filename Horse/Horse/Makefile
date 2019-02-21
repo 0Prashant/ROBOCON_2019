@@ -43,36 +43,34 @@ Core/Src/periphs/usart.c \
 Core/Src/freertos.c \
 \
 Core/Src/utils/printf_config.c \
-Core/Src/encoder.c \
-Core/Src/interrupt.c \
 \
 Core/Src/sys/stm32f4xx_it.c \
 Core/Src/sys/stm32f4xx_hal_msp.c \
 Core/Src/sys/stm32f4xx_hal_timebase_tim.c \
 Core/Src/sys/system_stm32f4xx.c \
 \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/list.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
-C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/list.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/queue.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/timers.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
+C:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -82,11 +80,25 @@ startup_stm32f407xx.s
 ##
 # C++ sources
 CXX_SOURCES = \
+Core/Src/devs/encoder.cpp \
+Core/Src/devs/motor.cpp \
+Core/Src/devs/pneumatic.cpp \
+Core/Src/devs/blnc_motor.cpp \
+\
+Core/Src/robot/check.cpp \
+Core/Src/robot/feed_forward.cpp \
+Core/Src/robot/fsm_tasks.cpp \
+Core/Src/robot/fsm.cpp \
+Core/Src/robot/interrupt.cpp \
+Core/Src/robot/robo_init.cpp \
+Core/Src/robot/robo_states.cpp \
+\
+Core/Src/utils/math/mat.cpp \
+Core/Src/utils/filter/exp_smooth.cpp \
+Core/Src/utils/logger.cpp \
+Core/Src/utils/pid.cpp \
 \
 Core/Src/robo_tasks.cpp \
-Core/Src/blnc_motor.cpp \
-Core/Src/pid.cpp \
-Core/Src/motor.cpp \
 Core/Src/main.cpp
 ##
 #######################################
@@ -151,15 +163,18 @@ C_INCLUDES =  \
 -ICore/Inc/periphs \
 -ICore/Inc/robot \
 -ICore/Inc/utils \
+-ICore/Inc/utils/container \
+-ICore/Inc/utils/filter \
+-ICore/Inc/utils/math \
 -ICore/Inc/sys \
 \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/include \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include \
--IC:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include 
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Inc \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/include \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/CMSIS/Device/ST/STM32F4xx/Include \
+-IC:/Users/$(USER_NAME)/STM32Cube/Repository/${STM_CUBE_VERSION}/Drivers/CMSIS/Include
 
 
 # compile gcc flags
