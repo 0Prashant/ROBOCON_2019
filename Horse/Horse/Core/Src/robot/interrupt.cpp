@@ -91,6 +91,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
                         setDutyCycle(&gBallet.motor, 0);
                         setDirection(&gBallet.motor, DIR_BRAKE);
                 }
+		printf("A\n");
         }
         if (GPIO_PIN == gBallet.interrupt[1].int_pin)
         {
@@ -100,6 +101,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
                         setDutyCycle(&gBallet.motor, 0);
                         setDirection(&gBallet.motor, DIR_BRAKE);
                 }
+		printf("B\n");
         }
         if (GPIO_PIN == gBallet.interrupt[2].int_pin)
         {

@@ -10,14 +10,14 @@ uint16_t bvel = 45000;
 void balance_Init(void)
 {
 	/******Initializing Interrupts******/
-	gBallet.interrupt[0].int_port = GPIOA;
+	gBallet.interrupt[0].int_port = GPIOC;
 	gBallet.interrupt[0].int_pin = GPIO_PIN_14;
-	gBallet.interrupt[1].int_port = GPIOB;
+	gBallet.interrupt[1].int_port = GPIOC;
         gBallet.interrupt[1].int_pin = GPIO_PIN_15;
 	gBallet.interrupt[2].int_port = GPIOC;
         gBallet.interrupt[2].int_pin = GPIO_PIN_7;
-	gBallet.interrupt[3].int_port = GPIOE;
-        gBallet.interrupt[3].int_pin = GPIO_PIN_3;
+	gBallet.interrupt[3].int_port = GPIOB;
+        gBallet.interrupt[3].int_pin = GPIO_PIN_12;
 
 	/******Initializing Motor******/
 	gBallet.motor.dir1_port = GPIOA;
