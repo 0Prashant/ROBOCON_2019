@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -31,7 +31,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 1
    2:Core/Src/devs/pneumatic.cpp **** #include "robo_states.h"
    3:Core/Src/devs/pneumatic.cpp **** 
    4:Core/Src/devs/pneumatic.cpp **** extern State gHorse_State;
-   5:Core/Src/devs/pneumatic.cpp **** 
+   5:Core/Src/devs/pneumatic.cpp **** extern bool gReady_To_Go;
    6:Core/Src/devs/pneumatic.cpp **** 
    7:Core/Src/devs/pneumatic.cpp **** enum class Pneu_Index
    8:Core/Src/devs/pneumatic.cpp **** {
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 1
   29:Core/Src/devs/pneumatic.cpp ****         }
   30:Core/Src/devs/pneumatic.cpp **** 
   31:Core/Src/devs/pneumatic.cpp ****         void set(void);
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 2
 
 
   32:Core/Src/devs/pneumatic.cpp ****         void reset(void);
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 1
   71 0002 0022     		movs	r2, #0
   72 0004 8188     		ldrh	r1, [r0, #4]
   73 0006 0068     		ldr	r0, [r0]
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 3
 
 
   74              	.LVL4:
@@ -164,329 +164,343 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 1
  102              		.cfi_offset 14, -4
  103 0002 0646     		mov	r6, r0
  104 0004 0D46     		mov	r5, r1
-  59:Core/Src/devs/pneumatic.cpp ****         if (index != Pneu_Index::P_NONE)
+  59:Core/Src/devs/pneumatic.cpp **** 	if(gReady_To_Go)
  105              		.loc 1 59 0
- 106 0006 0429     		cmp	r1, #4
- 107 0008 01D1     		bne	.L11
- 108              	.LVL7:
- 109              	.L6:
-  58:Core/Src/devs/pneumatic.cpp ****         if (index != Pneu_Index::P_NONE)
- 110              		.loc 1 58 0 discriminator 1
- 111 000a 0024     		movs	r4, #0
- 112 000c 06E0     		b	.L9
- 113              	.LVL8:
- 114              	.L11:
-  60:Core/Src/devs/pneumatic.cpp ****         {
-  61:Core/Src/devs/pneumatic.cpp ****                 arr[(int)index].set();
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 4
+ 106 0006 0C4B     		ldr	r3, .L12
+ 107 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 108 000a 0BB1     		cbz	r3, .L6
+  60:Core/Src/devs/pneumatic.cpp **** 	{
+  61:Core/Src/devs/pneumatic.cpp ****         	if (index != Pneu_Index::P_NONE)
+ 109              		.loc 1 61 0
+ 110 000c 0429     		cmp	r1, #4
+ 111 000e 01D1     		bne	.L11
+ 112              	.LVL7:
+ 113              	.L6:
+  58:Core/Src/devs/pneumatic.cpp **** 	if(gReady_To_Go)
+ 114              		.loc 1 58 0 discriminator 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 4
 
 
- 115              		.loc 1 61 0
- 116 000e 00EBC100 		add	r0, r0, r1, lsl #3
- 117              	.LVL9:
- 118 0012 FFF7FEFF 		bl	_ZN9Pneumatic3setEv
- 119              	.LVL10:
- 120 0016 F8E7     		b	.L6
- 121              	.LVL11:
- 122              	.L8:
- 123              	.LBB12:
-  62:Core/Src/devs/pneumatic.cpp ****         }
-  63:Core/Src/devs/pneumatic.cpp ****         for (uint8_t i = 0; i < (int)(Pneu_Index::P_NONE); ++i)
- 124              		.loc 1 63 0 discriminator 2
- 125 0018 0134     		adds	r4, r4, #1
- 126              	.LVL12:
- 127 001a E4B2     		uxtb	r4, r4
- 128              	.LVL13:
- 129              	.L9:
- 130              		.loc 1 63 0 is_stmt 0 discriminator 1
- 131 001c 032C     		cmp	r4, #3
- 132 001e 06D8     		bhi	.L5
-  64:Core/Src/devs/pneumatic.cpp ****         {
-  65:Core/Src/devs/pneumatic.cpp ****                 if (i != (int)index)
- 133              		.loc 1 65 0 is_stmt 1
- 134 0020 AC42     		cmp	r4, r5
- 135 0022 F9D0     		beq	.L8
-  66:Core/Src/devs/pneumatic.cpp ****                 {
-  67:Core/Src/devs/pneumatic.cpp ****                         arr[i].reset();
- 136              		.loc 1 67 0
- 137 0024 06EBC400 		add	r0, r6, r4, lsl #3
- 138 0028 FFF7FEFF 		bl	_ZN9Pneumatic5resetEv
- 139              	.LVL14:
- 140 002c F4E7     		b	.L8
- 141              	.L5:
- 142              	.LBE12:
-  68:Core/Src/devs/pneumatic.cpp ****                 }
-  69:Core/Src/devs/pneumatic.cpp ****         }
-  70:Core/Src/devs/pneumatic.cpp **** }
- 143              		.loc 1 70 0
- 144 002e 70BD     		pop	{r4, r5, r6, pc}
- 145              		.cfi_endproc
- 146              	.LFE143:
- 148              		.section	.text._Z9pneu_Initv,"ax",%progbits
- 149              		.align	1
- 150              		.global	_Z9pneu_Initv
- 151              		.syntax unified
- 152              		.thumb
- 153              		.thumb_func
- 154              		.fpu fpv4-sp-d16
- 156              	_Z9pneu_Initv:
- 157              	.LFB142:
+ 115 0010 0024     		movs	r4, #0
+ 116 0012 06E0     		b	.L9
+ 117              	.LVL8:
+ 118              	.L11:
+  62:Core/Src/devs/pneumatic.cpp ****         	{
+  63:Core/Src/devs/pneumatic.cpp ****         	        arr[(int)index].set();
+ 119              		.loc 1 63 0
+ 120 0014 00EBC100 		add	r0, r0, r1, lsl #3
+ 121              	.LVL9:
+ 122 0018 FFF7FEFF 		bl	_ZN9Pneumatic3setEv
+ 123              	.LVL10:
+ 124 001c F8E7     		b	.L6
+ 125              	.LVL11:
+ 126              	.L8:
+ 127              	.LBB12:
+  64:Core/Src/devs/pneumatic.cpp ****         	}
+  65:Core/Src/devs/pneumatic.cpp **** 	}
+  66:Core/Src/devs/pneumatic.cpp ****         for (uint8_t i = 0; i < (int)(Pneu_Index::P_NONE); ++i)
+ 128              		.loc 1 66 0 discriminator 2
+ 129 001e 0134     		adds	r4, r4, #1
+ 130              	.LVL12:
+ 131 0020 E4B2     		uxtb	r4, r4
+ 132              	.LVL13:
+ 133              	.L9:
+ 134              		.loc 1 66 0 is_stmt 0 discriminator 1
+ 135 0022 032C     		cmp	r4, #3
+ 136 0024 06D8     		bhi	.L5
+  67:Core/Src/devs/pneumatic.cpp ****         {
+  68:Core/Src/devs/pneumatic.cpp ****                 if (i != (int)index)
+ 137              		.loc 1 68 0 is_stmt 1
+ 138 0026 AC42     		cmp	r4, r5
+ 139 0028 F9D0     		beq	.L8
+  69:Core/Src/devs/pneumatic.cpp ****                 {
+  70:Core/Src/devs/pneumatic.cpp ****                         arr[i].reset();
+ 140              		.loc 1 70 0
+ 141 002a 06EBC400 		add	r0, r6, r4, lsl #3
+ 142 002e FFF7FEFF 		bl	_ZN9Pneumatic5resetEv
+ 143              	.LVL14:
+ 144 0032 F4E7     		b	.L8
+ 145              	.L5:
+ 146              	.LBE12:
+  71:Core/Src/devs/pneumatic.cpp ****                 }
+  72:Core/Src/devs/pneumatic.cpp ****         }
+  73:Core/Src/devs/pneumatic.cpp **** }
+ 147              		.loc 1 73 0
+ 148 0034 70BD     		pop	{r4, r5, r6, pc}
+ 149              	.LVL15:
+ 150              	.L13:
+ 151 0036 00BF     		.align	2
+ 152              	.L12:
+ 153 0038 00000000 		.word	gReady_To_Go
+ 154              		.cfi_endproc
+ 155              	.LFE143:
+ 157              		.section	.text._Z9pneu_Initv,"ax",%progbits
+ 158              		.align	1
+ 159              		.global	_Z9pneu_Initv
+ 160              		.syntax unified
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 5
+
+
+ 161              		.thumb
+ 162              		.thumb_func
+ 163              		.fpu fpv4-sp-d16
+ 165              	_Z9pneu_Initv:
+ 166              	.LFB142:
   50:Core/Src/devs/pneumatic.cpp ****         gPneu[(int)(Pneu_Index::P_1)].init(GPIOC, GPIO_PIN_1);
- 158              		.loc 1 50 0
- 159              		.cfi_startproc
- 160              		@ args = 0, pretend = 0, frame = 0
- 161              		@ frame_needed = 0, uses_anonymous_args = 0
- 162              		@ link register save eliminated.
- 163              	.LVL15:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 5
+ 167              		.loc 1 50 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171              		@ link register save eliminated.
+ 172              	.LVL16:
+ 173              	.LBB13:
+ 174              	.LBB14:
+  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
+ 175              		.loc 1 27 0
+ 176 0000 084B     		ldr	r3, .L15
+ 177 0002 094A     		ldr	r2, .L15+4
+ 178 0004 1A60     		str	r2, [r3]
+  28:Core/Src/devs/pneumatic.cpp ****         }
+ 179              		.loc 1 28 0
+ 180 0006 0221     		movs	r1, #2
+ 181 0008 9980     		strh	r1, [r3, #4]	@ movhi
+ 182              	.LVL17:
+ 183              	.LBE14:
+ 184              	.LBE13:
+ 185              	.LBB15:
+ 186              	.LBB16:
+  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
+ 187              		.loc 1 27 0
+ 188 000a 0849     		ldr	r1, .L15+8
+ 189 000c 9960     		str	r1, [r3, #8]
+  28:Core/Src/devs/pneumatic.cpp ****         }
+ 190              		.loc 1 28 0
+ 191 000e 4FF48071 		mov	r1, #256
+ 192 0012 9981     		strh	r1, [r3, #12]	@ movhi
+ 193              	.LVL18:
+ 194              	.LBE16:
+ 195              	.LBE15:
+ 196              	.LBB17:
+ 197              	.LBB18:
+  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
+ 198              		.loc 1 27 0
+ 199 0014 0649     		ldr	r1, .L15+12
+ 200 0016 1961     		str	r1, [r3, #16]
+  28:Core/Src/devs/pneumatic.cpp ****         }
+ 201              		.loc 1 28 0
+ 202 0018 0421     		movs	r1, #4
+ 203 001a 9982     		strh	r1, [r3, #20]	@ movhi
+ 204              	.LVL19:
+ 205              	.LBE18:
+ 206              	.LBE17:
+ 207              	.LBB19:
+ 208              	.LBB20:
+  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
+ 209              		.loc 1 27 0
+ 210 001c 9A61     		str	r2, [r3, #24]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 6
 
 
- 164              	.LBB13:
- 165              	.LBB14:
-  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
- 166              		.loc 1 27 0
- 167 0000 084B     		ldr	r3, .L13
- 168 0002 094A     		ldr	r2, .L13+4
- 169 0004 1A60     		str	r2, [r3]
   28:Core/Src/devs/pneumatic.cpp ****         }
- 170              		.loc 1 28 0
- 171 0006 0221     		movs	r1, #2
- 172 0008 9980     		strh	r1, [r3, #4]	@ movhi
- 173              	.LVL16:
- 174              	.LBE14:
- 175              	.LBE13:
- 176              	.LBB15:
- 177              	.LBB16:
-  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
- 178              		.loc 1 27 0
- 179 000a 0849     		ldr	r1, .L13+8
- 180 000c 9960     		str	r1, [r3, #8]
-  28:Core/Src/devs/pneumatic.cpp ****         }
- 181              		.loc 1 28 0
- 182 000e 4FF48071 		mov	r1, #256
- 183 0012 9981     		strh	r1, [r3, #12]	@ movhi
- 184              	.LVL17:
- 185              	.LBE16:
- 186              	.LBE15:
- 187              	.LBB17:
- 188              	.LBB18:
-  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
- 189              		.loc 1 27 0
- 190 0014 0649     		ldr	r1, .L13+12
- 191 0016 1961     		str	r1, [r3, #16]
-  28:Core/Src/devs/pneumatic.cpp ****         }
- 192              		.loc 1 28 0
- 193 0018 0421     		movs	r1, #4
- 194 001a 9982     		strh	r1, [r3, #20]	@ movhi
- 195              	.LVL18:
- 196              	.LBE18:
- 197              	.LBE17:
- 198              	.LBB19:
- 199              	.LBB20:
-  27:Core/Src/devs/pneumatic.cpp ****                 pneu_pin = pin;
- 200              		.loc 1 27 0
- 201 001c 9A61     		str	r2, [r3, #24]
-  28:Core/Src/devs/pneumatic.cpp ****         }
- 202              		.loc 1 28 0
- 203 001e 0822     		movs	r2, #8
- 204 0020 9A83     		strh	r2, [r3, #28]	@ movhi
- 205              	.LVL19:
- 206              	.LBE20:
- 207              	.LBE19:
+ 211              		.loc 1 28 0
+ 212 001e 0822     		movs	r2, #8
+ 213 0020 9A83     		strh	r2, [r3, #28]	@ movhi
+ 214              	.LVL20:
+ 215              	.LBE20:
+ 216              	.LBE19:
   55:Core/Src/devs/pneumatic.cpp **** 
- 208              		.loc 1 55 0
- 209 0022 7047     		bx	lr
- 210              	.L14:
- 211              		.align	2
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 6
-
-
- 212              	.L13:
- 213 0024 00000000 		.word	.LANCHOR0
- 214 0028 00080240 		.word	1073874944
- 215 002c 00100240 		.word	1073876992
- 216 0030 00040240 		.word	1073873920
- 217              		.cfi_endproc
- 218              	.LFE142:
- 220              		.section	.text._Z9pneu_Loopv,"ax",%progbits
- 221              		.align	1
- 222              		.global	_Z9pneu_Loopv
- 223              		.syntax unified
- 224              		.thumb
- 225              		.thumb_func
- 226              		.fpu fpv4-sp-d16
- 228              	_Z9pneu_Loopv:
- 229              	.LFB144:
-  71:Core/Src/devs/pneumatic.cpp **** 
-  72:Core/Src/devs/pneumatic.cpp **** /*read the state of the system*/
-  73:Core/Src/devs/pneumatic.cpp **** void pneu_Loop()
-  74:Core/Src/devs/pneumatic.cpp **** {
- 230              		.loc 1 74 0
- 231              		.cfi_startproc
- 232              		@ args = 0, pretend = 0, frame = 0
- 233              		@ frame_needed = 0, uses_anonymous_args = 0
- 234 0000 08B5     		push	{r3, lr}
- 235              	.LCFI3:
- 236              		.cfi_def_cfa_offset 8
- 237              		.cfi_offset 3, -8
- 238              		.cfi_offset 14, -4
-  75:Core/Src/devs/pneumatic.cpp ****         switch (gHorse_State.get_ID())
- 239              		.loc 1 75 0
- 240 0002 1148     		ldr	r0, .L24
- 241 0004 FFF7FEFF 		bl	_ZN5State6get_IDEv
- 242              	.LVL20:
- 243 0008 0428     		cmp	r0, #4
- 244 000a 08D8     		bhi	.L15
- 245 000c DFE800F0 		tbb	[pc, r0]
- 246              	.L18:
- 247 0010 03       		.byte	(.L17-.L18)/2
- 248 0011 08       		.byte	(.L19-.L18)/2
- 249 0012 0D       		.byte	(.L20-.L18)/2
- 250 0013 12       		.byte	(.L21-.L18)/2
- 251 0014 17       		.byte	(.L22-.L18)/2
- 252 0015 00       		.p2align 1
- 253              	.L17:
-  76:Core/Src/devs/pneumatic.cpp ****         {
-  77:Core/Src/devs/pneumatic.cpp ****         case State_ID::HOME:
-  78:Core/Src/devs/pneumatic.cpp ****         {
-  79:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_NONE);
- 254              		.loc 1 79 0
- 255 0016 0421     		movs	r1, #4
- 256 0018 0C48     		ldr	r0, .L24+4
- 257 001a FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
- 258              	.LVL21:
- 259              	.L15:
-  80:Core/Src/devs/pneumatic.cpp ****         }
-  81:Core/Src/devs/pneumatic.cpp ****         break;
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 7
-
-
-  82:Core/Src/devs/pneumatic.cpp **** 
-  83:Core/Src/devs/pneumatic.cpp ****         case State_ID::WS1:
-  84:Core/Src/devs/pneumatic.cpp ****         {
-  85:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_1);
-  86:Core/Src/devs/pneumatic.cpp ****         }
-  87:Core/Src/devs/pneumatic.cpp ****         break;
-  88:Core/Src/devs/pneumatic.cpp **** 
-  89:Core/Src/devs/pneumatic.cpp ****         case State_ID::WS2:
-  90:Core/Src/devs/pneumatic.cpp ****         {
-  91:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_2);
-  92:Core/Src/devs/pneumatic.cpp ****         }
-  93:Core/Src/devs/pneumatic.cpp ****         break;
-  94:Core/Src/devs/pneumatic.cpp **** 
-  95:Core/Src/devs/pneumatic.cpp ****         case State_ID::WS3:
-  96:Core/Src/devs/pneumatic.cpp ****         {
-  97:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_3);
-  98:Core/Src/devs/pneumatic.cpp ****         }
-  99:Core/Src/devs/pneumatic.cpp ****         break;
- 100:Core/Src/devs/pneumatic.cpp **** 
- 101:Core/Src/devs/pneumatic.cpp ****         case State_ID::WS4:
- 102:Core/Src/devs/pneumatic.cpp ****         {
- 103:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_4);
- 104:Core/Src/devs/pneumatic.cpp ****         }
- 105:Core/Src/devs/pneumatic.cpp ****         break;
- 106:Core/Src/devs/pneumatic.cpp ****         }
- 107:Core/Src/devs/pneumatic.cpp **** }...
- 260              		.loc 1 107 0
- 261 001e 08BD     		pop	{r3, pc}
+ 217              		.loc 1 55 0
+ 218 0022 7047     		bx	lr
+ 219              	.L16:
+ 220              		.align	2
+ 221              	.L15:
+ 222 0024 00000000 		.word	.LANCHOR0
+ 223 0028 00080240 		.word	1073874944
+ 224 002c 00100240 		.word	1073876992
+ 225 0030 00040240 		.word	1073873920
+ 226              		.cfi_endproc
+ 227              	.LFE142:
+ 229              		.section	.text._Z9pneu_Loopv,"ax",%progbits
+ 230              		.align	1
+ 231              		.global	_Z9pneu_Loopv
+ 232              		.syntax unified
+ 233              		.thumb
+ 234              		.thumb_func
+ 235              		.fpu fpv4-sp-d16
+ 237              	_Z9pneu_Loopv:
+ 238              	.LFB144:
+  74:Core/Src/devs/pneumatic.cpp **** 
+  75:Core/Src/devs/pneumatic.cpp **** /*read the state of the system*/
+  76:Core/Src/devs/pneumatic.cpp **** void pneu_Loop()
+  77:Core/Src/devs/pneumatic.cpp **** {
+ 239              		.loc 1 77 0
+ 240              		.cfi_startproc
+ 241              		@ args = 0, pretend = 0, frame = 0
+ 242              		@ frame_needed = 0, uses_anonymous_args = 0
+ 243 0000 08B5     		push	{r3, lr}
+ 244              	.LCFI3:
+ 245              		.cfi_def_cfa_offset 8
+ 246              		.cfi_offset 3, -8
+ 247              		.cfi_offset 14, -4
+  78:Core/Src/devs/pneumatic.cpp **** 	switch (gHorse_State.get_ID())
+ 248              		.loc 1 78 0
+ 249 0002 1148     		ldr	r0, .L26
+ 250 0004 FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 251              	.LVL21:
+ 252 0008 0428     		cmp	r0, #4
+ 253 000a 08D8     		bhi	.L17
+ 254 000c DFE800F0 		tbb	[pc, r0]
+ 255              	.L20:
+ 256 0010 03       		.byte	(.L19-.L20)/2
+ 257 0011 08       		.byte	(.L21-.L20)/2
+ 258 0012 0D       		.byte	(.L22-.L20)/2
+ 259 0013 12       		.byte	(.L23-.L20)/2
+ 260 0014 17       		.byte	(.L24-.L20)/2
+ 261 0015 00       		.p2align 1
  262              	.L19:
-  85:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_1);
- 263              		.loc 1 85 0
- 264 0020 0021     		movs	r1, #0
- 265 0022 0A48     		ldr	r0, .L24+4
- 266 0024 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 7
+
+
+  79:Core/Src/devs/pneumatic.cpp **** 	{
+  80:Core/Src/devs/pneumatic.cpp **** 		case State_ID::HOME:
+  81:Core/Src/devs/pneumatic.cpp **** 		{
+  82:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_NONE);
+ 263              		.loc 1 82 0
+ 264 0016 0421     		movs	r1, #4
+ 265 0018 0C48     		ldr	r0, .L26+4
+ 266 001a FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
  267              	.LVL22:
-  87:Core/Src/devs/pneumatic.cpp ****         break;
- 268              		.loc 1 87 0
- 269 0028 F9E7     		b	.L15
- 270              	.L20:
-  91:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_2);
- 271              		.loc 1 91 0
- 272 002a 0121     		movs	r1, #1
- 273 002c 0748     		ldr	r0, .L24+4
- 274 002e FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
- 275              	.LVL23:
-  93:Core/Src/devs/pneumatic.cpp ****         break;
- 276              		.loc 1 93 0
- 277 0032 F4E7     		b	.L15
- 278              	.L21:
-  97:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_3);
- 279              		.loc 1 97 0
- 280 0034 0221     		movs	r1, #2
- 281 0036 0548     		ldr	r0, .L24+4
- 282 0038 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
- 283              	.LVL24:
-  99:Core/Src/devs/pneumatic.cpp ****         break;
- 284              		.loc 1 99 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 8
+ 268              	.L17:
+  83:Core/Src/devs/pneumatic.cpp **** 		}
+  84:Core/Src/devs/pneumatic.cpp **** 		break;
+  85:Core/Src/devs/pneumatic.cpp **** 
+  86:Core/Src/devs/pneumatic.cpp **** 		case State_ID::WS1:
+  87:Core/Src/devs/pneumatic.cpp **** 		{
+  88:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_1);
+  89:Core/Src/devs/pneumatic.cpp **** 		}
+  90:Core/Src/devs/pneumatic.cpp **** 		break;
+  91:Core/Src/devs/pneumatic.cpp **** 
+  92:Core/Src/devs/pneumatic.cpp **** 		case State_ID::WS2:
+  93:Core/Src/devs/pneumatic.cpp **** 		{
+  94:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_2);
+  95:Core/Src/devs/pneumatic.cpp **** 		}
+  96:Core/Src/devs/pneumatic.cpp **** 		break;
+  97:Core/Src/devs/pneumatic.cpp **** 
+  98:Core/Src/devs/pneumatic.cpp **** 		case State_ID::WS3:
+  99:Core/Src/devs/pneumatic.cpp **** 		{
+ 100:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_3);
+ 101:Core/Src/devs/pneumatic.cpp **** 		}
+ 102:Core/Src/devs/pneumatic.cpp **** 		break;
+ 103:Core/Src/devs/pneumatic.cpp **** 
+ 104:Core/Src/devs/pneumatic.cpp **** 		case State_ID::WS4:
+ 105:Core/Src/devs/pneumatic.cpp **** 		{
+ 106:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_4);
+ 107:Core/Src/devs/pneumatic.cpp **** 		}
+ 108:Core/Src/devs/pneumatic.cpp **** 		break;
+ 109:Core/Src/devs/pneumatic.cpp **** 	}
+ 110:Core/Src/devs/pneumatic.cpp **** }...
+ 269              		.loc 1 110 0
+ 270 001e 08BD     		pop	{r3, pc}
+ 271              	.L21:
+  88:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_1);
+ 272              		.loc 1 88 0
+ 273 0020 0021     		movs	r1, #0
+ 274 0022 0A48     		ldr	r0, .L26+4
+ 275 0024 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+ 276              	.LVL23:
+  90:Core/Src/devs/pneumatic.cpp **** 		break;
+ 277              		.loc 1 90 0
+ 278 0028 F9E7     		b	.L17
+ 279              	.L22:
+  94:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_2);
+ 280              		.loc 1 94 0
+ 281 002a 0121     		movs	r1, #1
+ 282 002c 0748     		ldr	r0, .L26+4
+ 283 002e FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+ 284              	.LVL24:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 8
 
 
- 285 003c EFE7     		b	.L15
- 286              	.L22:
- 103:Core/Src/devs/pneumatic.cpp ****                 set_Index(gPneu, Pneu_Index::P_4);
- 287              		.loc 1 103 0
- 288 003e 0321     		movs	r1, #3
- 289 0040 0248     		ldr	r0, .L24+4
- 290 0042 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
- 291              	.LVL25:
- 292              		.loc 1 107 0
- 293 0046 EAE7     		b	.L15
- 294              	.L25:
- 295              		.align	2
- 296              	.L24:
- 297 0048 00000000 		.word	gHorse_State
- 298 004c 00000000 		.word	.LANCHOR0
- 299              		.cfi_endproc
- 300              	.LFE144:
- 302              		.global	gPneu
- 303              		.section	.bss.gPneu,"aw",%nobits
+  96:Core/Src/devs/pneumatic.cpp **** 		break;
+ 285              		.loc 1 96 0
+ 286 0032 F4E7     		b	.L17
+ 287              	.L23:
+ 100:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_3);
+ 288              		.loc 1 100 0
+ 289 0034 0221     		movs	r1, #2
+ 290 0036 0548     		ldr	r0, .L26+4
+ 291 0038 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+ 292              	.LVL25:
+ 102:Core/Src/devs/pneumatic.cpp **** 		break;
+ 293              		.loc 1 102 0
+ 294 003c EFE7     		b	.L17
+ 295              	.L24:
+ 106:Core/Src/devs/pneumatic.cpp **** 			set_Index(gPneu, Pneu_Index::P_4);
+ 296              		.loc 1 106 0
+ 297 003e 0321     		movs	r1, #3
+ 298 0040 0248     		ldr	r0, .L26+4
+ 299 0042 FFF7FEFF 		bl	_ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+ 300              	.LVL26:
+ 301              		.loc 1 110 0
+ 302 0046 EAE7     		b	.L17
+ 303              	.L27:
  304              		.align	2
- 305              		.set	.LANCHOR0,. + 0
- 308              	gPneu:
- 309 0000 00000000 		.space	32
- 309      00000000 
- 309      00000000 
- 309      00000000 
- 309      00000000 
- 310              		.text
- 311              	.Letext0:
- 312              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 313              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 314              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
- 315              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 316              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 317              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 318              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 319              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 320              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 321              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 322              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 323              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 324              		.file 14 "Core/Inc/robot/robo_states.h"
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s 			page 9
+ 305              	.L26:
+ 306 0048 00000000 		.word	gHorse_State
+ 307 004c 00000000 		.word	.LANCHOR0
+ 308              		.cfi_endproc
+ 309              	.LFE144:
+ 311              		.global	gPneu
+ 312              		.section	.bss.gPneu,"aw",%nobits
+ 313              		.align	2
+ 314              		.set	.LANCHOR0,. + 0
+ 317              	gPneu:
+ 318 0000 00000000 		.space	32
+ 318      00000000 
+ 318      00000000 
+ 318      00000000 
+ 318      00000000 
+ 319              		.text
+ 320              	.Letext0:
+ 321              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 322              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 323              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 324              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 325              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 326              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 327              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 328              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 329              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 330              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 331              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 332              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 333              		.file 14 "Core/Inc/robot/robo_states.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 pneumatic.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:18     .text._ZN9Pneumatic3setEv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:25     .text._ZN9Pneumatic3setEv:00000000 _ZN9Pneumatic3setEv
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:51     .text._ZN9Pneumatic5resetEv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:58     .text._ZN9Pneumatic5resetEv:00000000 _ZN9Pneumatic5resetEv
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:83     .text._ZL9set_IndexRA4_9Pneumatic10Pneu_Index:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:89     .text._ZL9set_IndexRA4_9Pneumatic10Pneu_Index:00000000 _ZL9set_IndexRA4_9Pneumatic10Pneu_Index
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:149    .text._Z9pneu_Initv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:156    .text._Z9pneu_Initv:00000000 _Z9pneu_Initv
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:213    .text._Z9pneu_Initv:00000024 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:221    .text._Z9pneu_Loopv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:228    .text._Z9pneu_Loopv:00000000 _Z9pneu_Loopv
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:247    .text._Z9pneu_Loopv:00000010 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:297    .text._Z9pneu_Loopv:00000048 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:308    .bss.gPneu:00000000 gPneu
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:304    .bss.gPneu:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:252    .text._Z9pneu_Loopv:00000015 $d
-C:\Users\Prashant\AppData\Local\Temp\ccAEuR5I.s:252    .text._Z9pneu_Loopv:00000016 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:18     .text._ZN9Pneumatic3setEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:25     .text._ZN9Pneumatic3setEv:00000000 _ZN9Pneumatic3setEv
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:51     .text._ZN9Pneumatic5resetEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:58     .text._ZN9Pneumatic5resetEv:00000000 _ZN9Pneumatic5resetEv
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:83     .text._ZL9set_IndexRA4_9Pneumatic10Pneu_Index:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:89     .text._ZL9set_IndexRA4_9Pneumatic10Pneu_Index:00000000 _ZL9set_IndexRA4_9Pneumatic10Pneu_Index
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:153    .text._ZL9set_IndexRA4_9Pneumatic10Pneu_Index:00000038 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:158    .text._Z9pneu_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:165    .text._Z9pneu_Initv:00000000 _Z9pneu_Initv
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:222    .text._Z9pneu_Initv:00000024 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:230    .text._Z9pneu_Loopv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:237    .text._Z9pneu_Loopv:00000000 _Z9pneu_Loopv
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:256    .text._Z9pneu_Loopv:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:306    .text._Z9pneu_Loopv:00000048 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:317    .bss.gPneu:00000000 gPneu
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:313    .bss.gPneu:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:261    .text._Z9pneu_Loopv:00000015 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKc2ZPg.s:261    .text._Z9pneu_Loopv:00000016 $t
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin
+gReady_To_Go
 _ZN5State6get_IDEv
 gHorse_State

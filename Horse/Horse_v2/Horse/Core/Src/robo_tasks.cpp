@@ -113,42 +113,15 @@ void MotorThread(void const *argument)
 void PneumaticThread(void const *argument)
 {
         /* USER CODE BEGIN PneumaticThread */
-        pneu_Init();
-
-        uint32_t sample_period = 20;
-        uint32_t dt = HAL_GetTick();
-        uint32_t dt_tmp = HAL_GetTick();
-        uint32_t last_run_time = 0;
-        osDelay(sample_period);
-
-        /* Infinite loop */
-        for (;;)
-        {
-                // Since this is the highest priority task, we can be sure that
-                // another task won't start when this task is running
-                dt_tmp = HAL_GetTick();
-                dt = dt_tmp - dt;
-
-                // Run Code Here
-                pneu_Loop();
-  
-                dt = HAL_GetTick();
-                dt_tmp = dt - dt_tmp;
-                last_run_time = dt_tmp;
-
-                // Check for timing Issues
-                if (last_run_time > sample_period / 2) {
-                        // Timing Issue Occured since run time is more than half
-                        // of sample time
-                }
-
-                // Sleep for remaining time of the sampling period if there is
-                // time left
-                if (dt_tmp < sample_period) {
-                        osDelay(sample_period - dt_tmp);
-                }
-        }
-        /* USER CODE END PneumaticThread */
+	while(1)
+	{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
+		osDelay(1000);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
+		osDelay(1000);
+		printf("Pneumetic_Thread\n");
+	}
+	/* USER CODE END PneumaticThread */
 }
 
 /* USER CODE BEGIN Header_MovingMassThread */

@@ -146,9 +146,6 @@ void check_N_Stop(void)
                         motor_arr[i].update_omega = 0;
                         // resetAngle(&motor_arr[i]);
                         motor_arr[i].encoder->htim->Instance->CNT = 0;
-                        if (i == 0) {
-                                printf("\n\n\n\n\n\n\nHere!!\n\n\n\n\n");
-                        }
                 }
         }
         // if (blnc_int_arr[2].fhome_pos == 1)

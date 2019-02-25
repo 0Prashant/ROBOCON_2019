@@ -9,6 +9,7 @@
 
 extern State gHorse_State;
 extern Blnc gBallet;
+extern bool gReady_To_Go;
 
 //! This is dangerous
 State_ID gCurrent_Position = State_ID::WS3;
@@ -83,53 +84,60 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
         //         }
         //         // balance.motor.encoder->count = gCounter;
         // }
-        if (GPIO_PIN == gBallet.interrupt[0].int_pin)
-        {
-                if (gHorse_State.get_ID() == State_ID::WS3)
-                {
-                        gCurrent_Position = State_ID::WS3;
-                        setDutyCycle(&gBallet.motor, 0);
-                        setDirection(&gBallet.motor, DIR_BRAKE);
-                }
-		printf("A\n");
-        }
-        if (GPIO_PIN == gBallet.interrupt[1].int_pin)
-        {
-                if (gHorse_State.get_ID() == State_ID::WS4)
-                {
-                        gCurrent_Position = State_ID::WS4;
-                        setDutyCycle(&gBallet.motor, 0);
-                        setDirection(&gBallet.motor, DIR_BRAKE);
-                }
-		printf("B\n");
-        }
-        if (GPIO_PIN == gBallet.interrupt[2].int_pin)
-        {
-                if ((gHorse_State.get_ID() == State_ID::HOME) || (gHorse_State.get_ID() == State_ID::WS1))
-                {
-                        if (gFirst_Home_Interrupt)
-                        {
-                                gFirst_Home_Interrupt = false;
-                                gCurrent_Position = State_ID::HOME;
-                        }
-                        else
-                        {
-                                gCurrent_Position = State_ID::WS1;
-                        }
-                        setDutyCycle(&gBallet.motor, 0);
-                        setDirection(&gBallet.motor, DIR_BRAKE);
-                }
-                printf("C\n");
-        }
+	if(!gReady_To_Go)
+	{
+        	if (GPIO_PIN == gBallet.interrupt[0].int_pin)
+        	{
+        	        if (gHorse_State.get_ID() == State_ID::WS3)
+        	        {
+        	                gCurrent_Position = State_ID::WS3;
+        	                setDutyCycle(&gBallet.motor, 0);
+        	                setDirection(&gBallet.motor, DIR_BRAKE);
+				gReady_To_Go = true;
+        	        }
+			printf("A\n");
+        	}
+        	if (GPIO_PIN == gBallet.interrupt[1].int_pin)
+        	{
+        	        if (gHorse_State.get_ID() == State_ID::WS4)
+        	        {
+        	                gCurrent_Position = State_ID::WS4;
+        	                setDutyCycle(&gBallet.motor, 0);
+        	                setDirection(&gBallet.motor, DIR_BRAKE);
+				gReady_To_Go = true;
+        	        }
+			printf("B\n");
+        	}
+        	if (GPIO_PIN == gBallet.interrupt[2].int_pin)
+        	{
+        	        if ((gHorse_State.get_ID() == State_ID::HOME) || (gHorse_State.get_ID() == State_ID::WS1))
+        	        {
+        	                if (gFirst_Home_Interrupt)
+        	                {
+        	                        gFirst_Home_Interrupt = false;
+        	                        gCurrent_Position = State_ID::HOME;
+        	                }
+        	                else
+        	                {
+        	                        gCurrent_Position = State_ID::WS1;
+        	                }
+        	                setDutyCycle(&gBallet.motor, 0);
+        	                setDirection(&gBallet.motor, DIR_BRAKE);
+				gReady_To_Go = true;
+        	        }
+        	        printf("C\n");
+        	}
 
-        if (GPIO_PIN == gBallet.interrupt[3].int_pin)
-        {
-                if (gHorse_State.get_ID() == State_ID::WS2)
-                {
-                        gCurrent_Position = State_ID::WS2;
-                        setDutyCycle(&gBallet.motor, 0);
-                        setDirection(&gBallet.motor, DIR_BRAKE);
-                }
-                printf("D\n");
-        }
+        	if (GPIO_PIN == gBallet.interrupt[3].int_pin)
+        	{
+        	        if (gHorse_State.get_ID() == State_ID::WS2)
+        	        {
+        	                gCurrent_Position = State_ID::WS2;
+        	                setDutyCycle(&gBallet.motor, 0);
+        	                setDirection(&gBallet.motor, DIR_BRAKE);
+				gReady_To_Go = true;
+        	        }
+        	        printf("D\n");
+        	}
+	}
 }

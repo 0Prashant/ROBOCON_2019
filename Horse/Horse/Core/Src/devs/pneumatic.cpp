@@ -2,7 +2,7 @@
 #include "robo_states.h"
 
 extern State gHorse_State;
-
+extern bool gReady_To_Go;
 
 enum class Pneu_Index
 {
@@ -56,10 +56,13 @@ void pneu_Init()
 
 static void set_Index(Pneumatic (&arr)[4], Pneu_Index index)
 {
-        if (index != Pneu_Index::P_NONE)
-        {
-                arr[(int)index].set();
-        }
+	if(gReady_To_Go)
+	{
+        	if (index != Pneu_Index::P_NONE)
+        	{
+        	        arr[(int)index].set();
+        	}
+	}
         for (uint8_t i = 0; i < (int)(Pneu_Index::P_NONE); ++i)
         {
                 if (i != (int)index)
@@ -72,36 +75,36 @@ static void set_Index(Pneumatic (&arr)[4], Pneu_Index index)
 /*read the state of the system*/
 void pneu_Loop()
 {
-        switch (gHorse_State.get_ID())
-        {
-        case State_ID::HOME:
-        {
-                set_Index(gPneu, Pneu_Index::P_NONE);
-        }
-        break;
+	switch (gHorse_State.get_ID())
+	{
+		case State_ID::HOME:
+		{
+			set_Index(gPneu, Pneu_Index::P_NONE);
+		}
+		break;
 
-        case State_ID::WS1:
-        {
-                set_Index(gPneu, Pneu_Index::P_1);
-        }
-        break;
+		case State_ID::WS1:
+		{
+			set_Index(gPneu, Pneu_Index::P_1);
+		}
+		break;
 
-        case State_ID::WS2:
-        {
-                set_Index(gPneu, Pneu_Index::P_2);
-        }
-        break;
+		case State_ID::WS2:
+		{
+			set_Index(gPneu, Pneu_Index::P_2);
+		}
+		break;
 
-        case State_ID::WS3:
-        {
-                set_Index(gPneu, Pneu_Index::P_3);
-        }
-        break;
+		case State_ID::WS3:
+		{
+			set_Index(gPneu, Pneu_Index::P_3);
+		}
+		break;
 
-        case State_ID::WS4:
-        {
-                set_Index(gPneu, Pneu_Index::P_4);
-        }
-        break;
-        }
+		case State_ID::WS4:
+		{
+			set_Index(gPneu, Pneu_Index::P_4);
+		}
+		break;
+	}
 }

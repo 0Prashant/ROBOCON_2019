@@ -27,7 +27,7 @@ void feedForwardInit(void)
 {
         for (uint8_t i = 0; i < 4; i++)
         {
-                ffInit(&ff_arr[i], 5, 20, dt_secs);
+                ffInit(&ff_arr[i], 3 , 20, dt_secs);
         }
 }
 

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
   29:Core/Inc/robot/robo_states.h ****         State &operator=(State &&) = default;
   30:Core/Inc/robot/robo_states.h ****         State &operator=(const State &) = default;
   31:Core/Inc/robot/robo_states.h ****         ~State() { }
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 2
 
 
   28              		.loc 1 31 0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
   34:Core/Src/robo_tasks.cpp **** {
   35:Core/Src/robo_tasks.cpp **** 
   36:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN StartDefaultTask */
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 3
 
 
   37:Core/Src/robo_tasks.cpp ****         /* Infinite loop */
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
   91:Core/Src/robo_tasks.cpp ****                 // Check for timing Issues
   92:Core/Src/robo_tasks.cpp ****                 if (last_run_time > sample_period / 2) {
   93:Core/Src/robo_tasks.cpp ****                         // Timing Issue Occured since run time is more than half
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 4
 
 
   94:Core/Src/robo_tasks.cpp ****                         // of sample time
@@ -203,119 +203,89 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  113:Core/Src/robo_tasks.cpp **** void PneumaticThread(void const *argument)
  114:Core/Src/robo_tasks.cpp **** {
  115:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN PneumaticThread */
- 116:Core/Src/robo_tasks.cpp ****         pneu_Init();
- 117:Core/Src/robo_tasks.cpp **** 
- 118:Core/Src/robo_tasks.cpp ****         uint32_t sample_period = 20;
- 119:Core/Src/robo_tasks.cpp ****         uint32_t dt = HAL_GetTick();
- 120:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
- 121:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
- 122:Core/Src/robo_tasks.cpp ****         osDelay(sample_period);
- 123:Core/Src/robo_tasks.cpp **** 
- 124:Core/Src/robo_tasks.cpp ****         /* Infinite loop */
- 125:Core/Src/robo_tasks.cpp ****         for (;;)
- 126:Core/Src/robo_tasks.cpp ****         {
- 127:Core/Src/robo_tasks.cpp ****                 // Since this is the highest priority task, we can be sure that
- 128:Core/Src/robo_tasks.cpp ****                 // another task won't start when this task is running
- 129:Core/Src/robo_tasks.cpp ****                 dt_tmp = HAL_GetTick();
- 130:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
- 131:Core/Src/robo_tasks.cpp **** 
- 132:Core/Src/robo_tasks.cpp ****                 // Run Code Here
- 133:Core/Src/robo_tasks.cpp ****                 pneu_Loop();
- 134:Core/Src/robo_tasks.cpp ****   
- 135:Core/Src/robo_tasks.cpp ****                 dt = HAL_GetTick();
- 136:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
- 137:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
+ 116:Core/Src/robo_tasks.cpp **** 	while(1)
+ 117:Core/Src/robo_tasks.cpp **** 	{
+ 118:Core/Src/robo_tasks.cpp **** 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
+ 119:Core/Src/robo_tasks.cpp **** 		osDelay(1000);
+ 120:Core/Src/robo_tasks.cpp **** 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
+ 121:Core/Src/robo_tasks.cpp **** 		osDelay(1000);
+ 122:Core/Src/robo_tasks.cpp **** 		printf("Pneumetic_Thread\n");
+ 123:Core/Src/robo_tasks.cpp **** 	}
+ 124:Core/Src/robo_tasks.cpp **** 	/* USER CODE END PneumaticThread */
+ 125:Core/Src/robo_tasks.cpp **** }
+ 126:Core/Src/robo_tasks.cpp **** 
+ 127:Core/Src/robo_tasks.cpp **** /* USER CODE BEGIN Header_MovingMassThread */
+ 128:Core/Src/robo_tasks.cpp **** /**
+ 129:Core/Src/robo_tasks.cpp **** * @brief Function implementing the MovingMass thread.
+ 130:Core/Src/robo_tasks.cpp **** * @param argument: Not used
+ 131:Core/Src/robo_tasks.cpp **** * @retval None
+ 132:Core/Src/robo_tasks.cpp **** */
+ 133:Core/Src/robo_tasks.cpp **** /* USER CODE END Header_MovingMassThread */
+ 134:Core/Src/robo_tasks.cpp **** void MovingMassThread(void const *argument)
+ 135:Core/Src/robo_tasks.cpp **** {
+ 136:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN MovingMassThread */
+ 137:Core/Src/robo_tasks.cpp ****         balance_Init();
  138:Core/Src/robo_tasks.cpp **** 
- 139:Core/Src/robo_tasks.cpp ****                 // Check for timing Issues
- 140:Core/Src/robo_tasks.cpp ****                 if (last_run_time > sample_period / 2) {
- 141:Core/Src/robo_tasks.cpp ****                         // Timing Issue Occured since run time is more than half
- 142:Core/Src/robo_tasks.cpp ****                         // of sample time
- 143:Core/Src/robo_tasks.cpp ****                 }
+ 139:Core/Src/robo_tasks.cpp ****         uint32_t sample_period = 20;
+ 140:Core/Src/robo_tasks.cpp ****         uint32_t dt = HAL_GetTick();
+ 141:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
+ 142:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
+ 143:Core/Src/robo_tasks.cpp ****         osDelay(sample_period);
  144:Core/Src/robo_tasks.cpp **** 
- 145:Core/Src/robo_tasks.cpp ****                 // Sleep for remaining time of the sampling period if there is
- 146:Core/Src/robo_tasks.cpp ****                 // time left
- 147:Core/Src/robo_tasks.cpp ****                 if (dt_tmp < sample_period) {
- 148:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
- 149:Core/Src/robo_tasks.cpp ****                 }
- 150:Core/Src/robo_tasks.cpp ****         }
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 5
+ 145:Core/Src/robo_tasks.cpp ****         /* Infinite loop */
+ 146:Core/Src/robo_tasks.cpp ****         for (;;)
+ 147:Core/Src/robo_tasks.cpp ****         {
+ 148:Core/Src/robo_tasks.cpp ****                 // Since this is the highest priority task, we can be sure that
+ 149:Core/Src/robo_tasks.cpp ****                 // another task won't start when this task is running
+ 150:Core/Src/robo_tasks.cpp ****                 dt_tmp = HAL_GetTick();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 5
 
 
- 151:Core/Src/robo_tasks.cpp ****         /* USER CODE END PneumaticThread */
- 152:Core/Src/robo_tasks.cpp **** }
- 153:Core/Src/robo_tasks.cpp **** 
- 154:Core/Src/robo_tasks.cpp **** /* USER CODE BEGIN Header_MovingMassThread */
- 155:Core/Src/robo_tasks.cpp **** /**
- 156:Core/Src/robo_tasks.cpp **** * @brief Function implementing the MovingMass thread.
- 157:Core/Src/robo_tasks.cpp **** * @param argument: Not used
- 158:Core/Src/robo_tasks.cpp **** * @retval None
- 159:Core/Src/robo_tasks.cpp **** */
- 160:Core/Src/robo_tasks.cpp **** /* USER CODE END Header_MovingMassThread */
- 161:Core/Src/robo_tasks.cpp **** void MovingMassThread(void const *argument)
- 162:Core/Src/robo_tasks.cpp **** {
- 163:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN MovingMassThread */
- 164:Core/Src/robo_tasks.cpp ****         balance_Init();
+ 151:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
+ 152:Core/Src/robo_tasks.cpp **** 
+ 153:Core/Src/robo_tasks.cpp ****                 // Run Code Here
+ 154:Core/Src/robo_tasks.cpp ****                 balance_Loop();
+ 155:Core/Src/robo_tasks.cpp ****   
+ 156:Core/Src/robo_tasks.cpp ****                 dt = HAL_GetTick();
+ 157:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
+ 158:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
+ 159:Core/Src/robo_tasks.cpp **** 
+ 160:Core/Src/robo_tasks.cpp ****                 // Check for timing Issues
+ 161:Core/Src/robo_tasks.cpp ****                 if (last_run_time > sample_period / 2) {
+ 162:Core/Src/robo_tasks.cpp ****                         // Timing Issue Occured since run time is more than half
+ 163:Core/Src/robo_tasks.cpp ****                         // of sample time
+ 164:Core/Src/robo_tasks.cpp ****                 }
  165:Core/Src/robo_tasks.cpp **** 
- 166:Core/Src/robo_tasks.cpp ****         uint32_t sample_period = 20;
- 167:Core/Src/robo_tasks.cpp ****         uint32_t dt = HAL_GetTick();
- 168:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
- 169:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
- 170:Core/Src/robo_tasks.cpp ****         osDelay(sample_period);
- 171:Core/Src/robo_tasks.cpp **** 
- 172:Core/Src/robo_tasks.cpp ****         /* Infinite loop */
- 173:Core/Src/robo_tasks.cpp ****         for (;;)
- 174:Core/Src/robo_tasks.cpp ****         {
- 175:Core/Src/robo_tasks.cpp ****                 // Since this is the highest priority task, we can be sure that
- 176:Core/Src/robo_tasks.cpp ****                 // another task won't start when this task is running
- 177:Core/Src/robo_tasks.cpp ****                 dt_tmp = HAL_GetTick();
- 178:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
- 179:Core/Src/robo_tasks.cpp **** 
- 180:Core/Src/robo_tasks.cpp ****                 // Run Code Here
- 181:Core/Src/robo_tasks.cpp ****                 balance_Loop();
- 182:Core/Src/robo_tasks.cpp ****   
- 183:Core/Src/robo_tasks.cpp ****                 dt = HAL_GetTick();
- 184:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
- 185:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
- 186:Core/Src/robo_tasks.cpp **** 
- 187:Core/Src/robo_tasks.cpp ****                 // Check for timing Issues
- 188:Core/Src/robo_tasks.cpp ****                 if (last_run_time > sample_period / 2) {
- 189:Core/Src/robo_tasks.cpp ****                         // Timing Issue Occured since run time is more than half
- 190:Core/Src/robo_tasks.cpp ****                         // of sample time
- 191:Core/Src/robo_tasks.cpp ****                 }
- 192:Core/Src/robo_tasks.cpp **** 
- 193:Core/Src/robo_tasks.cpp ****                 // Sleep for remaining time of the sampling period if there is
- 194:Core/Src/robo_tasks.cpp ****                 // time left
- 195:Core/Src/robo_tasks.cpp ****                 if (dt_tmp < sample_period) {
- 196:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
- 197:Core/Src/robo_tasks.cpp ****                 }
- 198:Core/Src/robo_tasks.cpp ****         }
- 199:Core/Src/robo_tasks.cpp ****         /* USER CODE END MovingMassThread */
- 200:Core/Src/robo_tasks.cpp **** }
-  51              		.loc 2 200 0
+ 166:Core/Src/robo_tasks.cpp ****                 // Sleep for remaining time of the sampling period if there is
+ 167:Core/Src/robo_tasks.cpp ****                 // time left
+ 168:Core/Src/robo_tasks.cpp ****                 if (dt_tmp < sample_period) {
+ 169:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
+ 170:Core/Src/robo_tasks.cpp ****                 }
+ 171:Core/Src/robo_tasks.cpp ****         }
+ 172:Core/Src/robo_tasks.cpp ****         /* USER CODE END MovingMassThread */
+ 173:Core/Src/robo_tasks.cpp **** }
+  51              		.loc 2 173 0
   52              		.cfi_startproc
   53              		@ args = 0, pretend = 0, frame = 0
   54              		@ frame_needed = 0, uses_anonymous_args = 0
   55              	.LVL1:
   56 0000 0128     		cmp	r0, #1
   57 0002 00D0     		beq	.L8
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 6
-
-
   58 0004 7047     		bx	lr
   59              	.L8:
-  60              		.loc 2 200 0 is_stmt 0 discriminator 1
+  60              		.loc 2 173 0 is_stmt 0 discriminator 1
   61 0006 08B5     		push	{r3, lr}
   62              	.LCFI0:
   63              		.cfi_def_cfa_offset 8
   64              		.cfi_offset 3, -8
   65              		.cfi_offset 14, -4
-  66              		.loc 2 200 0 is_stmt 1 discriminator 1
+  66              		.loc 2 173 0 is_stmt 1 discriminator 1
   67 0008 4FF6FF73 		movw	r3, #65535
   68 000c 9942     		cmp	r1, r3
   69 000e 00D0     		beq	.L9
   70              	.LVL2:
   71              	.L2:
-  72              		.loc 2 200 0 is_stmt 0
+  72              		.loc 2 173 0 is_stmt 0
   73 0010 08BD     		pop	{r3, pc}
   74              	.LVL3:
   75              	.L9:
@@ -328,10 +298,13 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
   81 001a 1A60     		str	r2, [r3]
   82 001c 034A     		ldr	r2, .L10+4
   83 001e 0449     		ldr	r1, .L10+8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 6
+
+
   84 0020 1846     		mov	r0, r3
   85 0022 FFF7FEFF 		bl	__aeabi_atexit
   86              	.LVL5:
-  87              		.loc 2 200 0
+  87              		.loc 2 173 0
   88 0026 F3E7     		b	.L2
   89              	.L11:
   90              		.align	2
@@ -358,9 +331,6 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  112              		@ frame_needed = 0, uses_anonymous_args = 0
  113              	.LVL6:
  114 0000 08B5     		push	{r3, lr}
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 7
-
-
  115              	.LCFI1:
  116              		.cfi_def_cfa_offset 8
  117              		.cfi_offset 3, -8
@@ -388,6 +358,9 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  139              		.loc 2 54 0
  140              		.cfi_startproc
  141              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 7
+
+
  142              		@ frame_needed = 0, uses_anonymous_args = 0
  143              	.LVL9:
  144 0000 38B5     		push	{r3, r4, r5, lr}
@@ -418,9 +391,6 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  164              		.loc 2 57 0
  165 0014 0025     		movs	r5, #0
  166 0016 0DE0     		b	.L16
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 8
-
-
  167              	.LVL14:
  168              	.L17:
   83:Core/Src/robo_tasks.cpp ****                         updateOmegas();
@@ -448,6 +418,9 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  100:Core/Src/robo_tasks.cpp ****                 }
  186              		.loc 2 100 0
  187 002c C0F10A00 		rsb	r0, r0, #10
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 8
+
+
  188              	.LVL19:
  189 0030 FFF7FEFF 		bl	osDelay
  190              	.LVL20:
@@ -478,9 +451,6 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  211 004c FFF7FEFF 		bl	_ZN5State12update_StateEv
  212              	.LVL26:
   78:Core/Src/robo_tasks.cpp ****                         gHorse_State.update_State();
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 9
-
-
  213              		.loc 2 78 0
  214 0050 0125     		movs	r5, #1
  215 0052 E6E7     		b	.L18
@@ -504,230 +474,234 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 1
  114:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN PneumaticThread */
  235              		.loc 2 114 0
  236              		.cfi_startproc
- 237              		@ args = 0, pretend = 0, frame = 0
- 238              		@ frame_needed = 0, uses_anonymous_args = 0
- 239              	.LVL27:
- 240 0000 10B5     		push	{r4, lr}
- 241              	.LCFI3:
- 242              		.cfi_def_cfa_offset 8
- 243              		.cfi_offset 4, -8
- 244              		.cfi_offset 14, -4
- 116:Core/Src/robo_tasks.cpp **** 
- 245              		.loc 2 116 0
- 246 0002 FFF7FEFF 		bl	_Z9pneu_Initv
- 247              	.LVL28:
- 119:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
- 248              		.loc 2 119 0
- 249 0006 FFF7FEFF 		bl	HAL_GetTick
- 250              	.LVL29:
- 120:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
- 251              		.loc 2 120 0
- 252 000a FFF7FEFF 		bl	HAL_GetTick
- 253              	.LVL30:
- 122:Core/Src/robo_tasks.cpp **** 
- 254              		.loc 2 122 0
- 255 000e 1420     		movs	r0, #20
- 256 0010 FFF7FEFF 		bl	osDelay
- 257              	.LVL31:
- 258              	.L24:
- 129:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
- 259              		.loc 2 129 0
- 260 0014 FFF7FEFF 		bl	HAL_GetTick
- 261              	.LVL32:
- 262 0018 0446     		mov	r4, r0
- 263              	.LVL33:
- 133:Core/Src/robo_tasks.cpp ****   
- 264              		.loc 2 133 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 10
+ 237              		@ Volatile: function does not return.
+ 238              		@ args = 0, pretend = 0, frame = 0
+ 239              		@ frame_needed = 0, uses_anonymous_args = 0
+ 240              	.LVL27:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 9
 
 
- 265 001a FFF7FEFF 		bl	_Z9pneu_Loopv
- 266              	.LVL34:
- 135:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
- 267              		.loc 2 135 0
- 268 001e FFF7FEFF 		bl	HAL_GetTick
- 269              	.LVL35:
- 136:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
- 270              		.loc 2 136 0
- 271 0022 001B     		subs	r0, r0, r4
- 272              	.LVL36:
- 147:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
- 273              		.loc 2 147 0
- 274 0024 1328     		cmp	r0, #19
- 275 0026 F5D8     		bhi	.L24
- 148:Core/Src/robo_tasks.cpp ****                 }
- 276              		.loc 2 148 0
- 277 0028 C0F11400 		rsb	r0, r0, #20
- 278              	.LVL37:
- 279 002c FFF7FEFF 		bl	osDelay
- 280              	.LVL38:
- 281 0030 F0E7     		b	.L24
- 282              		.cfi_endproc
- 283              	.LFE143:
- 285              		.section	.text.MovingMassThread,"ax",%progbits
- 286              		.align	1
- 287              		.global	MovingMassThread
- 288              		.syntax unified
- 289              		.thumb
- 290              		.thumb_func
- 291              		.fpu fpv4-sp-d16
- 293              	MovingMassThread:
- 294              	.LFB144:
- 162:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN MovingMassThread */
- 295              		.loc 2 162 0
- 296              		.cfi_startproc
- 297              		@ args = 0, pretend = 0, frame = 0
- 298              		@ frame_needed = 0, uses_anonymous_args = 0
- 299              	.LVL39:
- 300 0000 10B5     		push	{r4, lr}
- 301              	.LCFI4:
- 302              		.cfi_def_cfa_offset 8
- 303              		.cfi_offset 4, -8
- 304              		.cfi_offset 14, -4
- 164:Core/Src/robo_tasks.cpp **** 
- 305              		.loc 2 164 0
- 306 0002 FFF7FEFF 		bl	_Z12balance_Initv
- 307              	.LVL40:
- 167:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
- 308              		.loc 2 167 0
- 309 0006 FFF7FEFF 		bl	HAL_GetTick
- 310              	.LVL41:
- 168:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
- 311              		.loc 2 168 0
- 312 000a FFF7FEFF 		bl	HAL_GetTick
- 313              	.LVL42:
- 170:Core/Src/robo_tasks.cpp **** 
- 314              		.loc 2 170 0
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 11
+ 241 0000 08B5     		push	{r3, lr}
+ 242              	.LCFI3:
+ 243              		.cfi_def_cfa_offset 8
+ 244              		.cfi_offset 3, -8
+ 245              		.cfi_offset 14, -4
+ 246              	.LVL28:
+ 247              	.L24:
+ 118:Core/Src/robo_tasks.cpp **** 		osDelay(1000);
+ 248              		.loc 2 118 0 discriminator 1
+ 249 0002 0B4C     		ldr	r4, .L26
+ 250 0004 0122     		movs	r2, #1
+ 251 0006 0421     		movs	r1, #4
+ 252 0008 2046     		mov	r0, r4
+ 253 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 254              	.LVL29:
+ 119:Core/Src/robo_tasks.cpp **** 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
+ 255              		.loc 2 119 0 discriminator 1
+ 256 000e 4FF47A70 		mov	r0, #1000
+ 257 0012 FFF7FEFF 		bl	osDelay
+ 258              	.LVL30:
+ 120:Core/Src/robo_tasks.cpp **** 		osDelay(1000);
+ 259              		.loc 2 120 0 discriminator 1
+ 260 0016 0022     		movs	r2, #0
+ 261 0018 0421     		movs	r1, #4
+ 262 001a 2046     		mov	r0, r4
+ 263 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 264              	.LVL31:
+ 121:Core/Src/robo_tasks.cpp **** 		printf("Pneumetic_Thread\n");
+ 265              		.loc 2 121 0 discriminator 1
+ 266 0020 4FF47A70 		mov	r0, #1000
+ 267 0024 FFF7FEFF 		bl	osDelay
+ 268              	.LVL32:
+ 122:Core/Src/robo_tasks.cpp **** 	}
+ 269              		.loc 2 122 0 discriminator 1
+ 270 0028 0248     		ldr	r0, .L26+4
+ 271 002a FFF7FEFF 		bl	puts
+ 272              	.LVL33:
+ 273 002e E8E7     		b	.L24
+ 274              	.L27:
+ 275              		.align	2
+ 276              	.L26:
+ 277 0030 00040240 		.word	1073873920
+ 278 0034 00000000 		.word	.LC0
+ 279              		.cfi_endproc
+ 280              	.LFE143:
+ 282              		.section	.text.MovingMassThread,"ax",%progbits
+ 283              		.align	1
+ 284              		.global	MovingMassThread
+ 285              		.syntax unified
+ 286              		.thumb
+ 287              		.thumb_func
+ 288              		.fpu fpv4-sp-d16
+ 290              	MovingMassThread:
+ 291              	.LFB144:
+ 135:Core/Src/robo_tasks.cpp ****         /* USER CODE BEGIN MovingMassThread */
+ 292              		.loc 2 135 0
+ 293              		.cfi_startproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 10
 
 
- 315 000e 1420     		movs	r0, #20
- 316 0010 FFF7FEFF 		bl	osDelay
- 317              	.LVL43:
- 318              	.L28:
- 177:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
- 319              		.loc 2 177 0
- 320 0014 FFF7FEFF 		bl	HAL_GetTick
- 321              	.LVL44:
- 322 0018 0446     		mov	r4, r0
- 323              	.LVL45:
- 181:Core/Src/robo_tasks.cpp ****   
- 324              		.loc 2 181 0
- 325 001a FFF7FEFF 		bl	_Z12balance_Loopv
- 326              	.LVL46:
- 183:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
- 327              		.loc 2 183 0
- 328 001e FFF7FEFF 		bl	HAL_GetTick
- 329              	.LVL47:
- 184:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
- 330              		.loc 2 184 0
- 331 0022 001B     		subs	r0, r0, r4
- 332              	.LVL48:
- 195:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
- 333              		.loc 2 195 0
- 334 0024 1328     		cmp	r0, #19
- 335 0026 F5D8     		bhi	.L28
- 196:Core/Src/robo_tasks.cpp ****                 }
- 336              		.loc 2 196 0
- 337 0028 C0F11400 		rsb	r0, r0, #20
- 338              	.LVL49:
- 339 002c FFF7FEFF 		bl	osDelay
- 340              	.LVL50:
- 341 0030 F0E7     		b	.L28
- 342              		.cfi_endproc
- 343              	.LFE144:
- 345              		.section	.text._GLOBAL__sub_I_gHorse_State,"ax",%progbits
- 346              		.align	1
- 347              		.syntax unified
- 348              		.thumb
- 349              		.thumb_func
- 350              		.fpu fpv4-sp-d16
- 352              	_GLOBAL__sub_I_gHorse_State:
- 353              	.LFB146:
- 354              		.loc 2 200 0
- 355              		.cfi_startproc
- 356              		@ args = 0, pretend = 0, frame = 0
- 357              		@ frame_needed = 0, uses_anonymous_args = 0
- 358 0000 08B5     		push	{r3, lr}
- 359              	.LCFI5:
- 360              		.cfi_def_cfa_offset 8
- 361              		.cfi_offset 3, -8
- 362              		.cfi_offset 14, -4
- 363              		.loc 2 200 0
- 364 0002 4FF6FF71 		movw	r1, #65535
- 365 0006 0120     		movs	r0, #1
- 366 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
- 367              	.LVL51:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 12
+ 294              		@ args = 0, pretend = 0, frame = 0
+ 295              		@ frame_needed = 0, uses_anonymous_args = 0
+ 296              	.LVL34:
+ 297 0000 10B5     		push	{r4, lr}
+ 298              	.LCFI4:
+ 299              		.cfi_def_cfa_offset 8
+ 300              		.cfi_offset 4, -8
+ 301              		.cfi_offset 14, -4
+ 137:Core/Src/robo_tasks.cpp **** 
+ 302              		.loc 2 137 0
+ 303 0002 FFF7FEFF 		bl	_Z12balance_Initv
+ 304              	.LVL35:
+ 140:Core/Src/robo_tasks.cpp ****         uint32_t dt_tmp = HAL_GetTick();
+ 305              		.loc 2 140 0
+ 306 0006 FFF7FEFF 		bl	HAL_GetTick
+ 307              	.LVL36:
+ 141:Core/Src/robo_tasks.cpp ****         uint32_t last_run_time = 0;
+ 308              		.loc 2 141 0
+ 309 000a FFF7FEFF 		bl	HAL_GetTick
+ 310              	.LVL37:
+ 143:Core/Src/robo_tasks.cpp **** 
+ 311              		.loc 2 143 0
+ 312 000e 1420     		movs	r0, #20
+ 313 0010 FFF7FEFF 		bl	osDelay
+ 314              	.LVL38:
+ 315              	.L29:
+ 150:Core/Src/robo_tasks.cpp ****                 dt = dt_tmp - dt;
+ 316              		.loc 2 150 0
+ 317 0014 FFF7FEFF 		bl	HAL_GetTick
+ 318              	.LVL39:
+ 319 0018 0446     		mov	r4, r0
+ 320              	.LVL40:
+ 154:Core/Src/robo_tasks.cpp ****   
+ 321              		.loc 2 154 0
+ 322 001a FFF7FEFF 		bl	_Z12balance_Loopv
+ 323              	.LVL41:
+ 156:Core/Src/robo_tasks.cpp ****                 dt_tmp = dt - dt_tmp;
+ 324              		.loc 2 156 0
+ 325 001e FFF7FEFF 		bl	HAL_GetTick
+ 326              	.LVL42:
+ 157:Core/Src/robo_tasks.cpp ****                 last_run_time = dt_tmp;
+ 327              		.loc 2 157 0
+ 328 0022 001B     		subs	r0, r0, r4
+ 329              	.LVL43:
+ 168:Core/Src/robo_tasks.cpp ****                         osDelay(sample_period - dt_tmp);
+ 330              		.loc 2 168 0
+ 331 0024 1328     		cmp	r0, #19
+ 332 0026 F5D8     		bhi	.L29
+ 169:Core/Src/robo_tasks.cpp ****                 }
+ 333              		.loc 2 169 0
+ 334 0028 C0F11400 		rsb	r0, r0, #20
+ 335              	.LVL44:
+ 336 002c FFF7FEFF 		bl	osDelay
+ 337              	.LVL45:
+ 338 0030 F0E7     		b	.L29
+ 339              		.cfi_endproc
+ 340              	.LFE144:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 11
 
 
- 368 000c 08BD     		pop	{r3, pc}
- 369              		.cfi_endproc
- 370              	.LFE146:
- 372              		.section	.init_array,"aw",%init_array
- 373              		.align	2
- 374 0000 00000000 		.word	_GLOBAL__sub_I_gHorse_State(target1)
- 375              		.global	gHorse_State
- 376              		.section	.bss.gHorse_State,"aw",%nobits
- 377              		.align	2
- 378              		.set	.LANCHOR0,. + 0
- 381              	gHorse_State:
- 382 0000 00000000 		.space	4
- 383              		.text
- 384              	.Letext0:
- 385              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 386              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 387              		.file 5 "Core/Inc/sys/FreeRTOSConfig.h"
- 388              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
- 389              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 390              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 391              		.file 9 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
- 392              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 393              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 394              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 395              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 396              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 397              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 398              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 399              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
- 400              		.file 18 "Core/Inc/periphs/tim.h"
- 401              		.file 19 "Core/Inc/robot/feed_forward.h"
- 402              		.file 20 "Core/Inc/robot/interrupt.h"
- 403              		.file 21 "Core/Inc/devs/encoder.h"
- 404              		.file 22 "Core/Inc/devs/motor.h"
- 405              		.file 23 "Core/Inc/utils/pid.h"
- 406              		.file 24 "Core/Inc/robot/fsm.h"
- 407              		.file 25 "Core/Inc/robot/robo_init.h"
- 408              		.file 26 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/F
- 409              		.file 27 "Core/Inc/devs/blnc_motor.h"
- 410              		.file 28 "Core/Inc/devs/pneumatic.h"
- 411              		.file 29 "Core/Inc/robot/fsm_tasks.h"
- 412              		.file 30 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s 			page 13
+ 342              		.section	.text._GLOBAL__sub_I_gHorse_State,"ax",%progbits
+ 343              		.align	1
+ 344              		.syntax unified
+ 345              		.thumb
+ 346              		.thumb_func
+ 347              		.fpu fpv4-sp-d16
+ 349              	_GLOBAL__sub_I_gHorse_State:
+ 350              	.LFB146:
+ 351              		.loc 2 173 0
+ 352              		.cfi_startproc
+ 353              		@ args = 0, pretend = 0, frame = 0
+ 354              		@ frame_needed = 0, uses_anonymous_args = 0
+ 355 0000 08B5     		push	{r3, lr}
+ 356              	.LCFI5:
+ 357              		.cfi_def_cfa_offset 8
+ 358              		.cfi_offset 3, -8
+ 359              		.cfi_offset 14, -4
+ 360              		.loc 2 173 0
+ 361 0002 4FF6FF71 		movw	r1, #65535
+ 362 0006 0120     		movs	r0, #1
+ 363 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 364              	.LVL46:
+ 365 000c 08BD     		pop	{r3, pc}
+ 366              		.cfi_endproc
+ 367              	.LFE146:
+ 369              		.section	.init_array,"aw",%init_array
+ 370              		.align	2
+ 371 0000 00000000 		.word	_GLOBAL__sub_I_gHorse_State(target1)
+ 372              		.global	gHorse_State
+ 373              		.section	.bss.gHorse_State,"aw",%nobits
+ 374              		.align	2
+ 375              		.set	.LANCHOR0,. + 0
+ 378              	gHorse_State:
+ 379 0000 00000000 		.space	4
+ 380              		.section	.rodata.PneumaticThread.str1.4,"aMS",%progbits,1
+ 381              		.align	2
+ 382              	.LC0:
+ 383 0000 506E6575 		.ascii	"Pneumetic_Thread\000"
+ 383      6D657469 
+ 383      635F5468 
+ 383      72656164 
+ 383      00
+ 384              		.text
+ 385              	.Letext0:
+ 386              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 387              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 388              		.file 5 "Core/Inc/sys/FreeRTOSConfig.h"
+ 389              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 390              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 391              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 392              		.file 9 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 393              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 394              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 395              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 396              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 397              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 398              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 12
+
+
+ 399              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 400              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 401              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 402              		.file 19 "Core/Inc/periphs/tim.h"
+ 403              		.file 20 "Core/Inc/robot/feed_forward.h"
+ 404              		.file 21 "Core/Inc/robot/interrupt.h"
+ 405              		.file 22 "Core/Inc/devs/encoder.h"
+ 406              		.file 23 "Core/Inc/devs/motor.h"
+ 407              		.file 24 "Core/Inc/utils/pid.h"
+ 408              		.file 25 "Core/Inc/robot/fsm.h"
+ 409              		.file 26 "Core/Inc/robot/robo_init.h"
+ 410              		.file 27 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/F
+ 411              		.file 28 "Core/Inc/devs/blnc_motor.h"
+ 412              		.file 29 "Core/Inc/robot/fsm_tasks.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s 			page 13
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 robo_tasks.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:18     .text._ZN5StateD2Ev:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD2Ev
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD1Ev
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:42     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:48     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:92     .text._Z41__static_initialization_and_destruction_0ii:00000028 $d
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:99     .text.StartDefaultTask:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:106    .text.StartDefaultTask:00000000 StartDefaultTask
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:130    .text.MotorThread:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:137    .text.MotorThread:00000000 MotorThread
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:219    .text.MotorThread:00000054 $d
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:226    .text.PneumaticThread:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:233    .text.PneumaticThread:00000000 PneumaticThread
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:286    .text.MovingMassThread:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:293    .text.MovingMassThread:00000000 MovingMassThread
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:346    .text._GLOBAL__sub_I_gHorse_State:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:352    .text._GLOBAL__sub_I_gHorse_State:00000000 _GLOBAL__sub_I_gHorse_State
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:373    .init_array:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:381    .bss.gHorse_State:00000000 gHorse_State
-C:\Users\Prashant\AppData\Local\Temp\ccdtTAgo.s:377    .bss.gHorse_State:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:18     .text._ZN5StateD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD2Ev
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:25     .text._ZN5StateD2Ev:00000000 _ZN5StateD1Ev
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:42     .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:48     .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:92     .text._Z41__static_initialization_and_destruction_0ii:00000028 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:99     .text.StartDefaultTask:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:106    .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:130    .text.MotorThread:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:137    .text.MotorThread:00000000 MotorThread
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:219    .text.MotorThread:00000054 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:226    .text.PneumaticThread:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:233    .text.PneumaticThread:00000000 PneumaticThread
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:277    .text.PneumaticThread:00000030 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:283    .text.MovingMassThread:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:290    .text.MovingMassThread:00000000 MovingMassThread
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:343    .text._GLOBAL__sub_I_gHorse_State:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:349    .text._GLOBAL__sub_I_gHorse_State:00000000 _GLOBAL__sub_I_gHorse_State
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:370    .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:378    .bss.gHorse_State:00000000 gHorse_State
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:374    .bss.gHorse_State:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccKtYkVO.s:381    .rodata.PneumaticThread.str1.4:00000000 $d
                            .group:00000000 _ZN5StateD5Ev
 
 UNDEFINED SYMBOLS
@@ -742,7 +716,7 @@ _Z12updateOmegasv
 HAL_GPIO_ReadPin
 _ZN5State12update_StateEv
 fsm
-_Z9pneu_Initv
-_Z9pneu_Loopv
+HAL_GPIO_WritePin
+puts
 _Z12balance_Initv
 _Z12balance_Loopv

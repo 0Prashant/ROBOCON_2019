@@ -74,34 +74,34 @@ void pneu_Loop()
 {
         switch (gHorse_State.get_ID())
         {
-        case State_ID::HOME:
-        {
-                set_Index(gPneu, Pneu_Index::P_NONE);
-        }
-        break;
-
-        case State_ID::WS1:
-        {
-                set_Index(gPneu, Pneu_Index::P_1);
-        }
-        break;
-
-        case State_ID::WS2:
-        {
-                set_Index(gPneu, Pneu_Index::P_2);
-        }
-        break;
-
-        case State_ID::WS3:
-        {
-                set_Index(gPneu, Pneu_Index::P_3);
-        }
-        break;
-
-        case State_ID::WS4:
-        {
-                set_Index(gPneu, Pneu_Index::P_4);
-        }
-        break;
+        	case State_ID::HOME:
+        	{
+        	        set_Index(gPneu, Pneu_Index::P_NONE);
+        	}
+        	break;
+	
+        	case State_ID::WS1:
+        	{
+        	        set_Index(gPneu, Pneu_Index::P_1); 
+        	}
+        	break;
+	
+        	case State_ID::WS2:
+        	{
+        	        set_Index(gPneu, Pneu_Index::P_2);
+        	}
+        	break;
+	
+        	case State_ID::WS3:
+        	{
+        	        set_Index(gPneu, Pneu_Index::P_3);
+        	}
+        	break;
+	
+        	case State_ID::WS4:
+        	{
+        	        set_Index(gPneu, Pneu_Index::P_4);
+        	}
+        	break;
         }
 }

@@ -3,21 +3,22 @@
 
 extern State gHorse_State;
 extern State_ID gCurrent_Position;
+bool gReady_To_Go = false;
 
 struct Blnc gBallet;
-uint16_t bvel = 45000;
+uint16_t bvel = 50000;
 
 void balance_Init(void)
 {
 	/******Initializing Interrupts******/
-	gBallet.interrupt[0].int_port = GPIOA;
+	gBallet.interrupt[0].int_port = GPIOC;
 	gBallet.interrupt[0].int_pin = GPIO_PIN_14;
-	gBallet.interrupt[1].int_port = GPIOB;
+	gBallet.interrupt[1].int_port = GPIOC;
         gBallet.interrupt[1].int_pin = GPIO_PIN_15;
 	gBallet.interrupt[2].int_port = GPIOC;
         gBallet.interrupt[2].int_pin = GPIO_PIN_7;
-	gBallet.interrupt[3].int_port = GPIOE;
-        gBallet.interrupt[3].int_pin = GPIO_PIN_3;
+	gBallet.interrupt[3].int_port = GPIOB;
+        gBallet.interrupt[3].int_pin = GPIO_PIN_12;
 
 	/******Initializing Motor******/
 	gBallet.motor.dir1_port = GPIOA;
@@ -51,7 +52,7 @@ void balance_Init(void)
 void balance_Loop(void)
 {
 	// printf("%ld\n", (gBallet.motor.encoder->count));
-	if(gCurrent_Position != gHorse_State.get_ID())
+	if(!gReady_To_Go)
 	{
 		switch (gHorse_State.get_ID())
 		{

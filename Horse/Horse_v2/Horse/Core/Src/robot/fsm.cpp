@@ -6,6 +6,7 @@
 #include "robo_states.h"
 
 extern State gHorse_State;
+extern bool gReady_To_Go;
 
 void startFSM(struct fsmStr *sfsm)
 {
@@ -20,60 +21,81 @@ void startFSM(struct fsmStr *sfsm)
                 }
                 break;
 
-        case State_ID::WS1:
+	case State_ID::WS1:
+		if (gReady_To_Go)
+		{
+			phaseOneChores(sfsm);
+			if (checkAngle(0))
+			{
+				printf("PHASE_2\n");
+				gReady_To_Go = false;
+				gHorse_State.update_State();
+				stateReset();
 
-                phaseOneChores(sfsm);
-                if (checkAngle(0))
-                {
-                        printf("PHASE_2\n");
-                        
-                        gHorse_State.update_State();
-                        stateReset();
+				motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CNT;
 
-                        motor_arr[0].encoder->last_count = motor_arr[0].encoder->htim->Instance->CNT;
-                }
-                break;
+				//HAL_Delay(300);
+			}
+		}
+		break;
 
-        case State_ID::WS2:
+	case State_ID::WS2:
+		if (gReady_To_Go)
+		{
+			phaseTwoChores(sfsm);
+			if (checkAngle(1))
+			{
+				printf("PHASE_3\n");
+				gReady_To_Go = false;
 
-                phaseTwoChores(sfsm);
-                if (checkAngle(1))
-                {
-                        printf("PHASE_3\n");
-                        
-                        gHorse_State.update_State();
-                        stateReset();
+				gHorse_State.update_State();
+				stateReset();
 
-                        motor_arr[1].encoder->last_count = motor_arr[1].encoder->htim->Instance->CNT;
-                }
-                break;
+				motor_arr[1].encoder->last_count = motor_arr[1].encoder->htim->Instance->CNT;
 
-        case State_ID::WS3:
+				//HAL_Delay(300);
+			
+			}
+		}
+		break;
 
-                phaseThreeChores(sfsm);
-                if (checkAngle(2))
-                {
-                        printf("PHASE_4\n");
+	case State_ID::WS3:
+		if (gReady_To_Go)
+		{
+			phaseThreeChores(sfsm);
+			if (checkAngle(2))
+			{
+				printf("PHASE_4\n");
+				gReady_To_Go = false;
 
-                        gHorse_State.update_State();
-                        stateReset();
+				gHorse_State.update_State();
+				stateReset();
 
-                        motor_arr[2].encoder->last_count = motor_arr[2].encoder->htim->Instance->CNT;
-                }
-                break;
+				motor_arr[2].encoder->last_count = motor_arr[2].encoder->htim->Instance->CNT;
+			
+				//HAL_Delay(300);
+			
+			}
+			break;
+		}
+	case State_ID::WS4:
+		if (gReady_To_Go)
+		{
+			phaseFourChores(sfsm);
+			if (checkAngle(3))
+			{
+				printf("PHASE_1\n");
+				gReady_To_Go = false;
 
-        case State_ID::WS4:
+				gHorse_State.update_State();
+				stateReset();
 
-                phaseFourChores(sfsm);
-                if (checkAngle(3))
-                {
-                        printf("PHASE_1\n");
-                        
-                        gHorse_State.update_State();
-                        stateReset();
-                        
-                        motor_arr[3].encoder->last_count = motor_arr[3].encoder->htim->Instance->CNT;
-                }
-                break;
-        }
+				motor_arr[3].encoder->last_count = motor_arr[3].encoder->htim->Instance->CNT;
+			
+				//HAL_Delay(300);
+			
+			}
+		}
+		break;
+	}
 }

@@ -3,9 +3,10 @@
 
 extern State gHorse_State;
 extern State_ID gCurrent_Position;
+bool gReady_To_Go = false;
 
 struct Blnc gBallet;
-uint16_t bvel = 45000;
+uint16_t bvel = 50000;
 
 void balance_Init(void)
 {
@@ -51,7 +52,7 @@ void balance_Init(void)
 void balance_Loop(void)
 {
 	// printf("%ld\n", (gBallet.motor.encoder->count));
-	if(gCurrent_Position != gHorse_State.get_ID())
+	if(!gReady_To_Go)
 	{
 		switch (gHorse_State.get_ID())
 		{
