@@ -115,7 +115,7 @@ void PneumaticThread(void const *argument)
         /* USER CODE BEGIN PneumaticThread */
         pneu_Init();
 
-        uint32_t sample_period = 20;
+        uint32_t sample_period = 50;
         uint32_t dt = HAL_GetTick();
         uint32_t dt_tmp = HAL_GetTick();
         uint32_t last_run_time = 0;

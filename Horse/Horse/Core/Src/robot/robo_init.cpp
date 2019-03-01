@@ -45,6 +45,7 @@ void interruptInit(void)
         blnc_int_arr[2].int_pin = GPIO_PIN_7;
         blnc_int_arr[3].int_pin = GPIO_PIN_3;
 
+
         for (uint8_t i = 0; i < 4; i++)
         {
                 int_arr[i].fhome_pos = 0;
@@ -163,4 +164,4 @@ void fsmInit(void)
     * M3 = E9 E11
     * M4 = A1 A5    
     *
-    */
+    */ 

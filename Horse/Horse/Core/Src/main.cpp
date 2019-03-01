@@ -98,7 +98,7 @@ extern "C" void MX_FREERTOS_Init(void);
   * @retval int
   */
 int main(void)
-{
+ {
         /* USER CODE BEGIN 1 */
 
         /* USER CODE END 1 */
@@ -226,7 +226,7 @@ void Error_Handler(void)
 {
         /* USER CODE BEGIN Error_Handler_Debug */
         /* User can add his own implementation to report the HAL error return state */
-        _Error_Handler(__FILE__, __LINE__);
+        
         /* USER CODE END Error_Handler_Debug */
 }
 void _Error_Handler(const char *file, size_t line)

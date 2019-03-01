@@ -29,7 +29,8 @@ Build/blnc_motor.o: Core/Src/devs/blnc_motor.cpp \
  C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  Core/Inc/periphs/tim.h Core/Inc/main.h Core/Inc/devs/encoder.h \
  Core/Inc/robot/interrupt.h Core/Inc/periphs/gpio.h Core/Inc/utils/pid.h \
- Core/Inc/robot/robo_states.h Core/Inc/utils/container/node.h
+ Core/Inc/robot/robo_states.h Core/Inc/utils/container/node.h \
+ Core/Inc/devs/motor.h
 
 Core/Inc/devs/blnc_motor.h:
 
@@ -104,3 +105,5 @@ Core/Inc/utils/pid.h:
 Core/Inc/robot/robo_states.h:
 
 Core/Inc/utils/container/node.h:
+
+Core/Inc/devs/motor.h:

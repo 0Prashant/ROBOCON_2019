@@ -41,6 +41,7 @@ struct motorStr
 void setDirection(struct motorStr *motor, enum motorDirection d);
 void setDutyCycle(struct motorStr *motor, uint16_t dutyCycle);
 void setOmega(struct motorStr *motor, float omega);
+void setbOmega(struct motorStr *motor, float omega);
 
 void resetAngle(struct motorStr *motor);
 void getAngle(struct motorStr *motor);

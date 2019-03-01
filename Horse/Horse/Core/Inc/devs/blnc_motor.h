@@ -14,5 +14,6 @@ struct Blnc
 
 void balance_Init(void);
 void balance_Loop(void);
+float get_BalletOmega();
 
 #endif // !_BLNC_MOTOR

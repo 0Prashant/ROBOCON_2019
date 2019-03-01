@@ -74,6 +74,28 @@ void setOmega(struct motorStr *motor, float omega)
             setDutyCycle(motor, 0);
     }
 }
+void setbOmega(struct motorStr *motor, float omega)
+{
+    uint16_t new_omega = (65535.0 / 7) * fabs(omega);
+    if (omega > 0) 
+    {
+            setDirection(motor, DIR_CLOCKWISE);
+            setDutyCycle(motor, new_omega);
+    }
+    
+    else if (omega < 0) 
+    {
+            setDirection(motor, DIR_ANTICLOCKWISE);
+            setDutyCycle(motor, new_omega);
+    }
+    
+    else 
+    {
+            setDirection(motor, DIR_HALT);
+            setDutyCycle(motor, 0);
+    }
+}
+
 
 void getAngle(struct motorStr *motor)
 {

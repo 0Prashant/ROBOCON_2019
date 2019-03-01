@@ -93,7 +93,6 @@ Core/Src/robot/interrupt.cpp \
 Core/Src/robot/robo_init.cpp \
 Core/Src/robot/robo_states.cpp \
 \
-Core/Src/utils/math/mat.cpp \
 Core/Src/utils/filter/exp_smooth.cpp \
 Core/Src/utils/logger.cpp \
 Core/Src/utils/pid.cpp \

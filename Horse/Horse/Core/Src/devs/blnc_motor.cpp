@@ -1,12 +1,16 @@
 #include "blnc_motor.h"
 #include "robo_states.h"
+#include "interrupt.h"
+#include "motor.h"
 
 extern State gHorse_State;
 extern State_ID gCurrent_Position;
+int16_t gCounter = 0;
+float gOmega = 0;
 bool gReady_To_Go = false;
 
 struct Blnc gBallet;
-uint16_t bvel = 50000;
+uint16_t bomega = 4;
 
 void balance_Init(void)
 {
@@ -41,52 +45,69 @@ void balance_Init(void)
 	PID_Init(&gBallet.pid);
 	gBallet.pid.max_output = 12;
 	gBallet.pid.min_output = -12;
-	gBallet.pid.kp = 0.3;
-	gBallet.pid.ki = 0.02;
+	gBallet.pid.kp = 2.578;
+	gBallet.pid.ki = 0;
 	gBallet.pid.last_error = 0;
 	gBallet.pid.output = 0;
 	gBallet.pid.previous_error = 0;
 	gBallet.pid.last_output = 0;
+	setDutyCycle(&gBallet.motor,0);
 }
+
+float get_BalletOmega()
+{
+	float omg;
+
+	// (2 * PI * gCounter ) / (179.0 * 0.05)
+	omg =  0.7024 * gCounter;
+	gCounter = 0 ;
+	return omg ;
+}  
 
 void balance_Loop(void)
 {
-	// printf("%ld\n", (gBallet.motor.encoder->count));
+	float pid_corrector = 0; //PID algorithm is not general
+	gOmega = get_BalletOmega();
+	//printf("omega = %d \t Count = %d\n", (int)gOmega*100, (int)gCounter*100);
 	if(!gReady_To_Go)
 	{
 		switch (gHorse_State.get_ID())
 		{
 			case State_ID::HOME:
-			{
-				setDutyCycle(&gBallet.motor, bvel);	
-				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+			{	
 				break;
 			}
 			case State_ID::WS1:
 			{
-				setDutyCycle(&gBallet.motor, bvel);	
-				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+				// setDutyCycle(&gBallet.motor, bomega);	
+				// setDirection(&gBallet.motor, DIR_CLOCKWISE);
 				break;
 			}
 			case State_ID::WS2:
 			{
-				setDutyCycle(&gBallet.motor, bvel);	
-				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+				// setDutyCycle(&gBallet.motor, bomega);	
+				// setDirection(&gBallet.motor, DIR_CLOCKWISE);
 				break;
 			}
 			case State_ID::WS3:
 			{
-				setDutyCycle(&gBallet.motor, bvel);	
-				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+				// setDutyCycle(&gBallet.motor, bomega);	
+				// setDirection(&gBallet.motor, DIR_CLOCKWISE);
 				break;
 			}
 			case State_ID::WS4:
 			{
-				setDutyCycle(&gBallet.motor, bvel);	
-				setDirection(&gBallet.motor, DIR_CLOCKWISE);
+				// setDutyCycle(&gBallet.motor, bomega);	
+				// setDirection(&gBallet.motor, DIR_CLOCKWISE);
 				break;
 			}
 		}
-		//printf("%d\n", bvel);
-	}	
+		
+	}
+	
+	pid_corrector = PID_Compute(&gBallet.pid, 0, gOmega, 20);
+	gBallet.motor.update_omega = pid_corrector * 14 / 17;
+	printf("gOmega = %d \t omega = %d \t corrector = %d \n",(int)gOmega * 100 , (int)gBallet.motor.update_omega*100, (int)pid_corrector*100);
+	setbOmega(&gBallet.motor,0);
+	
 }

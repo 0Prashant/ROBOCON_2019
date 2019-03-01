@@ -82,7 +82,6 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-void _Error_Handler(const char *file, size_t line);
 
 /* USER CODE BEGIN EFP */
 
