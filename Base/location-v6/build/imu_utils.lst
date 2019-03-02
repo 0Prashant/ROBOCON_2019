@@ -1,0 +1,734 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"imu_utils.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN4Vec3IfED2Ev,"axG",%progbits,_ZN4Vec3IfED5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN4Vec3IfED2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN4Vec3IfED2Ev:
+  26              	.LFB392:
+  27              		.file 1 "Core/Inc\\utils/vec3.h"
+   1:Core/Inc\utils/vec3.h **** /*
+   2:Core/Inc\utils/vec3.h ****  * vec3.h
+   3:Core/Inc\utils/vec3.h ****  * 
+   4:Core/Inc\utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc\utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc\utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc\utils/vec3.h ****  */
+   8:Core/Inc\utils/vec3.h **** 
+   9:Core/Inc\utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc\utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc\utils/vec3.h **** 
+  12:Core/Inc\utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc\utils/vec3.h **** 
+  14:Core/Inc\utils/vec3.h **** template <typename T>
+  15:Core/Inc\utils/vec3.h **** void swap_Element(T &first, T &second)
+  16:Core/Inc\utils/vec3.h **** {
+  17:Core/Inc\utils/vec3.h ****         T temp = first;
+  18:Core/Inc\utils/vec3.h ****         first = second;
+  19:Core/Inc\utils/vec3.h ****         second = temp;
+  20:Core/Inc\utils/vec3.h **** }
+  21:Core/Inc\utils/vec3.h **** 
+  22:Core/Inc\utils/vec3.h **** template <class T>
+  23:Core/Inc\utils/vec3.h **** class Vec3
+  24:Core/Inc\utils/vec3.h **** {
+  25:Core/Inc\utils/vec3.h **** public:
+  26:Core/Inc\utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  27:Core/Inc\utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  28:Core/Inc\utils/vec3.h ****         Vec3(Vec3 &&) = default;
+  29:Core/Inc\utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  30:Core/Inc\utils/vec3.h ****         ~Vec3();
+  31:Core/Inc\utils/vec3.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 2
+
+
+  32:Core/Inc\utils/vec3.h ****         void set_Values(T x, T y, T z);
+  33:Core/Inc\utils/vec3.h ****         T getX() const;
+  34:Core/Inc\utils/vec3.h ****         T getY() const;
+  35:Core/Inc\utils/vec3.h ****         T getZ() const;
+  36:Core/Inc\utils/vec3.h ****         void setX(T x) { x_ = x; }
+  37:Core/Inc\utils/vec3.h ****         void setY(T y) { y_ = y; }
+  38:Core/Inc\utils/vec3.h ****         void setZ(T z) { z_ = z; }
+  39:Core/Inc\utils/vec3.h **** 
+  40:Core/Inc\utils/vec3.h ****         template <typename T1, typename T2>
+  41:Core/Inc\utils/vec3.h ****         void divide(const Vec3<T1> &v, T2 num) {
+  42:Core/Inc\utils/vec3.h ****                 x_ = v.getX() / num;
+  43:Core/Inc\utils/vec3.h ****                 y_ = v.getY() / num;
+  44:Core/Inc\utils/vec3.h ****                 z_ = v.getZ() / num;
+  45:Core/Inc\utils/vec3.h ****         }
+  46:Core/Inc\utils/vec3.h **** 
+  47:Core/Inc\utils/vec3.h ****         Vec3 mult_EW(float num) {
+  48:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  49:Core/Inc\utils/vec3.h ****                 temp.x_ *= num;
+  50:Core/Inc\utils/vec3.h ****                 temp.y_ *= num;
+  51:Core/Inc\utils/vec3.h ****                 temp.z_ *= num;
+  52:Core/Inc\utils/vec3.h **** 
+  53:Core/Inc\utils/vec3.h ****                 return temp;
+  54:Core/Inc\utils/vec3.h ****         }
+  55:Core/Inc\utils/vec3.h **** 
+  56:Core/Inc\utils/vec3.h ****         Vec3 add_EW(float num) {
+  57:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  58:Core/Inc\utils/vec3.h ****                 temp.x_ += num;
+  59:Core/Inc\utils/vec3.h ****                 temp.y_ += num;
+  60:Core/Inc\utils/vec3.h ****                 temp.z_ += num;
+  61:Core/Inc\utils/vec3.h **** 
+  62:Core/Inc\utils/vec3.h ****                 return temp;
+  63:Core/Inc\utils/vec3.h ****         }
+  64:Core/Inc\utils/vec3.h **** 
+  65:Core/Inc\utils/vec3.h ****         Vec3 sub_EW(float num) {
+  66:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  67:Core/Inc\utils/vec3.h ****                 temp.x_ -= num;
+  68:Core/Inc\utils/vec3.h ****                 temp.y_ -= num;
+  69:Core/Inc\utils/vec3.h ****                 temp.z_ -= num;
+  70:Core/Inc\utils/vec3.h **** 
+  71:Core/Inc\utils/vec3.h ****                 return temp;
+  72:Core/Inc\utils/vec3.h ****         }
+  73:Core/Inc\utils/vec3.h **** 
+  74:Core/Inc\utils/vec3.h ****         template <typename T1>
+  75:Core/Inc\utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+  76:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  77:Core/Inc\utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+  78:Core/Inc\utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+  79:Core/Inc\utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+  80:Core/Inc\utils/vec3.h **** 
+  81:Core/Inc\utils/vec3.h ****                 return temp;
+  82:Core/Inc\utils/vec3.h ****         }
+  83:Core/Inc\utils/vec3.h **** 
+  84:Core/Inc\utils/vec3.h ****         template <typename T1>
+  85:Core/Inc\utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  86:Core/Inc\utils/vec3.h ****                 Vec3 temp(v);
+  87:Core/Inc\utils/vec3.h ****                 temp.x_ *= x_;
+  88:Core/Inc\utils/vec3.h ****                 temp.y_ *= y_;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 3
+
+
+  89:Core/Inc\utils/vec3.h ****                 temp.z_ *= z_;
+  90:Core/Inc\utils/vec3.h **** 
+  91:Core/Inc\utils/vec3.h ****                 return temp;
+  92:Core/Inc\utils/vec3.h ****         }
+  93:Core/Inc\utils/vec3.h **** 
+  94:Core/Inc\utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+  95:Core/Inc\utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+  96:Core/Inc\utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+  97:Core/Inc\utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+  98:Core/Inc\utils/vec3.h ****         }
+  99:Core/Inc\utils/vec3.h ****         
+ 100:Core/Inc\utils/vec3.h ****         Vec3(const Vec3 &v) {
+ 101:Core/Inc\utils/vec3.h ****                 x_ = v.x_;
+ 102:Core/Inc\utils/vec3.h ****                 y_ = v.y_;
+ 103:Core/Inc\utils/vec3.h ****                 z_ = v.z_;
+ 104:Core/Inc\utils/vec3.h ****         }
+ 105:Core/Inc\utils/vec3.h ****         
+ 106:Core/Inc\utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 107:Core/Inc\utils/vec3.h ****                 Vec3 temp(v);
+ 108:Core/Inc\utils/vec3.h ****                 swap(*this, temp);
+ 109:Core/Inc\utils/vec3.h **** 
+ 110:Core/Inc\utils/vec3.h ****                 return *this;
+ 111:Core/Inc\utils/vec3.h ****         }
+ 112:Core/Inc\utils/vec3.h **** 
+ 113:Core/Inc\utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 114:Core/Inc\utils/vec3.h ****                 x_ += rhs.x_;
+ 115:Core/Inc\utils/vec3.h ****                 y_ += rhs.y_;
+ 116:Core/Inc\utils/vec3.h ****                 z_ += rhs.z_;
+ 117:Core/Inc\utils/vec3.h **** 
+ 118:Core/Inc\utils/vec3.h ****                 return *this;
+ 119:Core/Inc\utils/vec3.h ****         }
+ 120:Core/Inc\utils/vec3.h ****         
+ 121:Core/Inc\utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 122:Core/Inc\utils/vec3.h ****                 x_ -= rhs.x_;
+ 123:Core/Inc\utils/vec3.h ****                 y_ -= rhs.y_;
+ 124:Core/Inc\utils/vec3.h ****                 z_ -= rhs.z_;
+ 125:Core/Inc\utils/vec3.h **** 
+ 126:Core/Inc\utils/vec3.h ****                 return *this;
+ 127:Core/Inc\utils/vec3.h ****         }
+ 128:Core/Inc\utils/vec3.h **** 
+ 129:Core/Inc\utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 130:Core/Inc\utils/vec3.h ****                 lhs += rhs;
+ 131:Core/Inc\utils/vec3.h ****                 return lhs;
+ 132:Core/Inc\utils/vec3.h ****         }
+ 133:Core/Inc\utils/vec3.h **** 
+ 134:Core/Inc\utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 135:Core/Inc\utils/vec3.h ****                 lhs -= rhs;
+ 136:Core/Inc\utils/vec3.h ****                 return lhs;
+ 137:Core/Inc\utils/vec3.h ****         }
+ 138:Core/Inc\utils/vec3.h **** 
+ 139:Core/Inc\utils/vec3.h ****         void print() const {
+ 140:Core/Inc\utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 141:Core/Inc\utils/vec3.h ****         }
+ 142:Core/Inc\utils/vec3.h **** 
+ 143:Core/Inc\utils/vec3.h **** private:
+ 144:Core/Inc\utils/vec3.h ****         T x_,y_,z_;
+ 145:Core/Inc\utils/vec3.h **** };
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 4
+
+
+ 146:Core/Inc\utils/vec3.h **** 
+ 147:Core/Inc\utils/vec3.h **** template <class T>
+ 148:Core/Inc\utils/vec3.h **** Vec3<T>::~Vec3()
+  28              		.loc 1 148 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+ 149:Core/Inc\utils/vec3.h **** {
+ 150:Core/Inc\utils/vec3.h **** }
+  34              		.loc 1 150 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE392:
+  39              		.weak	_ZN4Vec3IfED1Ev
+  40              		.thumb_set _ZN4Vec3IfED1Ev,_ZN4Vec3IfED2Ev
+  41              		.section	.text._ZNK4Vec3IfE4getXEv,"axG",%progbits,_ZNK4Vec3IfE4getXEv,comdat
+  42              		.align	1
+  43              		.weak	_ZNK4Vec3IfE4getXEv
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZNK4Vec3IfE4getXEv:
+  50              	.LFB395:
+ 151:Core/Inc\utils/vec3.h **** 
+ 152:Core/Inc\utils/vec3.h **** template <class T>
+ 153:Core/Inc\utils/vec3.h **** void Vec3<T>::set_Values(T x, T y, T z)
+ 154:Core/Inc\utils/vec3.h **** {
+ 155:Core/Inc\utils/vec3.h ****         x_ = x;
+ 156:Core/Inc\utils/vec3.h ****         y_ = y;
+ 157:Core/Inc\utils/vec3.h ****         z_ = z;
+ 158:Core/Inc\utils/vec3.h **** }
+ 159:Core/Inc\utils/vec3.h **** 
+ 160:Core/Inc\utils/vec3.h **** template <class T>
+ 161:Core/Inc\utils/vec3.h **** T Vec3<T>::getX() const { return x_;}
+  51              		.loc 1 161 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  57              		.loc 1 161 0
+  58 0000 90ED000A 		vldr.32	s0, [r0]
+  59 0004 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE395:
+  63              		.section	.text._ZNK4Vec3IfE4getYEv,"axG",%progbits,_ZNK4Vec3IfE4getYEv,comdat
+  64              		.align	1
+  65              		.weak	_ZNK4Vec3IfE4getYEv
+  66              		.syntax unified
+  67              		.thumb
+  68              		.thumb_func
+  69              		.fpu fpv4-sp-d16
+  71              	_ZNK4Vec3IfE4getYEv:
+  72              	.LFB396:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 5
+
+
+ 162:Core/Inc\utils/vec3.h **** 
+ 163:Core/Inc\utils/vec3.h **** template <class T>
+ 164:Core/Inc\utils/vec3.h **** T Vec3<T>::getY() const { return y_;}
+  73              		.loc 1 164 0
+  74              		.cfi_startproc
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              		@ link register save eliminated.
+  78              	.LVL2:
+  79              		.loc 1 164 0
+  80 0000 90ED010A 		vldr.32	s0, [r0, #4]
+  81 0004 7047     		bx	lr
+  82              		.cfi_endproc
+  83              	.LFE396:
+  85              		.section	.text._ZNK4Vec3IfE4getZEv,"axG",%progbits,_ZNK4Vec3IfE4getZEv,comdat
+  86              		.align	1
+  87              		.weak	_ZNK4Vec3IfE4getZEv
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  91              		.fpu fpv4-sp-d16
+  93              	_ZNK4Vec3IfE4getZEv:
+  94              	.LFB397:
+ 165:Core/Inc\utils/vec3.h **** 
+ 166:Core/Inc\utils/vec3.h **** template <class T>
+ 167:Core/Inc\utils/vec3.h **** T Vec3<T>::getZ() const { return z_;}
+  95              		.loc 1 167 0
+  96              		.cfi_startproc
+  97              		@ args = 0, pretend = 0, frame = 0
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99              		@ link register save eliminated.
+ 100              	.LVL3:
+ 101              		.loc 1 167 0
+ 102 0000 90ED020A 		vldr.32	s0, [r0, #8]
+ 103 0004 7047     		bx	lr
+ 104              		.cfi_endproc
+ 105              	.LFE397:
+ 107              		.section	.text._ZN4Vec3IfE10set_ValuesEfff,"axG",%progbits,_ZN4Vec3IfE10set_ValuesEfff,comdat
+ 108              		.align	1
+ 109              		.weak	_ZN4Vec3IfE10set_ValuesEfff
+ 110              		.syntax unified
+ 111              		.thumb
+ 112              		.thumb_func
+ 113              		.fpu fpv4-sp-d16
+ 115              	_ZN4Vec3IfE10set_ValuesEfff:
+ 116              	.LFB398:
+ 153:Core/Inc\utils/vec3.h **** {
+ 117              		.loc 1 153 0
+ 118              		.cfi_startproc
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121              		@ link register save eliminated.
+ 122              	.LVL4:
+ 155:Core/Inc\utils/vec3.h ****         y_ = y;
+ 123              		.loc 1 155 0
+ 124 0000 80ED000A 		vstr.32	s0, [r0]
+ 156:Core/Inc\utils/vec3.h ****         z_ = z;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 6
+
+
+ 125              		.loc 1 156 0
+ 126 0004 C0ED010A 		vstr.32	s1, [r0, #4]
+ 157:Core/Inc\utils/vec3.h **** }
+ 127              		.loc 1 157 0
+ 128 0008 80ED021A 		vstr.32	s2, [r0, #8]
+ 158:Core/Inc\utils/vec3.h **** 
+ 129              		.loc 1 158 0
+ 130 000c 7047     		bx	lr
+ 131              		.cfi_endproc
+ 132              	.LFE398:
+ 134              		.section	.text._Z12swap_ElementIfEvRT_S1_,"axG",%progbits,_Z12swap_ElementIfEvRT_S1_,comdat
+ 135              		.align	1
+ 136              		.weak	_Z12swap_ElementIfEvRT_S1_
+ 137              		.syntax unified
+ 138              		.thumb
+ 139              		.thumb_func
+ 140              		.fpu fpv4-sp-d16
+ 142              	_Z12swap_ElementIfEvRT_S1_:
+ 143              	.LFB407:
+  15:Core/Inc\utils/vec3.h **** {
+ 144              		.loc 1 15 0
+ 145              		.cfi_startproc
+ 146              		@ args = 0, pretend = 0, frame = 0
+ 147              		@ frame_needed = 0, uses_anonymous_args = 0
+ 148              		@ link register save eliminated.
+ 149              	.LVL5:
+  17:Core/Inc\utils/vec3.h ****         first = second;
+ 150              		.loc 1 17 0
+ 151 0000 0368     		ldr	r3, [r0]	@ float
+ 152              	.LVL6:
+  18:Core/Inc\utils/vec3.h ****         second = temp;
+ 153              		.loc 1 18 0
+ 154 0002 0A68     		ldr	r2, [r1]	@ float
+ 155 0004 0260     		str	r2, [r0]	@ float
+  19:Core/Inc\utils/vec3.h **** }
+ 156              		.loc 1 19 0
+ 157 0006 0B60     		str	r3, [r1]	@ float
+  20:Core/Inc\utils/vec3.h **** 
+ 158              		.loc 1 20 0
+ 159 0008 7047     		bx	lr
+ 160              		.cfi_endproc
+ 161              	.LFE407:
+ 163              		.section	.text._Z14calc_OmegaMeanP7MPU6050m,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	_Z14calc_OmegaMeanP7MPU6050m
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 169              		.fpu fpv4-sp-d16
+ 171              	_Z14calc_OmegaMeanP7MPU6050m:
+ 172              	.LFB387:
+ 173              		.file 2 "Core/Src/utils/imu_utils.cpp"
+   1:Core/Src/utils/imu_utils.cpp **** /*
+   2:Core/Src/utils/imu_utils.cpp ****  * imu_utils.cpp
+   3:Core/Src/utils/imu_utils.cpp ****  * 
+   4:Core/Src/utils/imu_utils.cpp ****  * Created : 11/11/2018
+   5:Core/Src/utils/imu_utils.cpp ****  *  Author : n-is
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 7
+
+
+   6:Core/Src/utils/imu_utils.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/utils/imu_utils.cpp ****  */
+   8:Core/Src/utils/imu_utils.cpp **** 
+   9:Core/Src/utils/imu_utils.cpp **** #include <math.h>
+  10:Core/Src/utils/imu_utils.cpp **** #include "utils/imu_utils.h"
+  11:Core/Src/utils/imu_utils.cpp **** #include "utils/smoothie.h"
+  12:Core/Src/utils/imu_utils.cpp **** 
+  13:Core/Src/utils/imu_utils.cpp **** Vec3<float> calc_OmegaMean(struct MPU6050 *mpu, uint32_t n)
+  14:Core/Src/utils/imu_utils.cpp **** {
+ 174              		.loc 2 14 0
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 120
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178              	.LVL7:
+ 179 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 180              	.LCFI0:
+ 181              		.cfi_def_cfa_offset 20
+ 182              		.cfi_offset 4, -20
+ 183              		.cfi_offset 5, -16
+ 184              		.cfi_offset 6, -12
+ 185              		.cfi_offset 7, -8
+ 186              		.cfi_offset 14, -4
+ 187 0002 2DED028B 		vpush.64	{d8}
+ 188              	.LCFI1:
+ 189              		.cfi_def_cfa_offset 28
+ 190              		.cfi_offset 80, -28
+ 191              		.cfi_offset 81, -24
+ 192 0006 9FB0     		sub	sp, sp, #124
+ 193              	.LCFI2:
+ 194              		.cfi_def_cfa_offset 152
+ 195 0008 0446     		mov	r4, r0
+ 196 000a 0E46     		mov	r6, r1
+ 197 000c 1746     		mov	r7, r2
+ 198              	.LVL8:
+ 199              	.LBB87:
+ 200              	.LBB88:
+  26:Core/Inc\utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+ 201              		.loc 1 26 0
+ 202 000e 9FED568A 		vldr.32	s16, .L11
+ 203 0012 B0EE481A 		vmov.f32	s2, s16
+ 204 0016 F0EE480A 		vmov.f32	s1, s16
+ 205 001a B0EE480A 		vmov.f32	s0, s16
+ 206 001e FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 207              	.LVL9:
+ 208              	.LBE88:
+ 209              	.LBE87:
+ 210              	.LBB89:
+ 211              	.LBB90:
+ 212              	.LBB91:
+ 213 0022 B0EE481A 		vmov.f32	s2, s16
+ 214 0026 F0EE480A 		vmov.f32	s1, s16
+ 215 002a B0EE480A 		vmov.f32	s0, s16
+ 216 002e 0FA8     		add	r0, sp, #60
+ 217              	.LVL10:
+ 218 0030 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 219              	.LVL11:
+ 220              	.LBE91:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 8
+
+
+ 221              	.LBE90:
+ 222              	.LBE89:
+  15:Core/Src/utils/imu_utils.cpp ****         Vec3<float> mean;
+  16:Core/Src/utils/imu_utils.cpp ****         Vec3<float> gyro;
+  17:Core/Src/utils/imu_utils.cpp ****         float item_num;
+  18:Core/Src/utils/imu_utils.cpp ****         
+  19:Core/Src/utils/imu_utils.cpp ****         Exp_Smooth x_alpha35(0.35);
+ 223              		.loc 2 19 0
+ 224 0034 9FED4D8A 		vldr.32	s16, .L11+4
+ 225 0038 B0EE480A 		vmov.f32	s0, s16
+ 226 003c 0BA8     		add	r0, sp, #44
+ 227 003e FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 228              	.LVL12:
+  20:Core/Src/utils/imu_utils.cpp ****         Exp_Smooth y_alpha35(0.35);
+ 229              		.loc 2 20 0
+ 230 0042 B0EE480A 		vmov.f32	s0, s16
+ 231 0046 07A8     		add	r0, sp, #28
+ 232 0048 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 233              	.LVL13:
+  21:Core/Src/utils/imu_utils.cpp ****         Exp_Smooth z_alpha35(0.35);
+ 234              		.loc 2 21 0
+ 235 004c B0EE480A 		vmov.f32	s0, s16
+ 236 0050 03A8     		add	r0, sp, #12
+ 237 0052 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 238              	.LVL14:
+ 239              	.LBB92:
+  22:Core/Src/utils/imu_utils.cpp **** 
+  23:Core/Src/utils/imu_utils.cpp ****         float gx,gy,gz;
+  24:Core/Src/utils/imu_utils.cpp **** 
+  25:Core/Src/utils/imu_utils.cpp ****         for (uint32_t i = 0; i < n; ++i) {
+ 240              		.loc 2 25 0
+ 241 0056 0025     		movs	r5, #0
+ 242              	.LVL15:
+ 243              	.L9:
+ 244              		.loc 2 25 0 is_stmt 0 discriminator 3
+ 245 0058 BD42     		cmp	r5, r7
+ 246 005a 7FD2     		bcs	.L7
+  26:Core/Src/utils/imu_utils.cpp ****                 MPU6050_Read_NormGyro(mpu);
+ 247              		.loc 2 26 0 is_stmt 1 discriminator 2
+ 248 005c 3046     		mov	r0, r6
+ 249 005e FFF7FEFF 		bl	_Z21MPU6050_Read_NormGyroP7MPU6050
+ 250              	.LVL16:
+ 251              	.LBB93:
+ 252              	.LBB94:
+ 253              	.LBB95:
+ 254              	.LBB96:
+ 255              	.LBB97:
+ 101:Core/Inc\utils/vec3.h ****                 y_ = v.y_;
+ 256              		.loc 1 101 0 discriminator 2
+ 257 0062 3269     		ldr	r2, [r6, #16]	@ float
+ 258 0064 0092     		str	r2, [sp]	@ float
+ 102:Core/Inc\utils/vec3.h ****                 z_ = v.z_;
+ 259              		.loc 1 102 0 discriminator 2
+ 260 0066 7269     		ldr	r2, [r6, #20]	@ float
+ 261 0068 0192     		str	r2, [sp, #4]	@ float
+ 103:Core/Inc\utils/vec3.h ****         }
+ 262              		.loc 1 103 0 discriminator 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 9
+
+
+ 263 006a B369     		ldr	r3, [r6, #24]	@ float
+ 264 006c 0293     		str	r3, [sp, #8]	@ float
+ 265              	.LVL17:
+ 266              	.LBE97:
+ 267              	.LBE96:
+ 268              	.LBE95:
+ 269              	.LBB98:
+ 270              	.LBB99:
+  95:Core/Inc\utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 271              		.loc 1 95 0 discriminator 2
+ 272 006e 6946     		mov	r1, sp
+ 273 0070 0FA8     		add	r0, sp, #60
+ 274              	.LVL18:
+ 275 0072 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 276              	.LVL19:
+  96:Core/Inc\utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 277              		.loc 1 96 0 discriminator 2
+ 278 0076 01A9     		add	r1, sp, #4
+ 279 0078 10A8     		add	r0, sp, #64
+ 280 007a FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 281              	.LVL20:
+  97:Core/Inc\utils/vec3.h ****         }
+ 282              		.loc 1 97 0 discriminator 2
+ 283 007e 02A9     		add	r1, sp, #8
+ 284 0080 11A8     		add	r0, sp, #68
+ 285 0082 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 286              	.LVL21:
+ 287              	.LBE99:
+ 288              	.LBE98:
+ 289              	.LBE94:
+ 290              	.LBE93:
+  27:Core/Src/utils/imu_utils.cpp ****                 gyro = mpu->norm_g_axis;
+  28:Core/Src/utils/imu_utils.cpp ****                 gx = x_alpha35.smooth(gyro.getX());
+ 291              		.loc 2 28 0 discriminator 2
+ 292 0086 0FA8     		add	r0, sp, #60
+ 293 0088 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 294              	.LVL22:
+ 295 008c 12A9     		add	r1, sp, #72
+ 296 008e 81ED000A 		vstr.32	s0, [r1]
+ 297 0092 0BA8     		add	r0, sp, #44
+ 298 0094 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 299              	.LVL23:
+ 300 0098 B0EE408A 		vmov.f32	s16, s0
+ 301              	.LVL24:
+  29:Core/Src/utils/imu_utils.cpp ****                 gy = y_alpha35.smooth(gyro.getY());
+ 302              		.loc 2 29 0 discriminator 2
+ 303 009c 0FA8     		add	r0, sp, #60
+ 304 009e FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 305              	.LVL25:
+ 306 00a2 13A9     		add	r1, sp, #76
+ 307 00a4 81ED000A 		vstr.32	s0, [r1]
+ 308 00a8 07A8     		add	r0, sp, #28
+ 309 00aa FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 310              	.LVL26:
+ 311 00ae F0EE408A 		vmov.f32	s17, s0
+ 312              	.LVL27:
+  30:Core/Src/utils/imu_utils.cpp ****                 gz = z_alpha35.smooth(gyro.getZ());
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 10
+
+
+ 313              		.loc 2 30 0 discriminator 2
+ 314 00b2 0FA8     		add	r0, sp, #60
+ 315 00b4 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 316              	.LVL28:
+ 317 00b8 14A9     		add	r1, sp, #80
+ 318 00ba 81ED000A 		vstr.32	s0, [r1]
+ 319 00be 03A8     		add	r0, sp, #12
+ 320 00c0 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 321              	.LVL29:
+  31:Core/Src/utils/imu_utils.cpp ****                 gyro.set_Values(gx, gy, gz);
+ 322              		.loc 2 31 0 discriminator 2
+ 323 00c4 B0EE401A 		vmov.f32	s2, s0
+ 324 00c8 F0EE680A 		vmov.f32	s1, s17
+ 325 00cc B0EE480A 		vmov.f32	s0, s16
+ 326              	.LVL30:
+ 327 00d0 0FA8     		add	r0, sp, #60
+ 328 00d2 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 329              	.LVL31:
+  32:Core/Src/utils/imu_utils.cpp ****                 item_num = 1.0 / (float)(i+1);
+ 330              		.loc 2 32 0 discriminator 2
+ 331 00d6 0135     		adds	r5, r5, #1
+ 332              	.LVL32:
+ 333 00d8 07EE905A 		vmov	s15, r5	@ int
+ 334 00dc F8EE677A 		vcvt.f32.u32	s15, s15
+ 335 00e0 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 336 00e4 C7EE276A 		vdiv.f32	s13, s14, s15
+ 337              	.LVL33:
+ 338              	.LBB100:
+ 339              	.LBB101:
+ 340              	.LBB102:
+ 341              	.LBB103:
+ 122:Core/Inc\utils/vec3.h ****                 y_ -= rhs.y_;
+ 342              		.loc 1 122 0 discriminator 2
+ 343 00e8 D4ED004A 		vldr.32	s9, [r4]
+ 344 00ec 9DED0F7A 		vldr.32	s14, [sp, #60]
+ 345 00f0 37EE647A 		vsub.f32	s14, s14, s9
+ 346 00f4 8DED1B7A 		vstr.32	s14, [sp, #108]
+ 123:Core/Inc\utils/vec3.h ****                 z_ -= rhs.z_;
+ 347              		.loc 1 123 0 discriminator 2
+ 348 00f8 94ED015A 		vldr.32	s10, [r4, #4]
+ 349 00fc DDED107A 		vldr.32	s15, [sp, #64]
+ 350 0100 77EEC57A 		vsub.f32	s15, s15, s10
+ 351 0104 CDED1C7A 		vstr.32	s15, [sp, #112]
+ 124:Core/Inc\utils/vec3.h **** 
+ 352              		.loc 1 124 0 discriminator 2
+ 353 0108 D4ED025A 		vldr.32	s11, [r4, #8]
+ 354 010c 9DED116A 		vldr.32	s12, [sp, #68]
+ 355 0110 36EE656A 		vsub.f32	s12, s12, s11
+ 356 0114 8DED1D6A 		vstr.32	s12, [sp, #116]
+ 357              	.LVL34:
+ 358              	.LBE103:
+ 359              	.LBE102:
+ 136:Core/Inc\utils/vec3.h ****         }
+ 360              		.loc 1 136 0 discriminator 2
+ 361 0118 18AB     		add	r3, sp, #96
+ 362 011a 1EAA     		add	r2, sp, #120
+ 363 011c 12E90700 		ldmdb	r2, {r0, r1, r2}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 11
+
+
+ 364 0120 83E80700 		stm	r3, {r0, r1, r2}
+ 365              	.LVL35:
+ 366              	.LBE101:
+ 367              	.LBE100:
+ 368              	.LBB104:
+ 369              	.LBB105:
+  49:Core/Inc\utils/vec3.h ****                 temp.y_ *= num;
+ 370              		.loc 1 49 0 discriminator 2
+ 371 0124 26EE877A 		vmul.f32	s14, s13, s14
+ 372 0128 8DED157A 		vstr.32	s14, [sp, #84]
+  50:Core/Inc\utils/vec3.h ****                 temp.z_ *= num;
+ 373              		.loc 1 50 0 discriminator 2
+ 374 012c 66EEA77A 		vmul.f32	s15, s13, s15
+ 375 0130 CDED167A 		vstr.32	s15, [sp, #88]
+  51:Core/Inc\utils/vec3.h **** 
+ 376              		.loc 1 51 0 discriminator 2
+ 377 0134 66EE866A 		vmul.f32	s13, s13, s12
+ 378              	.LVL36:
+ 379 0138 CDED176A 		vstr.32	s13, [sp, #92]
+ 380              	.LVL37:
+ 381              	.LBE105:
+ 382              	.LBE104:
+ 383              	.LBB106:
+ 384              	.LBB107:
+ 114:Core/Inc\utils/vec3.h ****                 y_ += rhs.y_;
+ 385              		.loc 1 114 0 discriminator 2
+ 386 013c 37EE247A 		vadd.f32	s14, s14, s9
+ 387 0140 84ED007A 		vstr.32	s14, [r4]
+ 115:Core/Inc\utils/vec3.h ****                 z_ += rhs.z_;
+ 388              		.loc 1 115 0 discriminator 2
+ 389 0144 77EE857A 		vadd.f32	s15, s15, s10
+ 390 0148 C4ED017A 		vstr.32	s15, [r4, #4]
+ 116:Core/Inc\utils/vec3.h **** 
+ 391              		.loc 1 116 0 discriminator 2
+ 392 014c 76EEA56A 		vadd.f32	s13, s13, s11
+ 393 0150 C4ED026A 		vstr.32	s13, [r4, #8]
+ 394              	.LVL38:
+ 395              	.LBE107:
+ 396              	.LBE106:
+  33:Core/Src/utils/imu_utils.cpp ****                 mean +=(gyro - mean).mult_EW(item_num);
+  34:Core/Src/utils/imu_utils.cpp ****                 HAL_Delay(1);
+ 397              		.loc 2 34 0 discriminator 2
+ 398 0154 0120     		movs	r0, #1
+ 399 0156 FFF7FEFF 		bl	HAL_Delay
+ 400              	.LVL39:
+  25:Core/Src/utils/imu_utils.cpp ****                 MPU6050_Read_NormGyro(mpu);
+ 401              		.loc 2 25 0 discriminator 2
+ 402 015a 7DE7     		b	.L9
+ 403              	.LVL40:
+ 404              	.L7:
+ 405              	.LBE92:
+  35:Core/Src/utils/imu_utils.cpp ****         }
+  36:Core/Src/utils/imu_utils.cpp ****         return mean;
+  37:Core/Src/utils/imu_utils.cpp **** }
+ 406              		.loc 2 37 0
+ 407 015c 2046     		mov	r0, r4
+ 408 015e 1FB0     		add	sp, sp, #124
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 12
+
+
+ 409              	.LCFI3:
+ 410              		.cfi_def_cfa_offset 28
+ 411              		@ sp needed
+ 412 0160 BDEC028B 		vldm	sp!, {d8}
+ 413              	.LCFI4:
+ 414              		.cfi_restore 80
+ 415              		.cfi_restore 81
+ 416              		.cfi_def_cfa_offset 20
+ 417 0164 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 418              	.LVL41:
+ 419              	.L12:
+ 420 0166 00BF     		.align	2
+ 421              	.L11:
+ 422 0168 00000000 		.word	0
+ 423 016c 3333B33E 		.word	1051931443
+ 424              		.cfi_endproc
+ 425              	.LFE387:
+ 427              		.text
+ 428              	.Letext0:
+ 429              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 430              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 431              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 432              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 433              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 434              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 435              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 436              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 437              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 438              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 439              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 440              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 441              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/cor
+ 442              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/S
+ 443              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/S
+ 444              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/S
+ 445              		.file 19 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 446              		.file 20 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 447              		.file 21 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 448              		.file 22 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 449              		.file 23 "Core/Inc\\periphs/i2c.h"
+ 450              		.file 24 "Core/Inc/devs/mpu6050.h"
+ 451              		.file 25 "Core/Inc/utils/smoothing_algorithm.h"
+ 452              		.file 26 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 imu_utils.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:18     .text._ZN4Vec3IfED2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:25     .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED2Ev
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:25     .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED1Ev
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:42     .text._ZNK4Vec3IfE4getXEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:49     .text._ZNK4Vec3IfE4getXEv:00000000 _ZNK4Vec3IfE4getXEv
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:64     .text._ZNK4Vec3IfE4getYEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:71     .text._ZNK4Vec3IfE4getYEv:00000000 _ZNK4Vec3IfE4getYEv
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:86     .text._ZNK4Vec3IfE4getZEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:93     .text._ZNK4Vec3IfE4getZEv:00000000 _ZNK4Vec3IfE4getZEv
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:108    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:115    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 _ZN4Vec3IfE10set_ValuesEfff
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:135    .text._Z12swap_ElementIfEvRT_S1_:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:142    .text._Z12swap_ElementIfEvRT_S1_:00000000 _Z12swap_ElementIfEvRT_S1_
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:164    .text._Z14calc_OmegaMeanP7MPU6050m:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:171    .text._Z14calc_OmegaMeanP7MPU6050m:00000000 _Z14calc_OmegaMeanP7MPU6050m
+C:\Users\Prashant\AppData\Local\Temp\ccoDum7b.s:422    .text._Z14calc_OmegaMeanP7MPU6050m:00000168 $d
+                           .group:00000000 _ZN4Vec3IfED5Ev
+
+UNDEFINED SYMBOLS
+_ZN10Exp_SmoothC1Ef
+_Z21MPU6050_Read_NormGyroP7MPU6050
+_ZN10Exp_Smooth6smoothERKf
+HAL_Delay

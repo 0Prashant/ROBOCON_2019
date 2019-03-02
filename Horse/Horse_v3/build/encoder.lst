@@ -1,0 +1,448 @@
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"encoder.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.getCounts,"ax",%progbits
+  18              		.align	1
+  19              		.global	getCounts
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	getCounts:
+  26              	.LFB126:
+  27              		.file 1 "Core/Src/encoder.c"
+   1:Core/Src/encoder.c **** /* 22-1-2019 */
+   2:Core/Src/encoder.c **** 
+   3:Core/Src/encoder.c **** #include <stdlib.h>
+   4:Core/Src/encoder.c **** #include <math.h>
+   5:Core/Src/encoder.c **** #include "tim.h"
+   6:Core/Src/encoder.c **** #include "encoder.h"
+   7:Core/Src/encoder.c **** #include "defines.h"
+   8:Core/Src/encoder.c **** #include "motor.h"
+   9:Core/Src/encoder.c **** extern struct motorStr balance_motor;
+  10:Core/Src/encoder.c **** 
+  11:Core/Src/encoder.c **** int16_t getCounts(struct encoderStr *encoder)
+  12:Core/Src/encoder.c **** {
+  28              		.loc 1 12 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  13:Core/Src/encoder.c ****         return encoder->htim->Instance->CNT;
+  34              		.loc 1 13 0
+  35 0000 8368     		ldr	r3, [r0, #8]
+  36 0002 1B68     		ldr	r3, [r3]
+  37 0004 586A     		ldr	r0, [r3, #36]
+  38              	.LVL1:
+  14:Core/Src/encoder.c **** }
+  39              		.loc 1 14 0
+  40 0006 00B2     		sxth	r0, r0
+  41 0008 7047     		bx	lr
+  42              		.cfi_endproc
+  43              	.LFE126:
+  45              		.global	__aeabi_f2d
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 2
+
+
+  46              		.global	__aeabi_i2d
+  47              		.global	__aeabi_dmul
+  48              		.global	__aeabi_ddiv
+  49              		.global	__aeabi_d2f
+  50              		.section	.text.calculateOmega,"ax",%progbits
+  51              		.align	1
+  52              		.global	calculateOmega
+  53              		.syntax unified
+  54              		.thumb
+  55              		.thumb_func
+  56              		.fpu fpv4-sp-d16
+  58              	calculateOmega:
+  59              	.LFB127:
+  15:Core/Src/encoder.c **** 
+  16:Core/Src/encoder.c **** float calculateOmega(struct encoderStr *encoder)
+  17:Core/Src/encoder.c **** {
+  60              		.loc 1 17 0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64              	.LVL2:
+  65 0000 D0B5     		push	{r4, r6, r7, lr}
+  66              	.LCFI0:
+  67              		.cfi_def_cfa_offset 16
+  68              		.cfi_offset 4, -16
+  69              		.cfi_offset 6, -12
+  70              		.cfi_offset 7, -8
+  71              		.cfi_offset 14, -4
+  72 0002 0446     		mov	r4, r0
+  18:Core/Src/encoder.c ****         /* w = 2 * pi * f
+  19:Core/Src/encoder.c ****     *   = 2 * pi * counts_per_st / ( PPR * dt ) 
+  20:Core/Src/encoder.c ****     */
+  21:Core/Src/encoder.c ****         
+  22:Core/Src/encoder.c ****         if(encoder == balance_motor.encoder)
+  73              		.loc 1 22 0
+  74 0004 2C4B     		ldr	r3, .L7+8
+  75 0006 1B6B     		ldr	r3, [r3, #48]
+  76 0008 8342     		cmp	r3, r0
+  77 000a 28D0     		beq	.L6
+  78              	.LBB2:
+  23:Core/Src/encoder.c ****         {
+  24:Core/Src/encoder.c ****                 int16_t counts_per_st = encoder->count - encoder->last_count;
+  25:Core/Src/encoder.c ****                 encoder->last_count = encoder->count;
+  26:Core/Src/encoder.c ****                 return 2 * PI * counts_per_st / (encoder->ppr * dt_secs);
+  27:Core/Src/encoder.c ****         }
+  28:Core/Src/encoder.c ****         else
+  29:Core/Src/encoder.c ****         {
+  30:Core/Src/encoder.c ****                 int16_t counts_per_st = encoder->htim->Instance->CNT - encoder->last_count;
+  79              		.loc 1 30 0
+  80 000c 8368     		ldr	r3, [r0, #8]
+  81 000e 1A68     		ldr	r2, [r3]
+  82 0010 536A     		ldr	r3, [r2, #36]
+  83 0012 8188     		ldrh	r1, [r0, #4]
+  84 0014 5B1A     		subs	r3, r3, r1
+  85 0016 1BB2     		sxth	r3, r3
+  86              	.LVL3:
+  31:Core/Src/encoder.c ****                 encoder->last_count = encoder->htim->Instance->CNT;
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 3
+
+
+  87              		.loc 1 31 0
+  88 0018 526A     		ldr	r2, [r2, #36]
+  89 001a 8280     		strh	r2, [r0, #4]	@ movhi
+  32:Core/Src/encoder.c ****                 return 2 * PI * counts_per_st / (encoder->ppr * dt_secs);                   
+  90              		.loc 1 32 0
+  91 001c 07EE903A 		vmov	s15, r3	@ int
+  92 0020 F8EEE77A 		vcvt.f32.s32	s15, s15
+  93 0024 9FED257A 		vldr.32	s14, .L7+12
+  94 0028 67EE877A 		vmul.f32	s15, s15, s14
+  95 002c 17EE900A 		vmov	r0, s15
+  96              	.LVL4:
+  97 0030 FFF7FEFF 		bl	__aeabi_f2d
+  98              	.LVL5:
+  99 0034 0646     		mov	r6, r0
+ 100 0036 0F46     		mov	r7, r1
+ 101 0038 2088     		ldrh	r0, [r4]
+ 102 003a FFF7FEFF 		bl	__aeabi_i2d
+ 103              	.LVL6:
+ 104 003e 1CA3     		adr	r3, .L7
+ 105 0040 D3E90023 		ldrd	r2, [r3]
+ 106 0044 FFF7FEFF 		bl	__aeabi_dmul
+ 107              	.LVL7:
+ 108 0048 0246     		mov	r2, r0
+ 109 004a 0B46     		mov	r3, r1
+ 110 004c 3046     		mov	r0, r6
+ 111 004e 3946     		mov	r1, r7
+ 112 0050 FFF7FEFF 		bl	__aeabi_ddiv
+ 113              	.LVL8:
+ 114 0054 FFF7FEFF 		bl	__aeabi_d2f
+ 115              	.LVL9:
+ 116 0058 00EE100A 		vmov	s0, r0
+ 117              	.L2:
+ 118              	.LBE2:
+  33:Core/Src/encoder.c ****         }
+  34:Core/Src/encoder.c **** }
+ 119              		.loc 1 34 0
+ 120 005c D0BD     		pop	{r4, r6, r7, pc}
+ 121              	.LVL10:
+ 122              	.L6:
+ 123              	.LBB3:
+  24:Core/Src/encoder.c ****                 encoder->last_count = encoder->count;
+ 124              		.loc 1 24 0
+ 125 005e B0F90620 		ldrsh	r2, [r0, #6]
+ 126 0062 93B2     		uxth	r3, r2
+ 127 0064 8188     		ldrh	r1, [r0, #4]
+ 128 0066 5B1A     		subs	r3, r3, r1
+ 129 0068 1BB2     		sxth	r3, r3
+ 130              	.LVL11:
+  25:Core/Src/encoder.c ****                 return 2 * PI * counts_per_st / (encoder->ppr * dt_secs);
+ 131              		.loc 1 25 0
+ 132 006a 8280     		strh	r2, [r0, #4]	@ movhi
+  26:Core/Src/encoder.c ****         }
+ 133              		.loc 1 26 0
+ 134 006c 07EE903A 		vmov	s15, r3	@ int
+ 135 0070 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 136 0074 9FED117A 		vldr.32	s14, .L7+12
+ 137 0078 67EE877A 		vmul.f32	s15, s15, s14
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 4
+
+
+ 138 007c 17EE900A 		vmov	r0, s15
+ 139              	.LVL12:
+ 140 0080 FFF7FEFF 		bl	__aeabi_f2d
+ 141              	.LVL13:
+ 142 0084 0646     		mov	r6, r0
+ 143 0086 0F46     		mov	r7, r1
+ 144 0088 2088     		ldrh	r0, [r4]
+ 145 008a FFF7FEFF 		bl	__aeabi_i2d
+ 146              	.LVL14:
+ 147 008e 08A3     		adr	r3, .L7
+ 148 0090 D3E90023 		ldrd	r2, [r3]
+ 149 0094 FFF7FEFF 		bl	__aeabi_dmul
+ 150              	.LVL15:
+ 151 0098 0246     		mov	r2, r0
+ 152 009a 0B46     		mov	r3, r1
+ 153 009c 3046     		mov	r0, r6
+ 154 009e 3946     		mov	r1, r7
+ 155 00a0 FFF7FEFF 		bl	__aeabi_ddiv
+ 156              	.LVL16:
+ 157 00a4 FFF7FEFF 		bl	__aeabi_d2f
+ 158              	.LVL17:
+ 159 00a8 00EE100A 		vmov	s0, r0
+ 160 00ac D6E7     		b	.L2
+ 161              	.L8:
+ 162 00ae 00BF     		.align	3
+ 163              	.L7:
+ 164 00b0 7B14AE47 		.word	1202590843
+ 165 00b4 E17A843F 		.word	1065646817
+ 166 00b8 00000000 		.word	balance_motor
+ 167 00bc 560EC940 		.word	1086918230
+ 168              	.LBE3:
+ 169              		.cfi_endproc
+ 170              	.LFE127:
+ 172              		.global	__aeabi_dadd
+ 173              		.global	__aeabi_dcmplt
+ 174              		.section	.text.calculateAngle,"ax",%progbits
+ 175              		.align	1
+ 176              		.global	calculateAngle
+ 177              		.syntax unified
+ 178              		.thumb
+ 179              		.thumb_func
+ 180              		.fpu fpv4-sp-d16
+ 182              	calculateAngle:
+ 183              	.LFB128:
+  35:Core/Src/encoder.c **** 
+  36:Core/Src/encoder.c **** float calculateAngle(struct encoderStr *encoder)
+  37:Core/Src/encoder.c **** {
+ 184              		.loc 1 37 0
+ 185              		.cfi_startproc
+ 186              		@ args = 0, pretend = 0, frame = 0
+ 187              		@ frame_needed = 0, uses_anonymous_args = 0
+ 188              	.LVL18:
+ 189 0000 38B5     		push	{r3, r4, r5, lr}
+ 190              	.LCFI1:
+ 191              		.cfi_def_cfa_offset 16
+ 192              		.cfi_offset 3, -16
+ 193              		.cfi_offset 4, -12
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 5
+
+
+ 194              		.cfi_offset 5, -8
+ 195              		.cfi_offset 14, -4
+ 196 0002 2DED028B 		vpush.64	{d8}
+ 197              	.LCFI2:
+ 198              		.cfi_def_cfa_offset 24
+ 199              		.cfi_offset 80, -24
+ 200              		.cfi_offset 81, -20
+ 201 0006 0446     		mov	r4, r0
+  38:Core/Src/encoder.c ****         float angle;
+  39:Core/Src/encoder.c **** 
+  40:Core/Src/encoder.c ****         // angle = (360 / PPR) * no_of_counts
+  41:Core/Src/encoder.c ****         float mult_factor = 360.0 / encoder->ppr;
+ 202              		.loc 1 41 0
+ 203 0008 0088     		ldrh	r0, [r0]
+ 204              	.LVL19:
+ 205 000a FFF7FEFF 		bl	__aeabi_i2d
+ 206              	.LVL20:
+ 207 000e 0246     		mov	r2, r0
+ 208 0010 0B46     		mov	r3, r1
+ 209 0012 0020     		movs	r0, #0
+ 210 0014 2249     		ldr	r1, .L19+8
+ 211 0016 FFF7FEFF 		bl	__aeabi_ddiv
+ 212              	.LVL21:
+ 213 001a FFF7FEFF 		bl	__aeabi_d2f
+ 214              	.LVL22:
+  42:Core/Src/encoder.c ****         int16_t inst_count = encoder->htim->Instance->CNT;
+ 215              		.loc 1 42 0
+ 216 001e A368     		ldr	r3, [r4, #8]
+ 217 0020 1B68     		ldr	r3, [r3]
+ 218 0022 5B6A     		ldr	r3, [r3, #36]
+ 219              	.LVL23:
+  43:Core/Src/encoder.c ****         int16_t counts = inst_count - encoder->ref_count;
+ 220              		.loc 1 43 0
+ 221 0024 6288     		ldrh	r2, [r4, #2]
+ 222 0026 9B1A     		subs	r3, r3, r2
+ 223              	.LVL24:
+ 224 0028 1BB2     		sxth	r3, r3
+ 225 002a 08EE103A 		vmov	s16, r3	@ int
+ 226              	.LVL25:
+  44:Core/Src/encoder.c ****         angle = mult_factor * counts;
+ 227              		.loc 1 44 0
+ 228 002e B8EEC88A 		vcvt.f32.s32	s16, s16
+ 229              	.LVL26:
+ 230 0032 07EE900A 		vmov	s15, r0
+ 231 0036 28EE278A 		vmul.f32	s16, s16, s15
+ 232              	.LVL27:
+  45:Core/Src/encoder.c **** 
+  46:Core/Src/encoder.c ****         // Normalize: 360 - (-360)
+  47:Core/Src/encoder.c ****         while (fabs(angle) > 360)
+ 233              		.loc 1 47 0
+ 234 003a 03E0     		b	.L10
+ 235              	.LVL28:
+ 236              	.L16:
+  48:Core/Src/encoder.c ****         {
+  49:Core/Src/encoder.c ****                 if ((fabs(angle) - (angle * (-1))) < 0.00001)
+  50:Core/Src/encoder.c ****                         angle += 360;
+  51:Core/Src/encoder.c ****                 else
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 6
+
+
+  52:Core/Src/encoder.c ****                 {
+  53:Core/Src/encoder.c ****                         angle -= 360;
+ 237              		.loc 1 53 0
+ 238 003c DFED197A 		vldr.32	s15, .L19+12
+ 239 0040 38EE678A 		vsub.f32	s16, s16, s15
+ 240              	.LVL29:
+ 241              	.L10:
+  47:Core/Src/encoder.c ****         {
+ 242              		.loc 1 47 0
+ 243 0044 F0EEC87A 		vabs.f32	s15, s16
+ 244 0048 9FED167A 		vldr.32	s14, .L19+12
+ 245 004c F4EEC77A 		vcmpe.f32	s15, s14
+ 246 0050 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 247 0054 1BDD     		ble	.L18
+  49:Core/Src/encoder.c ****                         angle += 360;
+ 248              		.loc 1 49 0
+ 249 0056 17EE900A 		vmov	r0, s15
+ 250 005a FFF7FEFF 		bl	__aeabi_f2d
+ 251              	.LVL30:
+ 252 005e 0446     		mov	r4, r0
+ 253 0060 0D46     		mov	r5, r1
+ 254 0062 18EE100A 		vmov	r0, s16
+ 255 0066 FFF7FEFF 		bl	__aeabi_f2d
+ 256              	.LVL31:
+ 257 006a 0246     		mov	r2, r0
+ 258 006c 0B46     		mov	r3, r1
+ 259 006e 2046     		mov	r0, r4
+ 260 0070 2946     		mov	r1, r5
+ 261 0072 FFF7FEFF 		bl	__aeabi_dadd
+ 262              	.LVL32:
+ 263 0076 08A3     		adr	r3, .L19
+ 264 0078 D3E90023 		ldrd	r2, [r3]
+ 265 007c FFF7FEFF 		bl	__aeabi_dcmplt
+ 266              	.LVL33:
+ 267 0080 0028     		cmp	r0, #0
+ 268 0082 DBD0     		beq	.L16
+  50:Core/Src/encoder.c ****                 else
+ 269              		.loc 1 50 0
+ 270 0084 DFED077A 		vldr.32	s15, .L19+12
+ 271 0088 38EE278A 		vadd.f32	s16, s16, s15
+ 272              	.LVL34:
+ 273 008c DAE7     		b	.L10
+ 274              	.L18:
+  54:Core/Src/encoder.c ****                 }
+  55:Core/Src/encoder.c ****         }
+  56:Core/Src/encoder.c **** 
+  57:Core/Src/encoder.c ****         return angle;
+  58:Core/Src/encoder.c **** }
+ 275              		.loc 1 58 0
+ 276 008e B0EE480A 		vmov.f32	s0, s16
+ 277 0092 BDEC028B 		vldm	sp!, {d8}
+ 278              	.LCFI3:
+ 279              		.cfi_restore 80
+ 280              		.cfi_restore 81
+ 281              		.cfi_def_cfa_offset 16
+ 282              	.LVL35:
+ 283 0096 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 7
+
+
+ 284              	.L20:
+ 285              		.align	3
+ 286              	.L19:
+ 287 0098 F168E388 		.word	-1998362383
+ 288 009c B5F8E43E 		.word	1055193269
+ 289 00a0 00807640 		.word	1081507840
+ 290 00a4 0000B443 		.word	1135869952
+ 291              		.cfi_endproc
+ 292              	.LFE128:
+ 294              		.section	.text.resetEncoderAngle,"ax",%progbits
+ 295              		.align	1
+ 296              		.global	resetEncoderAngle
+ 297              		.syntax unified
+ 298              		.thumb
+ 299              		.thumb_func
+ 300              		.fpu fpv4-sp-d16
+ 302              	resetEncoderAngle:
+ 303              	.LFB129:
+  59:Core/Src/encoder.c **** 
+  60:Core/Src/encoder.c **** void resetEncoderAngle(struct encoderStr *encoder)
+  61:Core/Src/encoder.c **** {
+ 304              		.loc 1 61 0
+ 305              		.cfi_startproc
+ 306              		@ args = 0, pretend = 0, frame = 0
+ 307              		@ frame_needed = 0, uses_anonymous_args = 0
+ 308              		@ link register save eliminated.
+ 309              	.LVL36:
+  62:Core/Src/encoder.c ****         encoder->ref_count = encoder->htim->Instance->CNT;
+ 310              		.loc 1 62 0
+ 311 0000 8368     		ldr	r3, [r0, #8]
+ 312 0002 1B68     		ldr	r3, [r3]
+ 313 0004 5B6A     		ldr	r3, [r3, #36]
+ 314 0006 4380     		strh	r3, [r0, #2]	@ movhi
+  63:Core/Src/encoder.c **** }
+ 315              		.loc 1 63 0
+ 316 0008 7047     		bx	lr
+ 317              		.cfi_endproc
+ 318              	.LFE129:
+ 320              		.text
+ 321              	.Letext0:
+ 322              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 323              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 324              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 325              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 326              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 327              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 328              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 329              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 330              		.file 10 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4.h"
+ 331              		.file 11 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Incl
+ 332              		.file 12 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Incl
+ 333              		.file 13 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32
+ 334              		.file 14 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32
+ 335              		.file 15 "C:/Users/Rishav/Documents/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32
+ 336              		.file 16 "Core/Inc\\periphs/tim.h"
+ 337              		.file 17 "Core/Inc/encoder.h"
+ 338              		.file 18 "Core/Inc/motor.h"
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 8
+
+
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 encoder.c
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:18     .text.getCounts:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:25     .text.getCounts:00000000 getCounts
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:51     .text.calculateOmega:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:58     .text.calculateOmega:00000000 calculateOmega
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:164    .text.calculateOmega:000000b0 $d
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:175    .text.calculateAngle:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:182    .text.calculateAngle:00000000 calculateAngle
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:287    .text.calculateAngle:00000098 $d
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:295    .text.resetEncoderAngle:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\ccomAZs8.s:302    .text.resetEncoderAngle:00000000 resetEncoderAngle
+
+UNDEFINED SYMBOLS
+__aeabi_f2d
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_d2f
+balance_motor
+__aeabi_dadd
+__aeabi_dcmplt

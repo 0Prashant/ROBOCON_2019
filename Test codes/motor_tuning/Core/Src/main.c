@@ -143,7 +143,7 @@ int main(void)
 	set_Direction(&Wheel_arr[0], DIR_AHEAD);
         set_DutyCycle(&Wheel_arr[0], 20000);
 	HAL_Delay(2000);
-	play();
+	//play();
 	
         /* USER CODE END 2 */
 
@@ -151,6 +151,7 @@ int main(void)
         /* USER CODE BEGIN WHILE */
         while (1)
         {
+			printf("Hello \n");
 
 		//printf("%d\t %d\t %d\t %d",count[0], count[1], count[2], count[3]);
                 

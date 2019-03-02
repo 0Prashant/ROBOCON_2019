@@ -17,8 +17,8 @@ void run_CurrentConfig(void);
 
 // This function contains an infinite loop
 void play(void);
-int goto_distance(float dx, float dy);
-int goto_absolute_distance(float dx, float dy);
+int goto_distance(float dx, float dy, float dth);
+int goto_absolute_distance(float dx, float dy, float dth);
 
 
 #endif // _ROBOT_H_

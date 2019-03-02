@@ -1,0 +1,686 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"interrupt.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_GPIO_EXTI_Callback
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	HAL_GPIO_EXTI_Callback:
+  26              	.LFB136:
+  27              		.file 1 "Core/Src/robot/interrupt.cpp"
+   1:Core/Src/robot/interrupt.cpp **** /*1-27-2019*/
+   2:Core/Src/robot/interrupt.cpp **** 
+   3:Core/Src/robot/interrupt.cpp **** #include "interrupt.h"
+   4:Core/Src/robot/interrupt.cpp **** #include "robo_init.h"
+   5:Core/Src/robot/interrupt.cpp **** #include "blnc_motor.h"
+   6:Core/Src/robot/interrupt.cpp **** #include "robo_states.h"
+   7:Core/Src/robot/interrupt.cpp **** 
+   8:Core/Src/robot/interrupt.cpp **** // void Balance_Handle_Interrupt(uint16_t GPIO_Pin);
+   9:Core/Src/robot/interrupt.cpp **** 
+  10:Core/Src/robot/interrupt.cpp **** extern State gHorse_State;
+  11:Core/Src/robot/interrupt.cpp **** extern Blnc gBallet;
+  12:Core/Src/robot/interrupt.cpp **** extern bool gReady_To_Go;
+  13:Core/Src/robot/interrupt.cpp **** 
+  14:Core/Src/robot/interrupt.cpp **** //! This is dangerous
+  15:Core/Src/robot/interrupt.cpp **** State_ID gCurrent_Position = State_ID::WS3;
+  16:Core/Src/robot/interrupt.cpp **** 
+  17:Core/Src/robot/interrupt.cpp **** static bool gFirst_Home_Interrupt = true;
+  18:Core/Src/robot/interrupt.cpp **** 
+  19:Core/Src/robot/interrupt.cpp **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN)
+  20:Core/Src/robot/interrupt.cpp **** {
+  28              		.loc 1 20 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 2
+
+
+  39              		.cfi_offset 14, -4
+  40 0002 0446     		mov	r4, r0
+  21:Core/Src/robot/interrupt.cpp ****         if (GPIO_PIN == int_arr[0].int_pin)
+  41              		.loc 1 21 0
+  42 0004 714B     		ldr	r3, .L38
+  43 0006 1B89     		ldrh	r3, [r3, #8]
+  44 0008 8342     		cmp	r3, r0
+  45 000a 24D0     		beq	.L22
+  46              	.LVL1:
+  47              	.L2:
+  22:Core/Src/robot/interrupt.cpp ****         {
+  23:Core/Src/robot/interrupt.cpp ****                 printf("Motor_1 \n");
+  24:Core/Src/robot/interrupt.cpp ****                 if (int_arr[0].intState == STATE_B)
+  25:Core/Src/robot/interrupt.cpp ****                 {
+  26:Core/Src/robot/interrupt.cpp ****                         int_arr[0].intState = STATE_A;
+  27:Core/Src/robot/interrupt.cpp ****                 }
+  28:Core/Src/robot/interrupt.cpp ****                 else if (int_arr[0].intState == STATE_HOME)
+  29:Core/Src/robot/interrupt.cpp ****                 {
+  30:Core/Src/robot/interrupt.cpp ****                         int_arr[0].fhome_pos = 1;
+  31:Core/Src/robot/interrupt.cpp ****                 }
+  32:Core/Src/robot/interrupt.cpp ****         }
+  33:Core/Src/robot/interrupt.cpp **** 
+  34:Core/Src/robot/interrupt.cpp ****         if (GPIO_PIN == int_arr[1].int_pin)
+  48              		.loc 1 34 0
+  49 000c 6F4B     		ldr	r3, .L38
+  50 000e 9B8A     		ldrh	r3, [r3, #20]
+  51 0010 A342     		cmp	r3, r4
+  52 0012 31D0     		beq	.L23
+  53              	.L4:
+  35:Core/Src/robot/interrupt.cpp ****         {
+  36:Core/Src/robot/interrupt.cpp ****                 printf("Motor_2 \n");
+  37:Core/Src/robot/interrupt.cpp ****                 if (int_arr[1].intState == STATE_B)
+  38:Core/Src/robot/interrupt.cpp ****                 {
+  39:Core/Src/robot/interrupt.cpp ****                         int_arr[1].intState = STATE_A;
+  40:Core/Src/robot/interrupt.cpp ****                 }
+  41:Core/Src/robot/interrupt.cpp ****                 else if (int_arr[1].intState == STATE_HOME)
+  42:Core/Src/robot/interrupt.cpp ****                 {
+  43:Core/Src/robot/interrupt.cpp ****                         int_arr[1].fhome_pos = 1;
+  44:Core/Src/robot/interrupt.cpp ****                 }
+  45:Core/Src/robot/interrupt.cpp ****         }
+  46:Core/Src/robot/interrupt.cpp **** 
+  47:Core/Src/robot/interrupt.cpp ****         if (GPIO_PIN == int_arr[2].int_pin)
+  54              		.loc 1 47 0
+  55 0014 6D4B     		ldr	r3, .L38
+  56 0016 1B8C     		ldrh	r3, [r3, #32]
+  57 0018 A342     		cmp	r3, r4
+  58 001a 3ED0     		beq	.L24
+  59              	.L6:
+  48:Core/Src/robot/interrupt.cpp ****         {
+  49:Core/Src/robot/interrupt.cpp ****                 printf("Motor_3 \n");
+  50:Core/Src/robot/interrupt.cpp ****                 if (int_arr[2].intState == STATE_B)
+  51:Core/Src/robot/interrupt.cpp ****                 {
+  52:Core/Src/robot/interrupt.cpp ****                         int_arr[2].intState = STATE_A;
+  53:Core/Src/robot/interrupt.cpp ****                 }
+  54:Core/Src/robot/interrupt.cpp ****                 else if (int_arr[2].intState == STATE_HOME)
+  55:Core/Src/robot/interrupt.cpp ****                 {
+  56:Core/Src/robot/interrupt.cpp ****                         int_arr[2].fhome_pos = 1;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 3
+
+
+  57:Core/Src/robot/interrupt.cpp ****                 }
+  58:Core/Src/robot/interrupt.cpp ****         }
+  59:Core/Src/robot/interrupt.cpp **** 
+  60:Core/Src/robot/interrupt.cpp ****         if (GPIO_PIN == int_arr[3].int_pin)
+  60              		.loc 1 60 0
+  61 001c 6B4B     		ldr	r3, .L38
+  62 001e 9B8D     		ldrh	r3, [r3, #44]
+  63 0020 A342     		cmp	r3, r4
+  64 0022 4DD0     		beq	.L25
+  65              	.L8:
+  61:Core/Src/robot/interrupt.cpp ****         {
+  62:Core/Src/robot/interrupt.cpp ****                 printf("Motor_4 \n");
+  63:Core/Src/robot/interrupt.cpp ****                 if (int_arr[3].intState == STATE_B)
+  64:Core/Src/robot/interrupt.cpp ****                 {
+  65:Core/Src/robot/interrupt.cpp ****                         int_arr[3].intState = STATE_A;
+  66:Core/Src/robot/interrupt.cpp ****                 }
+  67:Core/Src/robot/interrupt.cpp ****                 else if (int_arr[3].intState == STATE_HOME)
+  68:Core/Src/robot/interrupt.cpp ****                 {
+  69:Core/Src/robot/interrupt.cpp ****                         int_arr[3].fhome_pos = 1;
+  70:Core/Src/robot/interrupt.cpp ****                 }
+  71:Core/Src/robot/interrupt.cpp ****         }
+  72:Core/Src/robot/interrupt.cpp **** 
+  73:Core/Src/robot/interrupt.cpp ****         //! This zombie code is here for position pid purpose
+  74:Core/Src/robot/interrupt.cpp ****         // if (GPIO_PIN == GPIO_PIN_12) //blnc_motor_chA_Pin
+  75:Core/Src/robot/interrupt.cpp ****         // {
+  76:Core/Src/robot/interrupt.cpp ****         //         printf("int\n");
+  77:Core/Src/robot/interrupt.cpp ****         //         if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) != GPIO_PIN_RESET) //blnc_motor_chB_Port
+  78:Core/Src/robot/interrupt.cpp ****         //         {
+  79:Core/Src/robot/interrupt.cpp ****         //                 ++gCounter;
+  80:Core/Src/robot/interrupt.cpp ****         //         }
+  81:Core/Src/robot/interrupt.cpp ****         //         else
+  82:Core/Src/robot/interrupt.cpp ****         //         {
+  83:Core/Src/robot/interrupt.cpp ****         //                 --gCounter;
+  84:Core/Src/robot/interrupt.cpp ****         //         }
+  85:Core/Src/robot/interrupt.cpp ****         //         // balance.motor.encoder->count = gCounter;
+  86:Core/Src/robot/interrupt.cpp ****         // }
+  87:Core/Src/robot/interrupt.cpp **** 	if(!gReady_To_Go)
+  66              		.loc 1 87 0
+  67 0024 6A4B     		ldr	r3, .L38+4
+  68 0026 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  69 0028 A3B9     		cbnz	r3, .L1
+  88:Core/Src/robot/interrupt.cpp **** 	{
+  89:Core/Src/robot/interrupt.cpp ****         	if (GPIO_PIN == gBallet.interrupt[0].int_pin)
+  70              		.loc 1 89 0
+  71 002a 6A4B     		ldr	r3, .L38+8
+  72 002c 9B8F     		ldrh	r3, [r3, #60]
+  73 002e A342     		cmp	r3, r4
+  74 0030 5AD0     		beq	.L26
+  75              	.L11:
+  90:Core/Src/robot/interrupt.cpp ****         	{
+  91:Core/Src/robot/interrupt.cpp ****         	        if (gHorse_State.get_ID() == State_ID::WS3)
+  92:Core/Src/robot/interrupt.cpp ****         	        {
+  93:Core/Src/robot/interrupt.cpp ****         	                gCurrent_Position = State_ID::WS3;
+  94:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+  95:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+  96:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+  97:Core/Src/robot/interrupt.cpp ****         	        }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 4
+
+
+  98:Core/Src/robot/interrupt.cpp **** 			printf("A\n");
+  99:Core/Src/robot/interrupt.cpp ****         	}
+ 100:Core/Src/robot/interrupt.cpp ****         	if (GPIO_PIN == gBallet.interrupt[1].int_pin)
+  76              		.loc 1 100 0
+  77 0032 684B     		ldr	r3, .L38+8
+  78 0034 B3F84830 		ldrh	r3, [r3, #72]
+  79 0038 A342     		cmp	r3, r4
+  80 003a 6ED0     		beq	.L27
+  81              	.L13:
+ 101:Core/Src/robot/interrupt.cpp ****         	{
+ 102:Core/Src/robot/interrupt.cpp ****         	        if (gHorse_State.get_ID() == State_ID::WS4)
+ 103:Core/Src/robot/interrupt.cpp ****         	        {
+ 104:Core/Src/robot/interrupt.cpp ****         	                gCurrent_Position = State_ID::WS4;
+ 105:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ 106:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 107:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 108:Core/Src/robot/interrupt.cpp ****         	        }
+ 109:Core/Src/robot/interrupt.cpp **** 			printf("B\n");
+ 110:Core/Src/robot/interrupt.cpp ****         	}
+ 111:Core/Src/robot/interrupt.cpp ****         	if (GPIO_PIN == gBallet.interrupt[2].int_pin)
+  82              		.loc 1 111 0
+  83 003c 654B     		ldr	r3, .L38+8
+  84 003e B3F85430 		ldrh	r3, [r3, #84]
+  85 0042 A342     		cmp	r3, r4
+  86 0044 00F08280 		beq	.L28
+  87              	.L15:
+ 112:Core/Src/robot/interrupt.cpp ****         	{
+ 113:Core/Src/robot/interrupt.cpp ****         	        if ((gHorse_State.get_ID() == State_ID::HOME) || (gHorse_State.get_ID() == State_I
+ 114:Core/Src/robot/interrupt.cpp ****         	        {
+ 115:Core/Src/robot/interrupt.cpp ****         	                if (gFirst_Home_Interrupt)
+ 116:Core/Src/robot/interrupt.cpp ****         	                {
+ 117:Core/Src/robot/interrupt.cpp ****         	                        gFirst_Home_Interrupt = false;
+ 118:Core/Src/robot/interrupt.cpp ****         	                        gCurrent_Position = State_ID::HOME;
+ 119:Core/Src/robot/interrupt.cpp ****         	                }
+ 120:Core/Src/robot/interrupt.cpp ****         	                else
+ 121:Core/Src/robot/interrupt.cpp ****         	                {
+ 122:Core/Src/robot/interrupt.cpp ****         	                        gCurrent_Position = State_ID::WS1;
+ 123:Core/Src/robot/interrupt.cpp ****         	                }
+ 124:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ 125:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 126:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 127:Core/Src/robot/interrupt.cpp ****         	        }
+ 128:Core/Src/robot/interrupt.cpp ****         	        printf("C\n");
+ 129:Core/Src/robot/interrupt.cpp ****         	}
+ 130:Core/Src/robot/interrupt.cpp **** 
+ 131:Core/Src/robot/interrupt.cpp ****         	if (GPIO_PIN == gBallet.interrupt[3].int_pin)
+  88              		.loc 1 131 0
+  89 0048 624B     		ldr	r3, .L38+8
+  90 004a B3F86030 		ldrh	r3, [r3, #96]
+  91 004e A342     		cmp	r3, r4
+  92 0050 00F0A280 		beq	.L29
+  93              	.L1:
+ 132:Core/Src/robot/interrupt.cpp ****         	{
+ 133:Core/Src/robot/interrupt.cpp ****         	        if (gHorse_State.get_ID() == State_ID::WS2)
+ 134:Core/Src/robot/interrupt.cpp ****         	        {
+ 135:Core/Src/robot/interrupt.cpp ****         	                gCurrent_Position = State_ID::WS2;
+ 136:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 5
+
+
+ 137:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 138:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 139:Core/Src/robot/interrupt.cpp ****         	        }
+ 140:Core/Src/robot/interrupt.cpp ****         	        printf("D\n");
+ 141:Core/Src/robot/interrupt.cpp ****         	}
+ 142:Core/Src/robot/interrupt.cpp **** 	}
+ 143:Core/Src/robot/interrupt.cpp **** }
+  94              		.loc 1 143 0
+  95 0054 70BD     		pop	{r4, r5, r6, pc}
+  96              	.LVL2:
+  97              	.L22:
+  23:Core/Src/robot/interrupt.cpp ****                 if (int_arr[0].intState == STATE_B)
+  98              		.loc 1 23 0
+  99 0056 6048     		ldr	r0, .L38+12
+ 100              	.LVL3:
+ 101 0058 FFF7FEFF 		bl	puts
+ 102              	.LVL4:
+  24:Core/Src/robot/interrupt.cpp ****                 {
+ 103              		.loc 1 24 0
+ 104 005c 5B4B     		ldr	r3, .L38
+ 105 005e 9B7A     		ldrb	r3, [r3, #10]	@ zero_extendqisi2
+ 106 0060 012B     		cmp	r3, #1
+ 107 0062 05D0     		beq	.L30
+  28:Core/Src/robot/interrupt.cpp ****                 {
+ 108              		.loc 1 28 0
+ 109 0064 022B     		cmp	r3, #2
+ 110 0066 D1D1     		bne	.L2
+  30:Core/Src/robot/interrupt.cpp ****                 }
+ 111              		.loc 1 30 0
+ 112 0068 584B     		ldr	r3, .L38
+ 113 006a 0122     		movs	r2, #1
+ 114 006c 5A70     		strb	r2, [r3, #1]
+ 115 006e CDE7     		b	.L2
+ 116              	.L30:
+  26:Core/Src/robot/interrupt.cpp ****                 }
+ 117              		.loc 1 26 0
+ 118 0070 564B     		ldr	r3, .L38
+ 119 0072 0022     		movs	r2, #0
+ 120 0074 9A72     		strb	r2, [r3, #10]
+ 121 0076 C9E7     		b	.L2
+ 122              	.L23:
+  36:Core/Src/robot/interrupt.cpp ****                 if (int_arr[1].intState == STATE_B)
+ 123              		.loc 1 36 0
+ 124 0078 5848     		ldr	r0, .L38+16
+ 125 007a FFF7FEFF 		bl	puts
+ 126              	.LVL5:
+  37:Core/Src/robot/interrupt.cpp ****                 {
+ 127              		.loc 1 37 0
+ 128 007e 534B     		ldr	r3, .L38
+ 129 0080 9B7D     		ldrb	r3, [r3, #22]	@ zero_extendqisi2
+ 130 0082 012B     		cmp	r3, #1
+ 131 0084 05D0     		beq	.L31
+  41:Core/Src/robot/interrupt.cpp ****                 {
+ 132              		.loc 1 41 0
+ 133 0086 022B     		cmp	r3, #2
+ 134 0088 C4D1     		bne	.L4
+  43:Core/Src/robot/interrupt.cpp ****                 }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 6
+
+
+ 135              		.loc 1 43 0
+ 136 008a 504B     		ldr	r3, .L38
+ 137 008c 0122     		movs	r2, #1
+ 138 008e 5A73     		strb	r2, [r3, #13]
+ 139 0090 C0E7     		b	.L4
+ 140              	.L31:
+  39:Core/Src/robot/interrupt.cpp ****                 }
+ 141              		.loc 1 39 0
+ 142 0092 4E4B     		ldr	r3, .L38
+ 143 0094 0022     		movs	r2, #0
+ 144 0096 9A75     		strb	r2, [r3, #22]
+ 145 0098 BCE7     		b	.L4
+ 146              	.L24:
+  49:Core/Src/robot/interrupt.cpp ****                 if (int_arr[2].intState == STATE_B)
+ 147              		.loc 1 49 0
+ 148 009a 5148     		ldr	r0, .L38+20
+ 149 009c FFF7FEFF 		bl	puts
+ 150              	.LVL6:
+  50:Core/Src/robot/interrupt.cpp ****                 {
+ 151              		.loc 1 50 0
+ 152 00a0 4A4B     		ldr	r3, .L38
+ 153 00a2 93F82230 		ldrb	r3, [r3, #34]	@ zero_extendqisi2
+ 154 00a6 012B     		cmp	r3, #1
+ 155 00a8 05D0     		beq	.L32
+  54:Core/Src/robot/interrupt.cpp ****                 {
+ 156              		.loc 1 54 0
+ 157 00aa 022B     		cmp	r3, #2
+ 158 00ac B6D1     		bne	.L6
+  56:Core/Src/robot/interrupt.cpp ****                 }
+ 159              		.loc 1 56 0
+ 160 00ae 474B     		ldr	r3, .L38
+ 161 00b0 0122     		movs	r2, #1
+ 162 00b2 5A76     		strb	r2, [r3, #25]
+ 163 00b4 B2E7     		b	.L6
+ 164              	.L32:
+  52:Core/Src/robot/interrupt.cpp ****                 }
+ 165              		.loc 1 52 0
+ 166 00b6 454B     		ldr	r3, .L38
+ 167 00b8 0022     		movs	r2, #0
+ 168 00ba 83F82220 		strb	r2, [r3, #34]
+ 169 00be ADE7     		b	.L6
+ 170              	.L25:
+  62:Core/Src/robot/interrupt.cpp ****                 if (int_arr[3].intState == STATE_B)
+ 171              		.loc 1 62 0
+ 172 00c0 4848     		ldr	r0, .L38+24
+ 173 00c2 FFF7FEFF 		bl	puts
+ 174              	.LVL7:
+  63:Core/Src/robot/interrupt.cpp ****                 {
+ 175              		.loc 1 63 0
+ 176 00c6 414B     		ldr	r3, .L38
+ 177 00c8 93F82E30 		ldrb	r3, [r3, #46]	@ zero_extendqisi2
+ 178 00cc 012B     		cmp	r3, #1
+ 179 00ce 06D0     		beq	.L33
+  67:Core/Src/robot/interrupt.cpp ****                 {
+ 180              		.loc 1 67 0
+ 181 00d0 022B     		cmp	r3, #2
+ 182 00d2 A7D1     		bne	.L8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 7
+
+
+  69:Core/Src/robot/interrupt.cpp ****                 }
+ 183              		.loc 1 69 0
+ 184 00d4 3D4B     		ldr	r3, .L38
+ 185 00d6 0122     		movs	r2, #1
+ 186 00d8 83F82520 		strb	r2, [r3, #37]
+ 187 00dc A2E7     		b	.L8
+ 188              	.L33:
+  65:Core/Src/robot/interrupt.cpp ****                 }
+ 189              		.loc 1 65 0
+ 190 00de 3B4B     		ldr	r3, .L38
+ 191 00e0 0022     		movs	r2, #0
+ 192 00e2 83F82E20 		strb	r2, [r3, #46]
+ 193 00e6 9DE7     		b	.L8
+ 194              	.L26:
+  91:Core/Src/robot/interrupt.cpp ****         	        {
+ 195              		.loc 1 91 0
+ 196 00e8 3F48     		ldr	r0, .L38+28
+ 197 00ea FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 198              	.LVL8:
+ 199 00ee 0328     		cmp	r0, #3
+ 200 00f0 03D0     		beq	.L34
+ 201              	.L12:
+  98:Core/Src/robot/interrupt.cpp ****         	}
+ 202              		.loc 1 98 0
+ 203 00f2 3E48     		ldr	r0, .L38+32
+ 204 00f4 FFF7FEFF 		bl	puts
+ 205              	.LVL9:
+ 206 00f8 9BE7     		b	.L11
+ 207              	.L34:
+  93:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ 208              		.loc 1 93 0
+ 209 00fa 0326     		movs	r6, #3
+ 210 00fc 3C4B     		ldr	r3, .L38+36
+ 211 00fe 1E60     		str	r6, [r3]
+  94:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 212              		.loc 1 94 0
+ 213 0100 344D     		ldr	r5, .L38+8
+ 214 0102 0021     		movs	r1, #0
+ 215 0104 2846     		mov	r0, r5
+ 216 0106 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 217              	.LVL10:
+  95:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 218              		.loc 1 95 0
+ 219 010a 3146     		mov	r1, r6
+ 220 010c 2846     		mov	r0, r5
+ 221 010e FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 222              	.LVL11:
+  96:Core/Src/robot/interrupt.cpp ****         	        }
+ 223              		.loc 1 96 0
+ 224 0112 2F4B     		ldr	r3, .L38+4
+ 225 0114 0122     		movs	r2, #1
+ 226 0116 1A70     		strb	r2, [r3]
+ 227 0118 EBE7     		b	.L12
+ 228              	.L27:
+ 102:Core/Src/robot/interrupt.cpp ****         	        {
+ 229              		.loc 1 102 0
+ 230 011a 3348     		ldr	r0, .L38+28
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 8
+
+
+ 231 011c FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 232              	.LVL12:
+ 233 0120 0428     		cmp	r0, #4
+ 234 0122 03D0     		beq	.L35
+ 235              	.L14:
+ 109:Core/Src/robot/interrupt.cpp ****         	}
+ 236              		.loc 1 109 0
+ 237 0124 3348     		ldr	r0, .L38+40
+ 238 0126 FFF7FEFF 		bl	puts
+ 239              	.LVL13:
+ 240 012a 87E7     		b	.L13
+ 241              	.L35:
+ 104:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ 242              		.loc 1 104 0
+ 243 012c 304B     		ldr	r3, .L38+36
+ 244 012e 0422     		movs	r2, #4
+ 245 0130 1A60     		str	r2, [r3]
+ 105:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 246              		.loc 1 105 0
+ 247 0132 284D     		ldr	r5, .L38+8
+ 248 0134 0021     		movs	r1, #0
+ 249 0136 2846     		mov	r0, r5
+ 250 0138 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 251              	.LVL14:
+ 106:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 252              		.loc 1 106 0
+ 253 013c 0321     		movs	r1, #3
+ 254 013e 2846     		mov	r0, r5
+ 255 0140 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 256              	.LVL15:
+ 107:Core/Src/robot/interrupt.cpp ****         	        }
+ 257              		.loc 1 107 0
+ 258 0144 224B     		ldr	r3, .L38+4
+ 259 0146 0122     		movs	r2, #1
+ 260 0148 1A70     		strb	r2, [r3]
+ 261 014a EBE7     		b	.L14
+ 262              	.L28:
+ 113:Core/Src/robot/interrupt.cpp ****         	        {
+ 263              		.loc 1 113 0
+ 264 014c 2648     		ldr	r0, .L38+28
+ 265 014e FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 266              	.LVL16:
+ 267 0152 B8B9     		cbnz	r0, .L36
+ 268              	.L16:
+ 115:Core/Src/robot/interrupt.cpp ****         	                {
+ 269              		.loc 1 115 0 discriminator 3
+ 270 0154 284B     		ldr	r3, .L38+44
+ 271 0156 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 272 0158 D3B1     		cbz	r3, .L18
+ 117:Core/Src/robot/interrupt.cpp ****         	                        gCurrent_Position = State_ID::HOME;
+ 273              		.loc 1 117 0
+ 274 015a 0023     		movs	r3, #0
+ 275 015c 264A     		ldr	r2, .L38+44
+ 276 015e 1370     		strb	r3, [r2]
+ 118:Core/Src/robot/interrupt.cpp ****         	                }
+ 277              		.loc 1 118 0
+ 278 0160 234A     		ldr	r2, .L38+36
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 9
+
+
+ 279 0162 1360     		str	r3, [r2]
+ 280              	.L19:
+ 124:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 281              		.loc 1 124 0
+ 282 0164 1B4D     		ldr	r5, .L38+8
+ 283 0166 0021     		movs	r1, #0
+ 284 0168 2846     		mov	r0, r5
+ 285 016a FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 286              	.LVL17:
+ 125:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 287              		.loc 1 125 0
+ 288 016e 0321     		movs	r1, #3
+ 289 0170 2846     		mov	r0, r5
+ 290 0172 FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 291              	.LVL18:
+ 126:Core/Src/robot/interrupt.cpp ****         	        }
+ 292              		.loc 1 126 0
+ 293 0176 164B     		ldr	r3, .L38+4
+ 294 0178 0122     		movs	r2, #1
+ 295 017a 1A70     		strb	r2, [r3]
+ 296              	.L17:
+ 128:Core/Src/robot/interrupt.cpp ****         	}
+ 297              		.loc 1 128 0
+ 298 017c 1F48     		ldr	r0, .L38+48
+ 299 017e FFF7FEFF 		bl	puts
+ 300              	.LVL19:
+ 301 0182 61E7     		b	.L15
+ 302              	.L36:
+ 113:Core/Src/robot/interrupt.cpp ****         	        {
+ 303              		.loc 1 113 0 discriminator 2
+ 304 0184 1848     		ldr	r0, .L38+28
+ 305 0186 FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 306              	.LVL20:
+ 307 018a 0128     		cmp	r0, #1
+ 308 018c F6D1     		bne	.L17
+ 309 018e E1E7     		b	.L16
+ 310              	.L18:
+ 122:Core/Src/robot/interrupt.cpp ****         	                }
+ 311              		.loc 1 122 0
+ 312 0190 174B     		ldr	r3, .L38+36
+ 313 0192 0122     		movs	r2, #1
+ 314 0194 1A60     		str	r2, [r3]
+ 315 0196 E5E7     		b	.L19
+ 316              	.L29:
+ 133:Core/Src/robot/interrupt.cpp ****         	        {
+ 317              		.loc 1 133 0
+ 318 0198 1348     		ldr	r0, .L38+28
+ 319 019a FFF7FEFF 		bl	_ZN5State6get_IDEv
+ 320              	.LVL21:
+ 321 019e 0228     		cmp	r0, #2
+ 322 01a0 03D0     		beq	.L37
+ 323              	.L20:
+ 140:Core/Src/robot/interrupt.cpp ****         	}
+ 324              		.loc 1 140 0
+ 325 01a2 1748     		ldr	r0, .L38+52
+ 326 01a4 FFF7FEFF 		bl	puts
+ 327              	.LVL22:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 10
+
+
+ 328              		.loc 1 143 0
+ 329 01a8 54E7     		b	.L1
+ 330              	.L37:
+ 135:Core/Src/robot/interrupt.cpp ****         	                setDutyCycle(&gBallet.motor, 0);
+ 331              		.loc 1 135 0
+ 332 01aa 114B     		ldr	r3, .L38+36
+ 333 01ac 0222     		movs	r2, #2
+ 334 01ae 1A60     		str	r2, [r3]
+ 136:Core/Src/robot/interrupt.cpp ****         	                setDirection(&gBallet.motor, DIR_BRAKE);
+ 335              		.loc 1 136 0
+ 336 01b0 084C     		ldr	r4, .L38+8
+ 337 01b2 0021     		movs	r1, #0
+ 338 01b4 2046     		mov	r0, r4
+ 339 01b6 FFF7FEFF 		bl	_Z12setDutyCycleP8motorStrt
+ 340              	.LVL23:
+ 137:Core/Src/robot/interrupt.cpp **** 				gReady_To_Go = true;
+ 341              		.loc 1 137 0
+ 342 01ba 0321     		movs	r1, #3
+ 343 01bc 2046     		mov	r0, r4
+ 344 01be FFF7FEFF 		bl	_Z12setDirectionP8motorStr14motorDirection
+ 345              	.LVL24:
+ 138:Core/Src/robot/interrupt.cpp ****         	        }
+ 346              		.loc 1 138 0
+ 347 01c2 034B     		ldr	r3, .L38+4
+ 348 01c4 0122     		movs	r2, #1
+ 349 01c6 1A70     		strb	r2, [r3]
+ 350 01c8 EBE7     		b	.L20
+ 351              	.L39:
+ 352 01ca 00BF     		.align	2
+ 353              	.L38:
+ 354 01cc 00000000 		.word	int_arr
+ 355 01d0 00000000 		.word	gReady_To_Go
+ 356 01d4 00000000 		.word	gBallet
+ 357 01d8 00000000 		.word	.LC0
+ 358 01dc 0C000000 		.word	.LC1
+ 359 01e0 18000000 		.word	.LC2
+ 360 01e4 24000000 		.word	.LC3
+ 361 01e8 00000000 		.word	gHorse_State
+ 362 01ec 30000000 		.word	.LC4
+ 363 01f0 00000000 		.word	.LANCHOR0
+ 364 01f4 34000000 		.word	.LC5
+ 365 01f8 00000000 		.word	.LANCHOR1
+ 366 01fc 38000000 		.word	.LC6
+ 367 0200 3C000000 		.word	.LC7
+ 368              		.cfi_endproc
+ 369              	.LFE136:
+ 371              		.global	gCurrent_Position
+ 372              		.section	.data._ZL21gFirst_Home_Interrupt,"aw",%progbits
+ 373              		.set	.LANCHOR1,. + 0
+ 376              	_ZL21gFirst_Home_Interrupt:
+ 377 0000 01       		.byte	1
+ 378              		.section	.data.gCurrent_Position,"aw",%progbits
+ 379              		.align	2
+ 380              		.set	.LANCHOR0,. + 0
+ 383              	gCurrent_Position:
+ 384 0000 03000000 		.word	3
+ 385              		.section	.rodata.HAL_GPIO_EXTI_Callback.str1.4,"aMS",%progbits,1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 11
+
+
+ 386              		.align	2
+ 387              	.LC0:
+ 388 0000 4D6F746F 		.ascii	"Motor_1 \000"
+ 388      725F3120 
+ 388      00
+ 389 0009 000000   		.space	3
+ 390              	.LC1:
+ 391 000c 4D6F746F 		.ascii	"Motor_2 \000"
+ 391      725F3220 
+ 391      00
+ 392 0015 000000   		.space	3
+ 393              	.LC2:
+ 394 0018 4D6F746F 		.ascii	"Motor_3 \000"
+ 394      725F3320 
+ 394      00
+ 395 0021 000000   		.space	3
+ 396              	.LC3:
+ 397 0024 4D6F746F 		.ascii	"Motor_4 \000"
+ 397      725F3420 
+ 397      00
+ 398 002d 000000   		.space	3
+ 399              	.LC4:
+ 400 0030 4100     		.ascii	"A\000"
+ 401 0032 0000     		.space	2
+ 402              	.LC5:
+ 403 0034 4200     		.ascii	"B\000"
+ 404 0036 0000     		.space	2
+ 405              	.LC6:
+ 406 0038 4300     		.ascii	"C\000"
+ 407 003a 0000     		.space	2
+ 408              	.LC7:
+ 409 003c 4400     		.ascii	"D\000"
+ 410              		.text
+ 411              	.Letext0:
+ 412              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 413              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 414              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 415              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 416              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 417              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 418              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 419              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 420              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 421              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 422              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 423              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 424              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 425              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 426              		.file 16 "Core/Inc/robot/interrupt.h"
+ 427              		.file 17 "Core/Inc/periphs/tim.h"
+ 428              		.file 18 "Core/Inc/robot/feed_forward.h"
+ 429              		.file 19 "Core/Inc/devs/encoder.h"
+ 430              		.file 20 "Core/Inc/devs/motor.h"
+ 431              		.file 21 "Core/Inc/utils/pid.h"
+ 432              		.file 22 "Core/Inc/robot/fsm.h"
+ 433              		.file 23 "Core/Inc/robot/robo_init.h"
+ 434              		.file 24 "Core/Inc/devs/blnc_motor.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 12
+
+
+ 435              		.file 25 "Core/Inc/robot/robo_states.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 interrupt.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:18     .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:25     .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:354    .text.HAL_GPIO_EXTI_Callback:000001cc $d
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:383    .data.gCurrent_Position:00000000 gCurrent_Position
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:376    .data._ZL21gFirst_Home_Interrupt:00000000 _ZL21gFirst_Home_Interrupt
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:379    .data.gCurrent_Position:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccbxD34q.s:386    .rodata.HAL_GPIO_EXTI_Callback.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+puts
+_ZN5State6get_IDEv
+_Z12setDutyCycleP8motorStrt
+_Z12setDirectionP8motorStr14motorDirection
+int_arr
+gReady_To_Go
+gBallet
+gHorse_State

@@ -1,0 +1,1625 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"play.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN12Discrete_PIDD2Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN12Discrete_PIDD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN12Discrete_PIDD2Ev:
+  26              	.LFB162:
+  27              		.file 1 "Core/Inc/utils/pid_algorithms.h"
+   1:Core/Inc/utils/pid_algorithms.h **** #ifndef _PID_ALGORITHMS_H_
+   2:Core/Inc/utils/pid_algorithms.h **** #define _PID_ALGORITHMS_H_
+   3:Core/Inc/utils/pid_algorithms.h **** 
+   4:Core/Inc/utils/pid_algorithms.h **** class PID_Algorithm
+   5:Core/Inc/utils/pid_algorithms.h **** {
+   6:Core/Inc/utils/pid_algorithms.h **** public:
+   7:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm() { set_PID(0,0,0); }
+   8:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(float p, float i, float d) { set_PID(p,i,d); }
+   9:Core/Inc/utils/pid_algorithms.h ****         virtual float compute(float error, uint32_t dt_millis) = 0;
+  10:Core/Inc/utils/pid_algorithms.h **** 
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_P(float p) { p_ = p; }
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+  14:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+  15:Core/Inc/utils/pid_algorithms.h ****                 set_P(p);
+  16:Core/Inc/utils/pid_algorithms.h ****                 set_I(i);
+  17:Core/Inc/utils/pid_algorithms.h ****                 set_D(d);
+  18:Core/Inc/utils/pid_algorithms.h ****         }
+  19:Core/Inc/utils/pid_algorithms.h ****         float get_P() { return p_; }
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  22:Core/Inc/utils/pid_algorithms.h **** 
+  23:Core/Inc/utils/pid_algorithms.h ****         void set_Limits(float max_out, float min_out) {
+  24:Core/Inc/utils/pid_algorithms.h ****                 max_ = max_out;
+  25:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+  26:Core/Inc/utils/pid_algorithms.h ****         }
+  27:Core/Inc/utils/pid_algorithms.h **** 
+  28:Core/Inc/utils/pid_algorithms.h ****         float get_Upper() { return max_; }
+  29:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+  30:Core/Inc/utils/pid_algorithms.h **** 
+  31:Core/Inc/utils/pid_algorithms.h ****         virtual ~PID_Algorithm() { }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 2
+
+
+  32:Core/Inc/utils/pid_algorithms.h **** 
+  33:Core/Inc/utils/pid_algorithms.h **** protected:
+  34:Core/Inc/utils/pid_algorithms.h ****         float p_, i_, d_;
+  35:Core/Inc/utils/pid_algorithms.h ****         float max_, min_;
+  36:Core/Inc/utils/pid_algorithms.h **** };
+  37:Core/Inc/utils/pid_algorithms.h **** 
+  38:Core/Inc/utils/pid_algorithms.h **** class Discrete_PID : public PID_Algorithm
+  39:Core/Inc/utils/pid_algorithms.h **** {
+  40:Core/Inc/utils/pid_algorithms.h **** public:
+  41:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(float p, float i, float d) :
+  42:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(p, i, d) {
+  43:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  44:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  45:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  46:Core/Inc/utils/pid_algorithms.h ****         }
+  47:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID() {
+  48:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  49:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  50:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  51:Core/Inc/utils/pid_algorithms.h ****         }
+  52:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(Discrete_PID &&) = default;
+  53:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(const Discrete_PID &) = default;
+  54:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(Discrete_PID &&) = default;
+  55:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(const Discrete_PID &) = default;
+  56:Core/Inc/utils/pid_algorithms.h ****         ~Discrete_PID() { }
+  28              		.loc 1 56 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 56 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE162:
+  39              		.weak	_ZN12Discrete_PIDD1Ev
+  40              		.thumb_set _ZN12Discrete_PIDD1Ev,_ZN12Discrete_PIDD2Ev
+  41              		.section	.text._ZN12Discrete_PID7computeEfm,"axG",%progbits,_ZN12Discrete_PID7computeEfm,comdat
+  42              		.align	1
+  43              		.weak	_ZN12Discrete_PID7computeEfm
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN12Discrete_PID7computeEfm:
+  50              	.LFB165:
+  57:Core/Inc/utils/pid_algorithms.h **** 
+  58:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+  59:Core/Inc/utils/pid_algorithms.h ****          * 1) Discrete PID control Algorithm
+  60:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
+  61:Core/Inc/utils/pid_algorithms.h ****          * 3) //! Filtered Derivative not used
+  62:Core/Inc/utils/pid_algorithms.h ****          * 4) Output Limited
+  63:Core/Inc/utils/pid_algorithms.h ****          * 5) Form : Parallel
+  64:Core/Inc/utils/pid_algorithms.h ****          * 6) Compensator Formula : Dz = P + I*Ts/(z-1) + D*(z-1)/(Ts*z)
+  65:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
+  66:Core/Inc/utils/pid_algorithms.h ****          *      y(t) - y(t-1) = a*x(t) + b*x(t-1) + c*x(t-2)
+  67:Core/Inc/utils/pid_algorithms.h ****          *      where,
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 3
+
+
+  68:Core/Inc/utils/pid_algorithms.h ****          *              a = P + D/Ts
+  69:Core/Inc/utils/pid_algorithms.h ****          *              b = -P + I*Ts - 2*D/Ts
+  70:Core/Inc/utils/pid_algorithms.h ****          *              c = D/Ts
+  71:Core/Inc/utils/pid_algorithms.h ****          */
+  72:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis) {
+  51              		.loc 1 72 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  73:Core/Inc/utils/pid_algorithms.h ****                 float Ts = (float)dt_millis / 1000.0;
+  57              		.loc 1 73 0
+  58 0000 07EE901A 		vmov	s15, r1	@ int
+  59 0004 F8EE676A 		vcvt.f32.u32	s13, s15
+  60 0008 DFED217A 		vldr.32	s15, .L11
+  61 000c 86EEA77A 		vdiv.f32	s14, s13, s15
+  62              	.LVL2:
+  63              	.LBB128:
+  64              	.LBB129:
+  19:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  65              		.loc 1 19 0
+  66 0010 90ED016A 		vldr.32	s12, [r0, #4]
+  67              	.LVL3:
+  68              	.LBE129:
+  69              	.LBE128:
+  70              	.LBB130:
+  71              	.LBB131:
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  72              		.loc 1 20 0
+  73 0014 D0ED025A 		vldr.32	s11, [r0, #8]
+  74              	.LVL4:
+  75              	.LBE131:
+  76              	.LBE130:
+  77              	.LBB132:
+  78              	.LBB133:
+  21:Core/Inc/utils/pid_algorithms.h **** 
+  79              		.loc 1 21 0
+  80 0018 D0ED037A 		vldr.32	s15, [r0, #12]
+  81              	.LVL5:
+  82              	.LBE133:
+  83              	.LBE132:
+  74:Core/Inc/utils/pid_algorithms.h ****                 
+  75:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+  76:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+  77:Core/Inc/utils/pid_algorithms.h ****                 float D_by_Ts = get_D() / Ts;
+  84              		.loc 1 77 0
+  85 001c C7EE876A 		vdiv.f32	s13, s15, s14
+  86              	.LVL6:
+  78:Core/Inc/utils/pid_algorithms.h **** 
+  79:Core/Inc/utils/pid_algorithms.h ****                 float a = P + D_by_Ts;
+  87              		.loc 1 79 0
+  88 0020 76EE867A 		vadd.f32	s15, s13, s12
+  89              	.LVL7:
+  80:Core/Inc/utils/pid_algorithms.h ****                 float b = -P + I * Ts - 2 * D_by_Ts;
+  90              		.loc 1 80 0
+  91 0024 27EE257A 		vmul.f32	s14, s14, s11
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 4
+
+
+  92              	.LVL8:
+  93 0028 37EE467A 		vsub.f32	s14, s14, s12
+  94 002c 36EEA66A 		vadd.f32	s12, s13, s13
+  95 0030 37EE467A 		vsub.f32	s14, s14, s12
+  96              	.LVL9:
+  81:Core/Inc/utils/pid_algorithms.h ****                 float c = D_by_Ts;
+  82:Core/Inc/utils/pid_algorithms.h **** 
+  83:Core/Inc/utils/pid_algorithms.h ****                 l_output_ += a * error + b * l_err_ + c * ll_err_;
+  97              		.loc 1 83 0
+  98 0034 67EE807A 		vmul.f32	s15, s15, s0
+  99              	.LVL10:
+ 100 0038 90ED076A 		vldr.32	s12, [r0, #28]
+ 101 003c 26EE077A 		vmul.f32	s14, s12, s14
+ 102              	.LVL11:
+ 103 0040 77EE877A 		vadd.f32	s15, s15, s14
+ 104 0044 90ED087A 		vldr.32	s14, [r0, #32]
+ 105 0048 67EE266A 		vmul.f32	s13, s14, s13
+ 106              	.LVL12:
+ 107 004c 77EEA67A 		vadd.f32	s15, s15, s13
+ 108 0050 90ED067A 		vldr.32	s14, [r0, #24]
+ 109 0054 77EE877A 		vadd.f32	s15, s15, s14
+ 110 0058 C0ED067A 		vstr.32	s15, [r0, #24]
+ 111              	.LVL13:
+ 112              	.LBB134:
+ 113              	.LBB135:
+  28:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ 114              		.loc 1 28 0
+ 115 005c 90ED047A 		vldr.32	s14, [r0, #16]
+ 116              	.LVL14:
+ 117              	.LBE135:
+ 118              	.LBE134:
+  84:Core/Inc/utils/pid_algorithms.h **** 
+  85:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper()) {
+ 119              		.loc 1 85 0
+ 120 0060 F4EEC77A 		vcmpe.f32	s15, s14
+ 121 0064 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 122 0068 09DC     		bgt	.L10
+ 123              	.LVL15:
+ 124              	.LBB136:
+ 125              	.LBB137:
+  29:Core/Inc/utils/pid_algorithms.h **** 
+ 126              		.loc 1 29 0
+ 127 006a 90ED057A 		vldr.32	s14, [r0, #20]
+ 128              	.LVL16:
+ 129              	.LBE137:
+ 130              	.LBE136:
+  86:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+  87:Core/Inc/utils/pid_algorithms.h ****                 }
+  88:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower()) {
+ 131              		.loc 1 88 0
+ 132 006e F4EEC77A 		vcmpe.f32	s15, s14
+ 133 0072 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 134 0076 04D5     		bpl	.L5
+  89:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 135              		.loc 1 89 0
+ 136 0078 80ED067A 		vstr.32	s14, [r0, #24]
+ 137 007c 01E0     		b	.L5
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 5
+
+
+ 138              	.L10:
+  86:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+ 139              		.loc 1 86 0
+ 140 007e 80ED067A 		vstr.32	s14, [r0, #24]
+ 141              	.L5:
+  90:Core/Inc/utils/pid_algorithms.h ****                 }
+  91:Core/Inc/utils/pid_algorithms.h **** 
+  92:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
+ 142              		.loc 1 92 0
+ 143 0082 80ED086A 		vstr.32	s12, [r0, #32]
+  93:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
+ 144              		.loc 1 93 0
+ 145 0086 80ED070A 		vstr.32	s0, [r0, #28]
+  94:Core/Inc/utils/pid_algorithms.h **** 
+  95:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
+  96:Core/Inc/utils/pid_algorithms.h ****         }
+ 146              		.loc 1 96 0
+ 147 008a 90ED060A 		vldr.32	s0, [r0, #24]
+ 148              	.LVL17:
+ 149 008e 7047     		bx	lr
+ 150              	.L12:
+ 151              		.align	2
+ 152              	.L11:
+ 153 0090 00007A44 		.word	1148846080
+ 154              		.cfi_endproc
+ 155              	.LFE165:
+ 157              		.section	.text.__tcf_0,"ax",%progbits
+ 158              		.align	1
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.fpu fpv4-sp-d16
+ 164              	__tcf_0:
+ 165              	.LFB406:
+ 166              		.file 2 "Core/Src/robot/play.cpp"
+   1:Core/Src/robot/play.cpp **** #include "robot/play.h"
+   2:Core/Src/robot/play.cpp **** #include "utils/pid_algorithms.h"
+   3:Core/Src/robot/play.cpp **** #include "utils/pid.h"
+   4:Core/Src/robot/play.cpp **** #include <math.h>
+   5:Core/Src/robot/play.cpp **** 
+   6:Core/Src/robot/play.cpp **** const float max_omega[2] = { 8.5, 7};
+   7:Core/Src/robot/play.cpp **** 
+   8:Core/Src/robot/play.cpp **** void update(float set_points[4])
+   9:Core/Src/robot/play.cpp **** {
+  10:Core/Src/robot/play.cpp ****         // Only update to new value if the buffer actually contains data else
+  11:Core/Src/robot/play.cpp ****         // keep the previous data.
+  12:Core/Src/robot/play.cpp ****         if (!Thinker_isEmpty()) {
+  13:Core/Src/robot/play.cpp ****                 get_Thinker(set_points);
+  14:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+  15:Core/Src/robot/play.cpp ****                         printf("%ld  ", (int32_t)(set_points[i]*1000));
+  16:Core/Src/robot/play.cpp ****                 }
+  17:Core/Src/robot/play.cpp ****                 printf("\n");
+  18:Core/Src/robot/play.cpp ****         }
+  19:Core/Src/robot/play.cpp **** }
+  20:Core/Src/robot/play.cpp **** 
+  21:Core/Src/robot/play.cpp **** /* *** Tasks To Be Done By tune function ***
+  22:Core/Src/robot/play.cpp ****  TODO 1: Measure omega of all wheels
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 6
+
+
+  23:Core/Src/robot/play.cpp ****  TODO 2: Compute error
+  24:Core/Src/robot/play.cpp ****  TODO 3: Compute PID using available PID algorithm
+  25:Core/Src/robot/play.cpp ****  TODO 4: set Omega of each wheel
+  26:Core/Src/robot/play.cpp ****  TODO 5: Repeat from step 1
+  27:Core/Src/robot/play.cpp ****  */
+  28:Core/Src/robot/play.cpp **** 
+  29:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 167              		.loc 2 29 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171 0000 10B5     		push	{r4, lr}
+ 172              	.LCFI0:
+ 173              		.cfi_def_cfa_offset 8
+ 174              		.cfi_offset 4, -8
+ 175              		.cfi_offset 14, -4
+ 176              		.loc 2 29 0
+ 177 0002 054C     		ldr	r4, .L17
+ 178              	.L15:
+ 179              		.loc 2 29 0 is_stmt 0 discriminator 5
+ 180 0004 054B     		ldr	r3, .L17+4
+ 181 0006 9C42     		cmp	r4, r3
+ 182 0008 05D0     		beq	.L13
+ 183              		.loc 2 29 0 discriminator 4
+ 184 000a 54F8243D 		ldr	r3, [r4, #-36]!
+ 185 000e 5B68     		ldr	r3, [r3, #4]
+ 186 0010 2046     		mov	r0, r4
+ 187 0012 9847     		blx	r3
+ 188              	.LVL18:
+ 189 0014 F6E7     		b	.L15
+ 190              	.L13:
+ 191              		.loc 2 29 0
+ 192 0016 10BD     		pop	{r4, pc}
+ 193              	.L18:
+ 194              		.align	2
+ 195              	.L17:
+ 196 0018 90000000 		.word	.LANCHOR0+144
+ 197 001c 00000000 		.word	.LANCHOR0
+ 198              		.cfi_endproc
+ 199              	.LFE406:
+ 201              		.section	.text.__tcf_1,"ax",%progbits
+ 202              		.align	1
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 206              		.fpu fpv4-sp-d16
+ 208              	__tcf_1:
+ 209              	.LFB407:
+  30:Core/Src/robot/play.cpp **** PID gPID[4];
+ 210              		.loc 2 30 0 is_stmt 1
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		@ link register save eliminated.
+ 215              		.loc 2 30 0
+ 216 0000 034B     		ldr	r3, .L22
+ 217              	.L21:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 7
+
+
+ 218              		.loc 2 30 0 is_stmt 0 discriminator 5
+ 219 0002 044A     		ldr	r2, .L22+4
+ 220 0004 9342     		cmp	r3, r2
+ 221 0006 01D0     		beq	.L19
+ 222              		.loc 2 30 0 discriminator 4
+ 223 0008 043B     		subs	r3, r3, #4
+ 224              	.LVL19:
+ 225 000a FAE7     		b	.L21
+ 226              	.LVL20:
+ 227              	.L19:
+ 228              		.loc 2 30 0
+ 229 000c 7047     		bx	lr
+ 230              	.L23:
+ 231 000e 00BF     		.align	2
+ 232              	.L22:
+ 233 0010 10000000 		.word	.LANCHOR1+16
+ 234 0014 00000000 		.word	.LANCHOR1
+ 235              		.cfi_endproc
+ 236              	.LFE407:
+ 238              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 239              		.align	1
+ 240              		.syntax unified
+ 241              		.thumb
+ 242              		.thumb_func
+ 243              		.fpu fpv4-sp-d16
+ 245              	_Z41__static_initialization_and_destruction_0ii:
+ 246              	.LFB405:
+  31:Core/Src/robot/play.cpp **** 
+  32:Core/Src/robot/play.cpp **** float gI_Factor = 20;
+  33:Core/Src/robot/play.cpp **** float gP_Factor = 1;
+  34:Core/Src/robot/play.cpp **** 
+  35:Core/Src/robot/play.cpp **** void pid_Init()
+  36:Core/Src/robot/play.cpp **** {
+  37:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_PID(1.70005, gI_Factor*1.2808, 0);
+  38:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_Limits(12, -12);
+  39:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_PID(1.6575, gI_Factor*0.78623, 0);
+  40:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_Limits(12, -12);
+  41:Core/Src/robot/play.cpp ****         gDisc_PID[2].set_PID(0.7336, gI_Factor*10.05, 0);
+  42:Core/Src/robot/play.cpp ****         gDisc_PID[2].set_Limits(24, -24);
+  43:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_PID(0.49, gI_Factor*7.615, 0);
+  44:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_Limits(24, -24);
+  45:Core/Src/robot/play.cpp **** 
+  46:Core/Src/robot/play.cpp ****         gPID[0].set_Algorithm(&gDisc_PID[0]);
+  47:Core/Src/robot/play.cpp ****         gPID[1].set_Algorithm(&gDisc_PID[1]);
+  48:Core/Src/robot/play.cpp ****         gPID[2].set_Algorithm(&gDisc_PID[2]);
+  49:Core/Src/robot/play.cpp ****         gPID[3].set_Algorithm(&gDisc_PID[3]);
+  50:Core/Src/robot/play.cpp **** }
+  51:Core/Src/robot/play.cpp **** 
+  52:Core/Src/robot/play.cpp **** void tune(float set_points[4], uint32_t dt_millis)
+  53:Core/Src/robot/play.cpp **** {
+  54:Core/Src/robot/play.cpp ****         float omega[4];
+  55:Core/Src/robot/play.cpp ****         float error[4];
+  56:Core/Src/robot/play.cpp ****         float voltage[4];
+  57:Core/Src/robot/play.cpp ****         float new_omega[4];
+  58:Core/Src/robot/play.cpp **** 
+  59:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 2; ++i) {
+  60:Core/Src/robot/play.cpp ****                 omega[i] = gWheels[i].get_Omega(dt_millis);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 8
+
+
+  61:Core/Src/robot/play.cpp ****                 error[i] = set_points[i] - omega[i];
+  62:Core/Src/robot/play.cpp ****                 voltage[i] = gPID[i].compute_PID(error[i], dt_millis);
+  63:Core/Src/robot/play.cpp ****                 new_omega[i] = voltage[i] * max_omega[i] / 12.0;
+  64:Core/Src/robot/play.cpp ****                 gWheels[i].set_Omega(new_omega[i]);
+  65:Core/Src/robot/play.cpp ****                 printf("(%ld, %ld)  ", (int32_t)(new_omega[i]*1000), (int32_t)(omega[i]*1000));
+  66:Core/Src/robot/play.cpp ****         }
+  67:Core/Src/robot/play.cpp ****         
+  68:Core/Src/robot/play.cpp ****         // omega[0] = gWheels[0].get_Omega(dt_millis);
+  69:Core/Src/robot/play.cpp ****         // error[0] = set_points[0] - omega[0];
+  70:Core/Src/robot/play.cpp ****         // voltage[0] = gPID[0].compute_PID(error[0], dt_millis);
+  71:Core/Src/robot/play.cpp ****         // new_omega[0] = voltage[0] * MAX_OMEGA / 24.0;
+  72:Core/Src/robot/play.cpp ****         // gWheels[0].set_Omega(new_omega[0]);
+  73:Core/Src/robot/play.cpp ****         // printf("(%ld, %ld)  ", (int32_t)(new_omega[0]), (int32_t)(omega[0]));
+  74:Core/Src/robot/play.cpp ****         printf("\n");
+  75:Core/Src/robot/play.cpp **** 
+  76:Core/Src/robot/play.cpp ****         // gWheels[0].update();
+  77:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+  78:Core/Src/robot/play.cpp ****                 gWheels[i].update();
+  79:Core/Src/robot/play.cpp ****         }
+  80:Core/Src/robot/play.cpp **** }
+  81:Core/Src/robot/play.cpp **** 
+  82:Core/Src/robot/play.cpp **** void ramp_down(uint32_t dt_millis)
+  83:Core/Src/robot/play.cpp **** {
+  84:Core/Src/robot/play.cpp ****         float omega[4];
+  85:Core/Src/robot/play.cpp ****         float error[4];
+  86:Core/Src/robot/play.cpp ****         float voltage[4];
+  87:Core/Src/robot/play.cpp ****         float new_omega[4];
+  88:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+  89:Core/Src/robot/play.cpp ****                 
+  90:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+  91:Core/Src/robot/play.cpp ****                         omega[i] = gWheels[i].get_Omega(dt_millis);
+  92:Core/Src/robot/play.cpp ****                         if (fabsf(omega[i]) < 5) {
+  93:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(0);
+  94:Core/Src/robot/play.cpp ****                         }else {
+  95:Core/Src/robot/play.cpp ****                                 error[i] = -(omega[i] / 2.0);
+  96:Core/Src/robot/play.cpp ****                                 voltage[i] = gPID[i].compute_PID(error[i], dt_millis);
+  97:Core/Src/robot/play.cpp ****                                 new_omega[i] = voltage[i] * MAX_OMEGA / 12.0;
+  98:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(new_omega[i]);
+  99:Core/Src/robot/play.cpp ****                         }
+ 100:Core/Src/robot/play.cpp ****                 }
+ 101:Core/Src/robot/play.cpp **** 
+ 102:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 103:Core/Src/robot/play.cpp ****                         gWheels[i].update();
+ 104:Core/Src/robot/play.cpp ****                 }
+ 105:Core/Src/robot/play.cpp ****                 HAL_Delay(10);
+ 106:Core/Src/robot/play.cpp ****         }
+ 107:Core/Src/robot/play.cpp **** }...
+ 247              		.loc 2 107 0 is_stmt 1
+ 248              		.cfi_startproc
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251              	.LVL21:
+ 252 0000 0128     		cmp	r0, #1
+ 253 0002 00D0     		beq	.L34
+ 254 0004 7047     		bx	lr
+ 255              	.L34:
+ 256              		.loc 2 107 0 is_stmt 0 discriminator 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 9
+
+
+ 257 0006 08B5     		push	{r3, lr}
+ 258              	.LCFI1:
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+ 262              		.loc 2 107 0 is_stmt 1 discriminator 1
+ 263 0008 4FF6FF73 		movw	r3, #65535
+ 264 000c 9942     		cmp	r1, r3
+ 265 000e 00D0     		beq	.L35
+ 266              	.LVL22:
+ 267              	.L24:
+ 268              		.loc 2 107 0 is_stmt 0
+ 269 0010 08BD     		pop	{r3, pc}
+ 270              	.LVL23:
+ 271              	.L35:
+  29:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 272              		.loc 2 29 0 is_stmt 1
+ 273 0012 0321     		movs	r1, #3
+ 274              	.LVL24:
+ 275 0014 0F4B     		ldr	r3, .L36
+ 276              	.LVL25:
+ 277              	.L27:
+  29:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 278              		.loc 2 29 0 is_stmt 0 discriminator 4
+ 279 0016 0029     		cmp	r1, #0
+ 280 0018 0BDB     		blt	.L26
+ 281              	.LVL26:
+ 282              	.LBB138:
+ 283              	.LBB139:
+ 284              	.LBB140:
+ 285              	.LBB141:
+ 286              	.LBB142:
+ 287              	.LBB143:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 288              		.loc 1 11 0 is_stmt 1
+ 289 001a 0022     		movs	r2, #0
+ 290 001c 5A60     		str	r2, [r3, #4]	@ float
+ 291              	.LVL27:
+ 292              	.LBE143:
+ 293              	.LBE142:
+ 294              	.LBB144:
+ 295              	.LBB145:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 296              		.loc 1 12 0
+ 297 001e 9A60     		str	r2, [r3, #8]	@ float
+ 298              	.LVL28:
+ 299              	.LBE145:
+ 300              	.LBE144:
+ 301              	.LBB146:
+ 302              	.LBB147:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 303              		.loc 1 13 0
+ 304 0020 DA60     		str	r2, [r3, #12]	@ float
+ 305              	.LVL29:
+ 306              	.LBE147:
+ 307              	.LBE146:
+ 308              	.LBE141:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 10
+
+
+ 309              	.LBE140:
+  47:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 310              		.loc 1 47 0
+ 311 0022 0D48     		ldr	r0, .L36+4
+ 312 0024 1860     		str	r0, [r3]
+  48:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 313              		.loc 1 48 0
+ 314 0026 9A61     		str	r2, [r3, #24]	@ float
+  49:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 315              		.loc 1 49 0
+ 316 0028 DA61     		str	r2, [r3, #28]	@ float
+  50:Core/Inc/utils/pid_algorithms.h ****         }
+ 317              		.loc 1 50 0
+ 318 002a 1A62     		str	r2, [r3, #32]	@ float
+ 319              	.LVL30:
+ 320              	.LBE139:
+ 321              	.LBE138:
+  29:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 322              		.loc 2 29 0
+ 323 002c 2433     		adds	r3, r3, #36
+ 324 002e 0139     		subs	r1, r1, #1
+ 325 0030 F1E7     		b	.L27
+ 326              	.L26:
+  29:Core/Src/robot/play.cpp **** Discrete_PID gDisc_PID[4];
+ 327              		.loc 2 29 0 is_stmt 0 discriminator 2
+ 328 0032 0A4A     		ldr	r2, .L36+8
+ 329 0034 0A49     		ldr	r1, .L36+12
+ 330 0036 0020     		movs	r0, #0
+ 331 0038 FFF7FEFF 		bl	__aeabi_atexit
+ 332              	.LVL31:
+  30:Core/Src/robot/play.cpp **** PID gPID[4];
+ 333              		.loc 2 30 0 is_stmt 1 discriminator 2
+ 334 003c 0323     		movs	r3, #3
+ 335              	.L29:
+  30:Core/Src/robot/play.cpp **** PID gPID[4];
+ 336              		.loc 2 30 0 is_stmt 0 discriminator 4
+ 337 003e 002B     		cmp	r3, #0
+ 338 0040 01DB     		blt	.L28
+  30:Core/Src/robot/play.cpp **** PID gPID[4];
+ 339              		.loc 2 30 0
+ 340 0042 013B     		subs	r3, r3, #1
+ 341 0044 FBE7     		b	.L29
+ 342              	.L28:
+  30:Core/Src/robot/play.cpp **** PID gPID[4];
+ 343              		.loc 2 30 0 discriminator 2
+ 344 0046 054A     		ldr	r2, .L36+8
+ 345 0048 0649     		ldr	r1, .L36+16
+ 346 004a 0020     		movs	r0, #0
+ 347 004c FFF7FEFF 		bl	__aeabi_atexit
+ 348              	.LVL32:
+ 349              		.loc 2 107 0 is_stmt 1 discriminator 2
+ 350 0050 DEE7     		b	.L24
+ 351              	.L37:
+ 352 0052 00BF     		.align	2
+ 353              	.L36:
+ 354 0054 00000000 		.word	.LANCHOR0
+ 355 0058 08000000 		.word	_ZTV12Discrete_PID+8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 11
+
+
+ 356 005c 00000000 		.word	__dso_handle
+ 357 0060 00000000 		.word	__tcf_0
+ 358 0064 00000000 		.word	__tcf_1
+ 359              		.cfi_endproc
+ 360              	.LFE405:
+ 362              		.section	.text._ZN12Discrete_PIDD0Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+ 363              		.align	1
+ 364              		.weak	_ZN12Discrete_PIDD0Ev
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 368              		.fpu fpv4-sp-d16
+ 370              	_ZN12Discrete_PIDD0Ev:
+ 371              	.LFB164:
+  56:Core/Inc/utils/pid_algorithms.h **** 
+ 372              		.loc 1 56 0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 0
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 376              	.LVL33:
+ 377 0000 10B5     		push	{r4, lr}
+ 378              	.LCFI2:
+ 379              		.cfi_def_cfa_offset 8
+ 380              		.cfi_offset 4, -8
+ 381              		.cfi_offset 14, -4
+ 382 0002 0446     		mov	r4, r0
+  56:Core/Inc/utils/pid_algorithms.h **** 
+ 383              		.loc 1 56 0
+ 384 0004 2421     		movs	r1, #36
+ 385 0006 FFF7FEFF 		bl	_ZdlPvj
+ 386              	.LVL34:
+ 387 000a 2046     		mov	r0, r4
+ 388 000c 10BD     		pop	{r4, pc}
+ 389              		.cfi_endproc
+ 390              	.LFE164:
+ 392              		.section	.text._Z6updatePf,"ax",%progbits
+ 393              		.align	1
+ 394              		.global	_Z6updatePf
+ 395              		.syntax unified
+ 396              		.thumb
+ 397              		.thumb_func
+ 398              		.fpu fpv4-sp-d16
+ 400              	_Z6updatePf:
+ 401              	.LFB401:
+   9:Core/Src/robot/play.cpp **** {
+ 402              		.loc 2 9 0
+ 403              		.cfi_startproc
+ 404              		@ args = 0, pretend = 0, frame = 0
+ 405              		@ frame_needed = 0, uses_anonymous_args = 0
+ 406              	.LVL35:
+ 407 0000 38B5     		push	{r3, r4, r5, lr}
+ 408              	.LCFI3:
+ 409              		.cfi_def_cfa_offset 16
+ 410              		.cfi_offset 3, -16
+ 411              		.cfi_offset 4, -12
+ 412              		.cfi_offset 5, -8
+ 413              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 12
+
+
+ 414 0002 0546     		mov	r5, r0
+ 415              	.LBB148:
+  12:Core/Src/robot/play.cpp ****         if (!Thinker_isEmpty()) {
+ 416              		.loc 2 12 0
+ 417 0004 FFF7FEFF 		bl	_Z15Thinker_isEmptyv
+ 418              	.LVL36:
+ 419 0008 00B1     		cbz	r0, .L45
+ 420              	.L40:
+ 421              	.LBE148:
+  19:Core/Src/robot/play.cpp **** }
+ 422              		.loc 2 19 0
+ 423 000a 38BD     		pop	{r3, r4, r5, pc}
+ 424              	.LVL37:
+ 425              	.L45:
+ 426              	.LBB151:
+ 427              	.LBB149:
+  13:Core/Src/robot/play.cpp ****                 get_Thinker(set_points);
+ 428              		.loc 2 13 0
+ 429 000c 2846     		mov	r0, r5
+ 430 000e FFF7FEFF 		bl	_Z11get_ThinkerPf
+ 431              	.LVL38:
+ 432              	.LBB150:
+  14:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 433              		.loc 2 14 0
+ 434 0012 0024     		movs	r4, #0
+ 435              	.LVL39:
+ 436              	.L43:
+  14:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 437              		.loc 2 14 0 is_stmt 0 discriminator 3
+ 438 0014 032C     		cmp	r4, #3
+ 439 0016 11D8     		bhi	.L42
+  15:Core/Src/robot/play.cpp ****                         printf("%ld  ", (int32_t)(set_points[i]*1000));
+ 440              		.loc 2 15 0 is_stmt 1 discriminator 2
+ 441 0018 05EB8403 		add	r3, r5, r4, lsl #2
+ 442 001c D3ED007A 		vldr.32	s15, [r3]
+ 443 0020 9FED087A 		vldr.32	s14, .L46
+ 444 0024 67EE877A 		vmul.f32	s15, s15, s14
+ 445 0028 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 446 002c 17EE901A 		vmov	r1, s15	@ int
+ 447 0030 0548     		ldr	r0, .L46+4
+ 448 0032 FFF7FEFF 		bl	printf
+ 449              	.LVL40:
+  14:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 450              		.loc 2 14 0 discriminator 2
+ 451 0036 0134     		adds	r4, r4, #1
+ 452              	.LVL41:
+ 453 0038 E4B2     		uxtb	r4, r4
+ 454              	.LVL42:
+ 455 003a EBE7     		b	.L43
+ 456              	.L42:
+ 457              	.LBE150:
+  17:Core/Src/robot/play.cpp ****                 printf("\n");
+ 458              		.loc 2 17 0
+ 459 003c 0A20     		movs	r0, #10
+ 460 003e FFF7FEFF 		bl	putchar
+ 461              	.LVL43:
+ 462              	.LBE149:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 13
+
+
+ 463              	.LBE151:
+  19:Core/Src/robot/play.cpp **** }
+ 464              		.loc 2 19 0
+ 465 0042 E2E7     		b	.L40
+ 466              	.L47:
+ 467              		.align	2
+ 468              	.L46:
+ 469 0044 00007A44 		.word	1148846080
+ 470 0048 00000000 		.word	.LC0
+ 471              		.cfi_endproc
+ 472              	.LFE401:
+ 474              		.global	__aeabi_f2d
+ 475              		.global	__aeabi_dmul
+ 476              		.global	__aeabi_d2f
+ 477              		.section	.text._Z8pid_Initv,"ax",%progbits
+ 478              		.align	1
+ 479              		.global	_Z8pid_Initv
+ 480              		.syntax unified
+ 481              		.thumb
+ 482              		.thumb_func
+ 483              		.fpu fpv4-sp-d16
+ 485              	_Z8pid_Initv:
+ 486              	.LFB402:
+  36:Core/Src/robot/play.cpp **** {
+ 487              		.loc 2 36 0
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 492              	.LCFI4:
+ 493              		.cfi_def_cfa_offset 32
+ 494              		.cfi_offset 3, -32
+ 495              		.cfi_offset 4, -28
+ 496              		.cfi_offset 5, -24
+ 497              		.cfi_offset 6, -20
+ 498              		.cfi_offset 7, -16
+ 499              		.cfi_offset 8, -12
+ 500              		.cfi_offset 9, -8
+ 501              		.cfi_offset 14, -4
+  37:Core/Src/robot/play.cpp ****         gDisc_PID[0].set_PID(1.70005, gI_Factor*1.2808, 0);
+ 502              		.loc 2 37 0
+ 503 0004 364B     		ldr	r3, .L50+32
+ 504 0006 1868     		ldr	r0, [r3]	@ float
+ 505 0008 FFF7FEFF 		bl	__aeabi_f2d
+ 506              	.LVL44:
+ 507 000c 0646     		mov	r6, r0
+ 508 000e 0F46     		mov	r7, r1
+ 509 0010 2BA3     		adr	r3, .L50
+ 510 0012 D3E90023 		ldrd	r2, [r3]
+ 511 0016 FFF7FEFF 		bl	__aeabi_dmul
+ 512              	.LVL45:
+ 513 001a FFF7FEFF 		bl	__aeabi_d2f
+ 514              	.LVL46:
+ 515              	.LBB152:
+ 516              	.LBB153:
+ 517              	.LBB154:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 14
+
+
+ 518              		.loc 1 11 0
+ 519 001e 314C     		ldr	r4, .L50+36
+ 520 0020 314B     		ldr	r3, .L50+40
+ 521 0022 6360     		str	r3, [r4, #4]	@ float
+ 522              	.LVL47:
+ 523              	.LBE154:
+ 524              	.LBE153:
+ 525              	.LBB155:
+ 526              	.LBB156:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 527              		.loc 1 12 0
+ 528 0024 A060     		str	r0, [r4, #8]	@ float
+ 529              	.LVL48:
+ 530              	.LBE156:
+ 531              	.LBE155:
+ 532              	.LBB157:
+ 533              	.LBB158:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 534              		.loc 1 13 0
+ 535 0026 0025     		movs	r5, #0
+ 536 0028 E560     		str	r5, [r4, #12]	@ float
+ 537              	.LVL49:
+ 538              	.LBE158:
+ 539              	.LBE157:
+ 540              	.LBE152:
+ 541              	.LBB159:
+ 542              	.LBB160:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 543              		.loc 1 24 0
+ 544 002a DFF8D090 		ldr	r9, .L50+60
+ 545 002e C4F81090 		str	r9, [r4, #16]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 546              		.loc 1 25 0
+ 547 0032 DFF8CC80 		ldr	r8, .L50+64
+ 548 0036 C4F81480 		str	r8, [r4, #20]	@ float
+ 549              	.LVL50:
+ 550              	.LBE160:
+ 551              	.LBE159:
+  39:Core/Src/robot/play.cpp ****         gDisc_PID[1].set_PID(1.6575, gI_Factor*0.78623, 0);
+ 552              		.loc 2 39 0
+ 553 003a 23A3     		adr	r3, .L50+8
+ 554 003c D3E90023 		ldrd	r2, [r3]
+ 555 0040 3046     		mov	r0, r6
+ 556 0042 3946     		mov	r1, r7
+ 557 0044 FFF7FEFF 		bl	__aeabi_dmul
+ 558              	.LVL51:
+ 559 0048 FFF7FEFF 		bl	__aeabi_d2f
+ 560              	.LVL52:
+ 561              	.LBB161:
+ 562              	.LBB162:
+ 563              	.LBB163:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 564              		.loc 1 11 0
+ 565 004c 274B     		ldr	r3, .L50+44
+ 566 004e A362     		str	r3, [r4, #40]	@ float
+ 567              	.LVL53:
+ 568              	.LBE163:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 15
+
+
+ 569              	.LBE162:
+ 570              	.LBB164:
+ 571              	.LBB165:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 572              		.loc 1 12 0
+ 573 0050 E062     		str	r0, [r4, #44]	@ float
+ 574              	.LVL54:
+ 575              	.LBE165:
+ 576              	.LBE164:
+ 577              	.LBB166:
+ 578              	.LBB167:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 579              		.loc 1 13 0
+ 580 0052 2563     		str	r5, [r4, #48]	@ float
+ 581              	.LVL55:
+ 582              	.LBE167:
+ 583              	.LBE166:
+ 584              	.LBE161:
+ 585              	.LBB168:
+ 586              	.LBB169:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 587              		.loc 1 24 0
+ 588 0054 C4F83490 		str	r9, [r4, #52]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 589              		.loc 1 25 0
+ 590 0058 C4F83880 		str	r8, [r4, #56]	@ float
+ 591              	.LVL56:
+ 592              	.LBE169:
+ 593              	.LBE168:
+  41:Core/Src/robot/play.cpp ****         gDisc_PID[2].set_PID(0.7336, gI_Factor*10.05, 0);
+ 594              		.loc 2 41 0
+ 595 005c 1CA3     		adr	r3, .L50+16
+ 596 005e D3E90023 		ldrd	r2, [r3]
+ 597 0062 3046     		mov	r0, r6
+ 598 0064 3946     		mov	r1, r7
+ 599 0066 FFF7FEFF 		bl	__aeabi_dmul
+ 600              	.LVL57:
+ 601 006a FFF7FEFF 		bl	__aeabi_d2f
+ 602              	.LVL58:
+ 603              	.LBB170:
+ 604              	.LBB171:
+ 605              	.LBB172:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 606              		.loc 1 11 0
+ 607 006e 204B     		ldr	r3, .L50+48
+ 608 0070 E364     		str	r3, [r4, #76]	@ float
+ 609              	.LVL59:
+ 610              	.LBE172:
+ 611              	.LBE171:
+ 612              	.LBB173:
+ 613              	.LBB174:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 614              		.loc 1 12 0
+ 615 0072 2065     		str	r0, [r4, #80]	@ float
+ 616              	.LVL60:
+ 617              	.LBE174:
+ 618              	.LBE173:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 16
+
+
+ 619              	.LBB175:
+ 620              	.LBB176:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 621              		.loc 1 13 0
+ 622 0074 6565     		str	r5, [r4, #84]	@ float
+ 623              	.LVL61:
+ 624              	.LBE176:
+ 625              	.LBE175:
+ 626              	.LBE170:
+ 627              	.LBB177:
+ 628              	.LBB178:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 629              		.loc 1 24 0
+ 630 0076 DFF88C90 		ldr	r9, .L50+68
+ 631 007a C4F85890 		str	r9, [r4, #88]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 632              		.loc 1 25 0
+ 633 007e DFF88880 		ldr	r8, .L50+72
+ 634 0082 C4F85C80 		str	r8, [r4, #92]	@ float
+ 635              	.LVL62:
+ 636              	.LBE178:
+ 637              	.LBE177:
+  43:Core/Src/robot/play.cpp ****         gDisc_PID[3].set_PID(0.49, gI_Factor*7.615, 0);
+ 638              		.loc 2 43 0
+ 639 0086 14A3     		adr	r3, .L50+24
+ 640 0088 D3E90023 		ldrd	r2, [r3]
+ 641 008c 3046     		mov	r0, r6
+ 642 008e 3946     		mov	r1, r7
+ 643 0090 FFF7FEFF 		bl	__aeabi_dmul
+ 644              	.LVL63:
+ 645 0094 FFF7FEFF 		bl	__aeabi_d2f
+ 646              	.LVL64:
+ 647              	.LBB179:
+ 648              	.LBB180:
+ 649              	.LBB181:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 650              		.loc 1 11 0
+ 651 0098 164B     		ldr	r3, .L50+52
+ 652 009a 2367     		str	r3, [r4, #112]	@ float
+ 653              	.LVL65:
+ 654              	.LBE181:
+ 655              	.LBE180:
+ 656              	.LBB182:
+ 657              	.LBB183:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 658              		.loc 1 12 0
+ 659 009c 6067     		str	r0, [r4, #116]	@ float
+ 660              	.LVL66:
+ 661              	.LBE183:
+ 662              	.LBE182:
+ 663              	.LBB184:
+ 664              	.LBB185:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d) {
+ 665              		.loc 1 13 0
+ 666 009e A567     		str	r5, [r4, #120]	@ float
+ 667              	.LVL67:
+ 668              	.LBE185:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 17
+
+
+ 669              	.LBE184:
+ 670              	.LBE179:
+ 671              	.LBB186:
+ 672              	.LBB187:
+  24:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 673              		.loc 1 24 0
+ 674 00a0 C4F87C90 		str	r9, [r4, #124]	@ float
+  25:Core/Inc/utils/pid_algorithms.h ****         }
+ 675              		.loc 1 25 0
+ 676 00a4 C4F88080 		str	r8, [r4, #128]	@ float
+ 677              	.LVL68:
+ 678              	.LBE187:
+ 679              	.LBE186:
+ 680              	.LBB188:
+ 681              	.LBB189:
+ 682              		.file 3 "Core/Inc/utils/pid.h"
+   1:Core/Inc/utils/pid.h **** #ifndef _PID_H_
+   2:Core/Inc/utils/pid.h **** #define _PID_H_
+   3:Core/Inc/utils/pid.h **** 
+   4:Core/Inc/utils/pid.h **** #include "pid_algorithms.h"
+   5:Core/Inc/utils/pid.h **** 
+   6:Core/Inc/utils/pid.h **** class PID
+   7:Core/Inc/utils/pid.h **** {
+   8:Core/Inc/utils/pid.h **** public:
+   9:Core/Inc/utils/pid.h ****         PID() { }
+  10:Core/Inc/utils/pid.h ****         PID(PID_Algorithm *algo) { set_Algorithm(algo); }
+  11:Core/Inc/utils/pid.h ****         PID(PID &&) = default;
+  12:Core/Inc/utils/pid.h ****         PID(const PID &) = default;
+  13:Core/Inc/utils/pid.h ****         PID &operator=(PID &&) = default;
+  14:Core/Inc/utils/pid.h ****         PID &operator=(const PID &) = default;
+  15:Core/Inc/utils/pid.h ****         ~PID() { }
+  16:Core/Inc/utils/pid.h **** 
+  17:Core/Inc/utils/pid.h ****         void set_Algorithm(PID_Algorithm *algo) { algo_ = algo; }
+ 683              		.loc 3 17 0
+ 684 00a8 134B     		ldr	r3, .L50+56
+ 685 00aa 1C60     		str	r4, [r3]
+ 686              	.LVL69:
+ 687              	.LBE189:
+ 688              	.LBE188:
+ 689              	.LBB190:
+ 690              	.LBB191:
+ 691 00ac 04F12402 		add	r2, r4, #36
+ 692 00b0 5A60     		str	r2, [r3, #4]
+ 693              	.LVL70:
+ 694              	.LBE191:
+ 695              	.LBE190:
+ 696              	.LBB192:
+ 697              	.LBB193:
+ 698 00b2 04F14802 		add	r2, r4, #72
+ 699 00b6 9A60     		str	r2, [r3, #8]
+ 700              	.LVL71:
+ 701              	.LBE193:
+ 702              	.LBE192:
+ 703              	.LBB194:
+ 704              	.LBB195:
+ 705 00b8 6C34     		adds	r4, r4, #108
+ 706 00ba DC60     		str	r4, [r3, #12]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 18
+
+
+ 707              	.LVL72:
+ 708              	.LBE195:
+ 709              	.LBE194:
+  50:Core/Src/robot/play.cpp **** }
+ 710              		.loc 2 50 0
+ 711 00bc BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 712              	.L51:
+ 713              		.align	3
+ 714              	.L50:
+ 715 00c0 03780B24 		.word	604731395
+ 716 00c4 287EF43F 		.word	1072987688
+ 717 00c8 624A24D1 		.word	-786150814
+ 718 00cc CB28E93F 		.word	1072244939
+ 719 00d0 9A999999 		.word	-1717986918
+ 720 00d4 99192440 		.word	1076107673
+ 721 00d8 F6285C8F 		.word	-1889785610
+ 722 00dc C2751E40 		.word	1075738050
+ 723 00e0 00000000 		.word	.LANCHOR2
+ 724 00e4 00000000 		.word	.LANCHOR0
+ 725 00e8 3D9BD93F 		.word	1071225661
+ 726 00ec F628D43F 		.word	1070868726
+ 727 00f0 36CD3B3F 		.word	1060883766
+ 728 00f4 48E1FA3E 		.word	1056629064
+ 729 00f8 00000000 		.word	.LANCHOR1
+ 730 00fc 00004041 		.word	1094713344
+ 731 0100 000040C1 		.word	-1052770304
+ 732 0104 0000C041 		.word	1103101952
+ 733 0108 0000C0C1 		.word	-1044381696
+ 734              		.cfi_endproc
+ 735              	.LFE402:
+ 737              		.section	.text._Z4tunePfm,"ax",%progbits
+ 738              		.align	1
+ 739              		.global	_Z4tunePfm
+ 740              		.syntax unified
+ 741              		.thumb
+ 742              		.thumb_func
+ 743              		.fpu fpv4-sp-d16
+ 745              	_Z4tunePfm:
+ 746              	.LFB403:
+  53:Core/Src/robot/play.cpp **** {
+ 747              		.loc 2 53 0
+ 748              		.cfi_startproc
+ 749              		@ args = 0, pretend = 0, frame = 0
+ 750              		@ frame_needed = 0, uses_anonymous_args = 0
+ 751              	.LVL73:
+ 752 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 753              	.LCFI5:
+ 754              		.cfi_def_cfa_offset 24
+ 755              		.cfi_offset 4, -24
+ 756              		.cfi_offset 5, -20
+ 757              		.cfi_offset 6, -16
+ 758              		.cfi_offset 7, -12
+ 759              		.cfi_offset 8, -8
+ 760              		.cfi_offset 14, -4
+ 761 0004 2DED028B 		vpush.64	{d8}
+ 762              	.LCFI6:
+ 763              		.cfi_def_cfa_offset 32
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 19
+
+
+ 764              		.cfi_offset 80, -32
+ 765              		.cfi_offset 81, -28
+ 766 0008 0746     		mov	r7, r0
+ 767 000a 0E46     		mov	r6, r1
+ 768              	.LVL74:
+ 769              	.LBB196:
+  59:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 2; ++i) {
+ 770              		.loc 2 59 0
+ 771 000c 0024     		movs	r4, #0
+ 772              	.LVL75:
+ 773              	.L54:
+  59:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 2; ++i) {
+ 774              		.loc 2 59 0 is_stmt 0 discriminator 3
+ 775 000e 012C     		cmp	r4, #1
+ 776 0010 38D8     		bhi	.L53
+  60:Core/Src/robot/play.cpp ****                 omega[i] = gWheels[i].get_Omega(dt_millis);
+ 777              		.loc 2 60 0 is_stmt 1 discriminator 2
+ 778 0012 254B     		ldr	r3, .L58
+ 779 0014 03EB0418 		add	r8, r3, r4, lsl #4
+ 780 0018 3146     		mov	r1, r6
+ 781 001a 4046     		mov	r0, r8
+ 782 001c FFF7FEFF 		bl	_ZN5Wheel9get_OmegaEm
+ 783              	.LVL76:
+ 784 0020 F0EE408A 		vmov.f32	s17, s0
+  61:Core/Src/robot/play.cpp ****                 error[i] = set_points[i] - omega[i];
+ 785              		.loc 2 61 0 discriminator 2
+ 786 0024 A500     		lsls	r5, r4, #2
+ 787 0026 7B19     		adds	r3, r7, r5
+ 788 0028 93ED000A 		vldr.32	s0, [r3]
+ 789              	.LVL77:
+ 790              	.LBB197:
+ 791              	.LBB198:
+  18:Core/Inc/utils/pid.h **** 
+  19:Core/Inc/utils/pid.h ****         float compute_PID(float err, uint32_t dt_millis) {
+  20:Core/Inc/utils/pid.h ****                 return algo_->compute(err, dt_millis);
+ 792              		.loc 3 20 0 discriminator 2
+ 793 002c 1F4B     		ldr	r3, .L58+4
+ 794 002e 53F82400 		ldr	r0, [r3, r4, lsl #2]
+ 795 0032 0368     		ldr	r3, [r0]
+ 796 0034 1B68     		ldr	r3, [r3]
+ 797 0036 3146     		mov	r1, r6
+ 798 0038 30EE680A 		vsub.f32	s0, s0, s17
+ 799              	.LVL78:
+ 800 003c 9847     		blx	r3
+ 801              	.LVL79:
+ 802              	.LBE198:
+ 803              	.LBE197:
+  63:Core/Src/robot/play.cpp ****                 new_omega[i] = voltage[i] * max_omega[i] / 12.0;
+ 804              		.loc 2 63 0 discriminator 2
+ 805 003e 1C4B     		ldr	r3, .L58+8
+ 806 0040 2B44     		add	r3, r3, r5
+ 807 0042 D3ED007A 		vldr.32	s15, [r3]
+ 808 0046 27EE800A 		vmul.f32	s0, s15, s0
+ 809 004a F2EE087A 		vmov.f32	s15, #1.2e+1
+ 810 004e 80EE278A 		vdiv.f32	s16, s0, s15
+  64:Core/Src/robot/play.cpp ****                 gWheels[i].set_Omega(new_omega[i]);
+ 811              		.loc 2 64 0 discriminator 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 20
+
+
+ 812 0052 B0EE480A 		vmov.f32	s0, s16
+ 813 0056 4046     		mov	r0, r8
+ 814 0058 FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ 815              	.LVL80:
+  65:Core/Src/robot/play.cpp ****                 printf("(%ld, %ld)  ", (int32_t)(new_omega[i]*1000), (int32_t)(omega[i]*1000));
+ 816              		.loc 2 65 0 discriminator 2
+ 817 005c DFED157A 		vldr.32	s15, .L58+12
+ 818 0060 28EE278A 		vmul.f32	s16, s16, s15
+ 819 0064 68EEA78A 		vmul.f32	s17, s17, s15
+ 820 0068 FDEEE87A 		vcvt.s32.f32	s15, s17
+ 821 006c 17EE902A 		vmov	r2, s15	@ int
+ 822 0070 FDEEC87A 		vcvt.s32.f32	s15, s16
+ 823 0074 17EE901A 		vmov	r1, s15	@ int
+ 824 0078 0F48     		ldr	r0, .L58+16
+ 825 007a FFF7FEFF 		bl	printf
+ 826              	.LVL81:
+  59:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 2; ++i) {
+ 827              		.loc 2 59 0 discriminator 2
+ 828 007e 0134     		adds	r4, r4, #1
+ 829              	.LVL82:
+ 830 0080 E4B2     		uxtb	r4, r4
+ 831              	.LVL83:
+ 832 0082 C4E7     		b	.L54
+ 833              	.L53:
+ 834              	.LBE196:
+  74:Core/Src/robot/play.cpp ****         printf("\n");
+ 835              		.loc 2 74 0
+ 836 0084 0A20     		movs	r0, #10
+ 837 0086 FFF7FEFF 		bl	putchar
+ 838              	.LVL84:
+ 839              	.LBB199:
+  77:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 840              		.loc 2 77 0
+ 841 008a 0024     		movs	r4, #0
+ 842              	.LVL85:
+ 843              	.L56:
+  77:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 844              		.loc 2 77 0 is_stmt 0 discriminator 3
+ 845 008c 032C     		cmp	r4, #3
+ 846 008e 07D8     		bhi	.L52
+  78:Core/Src/robot/play.cpp ****                 gWheels[i].update();
+ 847              		.loc 2 78 0 is_stmt 1 discriminator 2
+ 848 0090 0548     		ldr	r0, .L58
+ 849 0092 00EB0410 		add	r0, r0, r4, lsl #4
+ 850 0096 FFF7FEFF 		bl	_ZNK5Wheel6updateEv
+ 851              	.LVL86:
+  77:Core/Src/robot/play.cpp ****         for (uint8_t i = 0; i < 4; ++i) {
+ 852              		.loc 2 77 0 discriminator 2
+ 853 009a 0134     		adds	r4, r4, #1
+ 854              	.LVL87:
+ 855 009c E4B2     		uxtb	r4, r4
+ 856              	.LVL88:
+ 857 009e F5E7     		b	.L56
+ 858              	.L52:
+ 859              	.LBE199:
+  80:Core/Src/robot/play.cpp **** }
+ 860              		.loc 2 80 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 21
+
+
+ 861 00a0 BDEC028B 		vldm	sp!, {d8}
+ 862              	.LCFI7:
+ 863              		.cfi_restore 80
+ 864              		.cfi_restore 81
+ 865              		.cfi_def_cfa_offset 24
+ 866 00a4 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 867              	.LVL89:
+ 868              	.L59:
+ 869              		.align	2
+ 870              	.L58:
+ 871 00a8 00000000 		.word	gWheels
+ 872 00ac 00000000 		.word	.LANCHOR1
+ 873 00b0 00000000 		.word	.LANCHOR3
+ 874 00b4 00007A44 		.word	1148846080
+ 875 00b8 00000000 		.word	.LC1
+ 876              		.cfi_endproc
+ 877              	.LFE403:
+ 879              		.section	.text._Z9ramp_downm,"ax",%progbits
+ 880              		.align	1
+ 881              		.global	_Z9ramp_downm
+ 882              		.syntax unified
+ 883              		.thumb
+ 884              		.thumb_func
+ 885              		.fpu fpv4-sp-d16
+ 887              	_Z9ramp_downm:
+ 888              	.LFB404:
+  83:Core/Src/robot/play.cpp **** {
+ 889              		.loc 2 83 0
+ 890              		.cfi_startproc
+ 891              		@ args = 0, pretend = 0, frame = 0
+ 892              		@ frame_needed = 0, uses_anonymous_args = 0
+ 893              	.LVL90:
+ 894 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 895              	.LCFI8:
+ 896              		.cfi_def_cfa_offset 24
+ 897              		.cfi_offset 3, -24
+ 898              		.cfi_offset 4, -20
+ 899              		.cfi_offset 5, -16
+ 900              		.cfi_offset 6, -12
+ 901              		.cfi_offset 7, -8
+ 902              		.cfi_offset 14, -4
+ 903 0002 0646     		mov	r6, r0
+ 904              	.LVL91:
+ 905              	.LBB200:
+  88:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 906              		.loc 2 88 0
+ 907 0004 0027     		movs	r7, #0
+ 908 0006 3FE0     		b	.L68
+ 909              	.LVL92:
+ 910              	.L73:
+ 911              	.LBB201:
+ 912              	.LBB202:
+  93:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(0);
+ 913              		.loc 2 93 0
+ 914 0008 9FED220A 		vldr.32	s0, .L74
+ 915 000c 2846     		mov	r0, r5
+ 916 000e FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 22
+
+
+ 917              	.LVL93:
+ 918              	.L65:
+  90:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 919              		.loc 2 90 0 discriminator 2
+ 920 0012 0134     		adds	r4, r4, #1
+ 921              	.LVL94:
+ 922 0014 E4B2     		uxtb	r4, r4
+ 923              	.LVL95:
+ 924              	.L66:
+  90:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 925              		.loc 2 90 0 is_stmt 0 discriminator 1
+ 926 0016 032C     		cmp	r4, #3
+ 927 0018 26D8     		bhi	.L69
+  91:Core/Src/robot/play.cpp ****                         omega[i] = gWheels[i].get_Omega(dt_millis);
+ 928              		.loc 2 91 0 is_stmt 1
+ 929 001a 1F4D     		ldr	r5, .L74+4
+ 930 001c 05EB0415 		add	r5, r5, r4, lsl #4
+ 931 0020 3146     		mov	r1, r6
+ 932 0022 2846     		mov	r0, r5
+ 933 0024 FFF7FEFF 		bl	_ZN5Wheel9get_OmegaEm
+ 934              	.LVL96:
+  92:Core/Src/robot/play.cpp ****                         if (fabsf(omega[i]) < 5) {
+ 935              		.loc 2 92 0
+ 936 0028 B0EEC07A 		vabs.f32	s14, s0
+ 937 002c F1EE047A 		vmov.f32	s15, #5.0e+0
+ 938 0030 B4EEE77A 		vcmpe.f32	s14, s15
+ 939 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 940 0038 E6D4     		bmi	.L73
+ 941              	.LVL97:
+ 942              	.LBB203:
+ 943              	.LBB204:
+ 944              		.loc 3 20 0
+ 945 003a 184B     		ldr	r3, .L74+8
+ 946 003c 53F82400 		ldr	r0, [r3, r4, lsl #2]
+ 947 0040 0368     		ldr	r3, [r0]
+ 948 0042 1B68     		ldr	r3, [r3]
+ 949 0044 3146     		mov	r1, r6
+ 950 0046 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 951 004a 27EEC00A 		vnmul.f32	s0, s15, s0
+ 952              	.LVL98:
+ 953 004e 9847     		blx	r3
+ 954              	.LVL99:
+ 955              	.LBE204:
+ 956              	.LBE203:
+  97:Core/Src/robot/play.cpp ****                                 new_omega[i] = voltage[i] * MAX_OMEGA / 12.0;
+ 957              		.loc 2 97 0
+ 958 0050 DFED137A 		vldr.32	s15, .L74+12
+ 959 0054 20EE270A 		vmul.f32	s0, s0, s15
+  98:Core/Src/robot/play.cpp ****                                 gWheels[i].set_Omega(new_omega[i]);
+ 960              		.loc 2 98 0
+ 961 0058 F2EE087A 		vmov.f32	s15, #1.2e+1
+ 962 005c 80EE270A 		vdiv.f32	s0, s0, s15
+ 963 0060 2846     		mov	r0, r5
+ 964 0062 FFF7FEFF 		bl	_ZN5Wheel9set_OmegaEf
+ 965              	.LVL100:
+ 966 0066 D4E7     		b	.L65
+ 967              	.L69:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 23
+
+
+ 968              	.LBE202:
+ 969              	.LBB205:
+ 102:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 970              		.loc 2 102 0
+ 971 0068 0024     		movs	r4, #0
+ 972              	.LVL101:
+ 973              	.L62:
+ 102:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 974              		.loc 2 102 0 is_stmt 0 discriminator 3
+ 975 006a 032C     		cmp	r4, #3
+ 976 006c 07D8     		bhi	.L67
+ 103:Core/Src/robot/play.cpp ****                         gWheels[i].update();
+ 977              		.loc 2 103 0 is_stmt 1 discriminator 2
+ 978 006e 0A48     		ldr	r0, .L74+4
+ 979 0070 00EB0410 		add	r0, r0, r4, lsl #4
+ 980 0074 FFF7FEFF 		bl	_ZNK5Wheel6updateEv
+ 981              	.LVL102:
+ 102:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 982              		.loc 2 102 0 discriminator 2
+ 983 0078 0134     		adds	r4, r4, #1
+ 984              	.LVL103:
+ 985 007a E4B2     		uxtb	r4, r4
+ 986              	.LVL104:
+ 987 007c F5E7     		b	.L62
+ 988              	.L67:
+ 989              	.LBE205:
+ 105:Core/Src/robot/play.cpp ****                 HAL_Delay(10);
+ 990              		.loc 2 105 0 discriminator 2
+ 991 007e 0A20     		movs	r0, #10
+ 992 0080 FFF7FEFF 		bl	HAL_Delay
+ 993              	.LVL105:
+ 994              	.LBE201:
+  88:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 995              		.loc 2 88 0 discriminator 2
+ 996 0084 0137     		adds	r7, r7, #1
+ 997              	.LVL106:
+ 998 0086 FFB2     		uxtb	r7, r7
+ 999              	.LVL107:
+ 1000              	.L68:
+  88:Core/Src/robot/play.cpp ****         for (uint8_t j = 0; j < 10; ++j) {
+ 1001              		.loc 2 88 0 is_stmt 0 discriminator 1
+ 1002 0088 092F     		cmp	r7, #9
+ 1003 008a 01D8     		bhi	.L60
+ 1004              	.LBB207:
+ 1005              	.LBB206:
+  90:Core/Src/robot/play.cpp ****                 for (uint8_t i = 0; i < 4; ++i) {
+ 1006              		.loc 2 90 0 is_stmt 1
+ 1007 008c 0024     		movs	r4, #0
+ 1008 008e C2E7     		b	.L66
+ 1009              	.L60:
+ 1010              	.LBE206:
+ 1011              	.LBE207:
+ 1012              	.LBE200:
+ 1013              		.loc 2 107 0
+ 1014 0090 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1015              	.LVL108:
+ 1016              	.L75:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 24
+
+
+ 1017 0092 00BF     		.align	2
+ 1018              	.L74:
+ 1019 0094 00000000 		.word	0
+ 1020 0098 00000000 		.word	gWheels
+ 1021 009c 00000000 		.word	.LANCHOR1
+ 1022 00a0 00008C42 		.word	1116471296
+ 1023              		.cfi_endproc
+ 1024              	.LFE404:
+ 1026              		.section	.text._GLOBAL__sub_I__Z6updatePf,"ax",%progbits
+ 1027              		.align	1
+ 1028              		.syntax unified
+ 1029              		.thumb
+ 1030              		.thumb_func
+ 1031              		.fpu fpv4-sp-d16
+ 1033              	_GLOBAL__sub_I__Z6updatePf:
+ 1034              	.LFB408:
+ 1035              		.loc 2 107 0
+ 1036              		.cfi_startproc
+ 1037              		@ args = 0, pretend = 0, frame = 0
+ 1038              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1039 0000 08B5     		push	{r3, lr}
+ 1040              	.LCFI9:
+ 1041              		.cfi_def_cfa_offset 8
+ 1042              		.cfi_offset 3, -8
+ 1043              		.cfi_offset 14, -4
+ 1044              		.loc 2 107 0
+ 1045 0002 4FF6FF71 		movw	r1, #65535
+ 1046 0006 0120     		movs	r0, #1
+ 1047 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 1048              	.LVL109:
+ 1049 000c 08BD     		pop	{r3, pc}
+ 1050              		.cfi_endproc
+ 1051              	.LFE408:
+ 1053              		.section	.init_array,"aw",%init_array
+ 1054              		.align	2
+ 1055 0000 00000000 		.word	_GLOBAL__sub_I__Z6updatePf(target1)
+ 1056              		.weak	_ZTS13PID_Algorithm
+ 1057              		.section	.rodata._ZTS13PID_Algorithm,"aG",%progbits,_ZTS13PID_Algorithm,comdat
+ 1058              		.align	2
+ 1061              	_ZTS13PID_Algorithm:
+ 1062 0000 31335049 		.ascii	"13PID_Algorithm\000"
+ 1062      445F416C 
+ 1062      676F7269 
+ 1062      74686D00 
+ 1063              		.weak	_ZTI13PID_Algorithm
+ 1064              		.section	.rodata._ZTI13PID_Algorithm,"aG",%progbits,_ZTI13PID_Algorithm,comdat
+ 1065              		.align	2
+ 1068              	_ZTI13PID_Algorithm:
+ 1069 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 1070 0004 00000000 		.word	_ZTS13PID_Algorithm
+ 1071              		.weak	_ZTS12Discrete_PID
+ 1072              		.section	.rodata._ZTS12Discrete_PID,"aG",%progbits,_ZTS12Discrete_PID,comdat
+ 1073              		.align	2
+ 1076              	_ZTS12Discrete_PID:
+ 1077 0000 31324469 		.ascii	"12Discrete_PID\000"
+ 1077      73637265 
+ 1077      74655F50 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 25
+
+
+ 1077      494400
+ 1078              		.weak	_ZTI12Discrete_PID
+ 1079              		.section	.rodata._ZTI12Discrete_PID,"aG",%progbits,_ZTI12Discrete_PID,comdat
+ 1080              		.align	2
+ 1083              	_ZTI12Discrete_PID:
+ 1084 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1085 0004 00000000 		.word	_ZTS12Discrete_PID
+ 1086 0008 00000000 		.word	_ZTI13PID_Algorithm
+ 1087              		.weak	_ZTV12Discrete_PID
+ 1088              		.section	.rodata._ZTV12Discrete_PID,"aG",%progbits,_ZTV12Discrete_PID,comdat
+ 1089              		.align	2
+ 1092              	_ZTV12Discrete_PID:
+ 1093 0000 00000000 		.word	0
+ 1094 0004 00000000 		.word	_ZTI12Discrete_PID
+ 1095 0008 00000000 		.word	_ZN12Discrete_PID7computeEfm
+ 1096 000c 00000000 		.word	_ZN12Discrete_PIDD1Ev
+ 1097 0010 00000000 		.word	_ZN12Discrete_PIDD0Ev
+ 1098              		.global	gP_Factor
+ 1099              		.global	gI_Factor
+ 1100              		.global	gPID
+ 1101              		.global	gDisc_PID
+ 1102              		.section	.bss.gDisc_PID,"aw",%nobits
+ 1103              		.align	2
+ 1104              		.set	.LANCHOR0,. + 0
+ 1107              	gDisc_PID:
+ 1108 0000 00000000 		.space	144
+ 1108      00000000 
+ 1108      00000000 
+ 1108      00000000 
+ 1108      00000000 
+ 1109              		.section	.bss.gPID,"aw",%nobits
+ 1110              		.align	2
+ 1111              		.set	.LANCHOR1,. + 0
+ 1114              	gPID:
+ 1115 0000 00000000 		.space	16
+ 1115      00000000 
+ 1115      00000000 
+ 1115      00000000 
+ 1116              		.section	.data.gI_Factor,"aw",%progbits
+ 1117              		.align	2
+ 1118              		.set	.LANCHOR2,. + 0
+ 1121              	gI_Factor:
+ 1122 0000 0000A041 		.word	1101004800
+ 1123              		.section	.data.gP_Factor,"aw",%progbits
+ 1124              		.align	2
+ 1127              	gP_Factor:
+ 1128 0000 0000803F 		.word	1065353216
+ 1129              		.section	.rodata._Z4tunePfm.str1.4,"aMS",%progbits,1
+ 1130              		.align	2
+ 1131              	.LC1:
+ 1132 0000 28256C64 		.ascii	"(%ld, %ld)  \000"
+ 1132      2C20256C 
+ 1132      64292020 
+ 1132      00
+ 1133              		.section	.rodata._Z6updatePf.str1.4,"aMS",%progbits,1
+ 1134              		.align	2
+ 1135              	.LC0:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 26
+
+
+ 1136 0000 256C6420 		.ascii	"%ld  \000"
+ 1136      2000
+ 1137              		.section	.rodata._ZL9max_omega,"a",%progbits
+ 1138              		.align	2
+ 1139              		.set	.LANCHOR3,. + 0
+ 1142              	_ZL9max_omega:
+ 1143 0000 00000841 		.word	1091043328
+ 1144 0004 0000E040 		.word	1088421888
+ 1145              		.text
+ 1146              	.Letext0:
+ 1147              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1148              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1149              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 1150              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1151              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1152              		.file 9 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 1153              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1154              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1155              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1156              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1157              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1158              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1159              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1160              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1161              		.file 18 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1162              		.file 19 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 1163              		.file 20 "Core/Inc\\periphs/tim.h"
+ 1164              		.file 21 "Core/Inc\\periphs/usart.h"
+ 1165              		.file 22 "Core/Inc\\periphs/adc.h"
+ 1166              		.file 23 "Core/Inc\\devs/wheel.h"
+ 1167              		.file 24 "Core/Inc/robot/robo_init.h"
+ 1168              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1169              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1170              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1171              		.file 28 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1172              		.file 29 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1173              		.file 30 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1174              		.file 31 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1175              		.file 32 "Core/Inc\\devs/thinker.h"
+ 1176              		.file 33 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 27
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 play.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:18     .text._ZN12Discrete_PIDD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD2Ev
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD1Ev
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:42     .text._ZN12Discrete_PID7computeEfm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:49     .text._ZN12Discrete_PID7computeEfm:00000000 _ZN12Discrete_PID7computeEfm
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:153    .text._ZN12Discrete_PID7computeEfm:00000090 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:158    .text.__tcf_0:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:164    .text.__tcf_0:00000000 __tcf_0
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:196    .text.__tcf_0:00000018 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:202    .text.__tcf_1:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:208    .text.__tcf_1:00000000 __tcf_1
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:233    .text.__tcf_1:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:239    .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:245    .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:354    .text._Z41__static_initialization_and_destruction_0ii:00000054 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1092   .rodata._ZTV12Discrete_PID:00000000 _ZTV12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:363    .text._ZN12Discrete_PIDD0Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:370    .text._ZN12Discrete_PIDD0Ev:00000000 _ZN12Discrete_PIDD0Ev
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:393    .text._Z6updatePf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:400    .text._Z6updatePf:00000000 _Z6updatePf
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:469    .text._Z6updatePf:00000044 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:478    .text._Z8pid_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:485    .text._Z8pid_Initv:00000000 _Z8pid_Initv
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:715    .text._Z8pid_Initv:000000c0 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:738    .text._Z4tunePfm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:745    .text._Z4tunePfm:00000000 _Z4tunePfm
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:871    .text._Z4tunePfm:000000a8 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:880    .text._Z9ramp_downm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:887    .text._Z9ramp_downm:00000000 _Z9ramp_downm
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1019   .text._Z9ramp_downm:00000094 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1027   .text._GLOBAL__sub_I__Z6updatePf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1033   .text._GLOBAL__sub_I__Z6updatePf:00000000 _GLOBAL__sub_I__Z6updatePf
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1054   .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1061   .rodata._ZTS13PID_Algorithm:00000000 _ZTS13PID_Algorithm
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1058   .rodata._ZTS13PID_Algorithm:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1068   .rodata._ZTI13PID_Algorithm:00000000 _ZTI13PID_Algorithm
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1065   .rodata._ZTI13PID_Algorithm:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1076   .rodata._ZTS12Discrete_PID:00000000 _ZTS12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1073   .rodata._ZTS12Discrete_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1083   .rodata._ZTI12Discrete_PID:00000000 _ZTI12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1080   .rodata._ZTI12Discrete_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1089   .rodata._ZTV12Discrete_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1127   .data.gP_Factor:00000000 gP_Factor
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1121   .data.gI_Factor:00000000 gI_Factor
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1114   .bss.gPID:00000000 gPID
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1107   .bss.gDisc_PID:00000000 gDisc_PID
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1103   .bss.gDisc_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1110   .bss.gPID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1117   .data.gI_Factor:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1124   .data.gP_Factor:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1130   .rodata._Z4tunePfm.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1134   .rodata._Z6updatePf.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1138   .rodata._ZL9max_omega:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s:1142   .rodata._ZL9max_omega:00000000 _ZL9max_omega
+                           .group:00000000 _ZN12Discrete_PIDD5Ev
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccDIuBgg.s 			page 28
+
+
+
+UNDEFINED SYMBOLS
+__aeabi_atexit
+__dso_handle
+_ZdlPvj
+_Z15Thinker_isEmptyv
+_Z11get_ThinkerPf
+printf
+putchar
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+_ZN5Wheel9get_OmegaEm
+_ZN5Wheel9set_OmegaEf
+_ZNK5Wheel6updateEv
+gWheels
+HAL_Delay
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

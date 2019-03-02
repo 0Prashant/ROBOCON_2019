@@ -1,0 +1,480 @@
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"feed_forward.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.ffInit,"ax",%progbits
+  18              		.align	1
+  19              		.global	ffInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	ffInit:
+  26              	.LFB3:
+  27              		.file 1 "Core/Src/feed_forward.c"
+   1:Core/Src/feed_forward.c **** /*30-1-2019*/
+   2:Core/Src/feed_forward.c **** 
+   3:Core/Src/feed_forward.c **** #include "feed_forward.h"
+   4:Core/Src/feed_forward.c **** #include <math.h>
+   5:Core/Src/feed_forward.c **** 
+   6:Core/Src/feed_forward.c **** void ffInit(struct feedStr *ff, float _max_omega, float _percent_div, float _dt)
+   7:Core/Src/feed_forward.c **** {
+  28              		.loc 1 7 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+   8:Core/Src/feed_forward.c ****         ff->max_omega = _max_omega;
+  34              		.loc 1 8 0
+  35 0000 80ED000A 		vstr.32	s0, [r0]
+   9:Core/Src/feed_forward.c ****         ff->percent_div = _percent_div;
+  36              		.loc 1 9 0
+  37 0004 C0ED020A 		vstr.32	s1, [r0, #8]
+  10:Core/Src/feed_forward.c ****         ff->status = ffBUSY;
+  38              		.loc 1 10 0
+  39 0008 0023     		movs	r3, #0
+  40 000a 80F83830 		strb	r3, [r0, #56]
+  11:Core/Src/feed_forward.c ****         ff->dt = _dt;
+  41              		.loc 1 11 0
+  42 000e 80ED031A 		vstr.32	s2, [r0, #12]
+  12:Core/Src/feed_forward.c ****         ff->index = 0;
+  43              		.loc 1 12 0
+  44 0012 C362     		str	r3, [r0, #44]
+  13:Core/Src/feed_forward.c **** }
+  45              		.loc 1 13 0
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 2
+
+
+  46 0014 7047     		bx	lr
+  47              		.cfi_endproc
+  48              	.LFE3:
+  50              		.section	.text.ffSetAngle,"ax",%progbits
+  51              		.align	1
+  52              		.global	ffSetAngle
+  53              		.syntax unified
+  54              		.thumb
+  55              		.thumb_func
+  56              		.fpu fpv4-sp-d16
+  58              	ffSetAngle:
+  59              	.LFB4:
+  14:Core/Src/feed_forward.c **** 
+  15:Core/Src/feed_forward.c **** void ffSetAngle(struct feedStr *ff, float _max_angle)
+  16:Core/Src/feed_forward.c **** {
+  60              		.loc 1 16 0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64              		@ link register save eliminated.
+  65              	.LVL1:
+  17:Core/Src/feed_forward.c ****         float max_angle_rad;
+  18:Core/Src/feed_forward.c **** 
+  19:Core/Src/feed_forward.c ****         if (_max_angle > 0)
+  66              		.loc 1 19 0
+  67 0000 B5EEC00A 		vcmpe.f32	s0, #0
+  68 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  69 0008 01DD     		ble	.L3
+  20:Core/Src/feed_forward.c ****         {
+  21:Core/Src/feed_forward.c ****                 ff->sign_flag = 1;
+  70              		.loc 1 21 0
+  71 000a 0123     		movs	r3, #1
+  72 000c 0363     		str	r3, [r0, #48]
+  73              	.L3:
+  22:Core/Src/feed_forward.c ****         }
+  23:Core/Src/feed_forward.c **** 
+  24:Core/Src/feed_forward.c ****         if (_max_angle < 0)
+  74              		.loc 1 24 0
+  75 000e B5EEC00A 		vcmpe.f32	s0, #0
+  76 0012 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  77 0016 2AD4     		bmi	.L10
+  78              	.L5:
+  25:Core/Src/feed_forward.c ****         {
+  26:Core/Src/feed_forward.c ****                 _max_angle = -1 * _max_angle;
+  27:Core/Src/feed_forward.c ****                 ff->sign_flag = -1;
+  28:Core/Src/feed_forward.c ****         }
+  29:Core/Src/feed_forward.c **** 
+  30:Core/Src/feed_forward.c ****         //printf("%d", ff->sign_flag);
+  31:Core/Src/feed_forward.c ****         if (_max_angle == 0)
+  79              		.loc 1 31 0
+  80 0018 B5EE400A 		vcmp.f32	s0, #0
+  81 001c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  82 0020 02D1     		bne	.L7
+  32:Core/Src/feed_forward.c ****                 ff->status = ffCOMPLETE;
+  83              		.loc 1 32 0
+  84 0022 0123     		movs	r3, #1
+  85 0024 80F83830 		strb	r3, [r0, #56]
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 3
+
+
+  86              	.L7:
+  33:Core/Src/feed_forward.c **** 
+  34:Core/Src/feed_forward.c ****         max_angle_rad = (_max_angle * PI) / 180;
+  87              		.loc 1 34 0
+  88 0028 DFED147A 		vldr.32	s15, .L11
+  89 002c 60EE277A 		vmul.f32	s15, s0, s15
+  90 0030 9FED137A 		vldr.32	s14, .L11+4
+  91 0034 C7EE876A 		vdiv.f32	s13, s15, s14
+  92              	.LVL2:
+  35:Core/Src/feed_forward.c **** 
+  36:Core/Src/feed_forward.c ****         ff->max_angle = _max_angle;
+  93              		.loc 1 36 0
+  94 0038 80ED010A 		vstr.32	s0, [r0, #4]
+  37:Core/Src/feed_forward.c ****         ff->T = max_angle_rad / ff->max_omega; /*change*/
+  95              		.loc 1 37 0
+  96 003c 90ED007A 		vldr.32	s14, [r0]
+  97 0040 C6EE877A 		vdiv.f32	s15, s13, s14
+  98 0044 C0ED047A 		vstr.32	s15, [r0, #16]
+  38:Core/Src/feed_forward.c ****         ff->t1 = (ff->percent_div * ff->T) / 100.0f;
+  99              		.loc 1 38 0
+ 100 0048 90ED027A 		vldr.32	s14, [r0, #8]
+ 101 004c 67EE875A 		vmul.f32	s11, s15, s14
+ 102 0050 DFED0C6A 		vldr.32	s13, .L11+8
+ 103              	.LVL3:
+ 104 0054 85EEA66A 		vdiv.f32	s12, s11, s13
+ 105 0058 80ED056A 		vstr.32	s12, [r0, #20]
+  39:Core/Src/feed_forward.c ****         ff->t2 = (100.0f - ff->percent_div) * ff->T / 100.0f;
+ 106              		.loc 1 39 0
+ 107 005c 36EEC77A 		vsub.f32	s14, s13, s14
+ 108 0060 67EE877A 		vmul.f32	s15, s15, s14
+ 109 0064 87EEA67A 		vdiv.f32	s14, s15, s13
+ 110 0068 80ED067A 		vstr.32	s14, [r0, #24]
+  40:Core/Src/feed_forward.c **** }
+ 111              		.loc 1 40 0
+ 112 006c 7047     		bx	lr
+ 113              	.LVL4:
+ 114              	.L10:
+  26:Core/Src/feed_forward.c ****                 ff->sign_flag = -1;
+ 115              		.loc 1 26 0
+ 116 006e B1EE400A 		vneg.f32	s0, s0
+ 117              	.LVL5:
+  27:Core/Src/feed_forward.c ****         }
+ 118              		.loc 1 27 0
+ 119 0072 4FF0FF33 		mov	r3, #-1
+ 120 0076 0363     		str	r3, [r0, #48]
+ 121 0078 CEE7     		b	.L5
+ 122              	.L12:
+ 123 007a 00BF     		.align	2
+ 124              	.L11:
+ 125 007c 560E4940 		.word	1078529622
+ 126 0080 00003443 		.word	1127481344
+ 127 0084 0000C842 		.word	1120403456
+ 128              		.cfi_endproc
+ 129              	.LFE4:
+ 131              		.section	.text.ffGenerate,"ax",%progbits
+ 132              		.align	1
+ 133              		.global	ffGenerate
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 4
+
+
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 137              		.fpu fpv4-sp-d16
+ 139              	ffGenerate:
+ 140              	.LFB5:
+  41:Core/Src/feed_forward.c **** 
+  42:Core/Src/feed_forward.c **** float ffGenerate(struct feedStr *ff, float curr_angle)
+  43:Core/Src/feed_forward.c **** {
+ 141              		.loc 1 43 0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		@ link register save eliminated.
+ 146              	.LVL6:
+  44:Core/Src/feed_forward.c **** 
+  45:Core/Src/feed_forward.c ****         float new_omega = 0;
+  46:Core/Src/feed_forward.c ****         float t = ff->index * ff->dt;
+ 147              		.loc 1 46 0
+ 148 0000 C36A     		ldr	r3, [r0, #44]
+ 149 0002 07EE903A 		vmov	s15, r3	@ int
+ 150 0006 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 151 000a 90ED037A 		vldr.32	s14, [r0, #12]
+ 152 000e 67EE877A 		vmul.f32	s15, s15, s14
+ 153              	.LVL7:
+  47:Core/Src/feed_forward.c **** 
+  48:Core/Src/feed_forward.c ****         while (ff->status == ffBUSY)
+ 154              		.loc 1 48 0
+ 155 0012 90F83820 		ldrb	r2, [r0, #56]	@ zero_extendqisi2
+ 156 0016 002A     		cmp	r2, #0
+ 157 0018 70D1     		bne	.L28
+  49:Core/Src/feed_forward.c ****         {
+  50:Core/Src/feed_forward.c ****                 if ((t >= 0) && (t < ff->t1))
+ 158              		.loc 1 50 0
+ 159 001a F5EEC07A 		vcmpe.f32	s15, #0
+ 160 001e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 161 0022 20DB     		blt	.L15
+ 162              		.loc 1 50 0 is_stmt 0 discriminator 1
+ 163 0024 90ED057A 		vldr.32	s14, [r0, #20]
+ 164 0028 B4EEE77A 		vcmpe.f32	s14, s15
+ 165 002c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 166 0030 19DD     		ble	.L15
+  51:Core/Src/feed_forward.c ****                 {
+  52:Core/Src/feed_forward.c ****                         new_omega = (ff->max_omega * t) / ff->t1;
+ 167              		.loc 1 52 0 is_stmt 1
+ 168 0032 D0ED006A 		vldr.32	s13, [r0]
+ 169 0036 66EEA77A 		vmul.f32	s15, s13, s15
+ 170              	.LVL8:
+ 171 003a C7EE876A 		vdiv.f32	s13, s15, s14
+ 172              	.LVL9:
+ 173              	.L18:
+  53:Core/Src/feed_forward.c ****                 }
+  54:Core/Src/feed_forward.c **** 
+  55:Core/Src/feed_forward.c ****                 else if ((t > ff->t1 && (t < ff->t2)))
+  56:Core/Src/feed_forward.c ****                 {
+  57:Core/Src/feed_forward.c ****                         new_omega = ff->max_omega;
+  58:Core/Src/feed_forward.c ****                 }
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 5
+
+
+  59:Core/Src/feed_forward.c **** 
+  60:Core/Src/feed_forward.c ****                 else if ((t > ff->t2) && (t < ff->T))
+  61:Core/Src/feed_forward.c ****                 {
+  62:Core/Src/feed_forward.c ****                         new_omega = ff->max_omega * (t - ff->T) / (ff->t2 - ff->T);
+  63:Core/Src/feed_forward.c ****                         //new_omega = ff->max_omega ;
+  64:Core/Src/feed_forward.c ****                 }
+  65:Core/Src/feed_forward.c **** 
+  66:Core/Src/feed_forward.c ****                 else if (fabs(curr_angle) < fabs(ff->max_angle) && t > ff->T)
+  67:Core/Src/feed_forward.c ****                 {
+  68:Core/Src/feed_forward.c ****                         new_omega = 3;
+  69:Core/Src/feed_forward.c ****                 }
+  70:Core/Src/feed_forward.c **** 
+  71:Core/Src/feed_forward.c ****                 if (fabs(curr_angle) >= fabs(ff->max_angle))
+ 174              		.loc 1 71 0
+ 175 003e B0EEC00A 		vabs.f32	s0, s0
+ 176              	.LVL10:
+ 177 0042 D0ED017A 		vldr.32	s15, [r0, #4]
+ 178 0046 F0EEE77A 		vabs.f32	s15, s15
+ 179 004a B4EEE70A 		vcmpe.f32	s0, s15
+ 180 004e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 181 0052 4DDA     		bge	.L41
+  72:Core/Src/feed_forward.c ****                 {
+  73:Core/Src/feed_forward.c ****                         ff->status = ffCOMPLETE;
+  74:Core/Src/feed_forward.c ****                         return 0;
+  75:Core/Src/feed_forward.c ****                 }
+  76:Core/Src/feed_forward.c ****                 ff->index++;
+ 182              		.loc 1 76 0
+ 183 0054 0133     		adds	r3, r3, #1
+ 184              	.LVL11:
+ 185 0056 C362     		str	r3, [r0, #44]
+ 186              	.LVL12:
+  77:Core/Src/feed_forward.c ****                 return new_omega * ff->sign_flag;
+ 187              		.loc 1 77 0
+ 188 0058 90ED0C0A 		vldr.32	s0, [r0, #48]	@ int
+ 189 005c B8EEC00A 		vcvt.f32.s32	s0, s0
+ 190 0060 20EE260A 		vmul.f32	s0, s0, s13
+ 191 0064 7047     		bx	lr
+ 192              	.LVL13:
+ 193              	.L15:
+  55:Core/Src/feed_forward.c ****                 {
+ 194              		.loc 1 55 0
+ 195 0066 90ED057A 		vldr.32	s14, [r0, #20]
+ 196 006a B4EEE77A 		vcmpe.f32	s14, s15
+ 197 006e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 198 0072 09D5     		bpl	.L19
+  55:Core/Src/feed_forward.c ****                 {
+ 199              		.loc 1 55 0 is_stmt 0 discriminator 1
+ 200 0074 90ED067A 		vldr.32	s14, [r0, #24]
+ 201 0078 B4EEE77A 		vcmpe.f32	s14, s15
+ 202 007c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 203 0080 02DD     		ble	.L19
+  57:Core/Src/feed_forward.c ****                 }
+ 204              		.loc 1 57 0 is_stmt 1
+ 205 0082 D0ED006A 		vldr.32	s13, [r0]
+ 206              	.LVL14:
+ 207 0086 DAE7     		b	.L18
+ 208              	.LVL15:
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 6
+
+
+ 209              	.L19:
+  60:Core/Src/feed_forward.c ****                 {
+ 210              		.loc 1 60 0
+ 211 0088 90ED067A 		vldr.32	s14, [r0, #24]
+ 212 008c B4EEE77A 		vcmpe.f32	s14, s15
+ 213 0090 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 214 0094 11D5     		bpl	.L22
+  60:Core/Src/feed_forward.c ****                 {
+ 215              		.loc 1 60 0 is_stmt 0 discriminator 1
+ 216 0096 D0ED046A 		vldr.32	s13, [r0, #16]
+ 217 009a F4EEE76A 		vcmpe.f32	s13, s15
+ 218 009e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 219 00a2 0ADD     		ble	.L22
+  62:Core/Src/feed_forward.c ****                         //new_omega = ff->max_omega ;
+ 220              		.loc 1 62 0 is_stmt 1
+ 221 00a4 90ED006A 		vldr.32	s12, [r0]
+ 222 00a8 77EEE67A 		vsub.f32	s15, s15, s13
+ 223              	.LVL16:
+ 224 00ac 66EE277A 		vmul.f32	s15, s12, s15
+ 225 00b0 37EE667A 		vsub.f32	s14, s14, s13
+ 226 00b4 C7EE876A 		vdiv.f32	s13, s15, s14
+ 227              	.LVL17:
+ 228 00b8 C1E7     		b	.L18
+ 229              	.LVL18:
+ 230              	.L22:
+  66:Core/Src/feed_forward.c ****                 {
+ 231              		.loc 1 66 0
+ 232 00ba F0EEC06A 		vabs.f32	s13, s0
+ 233 00be 90ED017A 		vldr.32	s14, [r0, #4]
+ 234 00c2 B0EEC77A 		vabs.f32	s14, s14
+ 235 00c6 F4EEC76A 		vcmpe.f32	s13, s14
+ 236 00ca F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 237 00ce 09D5     		bpl	.L39
+  66:Core/Src/feed_forward.c ****                 {
+ 238              		.loc 1 66 0 is_stmt 0 discriminator 1
+ 239 00d0 90ED047A 		vldr.32	s14, [r0, #16]
+ 240 00d4 B4EEE77A 		vcmpe.f32	s14, s15
+ 241 00d8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 242 00dc 05D4     		bmi	.L30
+  45:Core/Src/feed_forward.c ****         float t = ff->index * ff->dt;
+ 243              		.loc 1 45 0 is_stmt 1
+ 244 00de DFED096A 		vldr.32	s13, .L42
+ 245 00e2 ACE7     		b	.L18
+ 246              	.L39:
+ 247 00e4 DFED076A 		vldr.32	s13, .L42
+ 248 00e8 A9E7     		b	.L18
+ 249              	.L30:
+  68:Core/Src/feed_forward.c ****                 }
+ 250              		.loc 1 68 0
+ 251 00ea F0EE086A 		vmov.f32	s13, #3.0e+0
+ 252 00ee A6E7     		b	.L18
+ 253              	.LVL19:
+ 254              	.L41:
+  73:Core/Src/feed_forward.c ****                         return 0;
+ 255              		.loc 1 73 0
+ 256 00f0 0123     		movs	r3, #1
+ 257              	.LVL20:
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 7
+
+
+ 258 00f2 80F83830 		strb	r3, [r0, #56]
+  74:Core/Src/feed_forward.c ****                 }
+ 259              		.loc 1 74 0
+ 260 00f6 9FED030A 		vldr.32	s0, .L42
+ 261 00fa 7047     		bx	lr
+ 262              	.LVL21:
+ 263              	.L28:
+  78:Core/Src/feed_forward.c ****         }
+  79:Core/Src/feed_forward.c ****         return 0;
+ 264              		.loc 1 79 0
+ 265 00fc 9FED010A 		vldr.32	s0, .L42
+ 266              	.LVL22:
+  80:Core/Src/feed_forward.c **** }
+ 267              		.loc 1 80 0
+ 268 0100 7047     		bx	lr
+ 269              	.L43:
+ 270 0102 00BF     		.align	2
+ 271              	.L42:
+ 272 0104 00000000 		.word	0
+ 273              		.cfi_endproc
+ 274              	.LFE5:
+ 276              		.section	.text.ffResetParams,"ax",%progbits
+ 277              		.align	1
+ 278              		.global	ffResetParams
+ 279              		.syntax unified
+ 280              		.thumb
+ 281              		.thumb_func
+ 282              		.fpu fpv4-sp-d16
+ 284              	ffResetParams:
+ 285              	.LFB7:
+  81:Core/Src/feed_forward.c **** 
+  82:Core/Src/feed_forward.c **** void ffRestart(struct feedStr *ff)
+  83:Core/Src/feed_forward.c **** {
+  84:Core/Src/feed_forward.c ****         ff->status = ffBUSY;
+  85:Core/Src/feed_forward.c ****         ffResetParams(ff);
+  86:Core/Src/feed_forward.c **** }
+  87:Core/Src/feed_forward.c **** 
+  88:Core/Src/feed_forward.c **** void ffResetParams(struct feedStr *ff)
+  89:Core/Src/feed_forward.c **** {
+ 286              		.loc 1 89 0
+ 287              		.cfi_startproc
+ 288              		@ args = 0, pretend = 0, frame = 0
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290              		@ link register save eliminated.
+ 291              	.LVL23:
+  90:Core/Src/feed_forward.c ****         ff->index = 0;
+ 292              		.loc 1 90 0
+ 293 0000 0023     		movs	r3, #0
+ 294 0002 C362     		str	r3, [r0, #44]
+  91:Core/Src/feed_forward.c **** }
+ 295              		.loc 1 91 0
+ 296 0004 7047     		bx	lr
+ 297              		.cfi_endproc
+ 298              	.LFE7:
+ 300              		.section	.text.ffRestart,"ax",%progbits
+ 301              		.align	1
+ 302              		.global	ffRestart
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 8
+
+
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 306              		.fpu fpv4-sp-d16
+ 308              	ffRestart:
+ 309              	.LFB6:
+  83:Core/Src/feed_forward.c ****         ff->status = ffBUSY;
+ 310              		.loc 1 83 0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314              	.LVL24:
+ 315 0000 08B5     		push	{r3, lr}
+ 316              	.LCFI0:
+ 317              		.cfi_def_cfa_offset 8
+ 318              		.cfi_offset 3, -8
+ 319              		.cfi_offset 14, -4
+  84:Core/Src/feed_forward.c ****         ffResetParams(ff);
+ 320              		.loc 1 84 0
+ 321 0002 0022     		movs	r2, #0
+ 322 0004 80F83820 		strb	r2, [r0, #56]
+  85:Core/Src/feed_forward.c **** }
+ 323              		.loc 1 85 0
+ 324 0008 FFF7FEFF 		bl	ffResetParams
+ 325              	.LVL25:
+  86:Core/Src/feed_forward.c **** 
+ 326              		.loc 1 86 0
+ 327 000c 08BD     		pop	{r3, pc}
+ 328              		.cfi_endproc
+ 329              	.LFE6:
+ 331              		.text
+ 332              	.Letext0:
+ 333              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 334              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 335              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 336              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 337              		.file 6 "Core/Inc/feed_forward.h"
+ 338              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ARM GAS  C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 feed_forward.c
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:18     .text.ffInit:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:25     .text.ffInit:00000000 ffInit
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:51     .text.ffSetAngle:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:58     .text.ffSetAngle:00000000 ffSetAngle
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:125    .text.ffSetAngle:0000007c $d
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:132    .text.ffGenerate:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:139    .text.ffGenerate:00000000 ffGenerate
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:272    .text.ffGenerate:00000104 $d
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:277    .text.ffResetParams:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:284    .text.ffResetParams:00000000 ffResetParams
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:301    .text.ffRestart:00000000 $t
+C:\Users\Rishav\AppData\Local\Temp\cc4Y9hBs.s:308    .text.ffRestart:00000000 ffRestart
+
+NO UNDEFINED SYMBOLS

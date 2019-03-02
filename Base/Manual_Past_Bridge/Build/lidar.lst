@@ -1,0 +1,447 @@
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lidar.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN5LidarD2Ev,"axG",%progbits,_ZN5LidarD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN5LidarD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN5LidarD2Ev:
+  26              	.LFB192:
+  27              		.file 1 "Core/Inc/parts/sensors/lidar.h"
+   1:Core/Inc/parts/sensors/lidar.h **** /*
+   2:Core/Inc/parts/sensors/lidar.h ****  * lidar.h
+   3:Core/Inc/parts/sensors/lidar.h ****  * 
+   4:Core/Inc/parts/sensors/lidar.h ****  * Created : 1/7/2018
+   5:Core/Inc/parts/sensors/lidar.h ****  *  Author : n-is
+   6:Core/Inc/parts/sensors/lidar.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/parts/sensors/lidar.h ****  */
+   8:Core/Inc/parts/sensors/lidar.h **** 
+   9:Core/Inc/parts/sensors/lidar.h **** #ifndef _LIDAR_H_
+  10:Core/Inc/parts/sensors/lidar.h **** #define _LIDAR_H_
+  11:Core/Inc/parts/sensors/lidar.h **** 
+  12:Core/Inc/parts/sensors/lidar.h **** #include "sensor.h"
+  13:Core/Inc/parts/sensors/lidar.h **** #include "arduino.h"
+  14:Core/Inc/parts/sensors/lidar.h **** #include "vec2.h"
+  15:Core/Inc/parts/sensors/lidar.h **** 
+  16:Core/Inc/parts/sensors/lidar.h **** class Lidar : public Sensor<float>
+  17:Core/Inc/parts/sensors/lidar.h **** {
+  18:Core/Inc/parts/sensors/lidar.h **** public:
+  19:Core/Inc/parts/sensors/lidar.h ****         Lidar() = default;
+  20:Core/Inc/parts/sensors/lidar.h ****         Lidar(Lidar &&) = default;
+  21:Core/Inc/parts/sensors/lidar.h ****         Lidar(const Lidar &) = default;
+  22:Core/Inc/parts/sensors/lidar.h ****         Lidar &operator=(Lidar &&) = default;
+  23:Core/Inc/parts/sensors/lidar.h ****         Lidar &operator=(const Lidar &) = default;
+  24:Core/Inc/parts/sensors/lidar.h ****         ~Lidar() { }
+  28              		.loc 1 24 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 24 0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 2
+
+
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE192:
+  39              		.weak	_ZN5LidarD1Ev
+  40              		.thumb_set _ZN5LidarD1Ev,_ZN5LidarD2Ev
+  41              		.section	.text._ZN5Lidar5denitEv,"ax",%progbits
+  42              		.align	1
+  43              		.global	_ZN5Lidar5denitEv
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN5Lidar5denitEv:
+  50              	.LFB205:
+  51              		.file 2 "Core/Src/parts/sensors/lidar.cpp"
+   1:Core/Src/parts/sensors/lidar.cpp **** /*
+   2:Core/Src/parts/sensors/lidar.cpp ****  * lidar.cpp
+   3:Core/Src/parts/sensors/lidar.cpp ****  * 
+   4:Core/Src/parts/sensors/lidar.cpp ****  * Created : 1/7/2018
+   5:Core/Src/parts/sensors/lidar.cpp ****  *  Author : n-is
+   6:Core/Src/parts/sensors/lidar.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/parts/sensors/lidar.cpp ****  */
+   8:Core/Src/parts/sensors/lidar.cpp **** 
+   9:Core/Src/parts/sensors/lidar.cpp **** #include "lidar.h"
+  10:Core/Src/parts/sensors/lidar.cpp **** 
+  11:Core/Src/parts/sensors/lidar.cpp **** int Lidar::init()
+  12:Core/Src/parts/sensors/lidar.cpp **** {
+  13:Core/Src/parts/sensors/lidar.cpp ****         adev_->init();
+  14:Core/Src/parts/sensors/lidar.cpp ****         return 0;
+  15:Core/Src/parts/sensors/lidar.cpp **** }
+  16:Core/Src/parts/sensors/lidar.cpp **** 
+  17:Core/Src/parts/sensors/lidar.cpp **** float Lidar::read()
+  18:Core/Src/parts/sensors/lidar.cpp **** {
+  19:Core/Src/parts/sensors/lidar.cpp ****         float dist = adev_->read();
+  20:Core/Src/parts/sensors/lidar.cpp **** 
+  21:Core/Src/parts/sensors/lidar.cpp ****         // printf("%ld\n", (int32_t)(dist));
+  22:Core/Src/parts/sensors/lidar.cpp **** 
+  23:Core/Src/parts/sensors/lidar.cpp ****         float mx,mn;
+  24:Core/Src/parts/sensors/lidar.cpp ****         mx = outliers_.getX();
+  25:Core/Src/parts/sensors/lidar.cpp ****         mn = outliers_.getY();
+  26:Core/Src/parts/sensors/lidar.cpp **** 
+  27:Core/Src/parts/sensors/lidar.cpp ****         if (mx > mn) {
+  28:Core/Src/parts/sensors/lidar.cpp ****                 if (dist > mx || dist < mn) {
+  29:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+  30:Core/Src/parts/sensors/lidar.cpp ****                 }
+  31:Core/Src/parts/sensors/lidar.cpp ****         }
+  32:Core/Src/parts/sensors/lidar.cpp ****         else {
+  33:Core/Src/parts/sensors/lidar.cpp ****                 if (dist > mn || dist < mx) {
+  34:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+  35:Core/Src/parts/sensors/lidar.cpp ****                 }
+  36:Core/Src/parts/sensors/lidar.cpp ****         }
+  37:Core/Src/parts/sensors/lidar.cpp ****         last_data_ = dist;
+  38:Core/Src/parts/sensors/lidar.cpp **** 
+  39:Core/Src/parts/sensors/lidar.cpp ****         return dist;
+  40:Core/Src/parts/sensors/lidar.cpp **** }
+  41:Core/Src/parts/sensors/lidar.cpp **** 
+  42:Core/Src/parts/sensors/lidar.cpp **** bool Lidar::available()
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 3
+
+
+  43:Core/Src/parts/sensors/lidar.cpp **** {
+  44:Core/Src/parts/sensors/lidar.cpp ****         return adev_->available();
+  45:Core/Src/parts/sensors/lidar.cpp **** }
+  46:Core/Src/parts/sensors/lidar.cpp **** 
+  47:Core/Src/parts/sensors/lidar.cpp **** void Lidar::denit()
+  48:Core/Src/parts/sensors/lidar.cpp **** {
+  52              		.loc 2 48 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  49:Core/Src/parts/sensors/lidar.cpp ****         
+  50:Core/Src/parts/sensors/lidar.cpp **** }
+  58              		.loc 2 50 0
+  59 0000 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE205:
+  63              		.section	.text._ZN5Lidar4initEv,"ax",%progbits
+  64              		.align	1
+  65              		.global	_ZN5Lidar4initEv
+  66              		.syntax unified
+  67              		.thumb
+  68              		.thumb_func
+  69              		.fpu fpv4-sp-d16
+  71              	_ZN5Lidar4initEv:
+  72              	.LFB202:
+  12:Core/Src/parts/sensors/lidar.cpp ****         adev_->init();
+  73              		.loc 2 12 0
+  74              		.cfi_startproc
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              	.LVL2:
+  78 0000 08B5     		push	{r3, lr}
+  79              	.LCFI0:
+  80              		.cfi_def_cfa_offset 8
+  81              		.cfi_offset 3, -8
+  82              		.cfi_offset 14, -4
+  13:Core/Src/parts/sensors/lidar.cpp ****         return 0;
+  83              		.loc 2 13 0
+  84 0002 FFF7FEFF 		bl	_ZN14Arduino_Device4initEv
+  85              	.LVL3:
+  15:Core/Src/parts/sensors/lidar.cpp **** 
+  86              		.loc 2 15 0
+  87 0006 0020     		movs	r0, #0
+  88 0008 08BD     		pop	{r3, pc}
+  89              		.cfi_endproc
+  90              	.LFE202:
+  92              		.section	.text._ZN5Lidar4readEv,"ax",%progbits
+  93              		.align	1
+  94              		.global	_ZN5Lidar4readEv
+  95              		.syntax unified
+  96              		.thumb
+  97              		.thumb_func
+  98              		.fpu fpv4-sp-d16
+ 100              	_ZN5Lidar4readEv:
+ 101              	.LFB203:
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 4
+
+
+  18:Core/Src/parts/sensors/lidar.cpp ****         float dist = adev_->read();
+ 102              		.loc 2 18 0
+ 103              		.cfi_startproc
+ 104              		@ args = 0, pretend = 0, frame = 0
+ 105              		@ frame_needed = 0, uses_anonymous_args = 0
+ 106              	.LVL4:
+ 107 0000 10B5     		push	{r4, lr}
+ 108              	.LCFI1:
+ 109              		.cfi_def_cfa_offset 8
+ 110              		.cfi_offset 4, -8
+ 111              		.cfi_offset 14, -4
+ 112 0002 0446     		mov	r4, r0
+  19:Core/Src/parts/sensors/lidar.cpp **** 
+ 113              		.loc 2 19 0
+ 114 0004 8068     		ldr	r0, [r0, #8]
+ 115              	.LVL5:
+ 116 0006 FFF7FEFF 		bl	_ZN14Arduino_Device4readEv
+ 117              	.LVL6:
+ 118              	.LBB21:
+ 119              	.LBB22:
+ 120              		.file 3 "Core/Inc/utils\\math/vec2.h"
+   1:Core/Inc/utils\math/vec2.h **** /*
+   2:Core/Inc/utils\math/vec2.h ****  * vec2.h
+   3:Core/Inc/utils\math/vec2.h ****  * 
+   4:Core/Inc/utils\math/vec2.h ****  * Created : 1/9/2018
+   5:Core/Inc/utils\math/vec2.h ****  *  Author : n-is
+   6:Core/Inc/utils\math/vec2.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils\math/vec2.h ****  */
+   8:Core/Inc/utils\math/vec2.h **** 
+   9:Core/Inc/utils\math/vec2.h **** #ifndef _VEC2_H_
+  10:Core/Inc/utils\math/vec2.h **** #define _VEC2_H_
+  11:Core/Inc/utils\math/vec2.h **** 
+  12:Core/Inc/utils\math/vec2.h **** #include "vec3.h"
+  13:Core/Inc/utils\math/vec2.h **** 
+  14:Core/Inc/utils\math/vec2.h **** template <class T>
+  15:Core/Inc/utils\math/vec2.h **** class Vec2
+  16:Core/Inc/utils\math/vec2.h **** {
+  17:Core/Inc/utils\math/vec2.h **** public:
+  18:Core/Inc/utils\math/vec2.h ****         Vec2() { set_Values(0,0); }
+  19:Core/Inc/utils\math/vec2.h ****         Vec2(T x, T y) { set_Values(x,y); }
+  20:Core/Inc/utils\math/vec2.h **** 
+  21:Core/Inc/utils\math/vec2.h ****         Vec2(Vec3<T> v) { set_Values(v.getX(), v.getY()) ;}
+  22:Core/Inc/utils\math/vec2.h **** 
+  23:Core/Inc/utils\math/vec2.h ****         Vec2(Vec2 &&) = default;
+  24:Core/Inc/utils\math/vec2.h ****         Vec2 &operator=(Vec2 &&) = default;
+  25:Core/Inc/utils\math/vec2.h ****         ~Vec2() { }
+  26:Core/Inc/utils\math/vec2.h **** 
+  27:Core/Inc/utils\math/vec2.h ****         T getX() const { return x_; }
+ 121              		.loc 3 27 0
+ 122 000a 94ED037A 		vldr.32	s14, [r4, #12]
+ 123              	.LVL7:
+ 124              	.LBE22:
+ 125              	.LBE21:
+ 126              	.LBB23:
+ 127              	.LBB24:
+  28:Core/Inc/utils\math/vec2.h ****         T getY() const { return y_; }
+ 128              		.loc 3 28 0
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 5
+
+
+ 129 000e D4ED047A 		vldr.32	s15, [r4, #16]
+ 130              	.LVL8:
+ 131              	.LBE24:
+ 132              	.LBE23:
+  27:Core/Src/parts/sensors/lidar.cpp ****                 if (dist > mx || dist < mn) {
+ 133              		.loc 2 27 0
+ 134 0012 B4EEE77A 		vcmpe.f32	s14, s15
+ 135 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 136 001a 0CDD     		ble	.L14
+  28:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+ 137              		.loc 2 28 0
+ 138 001c B4EEC70A 		vcmpe.f32	s0, s14
+ 139 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 140 0024 04DC     		bgt	.L8
+  28:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+ 141              		.loc 2 28 0 is_stmt 0 discriminator 1
+ 142 0026 B4EEE70A 		vcmpe.f32	s0, s15
+ 143 002a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 144 002e 0ED5     		bpl	.L9
+ 145              	.L8:
+  29:Core/Src/parts/sensors/lidar.cpp ****                 }
+ 146              		.loc 2 29 0 is_stmt 1
+ 147 0030 94ED050A 		vldr.32	s0, [r4, #20]
+ 148              	.LVL9:
+ 149 0034 0BE0     		b	.L9
+ 150              	.L14:
+  33:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+ 151              		.loc 2 33 0
+ 152 0036 B4EEE70A 		vcmpe.f32	s0, s15
+ 153 003a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 154 003e 04DC     		bgt	.L11
+  33:Core/Src/parts/sensors/lidar.cpp ****                         dist = last_data_;
+ 155              		.loc 2 33 0 is_stmt 0 discriminator 1
+ 156 0040 B4EEC70A 		vcmpe.f32	s0, s14
+ 157 0044 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 158 0048 01D5     		bpl	.L9
+ 159              	.L11:
+  34:Core/Src/parts/sensors/lidar.cpp ****                 }
+ 160              		.loc 2 34 0 is_stmt 1
+ 161 004a 94ED050A 		vldr.32	s0, [r4, #20]
+ 162              	.LVL10:
+ 163              	.L9:
+  37:Core/Src/parts/sensors/lidar.cpp **** 
+ 164              		.loc 2 37 0
+ 165 004e 84ED050A 		vstr.32	s0, [r4, #20]
+  40:Core/Src/parts/sensors/lidar.cpp **** 
+ 166              		.loc 2 40 0
+ 167 0052 10BD     		pop	{r4, pc}
+ 168              		.cfi_endproc
+ 169              	.LFE203:
+ 171              		.section	.text._ZN5Lidar9availableEv,"ax",%progbits
+ 172              		.align	1
+ 173              		.global	_ZN5Lidar9availableEv
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 177              		.fpu fpv4-sp-d16
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 6
+
+
+ 179              	_ZN5Lidar9availableEv:
+ 180              	.LFB204:
+  43:Core/Src/parts/sensors/lidar.cpp ****         return adev_->available();
+ 181              		.loc 2 43 0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 0, uses_anonymous_args = 0
+ 185              	.LVL11:
+ 186 0000 08B5     		push	{r3, lr}
+ 187              	.LCFI2:
+ 188              		.cfi_def_cfa_offset 8
+ 189              		.cfi_offset 3, -8
+ 190              		.cfi_offset 14, -4
+  44:Core/Src/parts/sensors/lidar.cpp **** }
+ 191              		.loc 2 44 0
+ 192 0002 8068     		ldr	r0, [r0, #8]
+ 193              	.LVL12:
+ 194 0004 FFF7FEFF 		bl	_ZN14Arduino_Device9availableEv
+ 195              	.LVL13:
+  45:Core/Src/parts/sensors/lidar.cpp **** 
+ 196              		.loc 2 45 0
+ 197 0008 08BD     		pop	{r3, pc}
+ 198              		.cfi_endproc
+ 199              	.LFE204:
+ 201              		.section	.text._ZN5LidarD0Ev,"axG",%progbits,_ZN5LidarD5Ev,comdat
+ 202              		.align	1
+ 203              		.weak	_ZN5LidarD0Ev
+ 204              		.syntax unified
+ 205              		.thumb
+ 206              		.thumb_func
+ 207              		.fpu fpv4-sp-d16
+ 209              	_ZN5LidarD0Ev:
+ 210              	.LFB194:
+ 211              		.loc 1 24 0
+ 212              		.cfi_startproc
+ 213              		@ args = 0, pretend = 0, frame = 0
+ 214              		@ frame_needed = 0, uses_anonymous_args = 0
+ 215              	.LVL14:
+ 216 0000 10B5     		push	{r4, lr}
+ 217              	.LCFI3:
+ 218              		.cfi_def_cfa_offset 8
+ 219              		.cfi_offset 4, -8
+ 220              		.cfi_offset 14, -4
+ 221 0002 0446     		mov	r4, r0
+ 222              		.loc 1 24 0
+ 223 0004 1821     		movs	r1, #24
+ 224 0006 FFF7FEFF 		bl	_ZdlPvj
+ 225              	.LVL15:
+ 226 000a 2046     		mov	r0, r4
+ 227 000c 10BD     		pop	{r4, pc}
+ 228              		.cfi_endproc
+ 229              	.LFE194:
+ 231              		.weak	_ZTS6SensorIfE
+ 232              		.section	.rodata._ZTS6SensorIfE,"aG",%progbits,_ZTS6SensorIfE,comdat
+ 233              		.align	2
+ 236              	_ZTS6SensorIfE:
+ 237 0000 3653656E 		.ascii	"6SensorIfE\000"
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 7
+
+
+ 237      736F7249 
+ 237      664500
+ 238              		.weak	_ZTI6SensorIfE
+ 239              		.section	.rodata._ZTI6SensorIfE,"aG",%progbits,_ZTI6SensorIfE,comdat
+ 240              		.align	2
+ 243              	_ZTI6SensorIfE:
+ 244 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 245 0004 00000000 		.word	_ZTS6SensorIfE
+ 246              		.global	_ZTS5Lidar
+ 247              		.global	_ZTI5Lidar
+ 248              		.global	_ZTV5Lidar
+ 249              		.section	.rodata._ZTI5Lidar,"a",%progbits
+ 250              		.align	2
+ 253              	_ZTI5Lidar:
+ 254 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 255 0004 00000000 		.word	_ZTS5Lidar
+ 256 0008 00000000 		.word	_ZTI6SensorIfE
+ 257              		.section	.rodata._ZTS5Lidar,"a",%progbits
+ 258              		.align	2
+ 261              	_ZTS5Lidar:
+ 262 0000 354C6964 		.ascii	"5Lidar\000"
+ 262      617200
+ 263              		.section	.rodata._ZTV5Lidar,"a",%progbits
+ 264              		.align	2
+ 267              	_ZTV5Lidar:
+ 268 0000 00000000 		.word	0
+ 269 0004 00000000 		.word	_ZTI5Lidar
+ 270 0008 00000000 		.word	_ZN5LidarD1Ev
+ 271 000c 00000000 		.word	_ZN5LidarD0Ev
+ 272 0010 00000000 		.word	_ZN5Lidar4initEv
+ 273 0014 00000000 		.word	_ZN5Lidar4readEv
+ 274 0018 00000000 		.word	_ZN5Lidar9availableEv
+ 275 001c 00000000 		.word	_ZN5Lidar5denitEv
+ 276              		.text
+ 277              	.Letext0:
+ 278              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 279              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 280              		.file 6 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core_cm4
+ 281              		.file 7 "C:/Users/n-is/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/STM32F
+ 282              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 283              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 284              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 285              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 286              		.file 12 "Core/Inc/utils\\container/queue_custom.h"
+ 287              		.file 13 "Core/Inc/devs/arduino.h"
+ 288              		.file 14 "Core/Inc/utils\\math/vec3.h"
+ 289              		.file 15 "Core/Inc/parts/sensors/sensor.h"
+ARM GAS  C:\Users\073be\AppData\Local\Temp\ccrn7S71.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lidar.cpp
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:18     .text._ZN5LidarD2Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:25     .text._ZN5LidarD2Ev:00000000 _ZN5LidarD2Ev
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:25     .text._ZN5LidarD2Ev:00000000 _ZN5LidarD1Ev
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:42     .text._ZN5Lidar5denitEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:49     .text._ZN5Lidar5denitEv:00000000 _ZN5Lidar5denitEv
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:64     .text._ZN5Lidar4initEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:71     .text._ZN5Lidar4initEv:00000000 _ZN5Lidar4initEv
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:93     .text._ZN5Lidar4readEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:100    .text._ZN5Lidar4readEv:00000000 _ZN5Lidar4readEv
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:172    .text._ZN5Lidar9availableEv:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:179    .text._ZN5Lidar9availableEv:00000000 _ZN5Lidar9availableEv
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:202    .text._ZN5LidarD0Ev:00000000 $t
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:209    .text._ZN5LidarD0Ev:00000000 _ZN5LidarD0Ev
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:236    .rodata._ZTS6SensorIfE:00000000 _ZTS6SensorIfE
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:233    .rodata._ZTS6SensorIfE:00000000 $d
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:243    .rodata._ZTI6SensorIfE:00000000 _ZTI6SensorIfE
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:240    .rodata._ZTI6SensorIfE:00000000 $d
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:261    .rodata._ZTS5Lidar:00000000 _ZTS5Lidar
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:253    .rodata._ZTI5Lidar:00000000 _ZTI5Lidar
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:267    .rodata._ZTV5Lidar:00000000 _ZTV5Lidar
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:250    .rodata._ZTI5Lidar:00000000 $d
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:258    .rodata._ZTS5Lidar:00000000 $d
+C:\Users\073be\AppData\Local\Temp\ccrn7S71.s:264    .rodata._ZTV5Lidar:00000000 $d
+                           .group:00000000 _ZN5LidarD5Ev
+
+UNDEFINED SYMBOLS
+_ZN14Arduino_Device4initEv
+_ZN14Arduino_Device4readEv
+_ZN14Arduino_Device9availableEv
+_ZdlPvj
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE

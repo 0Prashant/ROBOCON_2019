@@ -1,0 +1,1330 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"hmc5883.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZL7max_valff,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	_ZL7max_valff:
+  25              	.LFB151:
+  26              		.file 1 "Core/Src/devs/hmc5883.cpp"
+   1:Core/Src/devs/hmc5883.cpp **** /*
+   2:Core/Src/devs/hmc5883.cpp ****  * hmc5883.c
+   3:Core/Src/devs/hmc5883.cpp ****  * 
+   4:Core/Src/devs/hmc5883.cpp ****  * Created : 11/13/2018
+   5:Core/Src/devs/hmc5883.cpp ****  *  Author : n-is & ane
+   6:Core/Src/devs/hmc5883.cpp ****  *   email : 073bex421.nischal@pcampus.edu.np
+   7:Core/Src/devs/hmc5883.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   8:Core/Src/devs/hmc5883.cpp ****  */
+   9:Core/Src/devs/hmc5883.cpp **** 
+  10:Core/Src/devs/hmc5883.cpp **** #include "devs/hmc5883.h"
+  11:Core/Src/devs/hmc5883.cpp **** 
+  12:Core/Src/devs/hmc5883.cpp **** static uint8_t buffer[8];
+  13:Core/Src/devs/hmc5883.cpp **** 
+  14:Core/Src/devs/hmc5883.cpp **** void HMC5883_Init(struct HMC5883 *hmc)
+  15:Core/Src/devs/hmc5883.cpp **** {        
+  16:Core/Src/devs/hmc5883.cpp **** 	buffer[0] = 0x00;
+  17:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x78;       // Sampling Number, Output Rate
+  18:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+  19:Core/Src/devs/hmc5883.cpp **** 	
+  20:Core/Src/devs/hmc5883.cpp **** 	buffer[0] = 0x01;
+  21:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x60;       // Gain
+  22:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+  23:Core/Src/devs/hmc5883.cpp **** 	
+  24:Core/Src/devs/hmc5883.cpp **** 	buffer[0] = 0x02;
+  25:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x00;       // Measurement Mode
+  26:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+  27:Core/Src/devs/hmc5883.cpp **** }
+  28:Core/Src/devs/hmc5883.cpp **** 
+  29:Core/Src/devs/hmc5883.cpp **** void HMC5883_Read(struct HMC5883 *hmc)
+  30:Core/Src/devs/hmc5883.cpp **** {        
+  31:Core/Src/devs/hmc5883.cpp ****         buffer[0] = 0x03;
+  32:Core/Src/devs/hmc5883.cpp ****         HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 1, 10);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 2
+
+
+  33:Core/Src/devs/hmc5883.cpp ****         HAL_I2C_Master_Receive(hmc->hi2c, hmc->address, &buffer[1], 6, 10);
+  34:Core/Src/devs/hmc5883.cpp ****         
+  35:Core/Src/devs/hmc5883.cpp ****         int16_t x = (buffer[1]<<8 | buffer[2]);
+  36:Core/Src/devs/hmc5883.cpp ****         int16_t y = (buffer[5]<<8 | buffer[6]);		
+  37:Core/Src/devs/hmc5883.cpp ****         int16_t z = (buffer[3]<<8 | buffer[4]);
+  38:Core/Src/devs/hmc5883.cpp **** 
+  39:Core/Src/devs/hmc5883.cpp ****         float bx = (float)x - hmc->hard_iron_offset.getX();
+  40:Core/Src/devs/hmc5883.cpp ****         float by = (float)y - hmc->hard_iron_offset.getY();
+  41:Core/Src/devs/hmc5883.cpp ****         float bz = (float)z - hmc->hard_iron_offset.getZ();
+  42:Core/Src/devs/hmc5883.cpp **** 
+  43:Core/Src/devs/hmc5883.cpp ****         (hmc->raw_axis).set_Values((float)bx,(float)by,(float)bz);
+  44:Core/Src/devs/hmc5883.cpp **** }
+  45:Core/Src/devs/hmc5883.cpp **** 
+  46:Core/Src/devs/hmc5883.cpp **** static float max_val(float x, float y)
+  47:Core/Src/devs/hmc5883.cpp **** {
+  27              		.loc 1 47 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              	.LVL0:
+  48:Core/Src/devs/hmc5883.cpp ****         return (x > y)? x : y;
+  33              		.loc 1 48 0
+  34 0000 B4EEE00A 		vcmpe.f32	s0, s1
+  35 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  36 0008 02DC     		bgt	.L5
+  37              	.LVL1:
+  38              	.L2:
+  49:Core/Src/devs/hmc5883.cpp **** }
+  39              		.loc 1 49 0 discriminator 4
+  40 000a B0EE600A 		vmov.f32	s0, s1
+  41              	.LVL2:
+  42 000e 7047     		bx	lr
+  43              	.LVL3:
+  44              	.L5:
+  48:Core/Src/devs/hmc5883.cpp ****         return (x > y)? x : y;
+  45              		.loc 1 48 0
+  46 0010 F0EE400A 		vmov.f32	s1, s0
+  47              	.LVL4:
+  48 0014 F9E7     		b	.L2
+  49              		.cfi_endproc
+  50              	.LFE151:
+  52              		.section	.text._ZL7min_valff,"ax",%progbits
+  53              		.align	1
+  54              		.syntax unified
+  55              		.thumb
+  56              		.thumb_func
+  57              		.fpu fpv4-sp-d16
+  59              	_ZL7min_valff:
+  60              	.LFB152:
+  50:Core/Src/devs/hmc5883.cpp **** 
+  51:Core/Src/devs/hmc5883.cpp **** static float min_val(float x, float y)
+  52:Core/Src/devs/hmc5883.cpp **** {
+  61              		.loc 1 52 0
+  62              		.cfi_startproc
+  63              		@ args = 0, pretend = 0, frame = 0
+  64              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 3
+
+
+  65              		@ link register save eliminated.
+  66              	.LVL5:
+  53:Core/Src/devs/hmc5883.cpp ****         return (x < y)? x : y;
+  67              		.loc 1 53 0
+  68 0000 B4EEE00A 		vcmpe.f32	s0, s1
+  69 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  70 0008 02D4     		bmi	.L10
+  71              	.LVL6:
+  72              	.L7:
+  54:Core/Src/devs/hmc5883.cpp **** }
+  73              		.loc 1 54 0 discriminator 4
+  74 000a B0EE600A 		vmov.f32	s0, s1
+  75              	.LVL7:
+  76 000e 7047     		bx	lr
+  77              	.LVL8:
+  78              	.L10:
+  53:Core/Src/devs/hmc5883.cpp ****         return (x < y)? x : y;
+  79              		.loc 1 53 0
+  80 0010 F0EE400A 		vmov.f32	s1, s0
+  81              	.LVL9:
+  82 0014 F9E7     		b	.L7
+  83              		.cfi_endproc
+  84              	.LFE152:
+  86              		.section	.text._Z12HMC5883_InitP7HMC5883,"ax",%progbits
+  87              		.align	1
+  88              		.global	_Z12HMC5883_InitP7HMC5883
+  89              		.syntax unified
+  90              		.thumb
+  91              		.thumb_func
+  92              		.fpu fpv4-sp-d16
+  94              	_Z12HMC5883_InitP7HMC5883:
+  95              	.LFB149:
+  15:Core/Src/devs/hmc5883.cpp **** 	buffer[0] = 0x00;
+  96              		.loc 1 15 0
+  97              		.cfi_startproc
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              	.LVL10:
+ 101 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 102              	.LCFI0:
+ 103              		.cfi_def_cfa_offset 20
+ 104              		.cfi_offset 4, -20
+ 105              		.cfi_offset 5, -16
+ 106              		.cfi_offset 6, -12
+ 107              		.cfi_offset 7, -8
+ 108              		.cfi_offset 14, -4
+ 109 0002 83B0     		sub	sp, sp, #12
+ 110              	.LCFI1:
+ 111              		.cfi_def_cfa_offset 32
+ 112 0004 0546     		mov	r5, r0
+  16:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x78;       // Sampling Number, Output Rate
+ 113              		.loc 1 16 0
+ 114 0006 114C     		ldr	r4, .L13
+ 115 0008 0027     		movs	r7, #0
+ 116 000a 2770     		strb	r7, [r4]
+  17:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+ 117              		.loc 1 17 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 4
+
+
+ 118 000c 7823     		movs	r3, #120
+ 119 000e 6370     		strb	r3, [r4, #1]
+  18:Core/Src/devs/hmc5883.cpp **** 	
+ 120              		.loc 1 18 0
+ 121 0010 017C     		ldrb	r1, [r0, #16]	@ zero_extendqisi2
+ 122 0012 0A26     		movs	r6, #10
+ 123 0014 0096     		str	r6, [sp]
+ 124 0016 0223     		movs	r3, #2
+ 125 0018 2246     		mov	r2, r4
+ 126 001a 0068     		ldr	r0, [r0]
+ 127              	.LVL11:
+ 128 001c FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 129              	.LVL12:
+  20:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x60;       // Gain
+ 130              		.loc 1 20 0
+ 131 0020 0123     		movs	r3, #1
+ 132 0022 2370     		strb	r3, [r4]
+  21:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+ 133              		.loc 1 21 0
+ 134 0024 6023     		movs	r3, #96
+ 135 0026 6370     		strb	r3, [r4, #1]
+  22:Core/Src/devs/hmc5883.cpp **** 	
+ 136              		.loc 1 22 0
+ 137 0028 297C     		ldrb	r1, [r5, #16]	@ zero_extendqisi2
+ 138 002a 0096     		str	r6, [sp]
+ 139 002c 0223     		movs	r3, #2
+ 140 002e 2246     		mov	r2, r4
+ 141 0030 2868     		ldr	r0, [r5]
+ 142 0032 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 143              	.LVL13:
+  24:Core/Src/devs/hmc5883.cpp **** 	buffer[1] = 0x00;       // Measurement Mode
+ 144              		.loc 1 24 0
+ 145 0036 0223     		movs	r3, #2
+ 146 0038 2370     		strb	r3, [r4]
+  25:Core/Src/devs/hmc5883.cpp **** 	HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 2, 10);
+ 147              		.loc 1 25 0
+ 148 003a 6770     		strb	r7, [r4, #1]
+  26:Core/Src/devs/hmc5883.cpp **** }
+ 149              		.loc 1 26 0
+ 150 003c 297C     		ldrb	r1, [r5, #16]	@ zero_extendqisi2
+ 151 003e 2868     		ldr	r0, [r5]
+ 152 0040 0096     		str	r6, [sp]
+ 153 0042 2246     		mov	r2, r4
+ 154 0044 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 155              	.LVL14:
+  27:Core/Src/devs/hmc5883.cpp **** 
+ 156              		.loc 1 27 0
+ 157 0048 03B0     		add	sp, sp, #12
+ 158              	.LCFI2:
+ 159              		.cfi_def_cfa_offset 20
+ 160              		@ sp needed
+ 161 004a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 162              	.LVL15:
+ 163              	.L14:
+ 164              		.align	2
+ 165              	.L13:
+ 166 004c 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 5
+
+
+ 167              		.cfi_endproc
+ 168              	.LFE149:
+ 170              		.section	.text._ZNK4Vec3IfE4getXEv,"axG",%progbits,_ZNK4Vec3IfE4getXEv,comdat
+ 171              		.align	1
+ 172              		.weak	_ZNK4Vec3IfE4getXEv
+ 173              		.syntax unified
+ 174              		.thumb
+ 175              		.thumb_func
+ 176              		.fpu fpv4-sp-d16
+ 178              	_ZNK4Vec3IfE4getXEv:
+ 179              	.LFB154:
+ 180              		.file 2 "Core/Inc/utils/vec3.h"
+   1:Core/Inc/utils/vec3.h **** /*
+   2:Core/Inc/utils/vec3.h ****  * vec3.h
+   3:Core/Inc/utils/vec3.h ****  * 
+   4:Core/Inc/utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc/utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/vec3.h ****  */
+   8:Core/Inc/utils/vec3.h **** 
+   9:Core/Inc/utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc/utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc/utils/vec3.h **** 
+  12:Core/Inc/utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/vec3.h **** 
+  14:Core/Inc/utils/vec3.h **** template <typename T>
+  15:Core/Inc/utils/vec3.h **** void swap_Element(T &first, T &second)
+  16:Core/Inc/utils/vec3.h **** {
+  17:Core/Inc/utils/vec3.h ****         T temp = first;
+  18:Core/Inc/utils/vec3.h ****         first = second;
+  19:Core/Inc/utils/vec3.h ****         second = temp;
+  20:Core/Inc/utils/vec3.h **** }
+  21:Core/Inc/utils/vec3.h **** 
+  22:Core/Inc/utils/vec3.h **** template <class T>
+  23:Core/Inc/utils/vec3.h **** class Vec3
+  24:Core/Inc/utils/vec3.h **** {
+  25:Core/Inc/utils/vec3.h **** public:
+  26:Core/Inc/utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  27:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  28:Core/Inc/utils/vec3.h ****         Vec3(Vec3 &&) = default;
+  29:Core/Inc/utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  30:Core/Inc/utils/vec3.h ****         ~Vec3();
+  31:Core/Inc/utils/vec3.h **** 
+  32:Core/Inc/utils/vec3.h ****         void set_Values(T x, T y, T z);
+  33:Core/Inc/utils/vec3.h ****         T getX() const;
+  34:Core/Inc/utils/vec3.h ****         T getY() const;
+  35:Core/Inc/utils/vec3.h ****         T getZ() const;
+  36:Core/Inc/utils/vec3.h ****         void setX(T x) { x_ = x; }
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+  39:Core/Inc/utils/vec3.h **** 
+  40:Core/Inc/utils/vec3.h ****         template <typename T1, typename T2>
+  41:Core/Inc/utils/vec3.h ****         void divide(const Vec3<T1> &v, T2 num) {
+  42:Core/Inc/utils/vec3.h ****                 x_ = v.getX() / num;
+  43:Core/Inc/utils/vec3.h ****                 y_ = v.getY() / num;
+  44:Core/Inc/utils/vec3.h ****                 z_ = v.getZ() / num;
+  45:Core/Inc/utils/vec3.h ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 6
+
+
+  46:Core/Inc/utils/vec3.h **** 
+  47:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(float num) {
+  48:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  49:Core/Inc/utils/vec3.h ****                 temp.x_ *= num;
+  50:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+  51:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+  52:Core/Inc/utils/vec3.h **** 
+  53:Core/Inc/utils/vec3.h ****                 return temp;
+  54:Core/Inc/utils/vec3.h ****         }
+  55:Core/Inc/utils/vec3.h **** 
+  56:Core/Inc/utils/vec3.h ****         Vec3 add_EW(float num) {
+  57:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  58:Core/Inc/utils/vec3.h ****                 temp.x_ += num;
+  59:Core/Inc/utils/vec3.h ****                 temp.y_ += num;
+  60:Core/Inc/utils/vec3.h ****                 temp.z_ += num;
+  61:Core/Inc/utils/vec3.h **** 
+  62:Core/Inc/utils/vec3.h ****                 return temp;
+  63:Core/Inc/utils/vec3.h ****         }
+  64:Core/Inc/utils/vec3.h **** 
+  65:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(float num) {
+  66:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  67:Core/Inc/utils/vec3.h ****                 temp.x_ -= num;
+  68:Core/Inc/utils/vec3.h ****                 temp.y_ -= num;
+  69:Core/Inc/utils/vec3.h ****                 temp.z_ -= num;
+  70:Core/Inc/utils/vec3.h **** 
+  71:Core/Inc/utils/vec3.h ****                 return temp;
+  72:Core/Inc/utils/vec3.h ****         }
+  73:Core/Inc/utils/vec3.h **** 
+  74:Core/Inc/utils/vec3.h ****         template <typename T1>
+  75:Core/Inc/utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+  76:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  77:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+  78:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+  79:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+  80:Core/Inc/utils/vec3.h **** 
+  81:Core/Inc/utils/vec3.h ****                 return temp;
+  82:Core/Inc/utils/vec3.h ****         }
+  83:Core/Inc/utils/vec3.h **** 
+  84:Core/Inc/utils/vec3.h ****         template <typename T1>
+  85:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  86:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  87:Core/Inc/utils/vec3.h ****                 temp.x_ *= x_;
+  88:Core/Inc/utils/vec3.h ****                 temp.y_ *= y_;
+  89:Core/Inc/utils/vec3.h ****                 temp.z_ *= z_;
+  90:Core/Inc/utils/vec3.h **** 
+  91:Core/Inc/utils/vec3.h ****                 return temp;
+  92:Core/Inc/utils/vec3.h ****         }
+  93:Core/Inc/utils/vec3.h **** 
+  94:Core/Inc/utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+  95:Core/Inc/utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+  96:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+  97:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+  98:Core/Inc/utils/vec3.h ****         }
+  99:Core/Inc/utils/vec3.h ****         
+ 100:Core/Inc/utils/vec3.h ****         Vec3(const Vec3 &v) {
+ 101:Core/Inc/utils/vec3.h ****                 x_ = v.x_;
+ 102:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 7
+
+
+ 103:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 104:Core/Inc/utils/vec3.h ****         }
+ 105:Core/Inc/utils/vec3.h ****         
+ 106:Core/Inc/utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 107:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 108:Core/Inc/utils/vec3.h ****                 swap(*this, temp);
+ 109:Core/Inc/utils/vec3.h **** 
+ 110:Core/Inc/utils/vec3.h ****                 return *this;
+ 111:Core/Inc/utils/vec3.h ****         }
+ 112:Core/Inc/utils/vec3.h **** 
+ 113:Core/Inc/utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 114:Core/Inc/utils/vec3.h ****                 x_ += rhs.x_;
+ 115:Core/Inc/utils/vec3.h ****                 y_ += rhs.y_;
+ 116:Core/Inc/utils/vec3.h ****                 z_ += rhs.z_;
+ 117:Core/Inc/utils/vec3.h **** 
+ 118:Core/Inc/utils/vec3.h ****                 return *this;
+ 119:Core/Inc/utils/vec3.h ****         }
+ 120:Core/Inc/utils/vec3.h ****         
+ 121:Core/Inc/utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 122:Core/Inc/utils/vec3.h ****                 x_ -= rhs.x_;
+ 123:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 124:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 125:Core/Inc/utils/vec3.h **** 
+ 126:Core/Inc/utils/vec3.h ****                 return *this;
+ 127:Core/Inc/utils/vec3.h ****         }
+ 128:Core/Inc/utils/vec3.h **** 
+ 129:Core/Inc/utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 130:Core/Inc/utils/vec3.h ****                 lhs += rhs;
+ 131:Core/Inc/utils/vec3.h ****                 return lhs;
+ 132:Core/Inc/utils/vec3.h ****         }
+ 133:Core/Inc/utils/vec3.h **** 
+ 134:Core/Inc/utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 135:Core/Inc/utils/vec3.h ****                 lhs -= rhs;
+ 136:Core/Inc/utils/vec3.h ****                 return lhs;
+ 137:Core/Inc/utils/vec3.h ****         }
+ 138:Core/Inc/utils/vec3.h **** 
+ 139:Core/Inc/utils/vec3.h ****         void print() const {
+ 140:Core/Inc/utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 141:Core/Inc/utils/vec3.h ****         }
+ 142:Core/Inc/utils/vec3.h **** 
+ 143:Core/Inc/utils/vec3.h **** private:
+ 144:Core/Inc/utils/vec3.h ****         T x_,y_,z_;
+ 145:Core/Inc/utils/vec3.h **** };
+ 146:Core/Inc/utils/vec3.h **** 
+ 147:Core/Inc/utils/vec3.h **** template <class T>
+ 148:Core/Inc/utils/vec3.h **** Vec3<T>::~Vec3()
+ 149:Core/Inc/utils/vec3.h **** {
+ 150:Core/Inc/utils/vec3.h **** }
+ 151:Core/Inc/utils/vec3.h **** 
+ 152:Core/Inc/utils/vec3.h **** template <class T>
+ 153:Core/Inc/utils/vec3.h **** void Vec3<T>::set_Values(T x, T y, T z)
+ 154:Core/Inc/utils/vec3.h **** {
+ 155:Core/Inc/utils/vec3.h ****         x_ = x;
+ 156:Core/Inc/utils/vec3.h ****         y_ = y;
+ 157:Core/Inc/utils/vec3.h ****         z_ = z;
+ 158:Core/Inc/utils/vec3.h **** }
+ 159:Core/Inc/utils/vec3.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 8
+
+
+ 160:Core/Inc/utils/vec3.h **** template <class T>
+ 161:Core/Inc/utils/vec3.h **** T Vec3<T>::getX() const { return x_;}
+ 181              		.loc 2 161 0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 0, uses_anonymous_args = 0
+ 185              		@ link register save eliminated.
+ 186              	.LVL16:
+ 187              		.loc 2 161 0
+ 188 0000 90ED000A 		vldr.32	s0, [r0]
+ 189 0004 7047     		bx	lr
+ 190              		.cfi_endproc
+ 191              	.LFE154:
+ 193              		.section	.text._ZNK4Vec3IfE4getYEv,"axG",%progbits,_ZNK4Vec3IfE4getYEv,comdat
+ 194              		.align	1
+ 195              		.weak	_ZNK4Vec3IfE4getYEv
+ 196              		.syntax unified
+ 197              		.thumb
+ 198              		.thumb_func
+ 199              		.fpu fpv4-sp-d16
+ 201              	_ZNK4Vec3IfE4getYEv:
+ 202              	.LFB155:
+ 162:Core/Inc/utils/vec3.h **** 
+ 163:Core/Inc/utils/vec3.h **** template <class T>
+ 164:Core/Inc/utils/vec3.h **** T Vec3<T>::getY() const { return y_;}
+ 203              		.loc 2 164 0
+ 204              		.cfi_startproc
+ 205              		@ args = 0, pretend = 0, frame = 0
+ 206              		@ frame_needed = 0, uses_anonymous_args = 0
+ 207              		@ link register save eliminated.
+ 208              	.LVL17:
+ 209              		.loc 2 164 0
+ 210 0000 90ED010A 		vldr.32	s0, [r0, #4]
+ 211 0004 7047     		bx	lr
+ 212              		.cfi_endproc
+ 213              	.LFE155:
+ 215              		.section	.text._ZNK4Vec3IfE4getZEv,"axG",%progbits,_ZNK4Vec3IfE4getZEv,comdat
+ 216              		.align	1
+ 217              		.weak	_ZNK4Vec3IfE4getZEv
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 221              		.fpu fpv4-sp-d16
+ 223              	_ZNK4Vec3IfE4getZEv:
+ 224              	.LFB156:
+ 165:Core/Inc/utils/vec3.h **** 
+ 166:Core/Inc/utils/vec3.h **** template <class T>
+ 167:Core/Inc/utils/vec3.h **** T Vec3<T>::getZ() const { return z_;}
+ 225              		.loc 2 167 0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229              		@ link register save eliminated.
+ 230              	.LVL18:
+ 231              		.loc 2 167 0
+ 232 0000 90ED020A 		vldr.32	s0, [r0, #8]
+ 233 0004 7047     		bx	lr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 9
+
+
+ 234              		.cfi_endproc
+ 235              	.LFE156:
+ 237              		.section	.text._ZN4Vec3IfE10set_ValuesEfff,"axG",%progbits,_ZN4Vec3IfE10set_ValuesEfff,comdat
+ 238              		.align	1
+ 239              		.weak	_ZN4Vec3IfE10set_ValuesEfff
+ 240              		.syntax unified
+ 241              		.thumb
+ 242              		.thumb_func
+ 243              		.fpu fpv4-sp-d16
+ 245              	_ZN4Vec3IfE10set_ValuesEfff:
+ 246              	.LFB157:
+ 153:Core/Inc/utils/vec3.h **** {
+ 247              		.loc 2 153 0
+ 248              		.cfi_startproc
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251              		@ link register save eliminated.
+ 252              	.LVL19:
+ 155:Core/Inc/utils/vec3.h ****         y_ = y;
+ 253              		.loc 2 155 0
+ 254 0000 80ED000A 		vstr.32	s0, [r0]
+ 156:Core/Inc/utils/vec3.h ****         z_ = z;
+ 255              		.loc 2 156 0
+ 256 0004 C0ED010A 		vstr.32	s1, [r0, #4]
+ 157:Core/Inc/utils/vec3.h **** }
+ 257              		.loc 2 157 0
+ 258 0008 80ED021A 		vstr.32	s2, [r0, #8]
+ 158:Core/Inc/utils/vec3.h **** 
+ 259              		.loc 2 158 0
+ 260 000c 7047     		bx	lr
+ 261              		.cfi_endproc
+ 262              	.LFE157:
+ 264              		.section	.text._Z12HMC5883_ReadP7HMC5883,"ax",%progbits
+ 265              		.align	1
+ 266              		.global	_Z12HMC5883_ReadP7HMC5883
+ 267              		.syntax unified
+ 268              		.thumb
+ 269              		.thumb_func
+ 270              		.fpu fpv4-sp-d16
+ 272              	_Z12HMC5883_ReadP7HMC5883:
+ 273              	.LFB150:
+  30:Core/Src/devs/hmc5883.cpp ****         buffer[0] = 0x03;
+ 274              		.loc 1 30 0
+ 275              		.cfi_startproc
+ 276              		@ args = 0, pretend = 0, frame = 0
+ 277              		@ frame_needed = 0, uses_anonymous_args = 0
+ 278              	.LVL20:
+ 279 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 280              	.LCFI3:
+ 281              		.cfi_def_cfa_offset 20
+ 282              		.cfi_offset 4, -20
+ 283              		.cfi_offset 5, -16
+ 284              		.cfi_offset 6, -12
+ 285              		.cfi_offset 7, -8
+ 286              		.cfi_offset 14, -4
+ 287 0002 2DED048B 		vpush.64	{d8, d9}
+ 288              	.LCFI4:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 10
+
+
+ 289              		.cfi_def_cfa_offset 36
+ 290              		.cfi_offset 80, -36
+ 291              		.cfi_offset 81, -32
+ 292              		.cfi_offset 82, -28
+ 293              		.cfi_offset 83, -24
+ 294 0006 83B0     		sub	sp, sp, #12
+ 295              	.LCFI5:
+ 296              		.cfi_def_cfa_offset 48
+ 297 0008 0546     		mov	r5, r0
+  31:Core/Src/devs/hmc5883.cpp ****         HAL_I2C_Master_Transmit(hmc->hi2c, hmc->address, buffer, 1, 10);
+ 298              		.loc 1 31 0
+ 299 000a 244C     		ldr	r4, .L21
+ 300 000c 0323     		movs	r3, #3
+ 301 000e 2370     		strb	r3, [r4]
+  32:Core/Src/devs/hmc5883.cpp ****         HAL_I2C_Master_Receive(hmc->hi2c, hmc->address, &buffer[1], 6, 10);
+ 302              		.loc 1 32 0
+ 303 0010 017C     		ldrb	r1, [r0, #16]	@ zero_extendqisi2
+ 304 0012 0A27     		movs	r7, #10
+ 305 0014 0097     		str	r7, [sp]
+ 306 0016 0123     		movs	r3, #1
+ 307 0018 2246     		mov	r2, r4
+ 308 001a 0068     		ldr	r0, [r0]
+ 309              	.LVL21:
+ 310 001c FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 311              	.LVL22:
+  33:Core/Src/devs/hmc5883.cpp ****         
+ 312              		.loc 1 33 0
+ 313 0020 297C     		ldrb	r1, [r5, #16]	@ zero_extendqisi2
+ 314 0022 2E46     		mov	r6, r5
+ 315 0024 56F8140B 		ldr	r0, [r6], #20
+ 316 0028 0097     		str	r7, [sp]
+ 317 002a 0623     		movs	r3, #6
+ 318 002c 621C     		adds	r2, r4, #1
+ 319 002e FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 320              	.LVL23:
+  35:Core/Src/devs/hmc5883.cpp ****         int16_t y = (buffer[5]<<8 | buffer[6]);		
+ 321              		.loc 1 35 0
+ 322 0032 6378     		ldrb	r3, [r4, #1]	@ zero_extendqisi2
+ 323 0034 1B02     		lsls	r3, r3, #8
+ 324 0036 1BB2     		sxth	r3, r3
+ 325 0038 A278     		ldrb	r2, [r4, #2]	@ zero_extendqisi2
+ 326 003a 1343     		orrs	r3, r3, r2
+ 327 003c 08EE103A 		vmov	s16, r3	@ int
+ 328              	.LVL24:
+  36:Core/Src/devs/hmc5883.cpp ****         int16_t z = (buffer[3]<<8 | buffer[4]);
+ 329              		.loc 1 36 0
+ 330 0040 6379     		ldrb	r3, [r4, #5]	@ zero_extendqisi2
+ 331 0042 1B02     		lsls	r3, r3, #8
+ 332 0044 1BB2     		sxth	r3, r3
+ 333 0046 A279     		ldrb	r2, [r4, #6]	@ zero_extendqisi2
+ 334 0048 1343     		orrs	r3, r3, r2
+ 335 004a 08EE903A 		vmov	s17, r3	@ int
+ 336              	.LVL25:
+  37:Core/Src/devs/hmc5883.cpp **** 
+ 337              		.loc 1 37 0
+ 338 004e E378     		ldrb	r3, [r4, #3]	@ zero_extendqisi2
+ 339 0050 1B02     		lsls	r3, r3, #8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 11
+
+
+ 340 0052 1BB2     		sxth	r3, r3
+ 341 0054 2279     		ldrb	r2, [r4, #4]	@ zero_extendqisi2
+ 342 0056 1343     		orrs	r3, r3, r2
+ 343 0058 09EE103A 		vmov	s18, r3	@ int
+ 344              	.LVL26:
+  39:Core/Src/devs/hmc5883.cpp ****         float by = (float)y - hmc->hard_iron_offset.getY();
+ 345              		.loc 1 39 0
+ 346 005c B8EEC88A 		vcvt.f32.s32	s16, s16
+ 347              	.LVL27:
+ 348 0060 3046     		mov	r0, r6
+ 349 0062 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 350              	.LVL28:
+ 351 0066 38EE408A 		vsub.f32	s16, s16, s0
+ 352              	.LVL29:
+  40:Core/Src/devs/hmc5883.cpp ****         float bz = (float)z - hmc->hard_iron_offset.getZ();
+ 353              		.loc 1 40 0
+ 354 006a F8EEE88A 		vcvt.f32.s32	s17, s17
+ 355              	.LVL30:
+ 356 006e 3046     		mov	r0, r6
+ 357 0070 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 358              	.LVL31:
+ 359 0074 78EEC08A 		vsub.f32	s17, s17, s0
+ 360              	.LVL32:
+  41:Core/Src/devs/hmc5883.cpp **** 
+ 361              		.loc 1 41 0
+ 362 0078 B8EEC99A 		vcvt.f32.s32	s18, s18
+ 363              	.LVL33:
+ 364 007c 3046     		mov	r0, r6
+ 365 007e FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 366              	.LVL34:
+  43:Core/Src/devs/hmc5883.cpp **** }
+ 367              		.loc 1 43 0
+ 368 0082 39EE401A 		vsub.f32	s2, s18, s0
+ 369              	.LVL35:
+ 370 0086 F0EE680A 		vmov.f32	s1, s17
+ 371 008a B0EE480A 		vmov.f32	s0, s16
+ 372 008e 281D     		adds	r0, r5, #4
+ 373 0090 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 374              	.LVL36:
+  44:Core/Src/devs/hmc5883.cpp **** 
+ 375              		.loc 1 44 0
+ 376 0094 03B0     		add	sp, sp, #12
+ 377              	.LCFI6:
+ 378              		.cfi_def_cfa_offset 36
+ 379              		@ sp needed
+ 380 0096 BDEC048B 		vldm	sp!, {d8-d9}
+ 381              	.LCFI7:
+ 382              		.cfi_restore 82
+ 383              		.cfi_restore 83
+ 384              		.cfi_restore 80
+ 385              		.cfi_restore 81
+ 386              		.cfi_def_cfa_offset 20
+ 387              	.LVL37:
+ 388 009a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 389              	.LVL38:
+ 390              	.L22:
+ 391              		.align	2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 12
+
+
+ 392              	.L21:
+ 393 009c 00000000 		.word	.LANCHOR0
+ 394              		.cfi_endproc
+ 395              	.LFE150:
+ 397              		.section	.text._ZN4Vec3IfED2Ev,"axG",%progbits,_ZN4Vec3IfED5Ev,comdat
+ 398              		.align	1
+ 399              		.weak	_ZN4Vec3IfED2Ev
+ 400              		.syntax unified
+ 401              		.thumb
+ 402              		.thumb_func
+ 403              		.fpu fpv4-sp-d16
+ 405              	_ZN4Vec3IfED2Ev:
+ 406              	.LFB162:
+ 148:Core/Inc/utils/vec3.h **** {
+ 407              		.loc 2 148 0
+ 408              		.cfi_startproc
+ 409              		@ args = 0, pretend = 0, frame = 0
+ 410              		@ frame_needed = 0, uses_anonymous_args = 0
+ 411              		@ link register save eliminated.
+ 412              	.LVL39:
+ 150:Core/Inc/utils/vec3.h **** 
+ 413              		.loc 2 150 0
+ 414 0000 7047     		bx	lr
+ 415              		.cfi_endproc
+ 416              	.LFE162:
+ 418              		.weak	_ZN4Vec3IfED1Ev
+ 419              		.thumb_set _ZN4Vec3IfED1Ev,_ZN4Vec3IfED2Ev
+ 420              		.section	.text._Z12swap_ElementIfEvRT_S1_,"axG",%progbits,_Z12swap_ElementIfEvRT_S1_,comdat
+ 421              		.align	1
+ 422              		.weak	_Z12swap_ElementIfEvRT_S1_
+ 423              		.syntax unified
+ 424              		.thumb
+ 425              		.thumb_func
+ 426              		.fpu fpv4-sp-d16
+ 428              	_Z12swap_ElementIfEvRT_S1_:
+ 429              	.LFB175:
+  15:Core/Inc/utils/vec3.h **** {
+ 430              		.loc 2 15 0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434              		@ link register save eliminated.
+ 435              	.LVL40:
+  17:Core/Inc/utils/vec3.h ****         first = second;
+ 436              		.loc 2 17 0
+ 437 0000 0368     		ldr	r3, [r0]	@ float
+ 438              	.LVL41:
+  18:Core/Inc/utils/vec3.h ****         second = temp;
+ 439              		.loc 2 18 0
+ 440 0002 0A68     		ldr	r2, [r1]	@ float
+ 441 0004 0260     		str	r2, [r0]	@ float
+  19:Core/Inc/utils/vec3.h **** }
+ 442              		.loc 2 19 0
+ 443 0006 0B60     		str	r3, [r1]	@ float
+  20:Core/Inc/utils/vec3.h **** 
+ 444              		.loc 2 20 0
+ 445 0008 7047     		bx	lr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 13
+
+
+ 446              		.cfi_endproc
+ 447              	.LFE175:
+ 449              		.section	.text._Z17HMC5883_CalibrateP7HMC5883P5A4988m,"ax",%progbits
+ 450              		.align	1
+ 451              		.global	_Z17HMC5883_CalibrateP7HMC5883P5A4988m
+ 452              		.syntax unified
+ 453              		.thumb
+ 454              		.thumb_func
+ 455              		.fpu fpv4-sp-d16
+ 457              	_Z17HMC5883_CalibrateP7HMC5883P5A4988m:
+ 458              	.LFB153:
+  55:Core/Src/devs/hmc5883.cpp **** 
+  56:Core/Src/devs/hmc5883.cpp **** void HMC5883_Calibrate(struct HMC5883 *hmc, struct A4988 *stpr, uint32_t n)
+  57:Core/Src/devs/hmc5883.cpp **** {
+ 459              		.loc 1 57 0
+ 460              		.cfi_startproc
+ 461              		@ args = 0, pretend = 0, frame = 72
+ 462              		@ frame_needed = 0, uses_anonymous_args = 0
+ 463              	.LVL42:
+ 464 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 465              	.LCFI8:
+ 466              		.cfi_def_cfa_offset 24
+ 467              		.cfi_offset 4, -24
+ 468              		.cfi_offset 5, -20
+ 469              		.cfi_offset 6, -16
+ 470              		.cfi_offset 7, -12
+ 471              		.cfi_offset 8, -8
+ 472              		.cfi_offset 14, -4
+ 473 0004 2DED028B 		vpush.64	{d8}
+ 474              	.LCFI9:
+ 475              		.cfi_def_cfa_offset 32
+ 476              		.cfi_offset 80, -32
+ 477              		.cfi_offset 81, -28
+ 478 0008 92B0     		sub	sp, sp, #72
+ 479              	.LCFI10:
+ 480              		.cfi_def_cfa_offset 104
+ 481 000a 8046     		mov	r8, r0
+ 482 000c 0E46     		mov	r6, r1
+ 483 000e 1746     		mov	r7, r2
+ 484              	.LVL43:
+ 485              	.LBB89:
+ 486              	.LBB90:
+ 487              	.LBB91:
+  26:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+ 488              		.loc 2 26 0
+ 489 0010 9FED838A 		vldr.32	s16, .L33
+ 490 0014 B0EE481A 		vmov.f32	s2, s16
+ 491 0018 F0EE480A 		vmov.f32	s1, s16
+ 492 001c B0EE480A 		vmov.f32	s0, s16
+ 493 0020 06A8     		add	r0, sp, #24
+ 494              	.LVL44:
+ 495 0022 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 496              	.LVL45:
+ 497              	.LBE91:
+ 498              	.LBE90:
+ 499              	.LBE89:
+ 500              	.LBB92:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 14
+
+
+ 501              	.LBB93:
+ 502              	.LBB94:
+ 503 0026 B0EE481A 		vmov.f32	s2, s16
+ 504 002a F0EE480A 		vmov.f32	s1, s16
+ 505 002e B0EE480A 		vmov.f32	s0, s16
+ 506 0032 03A8     		add	r0, sp, #12
+ 507              	.LVL46:
+ 508 0034 FFF7FEFF 		bl	_ZN4Vec3IfE10set_ValuesEfff
+ 509              	.LVL47:
+ 510              	.LBE94:
+ 511              	.LBE93:
+ 512              	.LBE92:
+  58:Core/Src/devs/hmc5883.cpp ****         Vec3<float> maxs, mins;
+  59:Core/Src/devs/hmc5883.cpp ****         printf("Start Rotating Compass\n");
+ 513              		.loc 1 59 0
+ 514 0038 7A48     		ldr	r0, .L33+4
+ 515 003a FFF7FEFF 		bl	puts
+ 516              	.LVL48:
+  60:Core/Src/devs/hmc5883.cpp ****         HMC5883_Read(hmc);
+ 517              		.loc 1 60 0
+ 518 003e 4046     		mov	r0, r8
+ 519 0040 FFF7FEFF 		bl	_Z12HMC5883_ReadP7HMC5883
+ 520              	.LVL49:
+  61:Core/Src/devs/hmc5883.cpp ****         maxs = hmc->raw_axis;
+ 521              		.loc 1 61 0
+ 522 0044 08F10404 		add	r4, r8, #4
+ 523              	.LVL50:
+ 524              	.LBB95:
+ 525              	.LBB96:
+ 526              	.LBB97:
+ 527              	.LBB98:
+ 528              	.LBB99:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 529              		.loc 2 101 0
+ 530 0048 D8F80430 		ldr	r3, [r8, #4]	@ float
+ 531 004c 0093     		str	r3, [sp]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 532              		.loc 2 102 0
+ 533 004e 6368     		ldr	r3, [r4, #4]	@ float
+ 534 0050 0193     		str	r3, [sp, #4]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 535              		.loc 2 103 0
+ 536 0052 A368     		ldr	r3, [r4, #8]	@ float
+ 537 0054 0293     		str	r3, [sp, #8]	@ float
+ 538              	.LVL51:
+ 539              	.LBE99:
+ 540              	.LBE98:
+ 541              	.LBE97:
+ 542              	.LBB100:
+ 543              	.LBB101:
+  95:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 544              		.loc 2 95 0
+ 545 0056 6946     		mov	r1, sp
+ 546 0058 06A8     		add	r0, sp, #24
+ 547              	.LVL52:
+ 548 005a FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 549              	.LVL53:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 15
+
+
+  96:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 550              		.loc 2 96 0
+ 551 005e 01A9     		add	r1, sp, #4
+ 552 0060 07A8     		add	r0, sp, #28
+ 553 0062 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 554              	.LVL54:
+  97:Core/Inc/utils/vec3.h ****         }
+ 555              		.loc 2 97 0
+ 556 0066 02A9     		add	r1, sp, #8
+ 557 0068 08A8     		add	r0, sp, #32
+ 558 006a FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 559              	.LVL55:
+ 560              	.LBE101:
+ 561              	.LBE100:
+ 562              	.LBE96:
+ 563              	.LBE95:
+ 564              	.LBB102:
+ 565              	.LBB103:
+ 566              	.LBB104:
+ 567              	.LBB105:
+ 568              	.LBB106:
+ 101:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 569              		.loc 2 101 0
+ 570 006e D8F80430 		ldr	r3, [r8, #4]	@ float
+ 571 0072 0093     		str	r3, [sp]	@ float
+ 102:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 572              		.loc 2 102 0
+ 573 0074 6368     		ldr	r3, [r4, #4]	@ float
+ 574 0076 0193     		str	r3, [sp, #4]	@ float
+ 103:Core/Inc/utils/vec3.h ****         }
+ 575              		.loc 2 103 0
+ 576 0078 A368     		ldr	r3, [r4, #8]	@ float
+ 577 007a 0293     		str	r3, [sp, #8]	@ float
+ 578              	.LVL56:
+ 579              	.LBE106:
+ 580              	.LBE105:
+ 581              	.LBE104:
+ 582              	.LBB107:
+ 583              	.LBB108:
+  95:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 584              		.loc 2 95 0
+ 585 007c 6946     		mov	r1, sp
+ 586 007e 03A8     		add	r0, sp, #12
+ 587              	.LVL57:
+ 588 0080 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 589              	.LVL58:
+  96:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 590              		.loc 2 96 0
+ 591 0084 01A9     		add	r1, sp, #4
+ 592 0086 04A8     		add	r0, sp, #16
+ 593 0088 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 594              	.LVL59:
+  97:Core/Inc/utils/vec3.h ****         }
+ 595              		.loc 2 97 0
+ 596 008c 02A9     		add	r1, sp, #8
+ 597 008e 05A8     		add	r0, sp, #20
+ 598 0090 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 16
+
+
+ 599              	.LVL60:
+ 600              	.LBE108:
+ 601              	.LBE107:
+ 602              	.LBE103:
+ 603              	.LBE102:
+  62:Core/Src/devs/hmc5883.cpp ****         mins = hmc->raw_axis;
+  63:Core/Src/devs/hmc5883.cpp ****         HAL_Delay(6);
+ 604              		.loc 1 63 0
+ 605 0094 0620     		movs	r0, #6
+ 606 0096 FFF7FEFF 		bl	HAL_Delay
+ 607              	.LVL61:
+ 608              	.LBB109:
+  64:Core/Src/devs/hmc5883.cpp ****         for (uint32_t i = 1; i < n; ++i) {
+ 609              		.loc 1 64 0
+ 610 009a 0125     		movs	r5, #1
+ 611              	.LVL62:
+ 612              	.L27:
+ 613              		.loc 1 64 0 is_stmt 0 discriminator 3
+ 614 009c BD42     		cmp	r5, r7
+ 615 009e 6AD2     		bcs	.L26
+  65:Core/Src/devs/hmc5883.cpp ****                 HMC5883_Read(hmc);
+ 616              		.loc 1 65 0 is_stmt 1 discriminator 2
+ 617 00a0 4046     		mov	r0, r8
+ 618 00a2 FFF7FEFF 		bl	_Z12HMC5883_ReadP7HMC5883
+ 619              	.LVL63:
+  66:Core/Src/devs/hmc5883.cpp ****                 maxs.setX(max_val(maxs.getX(), hmc->raw_axis.getX()));
+ 620              		.loc 1 66 0 discriminator 2
+ 621 00a6 06A8     		add	r0, sp, #24
+ 622 00a8 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 623              	.LVL64:
+ 624 00ac B0EE408A 		vmov.f32	s16, s0
+ 625 00b0 2046     		mov	r0, r4
+ 626 00b2 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 627              	.LVL65:
+ 628 00b6 F0EE400A 		vmov.f32	s1, s0
+ 629 00ba B0EE480A 		vmov.f32	s0, s16
+ 630 00be FFF7FEFF 		bl	_ZL7max_valff
+ 631              	.LVL66:
+ 632              	.LBB110:
+ 633              	.LBB111:
+  36:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 634              		.loc 2 36 0 discriminator 2
+ 635 00c2 8DED060A 		vstr.32	s0, [sp, #24]
+ 636              	.LVL67:
+ 637              	.LBE111:
+ 638              	.LBE110:
+  67:Core/Src/devs/hmc5883.cpp ****                 maxs.setY(max_val(maxs.getY(), hmc->raw_axis.getY()));
+ 639              		.loc 1 67 0 discriminator 2
+ 640 00c6 06A8     		add	r0, sp, #24
+ 641 00c8 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 642              	.LVL68:
+ 643 00cc B0EE408A 		vmov.f32	s16, s0
+ 644 00d0 2046     		mov	r0, r4
+ 645 00d2 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 646              	.LVL69:
+ 647 00d6 F0EE400A 		vmov.f32	s1, s0
+ 648 00da B0EE480A 		vmov.f32	s0, s16
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 17
+
+
+ 649 00de FFF7FEFF 		bl	_ZL7max_valff
+ 650              	.LVL70:
+ 651              	.LBB112:
+ 652              	.LBB113:
+  37:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 653              		.loc 2 37 0 discriminator 2
+ 654 00e2 8DED070A 		vstr.32	s0, [sp, #28]
+ 655              	.LVL71:
+ 656              	.LBE113:
+ 657              	.LBE112:
+  68:Core/Src/devs/hmc5883.cpp ****                 maxs.setZ(max_val(maxs.getZ(), hmc->raw_axis.getZ()));
+ 658              		.loc 1 68 0 discriminator 2
+ 659 00e6 06A8     		add	r0, sp, #24
+ 660 00e8 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 661              	.LVL72:
+ 662 00ec B0EE408A 		vmov.f32	s16, s0
+ 663 00f0 2046     		mov	r0, r4
+ 664 00f2 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 665              	.LVL73:
+ 666 00f6 F0EE400A 		vmov.f32	s1, s0
+ 667 00fa B0EE480A 		vmov.f32	s0, s16
+ 668 00fe FFF7FEFF 		bl	_ZL7max_valff
+ 669              	.LVL74:
+ 670              	.LBB114:
+ 671              	.LBB115:
+  38:Core/Inc/utils/vec3.h **** 
+ 672              		.loc 2 38 0 discriminator 2
+ 673 0102 8DED080A 		vstr.32	s0, [sp, #32]
+ 674              	.LVL75:
+ 675              	.LBE115:
+ 676              	.LBE114:
+  69:Core/Src/devs/hmc5883.cpp ****                 
+  70:Core/Src/devs/hmc5883.cpp ****                 mins.setX(min_val(mins.getX(), hmc->raw_axis.getX()));
+ 677              		.loc 1 70 0 discriminator 2
+ 678 0106 03A8     		add	r0, sp, #12
+ 679 0108 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 680              	.LVL76:
+ 681 010c B0EE408A 		vmov.f32	s16, s0
+ 682 0110 2046     		mov	r0, r4
+ 683 0112 FFF7FEFF 		bl	_ZNK4Vec3IfE4getXEv
+ 684              	.LVL77:
+ 685 0116 F0EE400A 		vmov.f32	s1, s0
+ 686 011a B0EE480A 		vmov.f32	s0, s16
+ 687 011e FFF7FEFF 		bl	_ZL7min_valff
+ 688              	.LVL78:
+ 689              	.LBB116:
+ 690              	.LBB117:
+  36:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 691              		.loc 2 36 0 discriminator 2
+ 692 0122 8DED030A 		vstr.32	s0, [sp, #12]
+ 693              	.LVL79:
+ 694              	.LBE117:
+ 695              	.LBE116:
+  71:Core/Src/devs/hmc5883.cpp ****                 mins.setY(min_val(mins.getY(), hmc->raw_axis.getY()));
+ 696              		.loc 1 71 0 discriminator 2
+ 697 0126 03A8     		add	r0, sp, #12
+ 698 0128 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 18
+
+
+ 699              	.LVL80:
+ 700 012c B0EE408A 		vmov.f32	s16, s0
+ 701 0130 2046     		mov	r0, r4
+ 702 0132 FFF7FEFF 		bl	_ZNK4Vec3IfE4getYEv
+ 703              	.LVL81:
+ 704 0136 F0EE400A 		vmov.f32	s1, s0
+ 705 013a B0EE480A 		vmov.f32	s0, s16
+ 706 013e FFF7FEFF 		bl	_ZL7min_valff
+ 707              	.LVL82:
+ 708              	.LBB118:
+ 709              	.LBB119:
+  37:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 710              		.loc 2 37 0 discriminator 2
+ 711 0142 8DED040A 		vstr.32	s0, [sp, #16]
+ 712              	.LVL83:
+ 713              	.LBE119:
+ 714              	.LBE118:
+  72:Core/Src/devs/hmc5883.cpp ****                 mins.setZ(min_val(mins.getZ(), hmc->raw_axis.getZ()));
+ 715              		.loc 1 72 0 discriminator 2
+ 716 0146 03A8     		add	r0, sp, #12
+ 717 0148 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 718              	.LVL84:
+ 719 014c B0EE408A 		vmov.f32	s16, s0
+ 720 0150 2046     		mov	r0, r4
+ 721 0152 FFF7FEFF 		bl	_ZNK4Vec3IfE4getZEv
+ 722              	.LVL85:
+ 723 0156 F0EE400A 		vmov.f32	s1, s0
+ 724 015a B0EE480A 		vmov.f32	s0, s16
+ 725 015e FFF7FEFF 		bl	_ZL7min_valff
+ 726              	.LVL86:
+ 727              	.LBB120:
+ 728              	.LBB121:
+  38:Core/Inc/utils/vec3.h **** 
+ 729              		.loc 2 38 0 discriminator 2
+ 730 0162 8DED050A 		vstr.32	s0, [sp, #20]
+ 731              	.LVL87:
+ 732              	.LBE121:
+ 733              	.LBE120:
+  73:Core/Src/devs/hmc5883.cpp **** 
+  74:Core/Src/devs/hmc5883.cpp ****                 A4988_step(stpr);
+ 734              		.loc 1 74 0 discriminator 2
+ 735 0166 3046     		mov	r0, r6
+ 736 0168 FFF7FEFF 		bl	_Z10A4988_stepP5A4988
+ 737              	.LVL88:
+  75:Core/Src/devs/hmc5883.cpp ****                 HAL_Delay(4);
+ 738              		.loc 1 75 0 discriminator 2
+ 739 016c 0420     		movs	r0, #4
+ 740 016e FFF7FEFF 		bl	HAL_Delay
+ 741              	.LVL89:
+  64:Core/Src/devs/hmc5883.cpp ****                 HMC5883_Read(hmc);
+ 742              		.loc 1 64 0 discriminator 2
+ 743 0172 0135     		adds	r5, r5, #1
+ 744              	.LVL90:
+ 745 0174 92E7     		b	.L27
+ 746              	.L26:
+ 747              	.LBE109:
+  76:Core/Src/devs/hmc5883.cpp ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 19
+
+
+  77:Core/Src/devs/hmc5883.cpp **** 
+  78:Core/Src/devs/hmc5883.cpp ****         HAL_Delay(50);
+ 748              		.loc 1 78 0
+ 749 0176 3220     		movs	r0, #50
+ 750 0178 FFF7FEFF 		bl	HAL_Delay
+ 751              	.LVL91:
+  79:Core/Src/devs/hmc5883.cpp ****         A4988_toggleDirection(stpr);
+ 752              		.loc 1 79 0
+ 753 017c 3046     		mov	r0, r6
+ 754 017e FFF7FEFF 		bl	_Z21A4988_toggleDirectionP5A4988
+ 755              	.LVL92:
+ 756              	.LBB122:
+  80:Core/Src/devs/hmc5883.cpp ****         for (uint32_t i = 0; i < (n); ++i) {
+ 757              		.loc 1 80 0
+ 758 0182 0024     		movs	r4, #0
+ 759 0184 00E0     		b	.L31
+ 760              	.LVL93:
+ 761              	.L29:
+ 762              		.loc 1 80 0 is_stmt 0 discriminator 2
+ 763 0186 0134     		adds	r4, r4, #1
+ 764              	.LVL94:
+ 765              	.L31:
+ 766              		.loc 1 80 0 discriminator 1
+ 767 0188 BC42     		cmp	r4, r7
+ 768 018a 0AD2     		bcs	.L28
+ 769              	.LBB123:
+  81:Core/Src/devs/hmc5883.cpp ****                 A4988_step(stpr);
+ 770              		.loc 1 81 0 is_stmt 1
+ 771 018c 3046     		mov	r0, r6
+ 772 018e FFF7FEFF 		bl	_Z10A4988_stepP5A4988
+ 773              	.LVL95:
+ 774              	.LBB124:
+  82:Core/Src/devs/hmc5883.cpp ****                 for (uint32_t j = 0; j < 30000; ++j) {
+ 775              		.loc 1 82 0
+ 776 0192 0023     		movs	r3, #0
+ 777              	.LVL96:
+ 778              	.L30:
+ 779              		.loc 1 82 0 is_stmt 0 discriminator 3
+ 780 0194 47F22F52 		movw	r2, #29999
+ 781 0198 9342     		cmp	r3, r2
+ 782 019a F4D8     		bhi	.L29
+  83:Core/Src/devs/hmc5883.cpp ****                         asm volatile("nop");
+ 783              		.loc 1 83 0 is_stmt 1 discriminator 2
+ 784              		.syntax unified
+ 785              	@ 83 "Core/Src/devs/hmc5883.cpp" 1
+ 786 019c 00BF     		nop
+ 787              	@ 0 "" 2
+  82:Core/Src/devs/hmc5883.cpp ****                 for (uint32_t j = 0; j < 30000; ++j) {
+ 788              		.loc 1 82 0 discriminator 2
+ 789              		.thumb
+ 790              		.syntax unified
+ 791 019e 0133     		adds	r3, r3, #1
+ 792              	.LVL97:
+ 793 01a0 F8E7     		b	.L30
+ 794              	.LVL98:
+ 795              	.L28:
+ 796              	.LBE124:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 20
+
+
+ 797              	.LBE123:
+ 798              	.LBE122:
+  84:Core/Src/devs/hmc5883.cpp ****                 }
+  85:Core/Src/devs/hmc5883.cpp ****         }
+  86:Core/Src/devs/hmc5883.cpp ****         A4988_toggleDirection(stpr);
+ 799              		.loc 1 86 0
+ 800 01a2 3046     		mov	r0, r6
+ 801 01a4 FFF7FEFF 		bl	_Z21A4988_toggleDirectionP5A4988
+ 802              	.LVL99:
+  87:Core/Src/devs/hmc5883.cpp ****         
+  88:Core/Src/devs/hmc5883.cpp ****         printf("Stop Rotating Compass\n");
+ 803              		.loc 1 88 0
+ 804 01a8 1F48     		ldr	r0, .L33+8
+ 805 01aa FFF7FEFF 		bl	puts
+ 806              	.LVL100:
+ 807              	.LBB125:
+ 808              	.LBB126:
+ 809              	.LBB127:
+ 810              	.LBB128:
+ 114:Core/Inc/utils/vec3.h ****                 y_ += rhs.y_;
+ 811              		.loc 2 114 0
+ 812 01ae DDED066A 		vldr.32	s13, [sp, #24]
+ 813 01b2 DDED037A 		vldr.32	s15, [sp, #12]
+ 814 01b6 76EEA76A 		vadd.f32	s13, s13, s15
+ 815 01ba CDED0F6A 		vstr.32	s13, [sp, #60]
+ 115:Core/Inc/utils/vec3.h ****                 z_ += rhs.z_;
+ 816              		.loc 2 115 0
+ 817 01be 9DED077A 		vldr.32	s14, [sp, #28]
+ 818 01c2 DDED047A 		vldr.32	s15, [sp, #16]
+ 819 01c6 37EE277A 		vadd.f32	s14, s14, s15
+ 820 01ca 8DED107A 		vstr.32	s14, [sp, #64]
+ 116:Core/Inc/utils/vec3.h **** 
+ 821              		.loc 2 116 0
+ 822 01ce DDED087A 		vldr.32	s15, [sp, #32]
+ 823 01d2 9DED056A 		vldr.32	s12, [sp, #20]
+ 824 01d6 77EE867A 		vadd.f32	s15, s15, s12
+ 825 01da CDED117A 		vstr.32	s15, [sp, #68]
+ 826              	.LVL101:
+ 827              	.LBE128:
+ 828              	.LBE127:
+ 131:Core/Inc/utils/vec3.h ****         }
+ 829              		.loc 2 131 0
+ 830 01de 0CAB     		add	r3, sp, #48
+ 831 01e0 12AA     		add	r2, sp, #72
+ 832 01e2 12E90700 		ldmdb	r2, {r0, r1, r2}
+ 833 01e6 83E80700 		stm	r3, {r0, r1, r2}
+ 834              	.LVL102:
+ 835              	.LBE126:
+ 836              	.LBE125:
+ 837              	.LBB129:
+ 838              	.LBB130:
+  49:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+ 839              		.loc 2 49 0
+ 840 01ea B6EE006A 		vmov.f32	s12, #5.0e-1
+ 841 01ee 66EE866A 		vmul.f32	s13, s13, s12
+ 842 01f2 CDED096A 		vstr.32	s13, [sp, #36]
+  50:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 21
+
+
+ 843              		.loc 2 50 0
+ 844 01f6 27EE067A 		vmul.f32	s14, s14, s12
+ 845 01fa 8DED0A7A 		vstr.32	s14, [sp, #40]
+  51:Core/Inc/utils/vec3.h **** 
+ 846              		.loc 2 51 0
+ 847 01fe 67EE867A 		vmul.f32	s15, s15, s12
+ 848 0202 CDED0B7A 		vstr.32	s15, [sp, #44]
+ 849              	.LVL103:
+ 850              	.LBE130:
+ 851              	.LBE129:
+  89:Core/Src/devs/hmc5883.cpp **** 
+  90:Core/Src/devs/hmc5883.cpp ****         hmc->hard_iron_offset = (maxs + mins).mult_EW(0.5);
+ 852              		.loc 1 90 0
+ 853 0206 08F11408 		add	r8, r8, #20
+ 854              	.LVL104:
+ 855 020a 09AB     		add	r3, sp, #36
+ 856 020c 93E80700 		ldm	r3, {r0, r1, r2}
+ 857 0210 88E80700 		stm	r8, {r0, r1, r2}
+  91:Core/Src/devs/hmc5883.cpp **** }
+ 858              		.loc 1 91 0
+ 859 0214 12B0     		add	sp, sp, #72
+ 860              	.LCFI11:
+ 861              		.cfi_def_cfa_offset 32
+ 862              		@ sp needed
+ 863 0216 BDEC028B 		vldm	sp!, {d8}
+ 864              	.LCFI12:
+ 865              		.cfi_restore 80
+ 866              		.cfi_restore 81
+ 867              		.cfi_def_cfa_offset 24
+ 868 021a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 869              	.LVL105:
+ 870              	.L34:
+ 871 021e 00BF     		.align	2
+ 872              	.L33:
+ 873 0220 00000000 		.word	0
+ 874 0224 00000000 		.word	.LC0
+ 875 0228 18000000 		.word	.LC1
+ 876              		.cfi_endproc
+ 877              	.LFE153:
+ 879              		.section	.bss._ZL6buffer,"aw",%nobits
+ 880              		.align	2
+ 881              		.set	.LANCHOR0,. + 0
+ 884              	_ZL6buffer:
+ 885 0000 00000000 		.space	8
+ 885      00000000 
+ 886              		.section	.rodata._Z17HMC5883_CalibrateP7HMC5883P5A4988m.str1.4,"aMS",%progbits,1
+ 887              		.align	2
+ 888              	.LC0:
+ 889 0000 53746172 		.ascii	"Start Rotating Compass\000"
+ 889      7420526F 
+ 889      74617469 
+ 889      6E672043 
+ 889      6F6D7061 
+ 890 0017 00       		.space	1
+ 891              	.LC1:
+ 892 0018 53746F70 		.ascii	"Stop Rotating Compass\000"
+ 892      20526F74 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 22
+
+
+ 892      6174696E 
+ 892      6720436F 
+ 892      6D706173 
+ 893              		.text
+ 894              	.Letext0:
+ 895              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 896              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 897              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core
+ 898              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 899              		.file 7 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 900              		.file 8 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/ST
+ 901              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 902              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 903              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 904              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 905              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 906              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 907              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 908              		.file 16 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 909              		.file 17 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Dri
+ 910              		.file 18 "Core/Inc/periphs/i2c.h"
+ 911              		.file 19 "Core/Inc/periphs/tim.h"
+ 912              		.file 20 "Core/Inc/devs/a4988.h"
+ 913              		.file 21 "Core/Inc/devs/hmc5883.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 hmc5883.cpp
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:18     .text._ZL7max_valff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:24     .text._ZL7max_valff:00000000 _ZL7max_valff
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:53     .text._ZL7min_valff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:59     .text._ZL7min_valff:00000000 _ZL7min_valff
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:87     .text._Z12HMC5883_InitP7HMC5883:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:94     .text._Z12HMC5883_InitP7HMC5883:00000000 _Z12HMC5883_InitP7HMC5883
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:166    .text._Z12HMC5883_InitP7HMC5883:0000004c $d
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:171    .text._ZNK4Vec3IfE4getXEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:178    .text._ZNK4Vec3IfE4getXEv:00000000 _ZNK4Vec3IfE4getXEv
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:194    .text._ZNK4Vec3IfE4getYEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:201    .text._ZNK4Vec3IfE4getYEv:00000000 _ZNK4Vec3IfE4getYEv
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:216    .text._ZNK4Vec3IfE4getZEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:223    .text._ZNK4Vec3IfE4getZEv:00000000 _ZNK4Vec3IfE4getZEv
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:238    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:245    .text._ZN4Vec3IfE10set_ValuesEfff:00000000 _ZN4Vec3IfE10set_ValuesEfff
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:265    .text._Z12HMC5883_ReadP7HMC5883:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:272    .text._Z12HMC5883_ReadP7HMC5883:00000000 _Z12HMC5883_ReadP7HMC5883
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:393    .text._Z12HMC5883_ReadP7HMC5883:0000009c $d
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:398    .text._ZN4Vec3IfED2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:405    .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:405    .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:421    .text._Z12swap_ElementIfEvRT_S1_:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:428    .text._Z12swap_ElementIfEvRT_S1_:00000000 _Z12swap_ElementIfEvRT_S1_
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:450    .text._Z17HMC5883_CalibrateP7HMC5883P5A4988m:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:457    .text._Z17HMC5883_CalibrateP7HMC5883P5A4988m:00000000 _Z17HMC5883_CalibrateP7HMC5883P5A4988m
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:873    .text._Z17HMC5883_CalibrateP7HMC5883P5A4988m:00000220 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:880    .bss._ZL6buffer:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:884    .bss._ZL6buffer:00000000 _ZL6buffer
+C:\Users\Prashant\AppData\Local\Temp\cc4JyaP9.s:887    .rodata._Z17HMC5883_CalibrateP7HMC5883P5A4988m.str1.4:00000000 $d
+                           .group:00000000 _ZN4Vec3IfED5Ev
+
+UNDEFINED SYMBOLS
+HAL_I2C_Master_Transmit
+HAL_I2C_Master_Receive
+puts
+HAL_Delay
+_Z10A4988_stepP5A4988
+_Z21A4988_toggleDirectionP5A4988

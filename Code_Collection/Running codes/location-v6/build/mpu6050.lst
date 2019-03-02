@@ -1,0 +1,1148 @@
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"mpu6050.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Z12MPU6050_InitP7MPU6050,"ax",%progbits
+  18              		.align	1
+  19              		.global	_Z12MPU6050_InitP7MPU6050
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_Z12MPU6050_InitP7MPU6050:
+  26              	.LFB149:
+  27              		.file 1 "Core/Src/devs/mpu6050.cpp"
+   1:Core/Src/devs/mpu6050.cpp **** /*
+   2:Core/Src/devs/mpu6050.cpp ****  * mpu6050.c
+   3:Core/Src/devs/mpu6050.cpp ****  * 
+   4:Core/Src/devs/mpu6050.cpp ****  * Created : 9/27/2018
+   5:Core/Src/devs/mpu6050.cpp ****  *  Author : n-is
+   6:Core/Src/devs/mpu6050.cpp ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Src/devs/mpu6050.cpp ****  */
+   8:Core/Src/devs/mpu6050.cpp **** 
+   9:Core/Src/devs/mpu6050.cpp **** // TODO: Test code in this file in actual hardware.
+  10:Core/Src/devs/mpu6050.cpp **** 
+  11:Core/Src/devs/mpu6050.cpp **** 
+  12:Core/Src/devs/mpu6050.cpp **** #include "mpu6050.h"
+  13:Core/Src/devs/mpu6050.cpp **** 
+  14:Core/Src/devs/mpu6050.cpp **** #define I2C_TIMEOUT     (10)
+  15:Core/Src/devs/mpu6050.cpp **** 
+  16:Core/Src/devs/mpu6050.cpp **** static uint8_t i2c_buffer[8];
+  17:Core/Src/devs/mpu6050.cpp **** 
+  18:Core/Src/devs/mpu6050.cpp **** static const uint16_t lsb_per_g[4] = { 16384, 8192, 4096, 2048 };
+  19:Core/Src/devs/mpu6050.cpp **** static const float lsb_per_dsp[4] = { 131.0, 65.5, 32.8, 16.4 };
+  20:Core/Src/devs/mpu6050.cpp **** 
+  21:Core/Src/devs/mpu6050.cpp **** void MPU6050_Init(struct MPU6050 *mpu)
+  22:Core/Src/devs/mpu6050.cpp **** {
+  28              		.loc 1 22 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 20
+  36              		.cfi_offset 4, -20
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 2
+
+
+  37              		.cfi_offset 5, -16
+  38              		.cfi_offset 6, -12
+  39              		.cfi_offset 7, -8
+  40              		.cfi_offset 14, -4
+  41 0002 83B0     		sub	sp, sp, #12
+  42              	.LCFI1:
+  43              		.cfi_def_cfa_offset 32
+  44 0004 0546     		mov	r5, r0
+  23:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = PWR_MGMT_1;        // PWR_MGMT_1
+  45              		.loc 1 23 0
+  46 0006 214C     		ldr	r4, .L3
+  47 0008 6B23     		movs	r3, #107
+  48 000a 2370     		strb	r3, [r4]
+  24:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[1] = (0x00);
+  49              		.loc 1 24 0
+  50 000c 0027     		movs	r7, #0
+  51 000e 6770     		strb	r7, [r4, #1]
+  25:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 2, 10);
+  52              		.loc 1 25 0
+  53 0010 90F82810 		ldrb	r1, [r0, #40]	@ zero_extendqisi2
+  54 0014 0A26     		movs	r6, #10
+  55 0016 0096     		str	r6, [sp]
+  56 0018 0223     		movs	r3, #2
+  57 001a 2246     		mov	r2, r4
+  58 001c 0068     		ldr	r0, [r0]
+  59              	.LVL1:
+  60 001e FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+  61              	.LVL2:
+  26:Core/Src/devs/mpu6050.cpp ****         
+  27:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = SMPLRT_DIV;        // SMPLRT_DIV
+  62              		.loc 1 27 0
+  63 0022 1923     		movs	r3, #25
+  64 0024 2370     		strb	r3, [r4]
+  28:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[1] = 0x19;
+  65              		.loc 1 28 0
+  66 0026 6370     		strb	r3, [r4, #1]
+  29:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 2, 10);
+  67              		.loc 1 29 0
+  68 0028 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+  69 002c 0096     		str	r6, [sp]
+  70 002e 0223     		movs	r3, #2
+  71 0030 2246     		mov	r2, r4
+  72 0032 2868     		ldr	r0, [r5]
+  73 0034 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+  74              	.LVL3:
+  30:Core/Src/devs/mpu6050.cpp ****         
+  31:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = CONFIG;            // CONFIG
+  75              		.loc 1 31 0
+  76 0038 1A23     		movs	r3, #26
+  77 003a 2370     		strb	r3, [r4]
+  32:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[1] = 0x00;
+  78              		.loc 1 32 0
+  79 003c 6770     		strb	r7, [r4, #1]
+  33:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 2, 10);
+  80              		.loc 1 33 0
+  81 003e 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+  82 0042 0096     		str	r6, [sp]
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 3
+
+
+  83 0044 0223     		movs	r3, #2
+  84 0046 2246     		mov	r2, r4
+  85 0048 2868     		ldr	r0, [r5]
+  86 004a FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+  87              	.LVL4:
+  34:Core/Src/devs/mpu6050.cpp **** 
+  35:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = GYRO_CONFIG;
+  88              		.loc 1 35 0
+  89 004e 1B23     		movs	r3, #27
+  90 0050 2370     		strb	r3, [r4]
+  36:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[1] = (mpu->g_scale) << 3;
+  91              		.loc 1 36 0
+  92 0052 95F83130 		ldrb	r3, [r5, #49]	@ zero_extendqisi2
+  93 0056 DB00     		lsls	r3, r3, #3
+  94 0058 6370     		strb	r3, [r4, #1]
+  37:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 2, I2C_TIMEOUT);
+  95              		.loc 1 37 0
+  96 005a 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+  97 005e 0096     		str	r6, [sp]
+  98 0060 0223     		movs	r3, #2
+  99 0062 2246     		mov	r2, r4
+ 100 0064 2868     		ldr	r0, [r5]
+ 101 0066 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 102              	.LVL5:
+  38:Core/Src/devs/mpu6050.cpp **** 
+  39:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = ACCEL_CONFIG;
+ 103              		.loc 1 39 0
+ 104 006a 1C23     		movs	r3, #28
+ 105 006c 2370     		strb	r3, [r4]
+  40:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[1] = (mpu->a_scale) << 3;
+ 106              		.loc 1 40 0
+ 107 006e 95F83030 		ldrb	r3, [r5, #48]	@ zero_extendqisi2
+ 108 0072 DB00     		lsls	r3, r3, #3
+ 109 0074 6370     		strb	r3, [r4, #1]
+  41:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 2, I2C_TIMEOUT);
+ 110              		.loc 1 41 0
+ 111 0076 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+ 112 007a 2868     		ldr	r0, [r5]
+ 113 007c 0096     		str	r6, [sp]
+ 114 007e 0223     		movs	r3, #2
+ 115 0080 2246     		mov	r2, r4
+ 116 0082 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 117              	.LVL6:
+  42:Core/Src/devs/mpu6050.cpp **** 
+  43:Core/Src/devs/mpu6050.cpp **** }
+ 118              		.loc 1 43 0
+ 119 0086 03B0     		add	sp, sp, #12
+ 120              	.LCFI2:
+ 121              		.cfi_def_cfa_offset 20
+ 122              		@ sp needed
+ 123 0088 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 124              	.LVL7:
+ 125              	.L4:
+ 126 008a 00BF     		.align	2
+ 127              	.L3:
+ 128 008c 00000000 		.word	.LANCHOR0
+ 129              		.cfi_endproc
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 4
+
+
+ 130              	.LFE149:
+ 132              		.global	__aeabi_i2d
+ 133              		.global	__aeabi_ddiv
+ 134              		.global	__aeabi_dadd
+ 135              		.global	__aeabi_d2f
+ 136              		.section	.text._Z17MPU6050_Read_TempP7MPU6050,"ax",%progbits
+ 137              		.align	1
+ 138              		.global	_Z17MPU6050_Read_TempP7MPU6050
+ 139              		.syntax unified
+ 140              		.thumb
+ 141              		.thumb_func
+ 142              		.fpu fpv4-sp-d16
+ 144              	_Z17MPU6050_Read_TempP7MPU6050:
+ 145              	.LFB152:
+  44:Core/Src/devs/mpu6050.cpp **** 
+  45:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_RawAccel(struct MPU6050 *mpu)
+  46:Core/Src/devs/mpu6050.cpp **** {
+  47:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = ACCEL_XOUT_H;   // Starting Address for Accelerometer data
+  48:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 1, I2C_TIMEOUT);
+  49:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Receive(mpu->hi2c, mpu->address, i2c_buffer, 6, I2C_TIMEOUT);
+  50:Core/Src/devs/mpu6050.cpp ****         int16_t x = (i2c_buffer[0] << 8) | i2c_buffer[1];
+  51:Core/Src/devs/mpu6050.cpp ****         int16_t y = (i2c_buffer[2] << 8) | i2c_buffer[3];
+  52:Core/Src/devs/mpu6050.cpp ****         int16_t z = (i2c_buffer[4] << 8) | i2c_buffer[5];
+  53:Core/Src/devs/mpu6050.cpp **** 
+  54:Core/Src/devs/mpu6050.cpp ****         mpu->raw_a_axis.set_Values(x,y,z);
+  55:Core/Src/devs/mpu6050.cpp **** }
+  56:Core/Src/devs/mpu6050.cpp **** 
+  57:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_RawGyro(struct MPU6050 *mpu)
+  58:Core/Src/devs/mpu6050.cpp **** {
+  59:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = GYRO_XOUT_H;   // Starting Address for gyro data
+  60:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 1, I2C_TIMEOUT);
+  61:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Receive(mpu->hi2c, mpu->address, i2c_buffer, 6, I2C_TIMEOUT);
+  62:Core/Src/devs/mpu6050.cpp ****         int16_t x = (i2c_buffer[0] << 8) | i2c_buffer[1];
+  63:Core/Src/devs/mpu6050.cpp ****         int16_t y = (i2c_buffer[2] << 8) | i2c_buffer[3];
+  64:Core/Src/devs/mpu6050.cpp ****         int16_t z = (i2c_buffer[4] << 8) | i2c_buffer[5];
+  65:Core/Src/devs/mpu6050.cpp ****         
+  66:Core/Src/devs/mpu6050.cpp ****         mpu->raw_g_axis.set_Values(x,y,z);
+  67:Core/Src/devs/mpu6050.cpp **** }
+  68:Core/Src/devs/mpu6050.cpp **** 
+  69:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_Temp(struct MPU6050 *mpu)
+  70:Core/Src/devs/mpu6050.cpp **** {
+ 146              		.loc 1 70 0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              	.LVL8:
+ 151 0000 70B5     		push	{r4, r5, r6, lr}
+ 152              	.LCFI3:
+ 153              		.cfi_def_cfa_offset 16
+ 154              		.cfi_offset 4, -16
+ 155              		.cfi_offset 5, -12
+ 156              		.cfi_offset 6, -8
+ 157              		.cfi_offset 14, -4
+ 158 0002 82B0     		sub	sp, sp, #8
+ 159              	.LCFI4:
+ 160              		.cfi_def_cfa_offset 24
+ 161 0004 0446     		mov	r4, r0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 5
+
+
+  71:Core/Src/devs/mpu6050.cpp ****         int16_t tmpr;
+  72:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = TEMP_OUT_H;   // Starting Address for temperature data
+ 162              		.loc 1 72 0
+ 163 0006 164D     		ldr	r5, .L7+8
+ 164 0008 4123     		movs	r3, #65
+ 165 000a 2B70     		strb	r3, [r5]
+  73:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 1, I2C_TIMEOUT);
+ 166              		.loc 1 73 0
+ 167 000c 90F82810 		ldrb	r1, [r0, #40]	@ zero_extendqisi2
+ 168 0010 0A26     		movs	r6, #10
+ 169 0012 0096     		str	r6, [sp]
+ 170 0014 0123     		movs	r3, #1
+ 171 0016 2A46     		mov	r2, r5
+ 172 0018 0068     		ldr	r0, [r0]
+ 173              	.LVL9:
+ 174 001a FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 175              	.LVL10:
+  74:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Receive(mpu->hi2c, mpu->address, i2c_buffer, 2, I2C_TIMEOUT);
+ 176              		.loc 1 74 0
+ 177 001e 94F82810 		ldrb	r1, [r4, #40]	@ zero_extendqisi2
+ 178 0022 0096     		str	r6, [sp]
+ 179 0024 0223     		movs	r3, #2
+ 180 0026 2A46     		mov	r2, r5
+ 181 0028 2068     		ldr	r0, [r4]
+ 182 002a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 183              	.LVL11:
+  75:Core/Src/devs/mpu6050.cpp ****         
+  76:Core/Src/devs/mpu6050.cpp ****         tmpr = (i2c_buffer[0] << 8) | i2c_buffer[1];
+ 184              		.loc 1 76 0
+ 185 002e 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 186 0030 1B02     		lsls	r3, r3, #8
+ 187 0032 1BB2     		sxth	r3, r3
+ 188 0034 6878     		ldrb	r0, [r5, #1]	@ zero_extendqisi2
+ 189              	.LVL12:
+  77:Core/Src/devs/mpu6050.cpp ****         mpu->tmpr = (tmpr / 340.0) + 36.53;
+ 190              		.loc 1 77 0
+ 191 0036 1843     		orrs	r0, r0, r3
+ 192              	.LVL13:
+ 193 0038 FFF7FEFF 		bl	__aeabi_i2d
+ 194              	.LVL14:
+ 195 003c 0022     		movs	r2, #0
+ 196 003e 094B     		ldr	r3, .L7+12
+ 197 0040 FFF7FEFF 		bl	__aeabi_ddiv
+ 198              	.LVL15:
+ 199 0044 04A3     		adr	r3, .L7
+ 200 0046 D3E90023 		ldrd	r2, [r3]
+ 201 004a FFF7FEFF 		bl	__aeabi_dadd
+ 202              	.LVL16:
+ 203 004e FFF7FEFF 		bl	__aeabi_d2f
+ 204              	.LVL17:
+ 205 0052 E062     		str	r0, [r4, #44]	@ float
+  78:Core/Src/devs/mpu6050.cpp **** }
+ 206              		.loc 1 78 0
+ 207 0054 02B0     		add	sp, sp, #8
+ 208              	.LCFI5:
+ 209              		.cfi_def_cfa_offset 16
+ 210              		@ sp needed
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 6
+
+
+ 211 0056 70BD     		pop	{r4, r5, r6, pc}
+ 212              	.LVL18:
+ 213              	.L8:
+ 214              		.align	3
+ 215              	.L7:
+ 216 0058 A4703D0A 		.word	171798692
+ 217 005c D7434240 		.word	1078084567
+ 218 0060 00000000 		.word	.LANCHOR0
+ 219 0064 00407540 		.word	1081425920
+ 220              		.cfi_endproc
+ 221              	.LFE152:
+ 223              		.section	.text._ZN4Vec3IsE10set_ValuesEsss,"axG",%progbits,_ZN4Vec3IsE10set_ValuesEsss,comdat
+ 224              		.align	1
+ 225              		.weak	_ZN4Vec3IsE10set_ValuesEsss
+ 226              		.syntax unified
+ 227              		.thumb
+ 228              		.thumb_func
+ 229              		.fpu fpv4-sp-d16
+ 231              	_ZN4Vec3IsE10set_ValuesEsss:
+ 232              	.LFB157:
+ 233              		.file 2 "Core/Inc\\utils/vec3.h"
+   1:Core/Inc\utils/vec3.h **** /*
+   2:Core/Inc\utils/vec3.h ****  * vec3.h
+   3:Core/Inc\utils/vec3.h ****  * 
+   4:Core/Inc\utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc\utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc\utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc\utils/vec3.h ****  */
+   8:Core/Inc\utils/vec3.h **** 
+   9:Core/Inc\utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc\utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc\utils/vec3.h **** 
+  12:Core/Inc\utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc\utils/vec3.h **** 
+  14:Core/Inc\utils/vec3.h **** template <typename T>
+  15:Core/Inc\utils/vec3.h **** void swap_Element(T &first, T &second)
+  16:Core/Inc\utils/vec3.h **** {
+  17:Core/Inc\utils/vec3.h ****         T temp = first;
+  18:Core/Inc\utils/vec3.h ****         first = second;
+  19:Core/Inc\utils/vec3.h ****         second = temp;
+  20:Core/Inc\utils/vec3.h **** }
+  21:Core/Inc\utils/vec3.h **** 
+  22:Core/Inc\utils/vec3.h **** template <class T>
+  23:Core/Inc\utils/vec3.h **** class Vec3
+  24:Core/Inc\utils/vec3.h **** {
+  25:Core/Inc\utils/vec3.h **** public:
+  26:Core/Inc\utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  27:Core/Inc\utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  28:Core/Inc\utils/vec3.h ****         Vec3(Vec3 &&) = default;
+  29:Core/Inc\utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  30:Core/Inc\utils/vec3.h ****         ~Vec3();
+  31:Core/Inc\utils/vec3.h **** 
+  32:Core/Inc\utils/vec3.h ****         void set_Values(T x, T y, T z);
+  33:Core/Inc\utils/vec3.h ****         T getX() const;
+  34:Core/Inc\utils/vec3.h ****         T getY() const;
+  35:Core/Inc\utils/vec3.h ****         T getZ() const;
+  36:Core/Inc\utils/vec3.h ****         void setX(T x) { x_ = x; }
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 7
+
+
+  37:Core/Inc\utils/vec3.h ****         void setY(T y) { y_ = y; }
+  38:Core/Inc\utils/vec3.h ****         void setZ(T z) { z_ = z; }
+  39:Core/Inc\utils/vec3.h **** 
+  40:Core/Inc\utils/vec3.h ****         template <typename T1, typename T2>
+  41:Core/Inc\utils/vec3.h ****         void divide(const Vec3<T1> &v, T2 num) {
+  42:Core/Inc\utils/vec3.h ****                 x_ = v.getX() / num;
+  43:Core/Inc\utils/vec3.h ****                 y_ = v.getY() / num;
+  44:Core/Inc\utils/vec3.h ****                 z_ = v.getZ() / num;
+  45:Core/Inc\utils/vec3.h ****         }
+  46:Core/Inc\utils/vec3.h **** 
+  47:Core/Inc\utils/vec3.h ****         Vec3 mult_EW(float num) {
+  48:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  49:Core/Inc\utils/vec3.h ****                 temp.x_ *= num;
+  50:Core/Inc\utils/vec3.h ****                 temp.y_ *= num;
+  51:Core/Inc\utils/vec3.h ****                 temp.z_ *= num;
+  52:Core/Inc\utils/vec3.h **** 
+  53:Core/Inc\utils/vec3.h ****                 return temp;
+  54:Core/Inc\utils/vec3.h ****         }
+  55:Core/Inc\utils/vec3.h **** 
+  56:Core/Inc\utils/vec3.h ****         Vec3 add_EW(float num) {
+  57:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  58:Core/Inc\utils/vec3.h ****                 temp.x_ += num;
+  59:Core/Inc\utils/vec3.h ****                 temp.y_ += num;
+  60:Core/Inc\utils/vec3.h ****                 temp.z_ += num;
+  61:Core/Inc\utils/vec3.h **** 
+  62:Core/Inc\utils/vec3.h ****                 return temp;
+  63:Core/Inc\utils/vec3.h ****         }
+  64:Core/Inc\utils/vec3.h **** 
+  65:Core/Inc\utils/vec3.h ****         Vec3 sub_EW(float num) {
+  66:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  67:Core/Inc\utils/vec3.h ****                 temp.x_ -= num;
+  68:Core/Inc\utils/vec3.h ****                 temp.y_ -= num;
+  69:Core/Inc\utils/vec3.h ****                 temp.z_ -= num;
+  70:Core/Inc\utils/vec3.h **** 
+  71:Core/Inc\utils/vec3.h ****                 return temp;
+  72:Core/Inc\utils/vec3.h ****         }
+  73:Core/Inc\utils/vec3.h **** 
+  74:Core/Inc\utils/vec3.h ****         template <typename T1>
+  75:Core/Inc\utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+  76:Core/Inc\utils/vec3.h ****                 Vec3 temp(*this);
+  77:Core/Inc\utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+  78:Core/Inc\utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+  79:Core/Inc\utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+  80:Core/Inc\utils/vec3.h **** 
+  81:Core/Inc\utils/vec3.h ****                 return temp;
+  82:Core/Inc\utils/vec3.h ****         }
+  83:Core/Inc\utils/vec3.h **** 
+  84:Core/Inc\utils/vec3.h ****         template <typename T1>
+  85:Core/Inc\utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  86:Core/Inc\utils/vec3.h ****                 Vec3 temp(v);
+  87:Core/Inc\utils/vec3.h ****                 temp.x_ *= x_;
+  88:Core/Inc\utils/vec3.h ****                 temp.y_ *= y_;
+  89:Core/Inc\utils/vec3.h ****                 temp.z_ *= z_;
+  90:Core/Inc\utils/vec3.h **** 
+  91:Core/Inc\utils/vec3.h ****                 return temp;
+  92:Core/Inc\utils/vec3.h ****         }
+  93:Core/Inc\utils/vec3.h **** 
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 8
+
+
+  94:Core/Inc\utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+  95:Core/Inc\utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+  96:Core/Inc\utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+  97:Core/Inc\utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+  98:Core/Inc\utils/vec3.h ****         }
+  99:Core/Inc\utils/vec3.h ****         
+ 100:Core/Inc\utils/vec3.h ****         Vec3(const Vec3 &v) {
+ 101:Core/Inc\utils/vec3.h ****                 x_ = v.x_;
+ 102:Core/Inc\utils/vec3.h ****                 y_ = v.y_;
+ 103:Core/Inc\utils/vec3.h ****                 z_ = v.z_;
+ 104:Core/Inc\utils/vec3.h ****         }
+ 105:Core/Inc\utils/vec3.h ****         
+ 106:Core/Inc\utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 107:Core/Inc\utils/vec3.h ****                 Vec3 temp(v);
+ 108:Core/Inc\utils/vec3.h ****                 swap(*this, temp);
+ 109:Core/Inc\utils/vec3.h **** 
+ 110:Core/Inc\utils/vec3.h ****                 return *this;
+ 111:Core/Inc\utils/vec3.h ****         }
+ 112:Core/Inc\utils/vec3.h **** 
+ 113:Core/Inc\utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 114:Core/Inc\utils/vec3.h ****                 x_ += rhs.x_;
+ 115:Core/Inc\utils/vec3.h ****                 y_ += rhs.y_;
+ 116:Core/Inc\utils/vec3.h ****                 z_ += rhs.z_;
+ 117:Core/Inc\utils/vec3.h **** 
+ 118:Core/Inc\utils/vec3.h ****                 return *this;
+ 119:Core/Inc\utils/vec3.h ****         }
+ 120:Core/Inc\utils/vec3.h ****         
+ 121:Core/Inc\utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 122:Core/Inc\utils/vec3.h ****                 x_ -= rhs.x_;
+ 123:Core/Inc\utils/vec3.h ****                 y_ -= rhs.y_;
+ 124:Core/Inc\utils/vec3.h ****                 z_ -= rhs.z_;
+ 125:Core/Inc\utils/vec3.h **** 
+ 126:Core/Inc\utils/vec3.h ****                 return *this;
+ 127:Core/Inc\utils/vec3.h ****         }
+ 128:Core/Inc\utils/vec3.h **** 
+ 129:Core/Inc\utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 130:Core/Inc\utils/vec3.h ****                 lhs += rhs;
+ 131:Core/Inc\utils/vec3.h ****                 return lhs;
+ 132:Core/Inc\utils/vec3.h ****         }
+ 133:Core/Inc\utils/vec3.h **** 
+ 134:Core/Inc\utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 135:Core/Inc\utils/vec3.h ****                 lhs -= rhs;
+ 136:Core/Inc\utils/vec3.h ****                 return lhs;
+ 137:Core/Inc\utils/vec3.h ****         }
+ 138:Core/Inc\utils/vec3.h **** 
+ 139:Core/Inc\utils/vec3.h ****         void print() const {
+ 140:Core/Inc\utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 141:Core/Inc\utils/vec3.h ****         }
+ 142:Core/Inc\utils/vec3.h **** 
+ 143:Core/Inc\utils/vec3.h **** private:
+ 144:Core/Inc\utils/vec3.h ****         T x_,y_,z_;
+ 145:Core/Inc\utils/vec3.h **** };
+ 146:Core/Inc\utils/vec3.h **** 
+ 147:Core/Inc\utils/vec3.h **** template <class T>
+ 148:Core/Inc\utils/vec3.h **** Vec3<T>::~Vec3()
+ 149:Core/Inc\utils/vec3.h **** {
+ 150:Core/Inc\utils/vec3.h **** }
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 9
+
+
+ 151:Core/Inc\utils/vec3.h **** 
+ 152:Core/Inc\utils/vec3.h **** template <class T>
+ 153:Core/Inc\utils/vec3.h **** void Vec3<T>::set_Values(T x, T y, T z)
+ 234              		.loc 2 153 0
+ 235              		.cfi_startproc
+ 236              		@ args = 0, pretend = 0, frame = 0
+ 237              		@ frame_needed = 0, uses_anonymous_args = 0
+ 238              		@ link register save eliminated.
+ 239              	.LVL19:
+ 154:Core/Inc\utils/vec3.h **** {
+ 155:Core/Inc\utils/vec3.h ****         x_ = x;
+ 240              		.loc 2 155 0
+ 241 0000 0180     		strh	r1, [r0]	@ movhi
+ 156:Core/Inc\utils/vec3.h ****         y_ = y;
+ 242              		.loc 2 156 0
+ 243 0002 4280     		strh	r2, [r0, #2]	@ movhi
+ 157:Core/Inc\utils/vec3.h ****         z_ = z;
+ 244              		.loc 2 157 0
+ 245 0004 8380     		strh	r3, [r0, #4]	@ movhi
+ 158:Core/Inc\utils/vec3.h **** }
+ 246              		.loc 2 158 0
+ 247 0006 7047     		bx	lr
+ 248              		.cfi_endproc
+ 249              	.LFE157:
+ 251              		.section	.text._Z21MPU6050_Read_RawAccelP7MPU6050,"ax",%progbits
+ 252              		.align	1
+ 253              		.global	_Z21MPU6050_Read_RawAccelP7MPU6050
+ 254              		.syntax unified
+ 255              		.thumb
+ 256              		.thumb_func
+ 257              		.fpu fpv4-sp-d16
+ 259              	_Z21MPU6050_Read_RawAccelP7MPU6050:
+ 260              	.LFB150:
+  46:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = ACCEL_XOUT_H;   // Starting Address for Accelerometer data
+ 261              		.loc 1 46 0
+ 262              		.cfi_startproc
+ 263              		@ args = 0, pretend = 0, frame = 0
+ 264              		@ frame_needed = 0, uses_anonymous_args = 0
+ 265              	.LVL20:
+ 266 0000 70B5     		push	{r4, r5, r6, lr}
+ 267              	.LCFI6:
+ 268              		.cfi_def_cfa_offset 16
+ 269              		.cfi_offset 4, -16
+ 270              		.cfi_offset 5, -12
+ 271              		.cfi_offset 6, -8
+ 272              		.cfi_offset 14, -4
+ 273 0002 82B0     		sub	sp, sp, #8
+ 274              	.LCFI7:
+ 275              		.cfi_def_cfa_offset 24
+ 276 0004 0546     		mov	r5, r0
+  47:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 1, I2C_TIMEOUT);
+ 277              		.loc 1 47 0
+ 278 0006 144C     		ldr	r4, .L12
+ 279 0008 3B23     		movs	r3, #59
+ 280 000a 2370     		strb	r3, [r4]
+  48:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Receive(mpu->hi2c, mpu->address, i2c_buffer, 6, I2C_TIMEOUT);
+ 281              		.loc 1 48 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 10
+
+
+ 282 000c 90F82810 		ldrb	r1, [r0, #40]	@ zero_extendqisi2
+ 283 0010 0A26     		movs	r6, #10
+ 284 0012 0096     		str	r6, [sp]
+ 285 0014 0123     		movs	r3, #1
+ 286 0016 2246     		mov	r2, r4
+ 287 0018 0068     		ldr	r0, [r0]
+ 288              	.LVL21:
+ 289 001a FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 290              	.LVL22:
+  49:Core/Src/devs/mpu6050.cpp ****         int16_t x = (i2c_buffer[0] << 8) | i2c_buffer[1];
+ 291              		.loc 1 49 0
+ 292 001e 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+ 293 0022 55F80A0B 		ldr	r0, [r5], #10
+ 294              	.LVL23:
+ 295 0026 0096     		str	r6, [sp]
+ 296 0028 0623     		movs	r3, #6
+ 297 002a 2246     		mov	r2, r4
+ 298 002c FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 299              	.LVL24:
+  50:Core/Src/devs/mpu6050.cpp ****         int16_t y = (i2c_buffer[2] << 8) | i2c_buffer[3];
+ 300              		.loc 1 50 0
+ 301 0030 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
+ 302 0032 0902     		lsls	r1, r1, #8
+ 303 0034 09B2     		sxth	r1, r1
+ 304 0036 6078     		ldrb	r0, [r4, #1]	@ zero_extendqisi2
+ 305              	.LVL25:
+  51:Core/Src/devs/mpu6050.cpp ****         int16_t z = (i2c_buffer[4] << 8) | i2c_buffer[5];
+ 306              		.loc 1 51 0
+ 307 0038 A278     		ldrb	r2, [r4, #2]	@ zero_extendqisi2
+ 308 003a 1202     		lsls	r2, r2, #8
+ 309 003c 12B2     		sxth	r2, r2
+ 310 003e E678     		ldrb	r6, [r4, #3]	@ zero_extendqisi2
+ 311              	.LVL26:
+  52:Core/Src/devs/mpu6050.cpp **** 
+ 312              		.loc 1 52 0
+ 313 0040 2379     		ldrb	r3, [r4, #4]	@ zero_extendqisi2
+ 314 0042 1B02     		lsls	r3, r3, #8
+ 315 0044 1BB2     		sxth	r3, r3
+ 316 0046 6479     		ldrb	r4, [r4, #5]	@ zero_extendqisi2
+ 317              	.LVL27:
+  54:Core/Src/devs/mpu6050.cpp **** }
+ 318              		.loc 1 54 0
+ 319 0048 2343     		orrs	r3, r3, r4
+ 320              	.LVL28:
+ 321 004a 3243     		orrs	r2, r2, r6
+ 322              	.LVL29:
+ 323 004c 0143     		orrs	r1, r1, r0
+ 324              	.LVL30:
+ 325 004e 2846     		mov	r0, r5
+ 326 0050 FFF7FEFF 		bl	_ZN4Vec3IsE10set_ValuesEsss
+ 327              	.LVL31:
+  55:Core/Src/devs/mpu6050.cpp **** 
+ 328              		.loc 1 55 0
+ 329 0054 02B0     		add	sp, sp, #8
+ 330              	.LCFI8:
+ 331              		.cfi_def_cfa_offset 16
+ 332              		@ sp needed
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 11
+
+
+ 333 0056 70BD     		pop	{r4, r5, r6, pc}
+ 334              	.LVL32:
+ 335              	.L13:
+ 336              		.align	2
+ 337              	.L12:
+ 338 0058 00000000 		.word	.LANCHOR0
+ 339              		.cfi_endproc
+ 340              	.LFE150:
+ 342              		.section	.text._Z20MPU6050_Read_RawGyroP7MPU6050,"ax",%progbits
+ 343              		.align	1
+ 344              		.global	_Z20MPU6050_Read_RawGyroP7MPU6050
+ 345              		.syntax unified
+ 346              		.thumb
+ 347              		.thumb_func
+ 348              		.fpu fpv4-sp-d16
+ 350              	_Z20MPU6050_Read_RawGyroP7MPU6050:
+ 351              	.LFB151:
+  58:Core/Src/devs/mpu6050.cpp ****         i2c_buffer[0] = GYRO_XOUT_H;   // Starting Address for gyro data
+ 352              		.loc 1 58 0
+ 353              		.cfi_startproc
+ 354              		@ args = 0, pretend = 0, frame = 0
+ 355              		@ frame_needed = 0, uses_anonymous_args = 0
+ 356              	.LVL33:
+ 357 0000 70B5     		push	{r4, r5, r6, lr}
+ 358              	.LCFI9:
+ 359              		.cfi_def_cfa_offset 16
+ 360              		.cfi_offset 4, -16
+ 361              		.cfi_offset 5, -12
+ 362              		.cfi_offset 6, -8
+ 363              		.cfi_offset 14, -4
+ 364 0002 82B0     		sub	sp, sp, #8
+ 365              	.LCFI10:
+ 366              		.cfi_def_cfa_offset 24
+ 367 0004 0546     		mov	r5, r0
+  59:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Transmit(mpu->hi2c, mpu->address, i2c_buffer, 1, I2C_TIMEOUT);
+ 368              		.loc 1 59 0
+ 369 0006 144C     		ldr	r4, .L16
+ 370 0008 4323     		movs	r3, #67
+ 371 000a 2370     		strb	r3, [r4]
+  60:Core/Src/devs/mpu6050.cpp ****         HAL_I2C_Master_Receive(mpu->hi2c, mpu->address, i2c_buffer, 6, I2C_TIMEOUT);
+ 372              		.loc 1 60 0
+ 373 000c 90F82810 		ldrb	r1, [r0, #40]	@ zero_extendqisi2
+ 374 0010 0A26     		movs	r6, #10
+ 375 0012 0096     		str	r6, [sp]
+ 376 0014 0123     		movs	r3, #1
+ 377 0016 2246     		mov	r2, r4
+ 378 0018 0068     		ldr	r0, [r0]
+ 379              	.LVL34:
+ 380 001a FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 381              	.LVL35:
+  61:Core/Src/devs/mpu6050.cpp ****         int16_t x = (i2c_buffer[0] << 8) | i2c_buffer[1];
+ 382              		.loc 1 61 0
+ 383 001e 95F82810 		ldrb	r1, [r5, #40]	@ zero_extendqisi2
+ 384 0022 55F8040B 		ldr	r0, [r5], #4
+ 385              	.LVL36:
+ 386 0026 0096     		str	r6, [sp]
+ 387 0028 0623     		movs	r3, #6
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 12
+
+
+ 388 002a 2246     		mov	r2, r4
+ 389 002c FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 390              	.LVL37:
+  62:Core/Src/devs/mpu6050.cpp ****         int16_t y = (i2c_buffer[2] << 8) | i2c_buffer[3];
+ 391              		.loc 1 62 0
+ 392 0030 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
+ 393 0032 0902     		lsls	r1, r1, #8
+ 394 0034 09B2     		sxth	r1, r1
+ 395 0036 6078     		ldrb	r0, [r4, #1]	@ zero_extendqisi2
+ 396              	.LVL38:
+  63:Core/Src/devs/mpu6050.cpp ****         int16_t z = (i2c_buffer[4] << 8) | i2c_buffer[5];
+ 397              		.loc 1 63 0
+ 398 0038 A278     		ldrb	r2, [r4, #2]	@ zero_extendqisi2
+ 399 003a 1202     		lsls	r2, r2, #8
+ 400 003c 12B2     		sxth	r2, r2
+ 401 003e E678     		ldrb	r6, [r4, #3]	@ zero_extendqisi2
+ 402              	.LVL39:
+  64:Core/Src/devs/mpu6050.cpp ****         
+ 403              		.loc 1 64 0
+ 404 0040 2379     		ldrb	r3, [r4, #4]	@ zero_extendqisi2
+ 405 0042 1B02     		lsls	r3, r3, #8
+ 406 0044 1BB2     		sxth	r3, r3
+ 407 0046 6479     		ldrb	r4, [r4, #5]	@ zero_extendqisi2
+ 408              	.LVL40:
+  66:Core/Src/devs/mpu6050.cpp **** }
+ 409              		.loc 1 66 0
+ 410 0048 2343     		orrs	r3, r3, r4
+ 411              	.LVL41:
+ 412 004a 3243     		orrs	r2, r2, r6
+ 413              	.LVL42:
+ 414 004c 0143     		orrs	r1, r1, r0
+ 415              	.LVL43:
+ 416 004e 2846     		mov	r0, r5
+ 417 0050 FFF7FEFF 		bl	_ZN4Vec3IsE10set_ValuesEsss
+ 418              	.LVL44:
+  67:Core/Src/devs/mpu6050.cpp **** 
+ 419              		.loc 1 67 0
+ 420 0054 02B0     		add	sp, sp, #8
+ 421              	.LCFI11:
+ 422              		.cfi_def_cfa_offset 16
+ 423              		@ sp needed
+ 424 0056 70BD     		pop	{r4, r5, r6, pc}
+ 425              	.LVL45:
+ 426              	.L17:
+ 427              		.align	2
+ 428              	.L16:
+ 429 0058 00000000 		.word	.LANCHOR0
+ 430              		.cfi_endproc
+ 431              	.LFE151:
+ 433              		.section	.text._Z20MPU6050_Read_RawAxesP7MPU6050,"ax",%progbits
+ 434              		.align	1
+ 435              		.global	_Z20MPU6050_Read_RawAxesP7MPU6050
+ 436              		.syntax unified
+ 437              		.thumb
+ 438              		.thumb_func
+ 439              		.fpu fpv4-sp-d16
+ 441              	_Z20MPU6050_Read_RawAxesP7MPU6050:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 13
+
+
+ 442              	.LFB153:
+  79:Core/Src/devs/mpu6050.cpp **** 
+  80:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_RawAxes(struct MPU6050 *mpu)
+  81:Core/Src/devs/mpu6050.cpp **** {
+ 443              		.loc 1 81 0
+ 444              		.cfi_startproc
+ 445              		@ args = 0, pretend = 0, frame = 0
+ 446              		@ frame_needed = 0, uses_anonymous_args = 0
+ 447              	.LVL46:
+ 448 0000 10B5     		push	{r4, lr}
+ 449              	.LCFI12:
+ 450              		.cfi_def_cfa_offset 8
+ 451              		.cfi_offset 4, -8
+ 452              		.cfi_offset 14, -4
+ 453 0002 0446     		mov	r4, r0
+  82:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_RawAccel(mpu);
+ 454              		.loc 1 82 0
+ 455 0004 FFF7FEFF 		bl	_Z21MPU6050_Read_RawAccelP7MPU6050
+ 456              	.LVL47:
+  83:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_RawGyro(mpu);
+ 457              		.loc 1 83 0
+ 458 0008 2046     		mov	r0, r4
+ 459 000a FFF7FEFF 		bl	_Z20MPU6050_Read_RawGyroP7MPU6050
+ 460              	.LVL48:
+  84:Core/Src/devs/mpu6050.cpp **** }
+ 461              		.loc 1 84 0
+ 462 000e 10BD     		pop	{r4, pc}
+ 463              		.cfi_endproc
+ 464              	.LFE153:
+ 466              		.section	.text._ZNK4Vec3IsE4getXEv,"axG",%progbits,_ZNK4Vec3IsE4getXEv,comdat
+ 467              		.align	1
+ 468              		.weak	_ZNK4Vec3IsE4getXEv
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 472              		.fpu fpv4-sp-d16
+ 474              	_ZNK4Vec3IsE4getXEv:
+ 475              	.LFB159:
+ 159:Core/Inc\utils/vec3.h **** 
+ 160:Core/Inc\utils/vec3.h **** template <class T>
+ 161:Core/Inc\utils/vec3.h **** T Vec3<T>::getX() const { return x_;}
+ 476              		.loc 2 161 0
+ 477              		.cfi_startproc
+ 478              		@ args = 0, pretend = 0, frame = 0
+ 479              		@ frame_needed = 0, uses_anonymous_args = 0
+ 480              		@ link register save eliminated.
+ 481              	.LVL49:
+ 482              		.loc 2 161 0
+ 483 0000 B0F90000 		ldrsh	r0, [r0]
+ 484              	.LVL50:
+ 485 0004 7047     		bx	lr
+ 486              		.cfi_endproc
+ 487              	.LFE159:
+ 489              		.section	.text._ZNK4Vec3IsE4getYEv,"axG",%progbits,_ZNK4Vec3IsE4getYEv,comdat
+ 490              		.align	1
+ 491              		.weak	_ZNK4Vec3IsE4getYEv
+ 492              		.syntax unified
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 14
+
+
+ 493              		.thumb
+ 494              		.thumb_func
+ 495              		.fpu fpv4-sp-d16
+ 497              	_ZNK4Vec3IsE4getYEv:
+ 498              	.LFB160:
+ 162:Core/Inc\utils/vec3.h **** 
+ 163:Core/Inc\utils/vec3.h **** template <class T>
+ 164:Core/Inc\utils/vec3.h **** T Vec3<T>::getY() const { return y_;}
+ 499              		.loc 2 164 0
+ 500              		.cfi_startproc
+ 501              		@ args = 0, pretend = 0, frame = 0
+ 502              		@ frame_needed = 0, uses_anonymous_args = 0
+ 503              		@ link register save eliminated.
+ 504              	.LVL51:
+ 505              		.loc 2 164 0
+ 506 0000 B0F90200 		ldrsh	r0, [r0, #2]
+ 507              	.LVL52:
+ 508 0004 7047     		bx	lr
+ 509              		.cfi_endproc
+ 510              	.LFE160:
+ 512              		.section	.text._ZNK4Vec3IsE4getZEv,"axG",%progbits,_ZNK4Vec3IsE4getZEv,comdat
+ 513              		.align	1
+ 514              		.weak	_ZNK4Vec3IsE4getZEv
+ 515              		.syntax unified
+ 516              		.thumb
+ 517              		.thumb_func
+ 518              		.fpu fpv4-sp-d16
+ 520              	_ZNK4Vec3IsE4getZEv:
+ 521              	.LFB161:
+ 165:Core/Inc\utils/vec3.h **** 
+ 166:Core/Inc\utils/vec3.h **** template <class T>
+ 167:Core/Inc\utils/vec3.h **** T Vec3<T>::getZ() const { return z_;}
+ 522              		.loc 2 167 0
+ 523              		.cfi_startproc
+ 524              		@ args = 0, pretend = 0, frame = 0
+ 525              		@ frame_needed = 0, uses_anonymous_args = 0
+ 526              		@ link register save eliminated.
+ 527              	.LVL53:
+ 528              		.loc 2 167 0
+ 529 0000 B0F90400 		ldrsh	r0, [r0, #4]
+ 530              	.LVL54:
+ 531 0004 7047     		bx	lr
+ 532              		.cfi_endproc
+ 533              	.LFE161:
+ 535              		.section	.text._Z22MPU6050_Read_NormAccelP7MPU6050,"ax",%progbits
+ 536              		.align	1
+ 537              		.global	_Z22MPU6050_Read_NormAccelP7MPU6050
+ 538              		.syntax unified
+ 539              		.thumb
+ 540              		.thumb_func
+ 541              		.fpu fpv4-sp-d16
+ 543              	_Z22MPU6050_Read_NormAccelP7MPU6050:
+ 544              	.LFB154:
+  85:Core/Src/devs/mpu6050.cpp **** 
+  86:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_NormAccel(struct MPU6050 *mpu)
+  87:Core/Src/devs/mpu6050.cpp **** {
+ 545              		.loc 1 87 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 15
+
+
+ 546              		.cfi_startproc
+ 547              		@ args = 0, pretend = 0, frame = 0
+ 548              		@ frame_needed = 0, uses_anonymous_args = 0
+ 549              	.LVL55:
+ 550 0000 70B5     		push	{r4, r5, r6, lr}
+ 551              	.LCFI13:
+ 552              		.cfi_def_cfa_offset 16
+ 553              		.cfi_offset 4, -16
+ 554              		.cfi_offset 5, -12
+ 555              		.cfi_offset 6, -8
+ 556              		.cfi_offset 14, -4
+ 557 0002 2DED028B 		vpush.64	{d8}
+ 558              	.LCFI14:
+ 559              		.cfi_def_cfa_offset 24
+ 560              		.cfi_offset 80, -24
+ 561              		.cfi_offset 81, -20
+ 562 0006 0446     		mov	r4, r0
+  88:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_RawAccel(mpu);
+ 563              		.loc 1 88 0
+ 564 0008 FFF7FEFF 		bl	_Z21MPU6050_Read_RawAccelP7MPU6050
+ 565              	.LVL56:
+  89:Core/Src/devs/mpu6050.cpp ****         (mpu->norm_a_axis).divide(mpu->raw_a_axis, (float)lsb_per_g[mpu->a_scale]);
+ 566              		.loc 1 89 0
+ 567 000c 04F10A05 		add	r5, r4, #10
+ 568 0010 94F83020 		ldrb	r2, [r4, #48]	@ zero_extendqisi2
+ 569 0014 154B     		ldr	r3, .L25
+ 570 0016 33F81230 		ldrh	r3, [r3, r2, lsl #1]
+ 571 001a 08EE103A 		vmov	s16, r3	@ int
+ 572 001e B8EE488A 		vcvt.f32.u32	s16, s16
+ 573              	.LVL57:
+ 574              	.LBB4:
+ 575              	.LBB5:
+  42:Core/Inc\utils/vec3.h ****                 y_ = v.getY() / num;
+ 576              		.loc 2 42 0
+ 577 0022 2846     		mov	r0, r5
+ 578 0024 FFF7FEFF 		bl	_ZNK4Vec3IsE4getXEv
+ 579              	.LVL58:
+ 580 0028 07EE900A 		vmov	s15, r0	@ int
+ 581 002c B8EEE77A 		vcvt.f32.s32	s14, s15
+ 582 0030 C7EE087A 		vdiv.f32	s15, s14, s16
+ 583 0034 C4ED077A 		vstr.32	s15, [r4, #28]
+  43:Core/Inc\utils/vec3.h ****                 z_ = v.getZ() / num;
+ 584              		.loc 2 43 0
+ 585 0038 2846     		mov	r0, r5
+ 586 003a FFF7FEFF 		bl	_ZNK4Vec3IsE4getYEv
+ 587              	.LVL59:
+ 588 003e 07EE900A 		vmov	s15, r0	@ int
+ 589 0042 B8EEE77A 		vcvt.f32.s32	s14, s15
+ 590 0046 C7EE087A 		vdiv.f32	s15, s14, s16
+ 591 004a C4ED087A 		vstr.32	s15, [r4, #32]
+  44:Core/Inc\utils/vec3.h ****         }
+ 592              		.loc 2 44 0
+ 593 004e 2846     		mov	r0, r5
+ 594 0050 FFF7FEFF 		bl	_ZNK4Vec3IsE4getZEv
+ 595              	.LVL60:
+ 596 0054 07EE900A 		vmov	s15, r0	@ int
+ 597 0058 B8EEE77A 		vcvt.f32.s32	s14, s15
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 16
+
+
+ 598 005c C7EE087A 		vdiv.f32	s15, s14, s16
+ 599 0060 C4ED097A 		vstr.32	s15, [r4, #36]
+ 600              	.LVL61:
+ 601              	.LBE5:
+ 602              	.LBE4:
+  90:Core/Src/devs/mpu6050.cpp **** }
+ 603              		.loc 1 90 0
+ 604 0064 BDEC028B 		vldm	sp!, {d8}
+ 605              	.LCFI15:
+ 606              		.cfi_restore 80
+ 607              		.cfi_restore 81
+ 608              		.cfi_def_cfa_offset 16
+ 609 0068 70BD     		pop	{r4, r5, r6, pc}
+ 610              	.LVL62:
+ 611              	.L26:
+ 612 006a 00BF     		.align	2
+ 613              	.L25:
+ 614 006c 00000000 		.word	.LANCHOR1
+ 615              		.cfi_endproc
+ 616              	.LFE154:
+ 618              		.section	.text._Z21MPU6050_Read_NormGyroP7MPU6050,"ax",%progbits
+ 619              		.align	1
+ 620              		.global	_Z21MPU6050_Read_NormGyroP7MPU6050
+ 621              		.syntax unified
+ 622              		.thumb
+ 623              		.thumb_func
+ 624              		.fpu fpv4-sp-d16
+ 626              	_Z21MPU6050_Read_NormGyroP7MPU6050:
+ 627              	.LFB155:
+  91:Core/Src/devs/mpu6050.cpp **** 
+  92:Core/Src/devs/mpu6050.cpp **** 
+  93:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_NormGyro(struct MPU6050 *mpu)
+  94:Core/Src/devs/mpu6050.cpp **** {
+ 628              		.loc 1 94 0
+ 629              		.cfi_startproc
+ 630              		@ args = 0, pretend = 0, frame = 0
+ 631              		@ frame_needed = 0, uses_anonymous_args = 0
+ 632              	.LVL63:
+ 633 0000 70B5     		push	{r4, r5, r6, lr}
+ 634              	.LCFI16:
+ 635              		.cfi_def_cfa_offset 16
+ 636              		.cfi_offset 4, -16
+ 637              		.cfi_offset 5, -12
+ 638              		.cfi_offset 6, -8
+ 639              		.cfi_offset 14, -4
+ 640 0002 2DED028B 		vpush.64	{d8}
+ 641              	.LCFI17:
+ 642              		.cfi_def_cfa_offset 24
+ 643              		.cfi_offset 80, -24
+ 644              		.cfi_offset 81, -20
+ 645 0006 0446     		mov	r4, r0
+  95:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_RawGyro(mpu);
+ 646              		.loc 1 95 0
+ 647 0008 FFF7FEFF 		bl	_Z20MPU6050_Read_RawGyroP7MPU6050
+ 648              	.LVL64:
+  96:Core/Src/devs/mpu6050.cpp ****         (mpu->norm_g_axis).divide(mpu->raw_g_axis, (float)lsb_per_dsp[mpu->g_scale]);
+ 649              		.loc 1 96 0
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 17
+
+
+ 650 000c 251D     		adds	r5, r4, #4
+ 651 000e 94F83120 		ldrb	r2, [r4, #49]	@ zero_extendqisi2
+ 652 0012 144B     		ldr	r3, .L29
+ 653 0014 03EB8203 		add	r3, r3, r2, lsl #2
+ 654 0018 93ED008A 		vldr.32	s16, [r3]
+ 655              	.LVL65:
+ 656              	.LBB8:
+ 657              	.LBB9:
+  42:Core/Inc\utils/vec3.h ****                 y_ = v.getY() / num;
+ 658              		.loc 2 42 0
+ 659 001c 2846     		mov	r0, r5
+ 660 001e FFF7FEFF 		bl	_ZNK4Vec3IsE4getXEv
+ 661              	.LVL66:
+ 662 0022 07EE900A 		vmov	s15, r0	@ int
+ 663 0026 B8EEE77A 		vcvt.f32.s32	s14, s15
+ 664 002a C7EE087A 		vdiv.f32	s15, s14, s16
+ 665 002e C4ED047A 		vstr.32	s15, [r4, #16]
+  43:Core/Inc\utils/vec3.h ****                 z_ = v.getZ() / num;
+ 666              		.loc 2 43 0
+ 667 0032 2846     		mov	r0, r5
+ 668 0034 FFF7FEFF 		bl	_ZNK4Vec3IsE4getYEv
+ 669              	.LVL67:
+ 670 0038 07EE900A 		vmov	s15, r0	@ int
+ 671 003c B8EEE77A 		vcvt.f32.s32	s14, s15
+ 672 0040 C7EE087A 		vdiv.f32	s15, s14, s16
+ 673 0044 C4ED057A 		vstr.32	s15, [r4, #20]
+  44:Core/Inc\utils/vec3.h ****         }
+ 674              		.loc 2 44 0
+ 675 0048 2846     		mov	r0, r5
+ 676 004a FFF7FEFF 		bl	_ZNK4Vec3IsE4getZEv
+ 677              	.LVL68:
+ 678 004e 07EE900A 		vmov	s15, r0	@ int
+ 679 0052 B8EEE77A 		vcvt.f32.s32	s14, s15
+ 680 0056 C7EE087A 		vdiv.f32	s15, s14, s16
+ 681 005a C4ED067A 		vstr.32	s15, [r4, #24]
+ 682              	.LVL69:
+ 683              	.LBE9:
+ 684              	.LBE8:
+  97:Core/Src/devs/mpu6050.cpp **** }
+ 685              		.loc 1 97 0
+ 686 005e BDEC028B 		vldm	sp!, {d8}
+ 687              	.LCFI18:
+ 688              		.cfi_restore 80
+ 689              		.cfi_restore 81
+ 690              		.cfi_def_cfa_offset 16
+ 691 0062 70BD     		pop	{r4, r5, r6, pc}
+ 692              	.LVL70:
+ 693              	.L30:
+ 694              		.align	2
+ 695              	.L29:
+ 696 0064 00000000 		.word	.LANCHOR2
+ 697              		.cfi_endproc
+ 698              	.LFE155:
+ 700              		.section	.text._Z21MPU6050_Read_NormAxesP7MPU6050,"ax",%progbits
+ 701              		.align	1
+ 702              		.global	_Z21MPU6050_Read_NormAxesP7MPU6050
+ 703              		.syntax unified
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 18
+
+
+ 704              		.thumb
+ 705              		.thumb_func
+ 706              		.fpu fpv4-sp-d16
+ 708              	_Z21MPU6050_Read_NormAxesP7MPU6050:
+ 709              	.LFB156:
+  98:Core/Src/devs/mpu6050.cpp **** 
+  99:Core/Src/devs/mpu6050.cpp **** void MPU6050_Read_NormAxes(struct MPU6050 *mpu)
+ 100:Core/Src/devs/mpu6050.cpp **** {
+ 710              		.loc 1 100 0
+ 711              		.cfi_startproc
+ 712              		@ args = 0, pretend = 0, frame = 0
+ 713              		@ frame_needed = 0, uses_anonymous_args = 0
+ 714              	.LVL71:
+ 715 0000 10B5     		push	{r4, lr}
+ 716              	.LCFI19:
+ 717              		.cfi_def_cfa_offset 8
+ 718              		.cfi_offset 4, -8
+ 719              		.cfi_offset 14, -4
+ 720 0002 0446     		mov	r4, r0
+ 101:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_NormAccel(mpu);
+ 721              		.loc 1 101 0
+ 722 0004 FFF7FEFF 		bl	_Z22MPU6050_Read_NormAccelP7MPU6050
+ 723              	.LVL72:
+ 102:Core/Src/devs/mpu6050.cpp ****         MPU6050_Read_NormGyro(mpu);
+ 724              		.loc 1 102 0
+ 725 0008 2046     		mov	r0, r4
+ 726 000a FFF7FEFF 		bl	_Z21MPU6050_Read_NormGyroP7MPU6050
+ 727              	.LVL73:
+ 103:Core/Src/devs/mpu6050.cpp **** }
+ 728              		.loc 1 103 0
+ 729 000e 10BD     		pop	{r4, pc}
+ 730              		.cfi_endproc
+ 731              	.LFE156:
+ 733              		.section	.bss._ZL10i2c_buffer,"aw",%nobits
+ 734              		.align	2
+ 735              		.set	.LANCHOR0,. + 0
+ 738              	_ZL10i2c_buffer:
+ 739 0000 00000000 		.space	8
+ 739      00000000 
+ 740              		.section	.rodata._ZL11lsb_per_dsp,"a",%progbits
+ 741              		.align	2
+ 742              		.set	.LANCHOR2,. + 0
+ 745              	_ZL11lsb_per_dsp:
+ 746 0000 00000343 		.word	1124270080
+ 747 0004 00008342 		.word	1115881472
+ 748 0008 33330342 		.word	1107505971
+ 749 000c 33338341 		.word	1099117363
+ 750              		.section	.rodata._ZL9lsb_per_g,"a",%progbits
+ 751              		.align	2
+ 752              		.set	.LANCHOR1,. + 0
+ 755              	_ZL9lsb_per_g:
+ 756 0000 0040     		.short	16384
+ 757 0002 0020     		.short	8192
+ 758 0004 0010     		.short	4096
+ 759 0006 0008     		.short	2048
+ 760              		.text
+ 761              	.Letext0:
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 19
+
+
+ 762              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 763              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 764              		.file 5 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include/core_cm4
+ 765              		.file 6 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 766              		.file 7 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 767              		.file 8 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F
+ 768              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 769              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 770              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 771              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 772              		.file 13 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 773              		.file 14 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 774              		.file 15 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 775              		.file 16 "C:/Users/DELL/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/
+ 776              		.file 17 "Core/Inc\\periphs/i2c.h"
+ 777              		.file 18 "Core/Inc\\devs/mpu6050.h"
+ARM GAS  C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 mpu6050.cpp
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:18     .text._Z12MPU6050_InitP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:25     .text._Z12MPU6050_InitP7MPU6050:00000000 _Z12MPU6050_InitP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:128    .text._Z12MPU6050_InitP7MPU6050:0000008c $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:137    .text._Z17MPU6050_Read_TempP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:144    .text._Z17MPU6050_Read_TempP7MPU6050:00000000 _Z17MPU6050_Read_TempP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:216    .text._Z17MPU6050_Read_TempP7MPU6050:00000058 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:224    .text._ZN4Vec3IsE10set_ValuesEsss:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:231    .text._ZN4Vec3IsE10set_ValuesEsss:00000000 _ZN4Vec3IsE10set_ValuesEsss
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:252    .text._Z21MPU6050_Read_RawAccelP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:259    .text._Z21MPU6050_Read_RawAccelP7MPU6050:00000000 _Z21MPU6050_Read_RawAccelP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:338    .text._Z21MPU6050_Read_RawAccelP7MPU6050:00000058 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:343    .text._Z20MPU6050_Read_RawGyroP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:350    .text._Z20MPU6050_Read_RawGyroP7MPU6050:00000000 _Z20MPU6050_Read_RawGyroP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:429    .text._Z20MPU6050_Read_RawGyroP7MPU6050:00000058 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:434    .text._Z20MPU6050_Read_RawAxesP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:441    .text._Z20MPU6050_Read_RawAxesP7MPU6050:00000000 _Z20MPU6050_Read_RawAxesP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:467    .text._ZNK4Vec3IsE4getXEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:474    .text._ZNK4Vec3IsE4getXEv:00000000 _ZNK4Vec3IsE4getXEv
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:490    .text._ZNK4Vec3IsE4getYEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:497    .text._ZNK4Vec3IsE4getYEv:00000000 _ZNK4Vec3IsE4getYEv
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:513    .text._ZNK4Vec3IsE4getZEv:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:520    .text._ZNK4Vec3IsE4getZEv:00000000 _ZNK4Vec3IsE4getZEv
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:536    .text._Z22MPU6050_Read_NormAccelP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:543    .text._Z22MPU6050_Read_NormAccelP7MPU6050:00000000 _Z22MPU6050_Read_NormAccelP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:614    .text._Z22MPU6050_Read_NormAccelP7MPU6050:0000006c $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:619    .text._Z21MPU6050_Read_NormGyroP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:626    .text._Z21MPU6050_Read_NormGyroP7MPU6050:00000000 _Z21MPU6050_Read_NormGyroP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:696    .text._Z21MPU6050_Read_NormGyroP7MPU6050:00000064 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:701    .text._Z21MPU6050_Read_NormAxesP7MPU6050:00000000 $t
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:708    .text._Z21MPU6050_Read_NormAxesP7MPU6050:00000000 _Z21MPU6050_Read_NormAxesP7MPU6050
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:734    .bss._ZL10i2c_buffer:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:738    .bss._ZL10i2c_buffer:00000000 _ZL10i2c_buffer
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:741    .rodata._ZL11lsb_per_dsp:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:745    .rodata._ZL11lsb_per_dsp:00000000 _ZL11lsb_per_dsp
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:751    .rodata._ZL9lsb_per_g:00000000 $d
+C:\Users\DELL\AppData\Local\Temp\cctLtJOz.s:755    .rodata._ZL9lsb_per_g:00000000 _ZL9lsb_per_g
+
+UNDEFINED SYMBOLS
+HAL_I2C_Master_Transmit
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_dadd
+__aeabi_d2f
+HAL_I2C_Master_Receive

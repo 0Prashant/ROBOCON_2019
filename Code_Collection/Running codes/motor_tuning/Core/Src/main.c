@@ -158,6 +158,7 @@ int main(void)
         /* USER CODE BEGIN WHILE */
         
 	ok=goto_distance(2000,0);
+	ok++;
 	while (1)
         {
 	
