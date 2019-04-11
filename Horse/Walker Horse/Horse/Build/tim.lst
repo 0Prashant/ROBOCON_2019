@@ -1,0 +1,668 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"tim.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.HAL_TIM_PWM_MspInit,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_TIM_PWM_MspInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	HAL_TIM_PWM_MspInit:
+  26              	.LFB127:
+  27              		.file 1 "Core/Src/periphs/tim.c"
+   1:Core/Src/periphs/tim.c **** /**
+   2:Core/Src/periphs/tim.c ****   ******************************************************************************
+   3:Core/Src/periphs/tim.c ****   * File Name          : TIM.c
+   4:Core/Src/periphs/tim.c ****   * Description        : This file provides code for the configuration
+   5:Core/Src/periphs/tim.c ****   *                      of the TIM instances.
+   6:Core/Src/periphs/tim.c ****   ******************************************************************************
+   7:Core/Src/periphs/tim.c ****   ** This notice applies to any and all portions of this file
+   8:Core/Src/periphs/tim.c ****   * that are not between comment pairs USER CODE BEGIN and
+   9:Core/Src/periphs/tim.c ****   * USER CODE END. Other portions of this file, whether 
+  10:Core/Src/periphs/tim.c ****   * inserted by the user or by software development tools
+  11:Core/Src/periphs/tim.c ****   * are owned by their respective copyright owners.
+  12:Core/Src/periphs/tim.c ****   *
+  13:Core/Src/periphs/tim.c ****   * COPYRIGHT(c) 2019 STMicroelectronics
+  14:Core/Src/periphs/tim.c ****   *
+  15:Core/Src/periphs/tim.c ****   * Redistribution and use in source and binary forms, with or without modification,
+  16:Core/Src/periphs/tim.c ****   * are permitted provided that the following conditions are met:
+  17:Core/Src/periphs/tim.c ****   *   1. Redistributions of source code must retain the above copyright notice,
+  18:Core/Src/periphs/tim.c ****   *      this list of conditions and the following disclaimer.
+  19:Core/Src/periphs/tim.c ****   *   2. Redistributions in binary form must reproduce the above copyright notice,
+  20:Core/Src/periphs/tim.c ****   *      this list of conditions and the following disclaimer in the documentation
+  21:Core/Src/periphs/tim.c ****   *      and/or other materials provided with the distribution.
+  22:Core/Src/periphs/tim.c ****   *   3. Neither the name of STMicroelectronics nor the names of its contributors
+  23:Core/Src/periphs/tim.c ****   *      may be used to endorse or promote products derived from this software
+  24:Core/Src/periphs/tim.c ****   *      without specific prior written permission.
+  25:Core/Src/periphs/tim.c ****   *
+  26:Core/Src/periphs/tim.c ****   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  27:Core/Src/periphs/tim.c ****   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  28:Core/Src/periphs/tim.c ****   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  29:Core/Src/periphs/tim.c ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  30:Core/Src/periphs/tim.c ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  31:Core/Src/periphs/tim.c ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 2
+
+
+  32:Core/Src/periphs/tim.c ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  33:Core/Src/periphs/tim.c ****   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  34:Core/Src/periphs/tim.c ****   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  35:Core/Src/periphs/tim.c ****   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  36:Core/Src/periphs/tim.c ****   *
+  37:Core/Src/periphs/tim.c ****   ******************************************************************************
+  38:Core/Src/periphs/tim.c ****   */
+  39:Core/Src/periphs/tim.c **** 
+  40:Core/Src/periphs/tim.c **** /* Includes ------------------------------------------------------------------*/
+  41:Core/Src/periphs/tim.c **** #include "tim.h"
+  42:Core/Src/periphs/tim.c **** 
+  43:Core/Src/periphs/tim.c **** /* USER CODE BEGIN 0 */
+  44:Core/Src/periphs/tim.c **** 
+  45:Core/Src/periphs/tim.c **** /* USER CODE END 0 */
+  46:Core/Src/periphs/tim.c **** 
+  47:Core/Src/periphs/tim.c **** TIM_HandleTypeDef htim8;
+  48:Core/Src/periphs/tim.c **** 
+  49:Core/Src/periphs/tim.c **** /* TIM8 init function */
+  50:Core/Src/periphs/tim.c **** void MX_TIM8_Init(void)
+  51:Core/Src/periphs/tim.c **** {
+  52:Core/Src/periphs/tim.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  53:Core/Src/periphs/tim.c ****   TIM_OC_InitTypeDef sConfigOC = {0};
+  54:Core/Src/periphs/tim.c ****   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+  55:Core/Src/periphs/tim.c **** 
+  56:Core/Src/periphs/tim.c ****   htim8.Instance = TIM8;
+  57:Core/Src/periphs/tim.c ****   htim8.Init.Prescaler = 0;
+  58:Core/Src/periphs/tim.c ****   htim8.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
+  59:Core/Src/periphs/tim.c ****   htim8.Init.Period = 10499;
+  60:Core/Src/periphs/tim.c ****   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  61:Core/Src/periphs/tim.c ****   htim8.Init.RepetitionCounter = 0;
+  62:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)
+  63:Core/Src/periphs/tim.c ****   {
+  64:Core/Src/periphs/tim.c ****     Error_Handler();
+  65:Core/Src/periphs/tim.c ****   }
+  66:Core/Src/periphs/tim.c ****   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  67:Core/Src/periphs/tim.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  68:Core/Src/periphs/tim.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
+  69:Core/Src/periphs/tim.c ****   {
+  70:Core/Src/periphs/tim.c ****     Error_Handler();
+  71:Core/Src/periphs/tim.c ****   }
+  72:Core/Src/periphs/tim.c ****   sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  73:Core/Src/periphs/tim.c ****   sConfigOC.Pulse = 0;
+  74:Core/Src/periphs/tim.c ****   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  75:Core/Src/periphs/tim.c ****   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  76:Core/Src/periphs/tim.c ****   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  77:Core/Src/periphs/tim.c ****   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  78:Core/Src/periphs/tim.c ****   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  79:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim8, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  80:Core/Src/periphs/tim.c ****   {
+  81:Core/Src/periphs/tim.c ****     Error_Handler();
+  82:Core/Src/periphs/tim.c ****   }
+  83:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim8, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  84:Core/Src/periphs/tim.c ****   {
+  85:Core/Src/periphs/tim.c ****     Error_Handler();
+  86:Core/Src/periphs/tim.c ****   }
+  87:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim8, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  88:Core/Src/periphs/tim.c ****   {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 3
+
+
+  89:Core/Src/periphs/tim.c ****     Error_Handler();
+  90:Core/Src/periphs/tim.c ****   }
+  91:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  92:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  93:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  94:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.DeadTime = 0;
+  95:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  96:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  97:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  98:Core/Src/periphs/tim.c ****   if (HAL_TIMEx_ConfigBreakDeadTime(&htim8, &sBreakDeadTimeConfig) != HAL_OK)
+  99:Core/Src/periphs/tim.c ****   {
+ 100:Core/Src/periphs/tim.c ****     Error_Handler();
+ 101:Core/Src/periphs/tim.c ****   }
+ 102:Core/Src/periphs/tim.c ****   HAL_TIM_MspPostInit(&htim8);
+ 103:Core/Src/periphs/tim.c **** 
+ 104:Core/Src/periphs/tim.c **** }
+ 105:Core/Src/periphs/tim.c **** 
+ 106:Core/Src/periphs/tim.c **** void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* tim_pwmHandle)
+ 107:Core/Src/periphs/tim.c **** {
+  28              		.loc 1 107 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+ 108:Core/Src/periphs/tim.c **** 
+ 109:Core/Src/periphs/tim.c ****   if(tim_pwmHandle->Instance==TIM8)
+  34              		.loc 1 109 0
+  35 0000 0268     		ldr	r2, [r0]
+  36 0002 094B     		ldr	r3, .L8
+  37 0004 9A42     		cmp	r2, r3
+  38 0006 00D0     		beq	.L7
+  39 0008 7047     		bx	lr
+  40              	.L7:
+ 107:Core/Src/periphs/tim.c **** 
+  41              		.loc 1 107 0
+  42 000a 82B0     		sub	sp, sp, #8
+  43              	.LCFI0:
+  44              		.cfi_def_cfa_offset 8
+  45              	.LBB2:
+ 110:Core/Src/periphs/tim.c ****   {
+ 111:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspInit 0 */
+ 112:Core/Src/periphs/tim.c **** 
+ 113:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspInit 0 */
+ 114:Core/Src/periphs/tim.c ****     /* TIM8 clock enable */
+ 115:Core/Src/periphs/tim.c ****     __HAL_RCC_TIM8_CLK_ENABLE();
+  46              		.loc 1 115 0
+  47 000c 0023     		movs	r3, #0
+  48 000e 0193     		str	r3, [sp, #4]
+  49 0010 064B     		ldr	r3, .L8+4
+  50 0012 5A6C     		ldr	r2, [r3, #68]
+  51 0014 42F00202 		orr	r2, r2, #2
+  52 0018 5A64     		str	r2, [r3, #68]
+  53 001a 5B6C     		ldr	r3, [r3, #68]
+  54 001c 03F00203 		and	r3, r3, #2
+  55 0020 0193     		str	r3, [sp, #4]
+  56 0022 019B     		ldr	r3, [sp, #4]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 4
+
+
+  57              	.LBE2:
+ 116:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspInit 1 */
+ 117:Core/Src/periphs/tim.c **** 
+ 118:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspInit 1 */
+ 119:Core/Src/periphs/tim.c ****   }
+ 120:Core/Src/periphs/tim.c **** }
+  58              		.loc 1 120 0
+  59 0024 02B0     		add	sp, sp, #8
+  60              	.LCFI1:
+  61              		.cfi_def_cfa_offset 0
+  62              		@ sp needed
+  63 0026 7047     		bx	lr
+  64              	.L9:
+  65              		.align	2
+  66              	.L8:
+  67 0028 00040140 		.word	1073808384
+  68 002c 00380240 		.word	1073887232
+  69              		.cfi_endproc
+  70              	.LFE127:
+  72              		.section	.text.HAL_TIM_MspPostInit,"ax",%progbits
+  73              		.align	1
+  74              		.global	HAL_TIM_MspPostInit
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  78              		.fpu fpv4-sp-d16
+  80              	HAL_TIM_MspPostInit:
+  81              	.LFB128:
+ 121:Core/Src/periphs/tim.c **** void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
+ 122:Core/Src/periphs/tim.c **** {
+  82              		.loc 1 122 0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 24
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  86              	.LVL1:
+  87 0000 00B5     		push	{lr}
+  88              	.LCFI2:
+  89              		.cfi_def_cfa_offset 4
+  90              		.cfi_offset 14, -4
+  91 0002 87B0     		sub	sp, sp, #28
+  92              	.LCFI3:
+  93              		.cfi_def_cfa_offset 32
+ 123:Core/Src/periphs/tim.c **** 
+ 124:Core/Src/periphs/tim.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  94              		.loc 1 124 0
+  95 0004 0023     		movs	r3, #0
+  96 0006 0193     		str	r3, [sp, #4]
+  97 0008 0293     		str	r3, [sp, #8]
+  98 000a 0393     		str	r3, [sp, #12]
+  99 000c 0493     		str	r3, [sp, #16]
+ 100 000e 0593     		str	r3, [sp, #20]
+ 125:Core/Src/periphs/tim.c ****   if(timHandle->Instance==TIM8)
+ 101              		.loc 1 125 0
+ 102 0010 0268     		ldr	r2, [r0]
+ 103 0012 03F18043 		add	r3, r3, #1073741824
+ 104 0016 03F58233 		add	r3, r3, #66560
+ 105 001a 9A42     		cmp	r2, r3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 5
+
+
+ 106 001c 02D0     		beq	.L13
+ 107              	.LVL2:
+ 108              	.L10:
+ 126:Core/Src/periphs/tim.c ****   {
+ 127:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspPostInit 0 */
+ 128:Core/Src/periphs/tim.c **** 
+ 129:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspPostInit 0 */
+ 130:Core/Src/periphs/tim.c ****   
+ 131:Core/Src/periphs/tim.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 132:Core/Src/periphs/tim.c ****     /**TIM8 GPIO Configuration    
+ 133:Core/Src/periphs/tim.c ****     PC6     ------> TIM8_CH1
+ 134:Core/Src/periphs/tim.c ****     PC7     ------> TIM8_CH2
+ 135:Core/Src/periphs/tim.c ****     PC8     ------> TIM8_CH3 
+ 136:Core/Src/periphs/tim.c ****     */
+ 137:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8;
+ 138:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 139:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 140:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 141:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Alternate = GPIO_AF3_TIM8;
+ 142:Core/Src/periphs/tim.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 143:Core/Src/periphs/tim.c **** 
+ 144:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspPostInit 1 */
+ 145:Core/Src/periphs/tim.c **** 
+ 146:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspPostInit 1 */
+ 147:Core/Src/periphs/tim.c ****   }
+ 148:Core/Src/periphs/tim.c **** 
+ 149:Core/Src/periphs/tim.c **** }
+ 109              		.loc 1 149 0
+ 110 001e 07B0     		add	sp, sp, #28
+ 111              	.LCFI4:
+ 112              		.cfi_remember_state
+ 113              		.cfi_def_cfa_offset 4
+ 114              		@ sp needed
+ 115 0020 5DF804FB 		ldr	pc, [sp], #4
+ 116              	.LVL3:
+ 117              	.L13:
+ 118              	.LCFI5:
+ 119              		.cfi_restore_state
+ 120              	.LBB3:
+ 131:Core/Src/periphs/tim.c ****     /**TIM8 GPIO Configuration    
+ 121              		.loc 1 131 0
+ 122 0024 0023     		movs	r3, #0
+ 123 0026 0093     		str	r3, [sp]
+ 124 0028 0A4B     		ldr	r3, .L14
+ 125 002a 1A6B     		ldr	r2, [r3, #48]
+ 126 002c 42F00402 		orr	r2, r2, #4
+ 127 0030 1A63     		str	r2, [r3, #48]
+ 128 0032 1B6B     		ldr	r3, [r3, #48]
+ 129 0034 03F00403 		and	r3, r3, #4
+ 130 0038 0093     		str	r3, [sp]
+ 131 003a 009B     		ldr	r3, [sp]
+ 132              	.LBE3:
+ 137:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 133              		.loc 1 137 0
+ 134 003c 4FF4E073 		mov	r3, #448
+ 135 0040 0193     		str	r3, [sp, #4]
+ 138:Core/Src/periphs/tim.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 6
+
+
+ 136              		.loc 1 138 0
+ 137 0042 0223     		movs	r3, #2
+ 138 0044 0293     		str	r3, [sp, #8]
+ 141:Core/Src/periphs/tim.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 139              		.loc 1 141 0
+ 140 0046 0323     		movs	r3, #3
+ 141 0048 0593     		str	r3, [sp, #20]
+ 142:Core/Src/periphs/tim.c **** 
+ 142              		.loc 1 142 0
+ 143 004a 01A9     		add	r1, sp, #4
+ 144 004c 0248     		ldr	r0, .L14+4
+ 145              	.LVL4:
+ 146 004e FFF7FEFF 		bl	HAL_GPIO_Init
+ 147              	.LVL5:
+ 148              		.loc 1 149 0
+ 149 0052 E4E7     		b	.L10
+ 150              	.L15:
+ 151              		.align	2
+ 152              	.L14:
+ 153 0054 00380240 		.word	1073887232
+ 154 0058 00080240 		.word	1073874944
+ 155              		.cfi_endproc
+ 156              	.LFE128:
+ 158              		.section	.text.MX_TIM8_Init,"ax",%progbits
+ 159              		.align	1
+ 160              		.global	MX_TIM8_Init
+ 161              		.syntax unified
+ 162              		.thumb
+ 163              		.thumb_func
+ 164              		.fpu fpv4-sp-d16
+ 166              	MX_TIM8_Init:
+ 167              	.LFB126:
+  51:Core/Src/periphs/tim.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 168              		.loc 1 51 0
+ 169              		.cfi_startproc
+ 170              		@ args = 0, pretend = 0, frame = 64
+ 171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172 0000 00B5     		push	{lr}
+ 173              	.LCFI6:
+ 174              		.cfi_def_cfa_offset 4
+ 175              		.cfi_offset 14, -4
+ 176 0002 91B0     		sub	sp, sp, #68
+ 177              	.LCFI7:
+ 178              		.cfi_def_cfa_offset 72
+  52:Core/Src/periphs/tim.c ****   TIM_OC_InitTypeDef sConfigOC = {0};
+ 179              		.loc 1 52 0
+ 180 0004 0023     		movs	r3, #0
+ 181 0006 0E93     		str	r3, [sp, #56]
+ 182 0008 0F93     		str	r3, [sp, #60]
+  53:Core/Src/periphs/tim.c ****   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+ 183              		.loc 1 53 0
+ 184 000a 0793     		str	r3, [sp, #28]
+ 185 000c 0893     		str	r3, [sp, #32]
+ 186 000e 0993     		str	r3, [sp, #36]
+ 187 0010 0A93     		str	r3, [sp, #40]
+ 188 0012 0B93     		str	r3, [sp, #44]
+ 189 0014 0C93     		str	r3, [sp, #48]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 7
+
+
+ 190 0016 0D93     		str	r3, [sp, #52]
+  54:Core/Src/periphs/tim.c **** 
+ 191              		.loc 1 54 0
+ 192 0018 0093     		str	r3, [sp]
+ 193 001a 0193     		str	r3, [sp, #4]
+ 194 001c 0293     		str	r3, [sp, #8]
+ 195 001e 0393     		str	r3, [sp, #12]
+ 196 0020 0493     		str	r3, [sp, #16]
+ 197 0022 0593     		str	r3, [sp, #20]
+ 198 0024 0693     		str	r3, [sp, #24]
+  56:Core/Src/periphs/tim.c ****   htim8.Init.Prescaler = 0;
+ 199              		.loc 1 56 0
+ 200 0026 2C48     		ldr	r0, .L30
+ 201 0028 2C4A     		ldr	r2, .L30+4
+ 202 002a 0260     		str	r2, [r0]
+  57:Core/Src/periphs/tim.c ****   htim8.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
+ 203              		.loc 1 57 0
+ 204 002c 4360     		str	r3, [r0, #4]
+  58:Core/Src/periphs/tim.c ****   htim8.Init.Period = 10499;
+ 205              		.loc 1 58 0
+ 206 002e 2022     		movs	r2, #32
+ 207 0030 8260     		str	r2, [r0, #8]
+  59:Core/Src/periphs/tim.c ****   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 208              		.loc 1 59 0
+ 209 0032 42F60312 		movw	r2, #10499
+ 210 0036 C260     		str	r2, [r0, #12]
+  60:Core/Src/periphs/tim.c ****   htim8.Init.RepetitionCounter = 0;
+ 211              		.loc 1 60 0
+ 212 0038 0361     		str	r3, [r0, #16]
+  61:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)
+ 213              		.loc 1 61 0
+ 214 003a 4361     		str	r3, [r0, #20]
+  62:Core/Src/periphs/tim.c ****   {
+ 215              		.loc 1 62 0
+ 216 003c FFF7FEFF 		bl	HAL_TIM_PWM_Init
+ 217              	.LVL6:
+ 218 0040 0028     		cmp	r0, #0
+ 219 0042 37D1     		bne	.L24
+ 220              	.L17:
+  66:Core/Src/periphs/tim.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 221              		.loc 1 66 0
+ 222 0044 0023     		movs	r3, #0
+ 223 0046 0E93     		str	r3, [sp, #56]
+  67:Core/Src/periphs/tim.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
+ 224              		.loc 1 67 0
+ 225 0048 0F93     		str	r3, [sp, #60]
+  68:Core/Src/periphs/tim.c ****   {
+ 226              		.loc 1 68 0
+ 227 004a 0EA9     		add	r1, sp, #56
+ 228 004c 2248     		ldr	r0, .L30
+ 229 004e FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 230              	.LVL7:
+ 231 0052 0028     		cmp	r0, #0
+ 232 0054 31D1     		bne	.L25
+ 233              	.L18:
+  72:Core/Src/periphs/tim.c ****   sConfigOC.Pulse = 0;
+ 234              		.loc 1 72 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 8
+
+
+ 235 0056 6023     		movs	r3, #96
+ 236 0058 0793     		str	r3, [sp, #28]
+  73:Core/Src/periphs/tim.c ****   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+ 237              		.loc 1 73 0
+ 238 005a 0022     		movs	r2, #0
+ 239 005c 0892     		str	r2, [sp, #32]
+  74:Core/Src/periphs/tim.c ****   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+ 240              		.loc 1 74 0
+ 241 005e 0992     		str	r2, [sp, #36]
+  75:Core/Src/periphs/tim.c ****   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+ 242              		.loc 1 75 0
+ 243 0060 0A92     		str	r2, [sp, #40]
+  76:Core/Src/periphs/tim.c ****   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+ 244              		.loc 1 76 0
+ 245 0062 0B92     		str	r2, [sp, #44]
+  77:Core/Src/periphs/tim.c ****   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+ 246              		.loc 1 77 0
+ 247 0064 0C92     		str	r2, [sp, #48]
+  78:Core/Src/periphs/tim.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim8, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+ 248              		.loc 1 78 0
+ 249 0066 0D92     		str	r2, [sp, #52]
+  79:Core/Src/periphs/tim.c ****   {
+ 250              		.loc 1 79 0
+ 251 0068 07A9     		add	r1, sp, #28
+ 252 006a 1B48     		ldr	r0, .L30
+ 253 006c FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 254              	.LVL8:
+ 255 0070 30BB     		cbnz	r0, .L26
+ 256              	.L19:
+  83:Core/Src/periphs/tim.c ****   {
+ 257              		.loc 1 83 0
+ 258 0072 0422     		movs	r2, #4
+ 259 0074 07A9     		add	r1, sp, #28
+ 260 0076 1848     		ldr	r0, .L30
+ 261 0078 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 262              	.LVL9:
+ 263 007c 18BB     		cbnz	r0, .L27
+ 264              	.L20:
+  87:Core/Src/periphs/tim.c ****   {
+ 265              		.loc 1 87 0
+ 266 007e 0822     		movs	r2, #8
+ 267 0080 07A9     		add	r1, sp, #28
+ 268 0082 1548     		ldr	r0, .L30
+ 269 0084 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 270              	.LVL10:
+ 271 0088 00BB     		cbnz	r0, .L28
+ 272              	.L21:
+  91:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+ 273              		.loc 1 91 0
+ 274 008a 0023     		movs	r3, #0
+ 275 008c 0093     		str	r3, [sp]
+  92:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+ 276              		.loc 1 92 0
+ 277 008e 0193     		str	r3, [sp, #4]
+  93:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.DeadTime = 0;
+ 278              		.loc 1 93 0
+ 279 0090 0293     		str	r3, [sp, #8]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 9
+
+
+  94:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+ 280              		.loc 1 94 0
+ 281 0092 0393     		str	r3, [sp, #12]
+  95:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+ 282              		.loc 1 95 0
+ 283 0094 0493     		str	r3, [sp, #16]
+  96:Core/Src/periphs/tim.c ****   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+ 284              		.loc 1 96 0
+ 285 0096 4FF40052 		mov	r2, #8192
+ 286 009a 0592     		str	r2, [sp, #20]
+  97:Core/Src/periphs/tim.c ****   if (HAL_TIMEx_ConfigBreakDeadTime(&htim8, &sBreakDeadTimeConfig) != HAL_OK)
+ 287              		.loc 1 97 0
+ 288 009c 0693     		str	r3, [sp, #24]
+  98:Core/Src/periphs/tim.c ****   {
+ 289              		.loc 1 98 0
+ 290 009e 6946     		mov	r1, sp
+ 291 00a0 0D48     		ldr	r0, .L30
+ 292 00a2 FFF7FEFF 		bl	HAL_TIMEx_ConfigBreakDeadTime
+ 293              	.LVL11:
+ 294 00a6 A0B9     		cbnz	r0, .L29
+ 295              	.L22:
+ 102:Core/Src/periphs/tim.c **** 
+ 296              		.loc 1 102 0
+ 297 00a8 0B48     		ldr	r0, .L30
+ 298 00aa FFF7FEFF 		bl	HAL_TIM_MspPostInit
+ 299              	.LVL12:
+ 104:Core/Src/periphs/tim.c **** 
+ 300              		.loc 1 104 0
+ 301 00ae 11B0     		add	sp, sp, #68
+ 302              	.LCFI8:
+ 303              		.cfi_remember_state
+ 304              		.cfi_def_cfa_offset 4
+ 305              		@ sp needed
+ 306 00b0 5DF804FB 		ldr	pc, [sp], #4
+ 307              	.L24:
+ 308              	.LCFI9:
+ 309              		.cfi_restore_state
+  64:Core/Src/periphs/tim.c ****   }
+ 310              		.loc 1 64 0
+ 311 00b4 FFF7FEFF 		bl	Error_Handler
+ 312              	.LVL13:
+ 313 00b8 C4E7     		b	.L17
+ 314              	.L25:
+  70:Core/Src/periphs/tim.c ****   }
+ 315              		.loc 1 70 0
+ 316 00ba FFF7FEFF 		bl	Error_Handler
+ 317              	.LVL14:
+ 318 00be CAE7     		b	.L18
+ 319              	.L26:
+  81:Core/Src/periphs/tim.c ****   }
+ 320              		.loc 1 81 0
+ 321 00c0 FFF7FEFF 		bl	Error_Handler
+ 322              	.LVL15:
+ 323 00c4 D5E7     		b	.L19
+ 324              	.L27:
+  85:Core/Src/periphs/tim.c ****   }
+ 325              		.loc 1 85 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 10
+
+
+ 326 00c6 FFF7FEFF 		bl	Error_Handler
+ 327              	.LVL16:
+ 328 00ca D8E7     		b	.L20
+ 329              	.L28:
+  89:Core/Src/periphs/tim.c ****   }
+ 330              		.loc 1 89 0
+ 331 00cc FFF7FEFF 		bl	Error_Handler
+ 332              	.LVL17:
+ 333 00d0 DBE7     		b	.L21
+ 334              	.L29:
+ 100:Core/Src/periphs/tim.c ****   }
+ 335              		.loc 1 100 0
+ 336 00d2 FFF7FEFF 		bl	Error_Handler
+ 337              	.LVL18:
+ 338 00d6 E7E7     		b	.L22
+ 339              	.L31:
+ 340              		.align	2
+ 341              	.L30:
+ 342 00d8 00000000 		.word	htim8
+ 343 00dc 00040140 		.word	1073808384
+ 344              		.cfi_endproc
+ 345              	.LFE126:
+ 347              		.section	.text.HAL_TIM_PWM_MspDeInit,"ax",%progbits
+ 348              		.align	1
+ 349              		.global	HAL_TIM_PWM_MspDeInit
+ 350              		.syntax unified
+ 351              		.thumb
+ 352              		.thumb_func
+ 353              		.fpu fpv4-sp-d16
+ 355              	HAL_TIM_PWM_MspDeInit:
+ 356              	.LFB129:
+ 150:Core/Src/periphs/tim.c **** 
+ 151:Core/Src/periphs/tim.c **** void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
+ 152:Core/Src/periphs/tim.c **** {
+ 357              		.loc 1 152 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361              		@ link register save eliminated.
+ 362              	.LVL19:
+ 153:Core/Src/periphs/tim.c **** 
+ 154:Core/Src/periphs/tim.c ****   if(tim_pwmHandle->Instance==TIM8)
+ 363              		.loc 1 154 0
+ 364 0000 0268     		ldr	r2, [r0]
+ 365 0002 054B     		ldr	r3, .L35
+ 366 0004 9A42     		cmp	r2, r3
+ 367 0006 00D0     		beq	.L34
+ 368              	.L32:
+ 155:Core/Src/periphs/tim.c ****   {
+ 156:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspDeInit 0 */
+ 157:Core/Src/periphs/tim.c **** 
+ 158:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspDeInit 0 */
+ 159:Core/Src/periphs/tim.c ****     /* Peripheral clock disable */
+ 160:Core/Src/periphs/tim.c ****     __HAL_RCC_TIM8_CLK_DISABLE();
+ 161:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspDeInit 1 */
+ 162:Core/Src/periphs/tim.c **** 
+ 163:Core/Src/periphs/tim.c ****   /* USER CODE END TIM8_MspDeInit 1 */
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 11
+
+
+ 164:Core/Src/periphs/tim.c ****   }
+ 165:Core/Src/periphs/tim.c **** } 
+ 369              		.loc 1 165 0
+ 370 0008 7047     		bx	lr
+ 371              	.L34:
+ 160:Core/Src/periphs/tim.c ****   /* USER CODE BEGIN TIM8_MspDeInit 1 */
+ 372              		.loc 1 160 0
+ 373 000a 044A     		ldr	r2, .L35+4
+ 374 000c 536C     		ldr	r3, [r2, #68]
+ 375 000e 23F00203 		bic	r3, r3, #2
+ 376 0012 5364     		str	r3, [r2, #68]
+ 377              		.loc 1 165 0
+ 378 0014 F8E7     		b	.L32
+ 379              	.L36:
+ 380 0016 00BF     		.align	2
+ 381              	.L35:
+ 382 0018 00040140 		.word	1073808384
+ 383 001c 00380240 		.word	1073887232
+ 384              		.cfi_endproc
+ 385              	.LFE129:
+ 387              		.comm	htim8,60,4
+ 388              		.text
+ 389              	.Letext0:
+ 390              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 391              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 392              		.file 4 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Include/core
+ 393              		.file 5 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 394              		.file 6 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/CMSIS/Device/ST/ST
+ 395              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 396              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 397              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 398              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 399              		.file 11 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 400              		.file 12 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 401              		.file 13 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 402              		.file 14 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 403              		.file 15 "C:/Users/Prashant/STM32Cube/Repository/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Dri
+ 404              		.file 16 "Core/Inc/periphs/tim.h"
+ 405              		.file 17 "Core/Inc/main.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 tim.c
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:18     .text.HAL_TIM_PWM_MspInit:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:25     .text.HAL_TIM_PWM_MspInit:00000000 HAL_TIM_PWM_MspInit
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:67     .text.HAL_TIM_PWM_MspInit:00000028 $d
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:73     .text.HAL_TIM_MspPostInit:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:80     .text.HAL_TIM_MspPostInit:00000000 HAL_TIM_MspPostInit
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:153    .text.HAL_TIM_MspPostInit:00000054 $d
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:159    .text.MX_TIM8_Init:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:166    .text.MX_TIM8_Init:00000000 MX_TIM8_Init
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:342    .text.MX_TIM8_Init:000000d8 $d
+                            *COM*:0000003c htim8
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:348    .text.HAL_TIM_PWM_MspDeInit:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:355    .text.HAL_TIM_PWM_MspDeInit:00000000 HAL_TIM_PWM_MspDeInit
+C:\Users\Prashant\AppData\Local\Temp\ccmSmkT7.s:382    .text.HAL_TIM_PWM_MspDeInit:00000018 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_TIM_PWM_Init
+HAL_TIMEx_MasterConfigSynchronization
+HAL_TIM_PWM_ConfigChannel
+HAL_TIMEx_ConfigBreakDeadTime
+Error_Handler

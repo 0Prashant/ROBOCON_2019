@@ -1,0 +1,224 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_init.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wheel_init,"ax",%progbits
+  18              		.align	1
+  19              		.p2align 2,,3
+  20              		.global	wheel_init
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	wheel_init:
+  27              	.LFB126:
+  28              		.file 1 "Core/Src/robo_init.c"
+   1:Core/Src/robo_init.c **** /*
+   2:Core/Src/robo_init.c ****  * robo_init.c
+   3:Core/Src/robo_init.c ****  *
+   4:Core/Src/robo_init.c ****  * Created : 10/1/2018
+   5:Core/Src/robo_init.c ****  */
+   6:Core/Src/robo_init.c **** 
+   7:Core/Src/robo_init.c **** #include "robo_init.h"
+   8:Core/Src/robo_init.c **** 
+   9:Core/Src/robo_init.c **** struct Wheel Wheel_arr[4];
+  10:Core/Src/robo_init.c **** 
+  11:Core/Src/robo_init.c **** void wheel_init(void)
+  12:Core/Src/robo_init.c **** {
+  29              		.loc 1 12 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34              	.LVL0:
+  13:Core/Src/robo_init.c ****         int i;
+  14:Core/Src/robo_init.c ****         for (i = 0; i < 2; i++)
+  15:Core/Src/robo_init.c ****         {
+  16:Core/Src/robo_init.c ****                 Wheel_arr[i].id = i;
+  35              		.loc 1 16 0
+  36 0000 154B     		ldr	r3, .L4
+  17:Core/Src/robo_init.c ****                 Wheel_arr[i].radius = 0.067;
+  18:Core/Src/robo_init.c ****                 // All motors are connected to same timer : TIM8
+  19:Core/Src/robo_init.c ****                 Wheel_arr[i].htim = &htim8;
+  20:Core/Src/robo_init.c ****                 // Initialize velocity and omega to 0 at the first epoch
+  21:Core/Src/robo_init.c ****                 Wheel_arr[i].velcoity = 0;
+  22:Core/Src/robo_init.c ****                 Wheel_arr[i].omega = 0;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s 			page 2
+
+
+  23:Core/Src/robo_init.c ****         }
+  24:Core/Src/robo_init.c ****         Wheel_arr[0].in1_port = GPIOD;
+  37              		.loc 1 24 0
+  38 0002 1649     		ldr	r1, .L4+4
+  25:Core/Src/robo_init.c ****         Wheel_arr[0].in1_pin = GPIO_PIN_2;
+  26:Core/Src/robo_init.c ****         Wheel_arr[0].in2_port = GPIOA;
+  39              		.loc 1 26 0
+  40 0004 1648     		ldr	r0, .L4+8
+  12:Core/Src/robo_init.c ****         int i;
+  41              		.loc 1 12 0
+  42 0006 30B4     		push	{r4, r5}
+  43              	.LCFI0:
+  44              		.cfi_def_cfa_offset 8
+  45              		.cfi_offset 4, -8
+  46              		.cfi_offset 5, -4
+  24:Core/Src/robo_init.c ****         Wheel_arr[0].in1_pin = GPIO_PIN_2;
+  47              		.loc 1 24 0
+  48 0008 1961     		str	r1, [r3, #16]
+  27:Core/Src/robo_init.c ****         Wheel_arr[0].in2_pin = GPIO_PIN_15;
+  49              		.loc 1 27 0
+  50 000a 4FF40041 		mov	r1, #32768
+  16:Core/Src/robo_init.c ****                 Wheel_arr[i].radius = 0.067;
+  51              		.loc 1 16 0
+  52 000e 0124     		movs	r4, #1
+  53              		.loc 1 27 0
+  54 0010 9983     		strh	r1, [r3, #28]	@ movhi
+  16:Core/Src/robo_init.c ****                 Wheel_arr[i].radius = 0.067;
+  55              		.loc 1 16 0
+  56 0012 0021     		movs	r1, #0
+  57 0014 83F82840 		strb	r4, [r3, #40]
+  58 0018 1970     		strb	r1, [r3]
+  28:Core/Src/robo_init.c ****         Wheel_arr[0].channel = TIM_CHANNEL_1;
+  29:Core/Src/robo_init.c **** 
+  30:Core/Src/robo_init.c ****         Wheel_arr[1].in1_port = GPIOC;
+  31:Core/Src/robo_init.c ****         Wheel_arr[1].in1_pin = GPIO_PIN_10;
+  59              		.loc 1 31 0
+  60 001a 4FF48064 		mov	r4, #1024
+  26:Core/Src/robo_init.c ****         Wheel_arr[0].in2_pin = GPIO_PIN_15;
+  61              		.loc 1 26 0
+  62 001e 9861     		str	r0, [r3, #24]
+  28:Core/Src/robo_init.c ****         Wheel_arr[0].channel = TIM_CHANNEL_1;
+  63              		.loc 1 28 0
+  64 0020 5962     		str	r1, [r3, #36]
+  32:Core/Src/robo_init.c ****         Wheel_arr[1].in2_port = GPIOC;
+  33:Core/Src/robo_init.c ****         Wheel_arr[1].in2_pin = GPIO_PIN_11 ;
+  65              		.loc 1 33 0
+  66 0022 4FF40060 		mov	r0, #2048
+  30:Core/Src/robo_init.c ****         Wheel_arr[1].in1_pin = GPIO_PIN_10;
+  67              		.loc 1 30 0
+  68 0026 01F18041 		add	r1, r1, #1073741824
+  21:Core/Src/robo_init.c ****                 Wheel_arr[i].omega = 0;
+  69              		.loc 1 21 0
+  70 002a 0022     		movs	r2, #0
+  17:Core/Src/robo_init.c ****                 // All motors are connected to same timer : TIM8
+  71              		.loc 1 17 0
+  72 002c 0D4D     		ldr	r5, .L4+12
+  31:Core/Src/robo_init.c ****         Wheel_arr[1].in2_port = GPIOC;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s 			page 3
+
+
+  73              		.loc 1 31 0
+  74 002e 9C87     		strh	r4, [r3, #60]	@ movhi
+  30:Core/Src/robo_init.c ****         Wheel_arr[1].in1_pin = GPIO_PIN_10;
+  75              		.loc 1 30 0
+  76 0030 01F50231 		add	r1, r1, #133120
+  19:Core/Src/robo_init.c ****                 // Initialize velocity and omega to 0 at the first epoch
+  77              		.loc 1 19 0
+  78 0034 0C4C     		ldr	r4, .L4+16
+  79              		.loc 1 33 0
+  80 0036 A3F84400 		strh	r0, [r3, #68]	@ movhi
+  25:Core/Src/robo_init.c ****         Wheel_arr[0].in2_port = GPIOA;
+  81              		.loc 1 25 0
+  82 003a 0420     		movs	r0, #4
+  17:Core/Src/robo_init.c ****                 // All motors are connected to same timer : TIM8
+  83              		.loc 1 17 0
+  84 003c 5D60     		str	r5, [r3, #4]	@ float
+  85 003e DD62     		str	r5, [r3, #44]	@ float
+  19:Core/Src/robo_init.c ****                 // Initialize velocity and omega to 0 at the first epoch
+  86              		.loc 1 19 0
+  87 0040 1C62     		str	r4, [r3, #32]
+  88 0042 9C64     		str	r4, [r3, #72]
+  21:Core/Src/robo_init.c ****                 Wheel_arr[i].omega = 0;
+  89              		.loc 1 21 0
+  90 0044 9A60     		str	r2, [r3, #8]	@ float
+  22:Core/Src/robo_init.c ****         }
+  91              		.loc 1 22 0
+  92 0046 DA60     		str	r2, [r3, #12]	@ float
+  93              	.LVL1:
+  21:Core/Src/robo_init.c ****                 Wheel_arr[i].omega = 0;
+  94              		.loc 1 21 0
+  95 0048 1A63     		str	r2, [r3, #48]	@ float
+  22:Core/Src/robo_init.c ****         }
+  96              		.loc 1 22 0
+  97 004a 5A63     		str	r2, [r3, #52]	@ float
+  98              	.LVL2:
+  25:Core/Src/robo_init.c ****         Wheel_arr[0].in2_port = GPIOA;
+  99              		.loc 1 25 0
+ 100 004c 9882     		strh	r0, [r3, #20]	@ movhi
+  34:Core/Src/robo_init.c ****         Wheel_arr[1].channel = TIM_CHANNEL_2;
+ 101              		.loc 1 34 0
+ 102 004e D864     		str	r0, [r3, #76]
+  30:Core/Src/robo_init.c ****         Wheel_arr[1].in1_pin = GPIO_PIN_10;
+ 103              		.loc 1 30 0
+ 104 0050 9963     		str	r1, [r3, #56]
+  32:Core/Src/robo_init.c ****         Wheel_arr[1].in2_pin = GPIO_PIN_11 ;
+ 105              		.loc 1 32 0
+ 106 0052 1964     		str	r1, [r3, #64]
+  35:Core/Src/robo_init.c **** }
+ 107              		.loc 1 35 0
+ 108 0054 30BC     		pop	{r4, r5}
+ 109              	.LCFI1:
+ 110              		.cfi_restore 5
+ 111              		.cfi_restore 4
+ 112              		.cfi_def_cfa_offset 0
+ 113 0056 7047     		bx	lr
+ 114              	.L5:
+ 115              		.align	2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s 			page 4
+
+
+ 116              	.L4:
+ 117 0058 00000000 		.word	Wheel_arr
+ 118 005c 000C0240 		.word	1073875968
+ 119 0060 00000240 		.word	1073872896
+ 120 0064 4C37893D 		.word	1032402764
+ 121 0068 00000000 		.word	htim8
+ 122              		.cfi_endproc
+ 123              	.LFE126:
+ 125              		.comm	Wheel_arr,160,4
+ 126              		.text
+ 127              	.Letext0:
+ 128              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 129              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 130              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 131              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 132              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 133              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 134              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 135              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 136              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 137              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 138              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 139              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 140              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 141              		.file 15 "Core/Inc/tim.h"
+ 142              		.file 16 "Core/Inc/usart.h"
+ 143              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 144              		.file 18 "Core/Inc/wheel.h"
+ 145              		.file 19 "Core/Inc/robo_init.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_init.c
+C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s:18     .text.wheel_init:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s:26     .text.wheel_init:00000000 wheel_init
+C:\Users\Prashant\AppData\Local\Temp\cc3rCdjk.s:117    .text.wheel_init:00000058 $d
+                            *COM*:000000a0 Wheel_arr
+
+UNDEFINED SYMBOLS
+htim8

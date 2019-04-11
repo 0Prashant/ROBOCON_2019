@@ -1,0 +1,344 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robot.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.play,"ax",%progbits
+  18              		.align	1
+  19              		.global	play
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	play:
+  26              	.LFB126:
+  27              		.file 1 "Core/Src/robot.c"
+   1:Core/Src/robot.c **** /*
+   2:Core/Src/robot.c ****  * robot.c
+   3:Core/Src/robot.c ****  *
+   4:Core/Src/robot.c ****  * Created : 10/1/2018
+   5:Core/Src/robot.c ****  */
+   6:Core/Src/robot.c **** 
+   7:Core/Src/robot.c **** #include "robo_init.h"
+   8:Core/Src/robot.c **** extern struct Wheel Wheel_arr[4];
+   9:Core/Src/robot.c **** 
+  10:Core/Src/robot.c **** void play(void)
+  11:Core/Src/robot.c **** {
+  28              		.loc 1 11 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 70B5     		push	{r4, r5, r6, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 4, -16
+  36              		.cfi_offset 5, -12
+  37              		.cfi_offset 6, -8
+  38              		.cfi_offset 14, -4
+  39 0002 82B0     		sub	sp, sp, #8
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 24
+  42              	.LVL0:
+  12:Core/Src/robot.c ****        uint16_t speed=0;
+  13:Core/Src/robot.c **** 	int downcount=0;
+  43              		.loc 1 13 0
+  44 0004 0025     		movs	r5, #0
+  12:Core/Src/robot.c ****        uint16_t speed=0;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 2
+
+
+  45              		.loc 1 12 0
+  46 0006 2C46     		mov	r4, r5
+  47 0008 1AE0     		b	.L2
+  48              	.LVL1:
+  49              	.L14:
+  14:Core/Src/robot.c ****         uint8_t buffer[1];
+  15:Core/Src/robot.c ****         while (1) {
+  16:Core/Src/robot.c ****                 if (HAL_UART_Receive(&huart3, buffer, 1, 10) == HAL_OK){
+  17:Core/Src/robot.c **** 			HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_12);
+  50              		.loc 1 17 0
+  51 000a 4FF48051 		mov	r1, #4096
+  52 000e 2B48     		ldr	r0, .L16
+  53 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  54              	.LVL2:
+  18:Core/Src/robot.c **** 			printf("%c",buffer[0]);
+  55              		.loc 1 18 0
+  56 0014 9DF80400 		ldrb	r0, [sp, #4]	@ zero_extendqisi2
+  57 0018 FFF7FEFF 		bl	putchar
+  58              	.LVL3:
+  59 001c 18E0     		b	.L4
+  60              	.L15:
+  19:Core/Src/robot.c **** 		}
+  20:Core/Src/robot.c **** 		//HAL_UART_Transmit(&huart3, buffer, 1, 10);
+  21:Core/Src/robot.c **** 		//printf("Data = %c",buffer[0]);	
+  22:Core/Src/robot.c **** 		//buffer[0] = 'F';
+  23:Core/Src/robot.c **** 		if(buffer[0] == 'a')
+  24:Core/Src/robot.c **** 			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14, GPIO_PIN_SET);
+  61              		.loc 1 24 0
+  62 001e 0122     		movs	r2, #1
+  63 0020 4FF48041 		mov	r1, #16384
+  64 0024 2548     		ldr	r0, .L16
+  65 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  66              	.LVL4:
+  67 002a 15E0     		b	.L5
+  68              	.L8:
+  25:Core/Src/robot.c **** 		if(speed<38000)
+  26:Core/Src/robot.c **** 			speed += 500;
+  27:Core/Src/robot.c **** 		robot_speed(speed);
+  28:Core/Src/robot.c **** 		if(buffer[0]!='S')
+  29:Core/Src/robot.c **** 			downcount=20;
+  30:Core/Src/robot.c **** 		switch (buffer[0])
+  31:Core/Src/robot.c **** 		{
+  32:Core/Src/robot.c **** 			case 'F':
+  33:Core/Src/robot.c **** 			{
+  34:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
+  69              		.loc 1 34 0
+  70 002c 244E     		ldr	r6, .L16+4
+  71 002e 0121     		movs	r1, #1
+  72 0030 3046     		mov	r0, r6
+  73 0032 FFF7FEFF 		bl	set_Direction
+  74              	.LVL5:
+  35:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  75              		.loc 1 35 0
+  76 0036 0021     		movs	r1, #0
+  77 0038 06F12800 		add	r0, r6, #40
+  78 003c FFF7FEFF 		bl	set_Direction
+  79              	.LVL6:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 3
+
+
+  80              	.L2:
+  16:Core/Src/robot.c **** 			HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_12);
+  81              		.loc 1 16 0
+  82 0040 0A23     		movs	r3, #10
+  83 0042 0122     		movs	r2, #1
+  84 0044 01A9     		add	r1, sp, #4
+  85 0046 1F48     		ldr	r0, .L16+8
+  86 0048 FFF7FEFF 		bl	HAL_UART_Receive
+  87              	.LVL7:
+  88 004c 0028     		cmp	r0, #0
+  89 004e DCD0     		beq	.L14
+  90              	.L4:
+  23:Core/Src/robot.c **** 			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14, GPIO_PIN_SET);
+  91              		.loc 1 23 0
+  92 0050 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+  93 0054 612B     		cmp	r3, #97
+  94 0056 E2D0     		beq	.L15
+  95              	.L5:
+  25:Core/Src/robot.c **** 			speed += 500;
+  96              		.loc 1 25 0
+  97 0058 49F26F43 		movw	r3, #37999
+  98 005c 9C42     		cmp	r4, r3
+  99 005e 02D8     		bhi	.L6
+  26:Core/Src/robot.c **** 		robot_speed(speed);
+ 100              		.loc 1 26 0
+ 101 0060 04F5FA74 		add	r4, r4, #500
+ 102              	.LVL8:
+ 103 0064 A4B2     		uxth	r4, r4
+ 104              	.LVL9:
+ 105              	.L6:
+  27:Core/Src/robot.c **** 		if(buffer[0]!='S')
+ 106              		.loc 1 27 0
+ 107 0066 20B2     		sxth	r0, r4
+ 108 0068 FFF7FEFF 		bl	robot_speed
+ 109              	.LVL10:
+  28:Core/Src/robot.c **** 			downcount=20;
+ 110              		.loc 1 28 0
+ 111 006c 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 112 0070 532B     		cmp	r3, #83
+ 113 0072 00D0     		beq	.L7
+  29:Core/Src/robot.c **** 		switch (buffer[0])
+ 114              		.loc 1 29 0
+ 115 0074 1425     		movs	r5, #20
+ 116              	.LVL11:
+ 117              	.L7:
+  30:Core/Src/robot.c **** 		{
+ 118              		.loc 1 30 0
+ 119 0076 462B     		cmp	r3, #70
+ 120 0078 D8D0     		beq	.L8
+ 121 007a 532B     		cmp	r3, #83
+ 122 007c 0CD0     		beq	.L9
+ 123 007e 422B     		cmp	r3, #66
+ 124 0080 DED1     		bne	.L2
+  36:Core/Src/robot.c **** 				break;
+  37:Core/Src/robot.c **** 			}
+  38:Core/Src/robot.c **** 			case 'B':
+  39:Core/Src/robot.c **** 			{
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 4
+
+
+  40:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_CLOCKWISE);
+ 125              		.loc 1 40 0
+ 126 0082 0F4E     		ldr	r6, .L16+4
+ 127 0084 0021     		movs	r1, #0
+ 128 0086 3046     		mov	r0, r6
+ 129 0088 FFF7FEFF 		bl	set_Direction
+ 130              	.LVL12:
+  41:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
+ 131              		.loc 1 41 0
+ 132 008c 0121     		movs	r1, #1
+ 133 008e 06F12800 		add	r0, r6, #40
+ 134 0092 FFF7FEFF 		bl	set_Direction
+ 135              	.LVL13:
+  42:Core/Src/robot.c **** 				break;
+ 136              		.loc 1 42 0
+ 137 0096 D3E7     		b	.L2
+ 138              	.L9:
+  43:Core/Src/robot.c **** 			}
+  44:Core/Src/robot.c **** 			/*case 'L':
+  45:Core/Src/robot.c **** 			{
+  46:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_CLOCKWISE);
+  47:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  48:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_ANTICLOCKWISE);
+  49:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_ANTICLOCKWISE);
+  50:Core/Src/robot.c **** 				break;
+  51:Core/Src/robot.c **** 			}
+  52:Core/Src/robot.c **** 			case 'R':
+  53:Core/Src/robot.c **** 			{
+  54:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
+  55:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
+  56:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_CLOCKWISE);
+  57:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_CLOCKWISE);
+  58:Core/Src/robot.c **** 				break;
+  59:Core/Src/robot.c **** 			}
+  60:Core/Src/robot.c **** 			case 'G':
+  61:Core/Src/robot.c **** 			{
+  62:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_HALT);
+  63:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  64:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_HALT);
+  65:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_ANTICLOCKWISE);
+  66:Core/Src/robot.c **** 				break;
+  67:Core/Src/robot.c **** 			}
+  68:Core/Src/robot.c **** 			case 'I':
+  69:Core/Src/robot.c **** 			{
+  70:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
+  71:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_HALT);
+  72:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_CLOCKWISE);
+  73:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_HALT);
+  74:Core/Src/robot.c **** 				break;
+  75:Core/Src/robot.c **** 			}
+  76:Core/Src/robot.c **** 			case 'H':
+  77:Core/Src/robot.c **** 			{
+  78:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_CLOCKWISE);
+  79:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  80:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_CLOCKWISE);
+  81:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_CLOCKWISE);
+  82:Core/Src/robot.c **** 				break;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 5
+
+
+  83:Core/Src/robot.c **** 			}
+  84:Core/Src/robot.c **** 			case 'J':
+  85:Core/Src/robot.c **** 			{
+  86:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
+  87:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
+  88:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[2], DIR_ANTICLOCKWISE);
+  89:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[3], DIR_ANTICLOCKWISE);
+  90:Core/Src/robot.c **** 				break;
+  91:Core/Src/robot.c **** 			}*/
+  92:Core/Src/robot.c **** 			case 'S':
+  93:Core/Src/robot.c **** 			{
+  94:Core/Src/robot.c **** 				
+  95:Core/Src/robot.c **** 				if(downcount>0)
+ 139              		.loc 1 95 0
+ 140 0098 002D     		cmp	r5, #0
+ 141 009a 04DD     		ble	.L11
+  96:Core/Src/robot.c **** 				{
+  97:Core/Src/robot.c **** 					speed -=2000;
+ 142              		.loc 1 97 0
+ 143 009c A4F5FA64 		sub	r4, r4, #2000
+ 144              	.LVL14:
+ 145 00a0 A4B2     		uxth	r4, r4
+ 146              	.LVL15:
+  98:Core/Src/robot.c **** 					downcount--;
+ 147              		.loc 1 98 0
+ 148 00a2 013D     		subs	r5, r5, #1
+ 149              	.LVL16:
+  99:Core/Src/robot.c **** 					break;
+ 150              		.loc 1 99 0
+ 151 00a4 CCE7     		b	.L2
+ 152              	.L11:
+ 100:Core/Src/robot.c **** 				}
+ 101:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[0], DIR_HALT);
+ 153              		.loc 1 101 0
+ 154 00a6 064E     		ldr	r6, .L16+4
+ 155 00a8 0221     		movs	r1, #2
+ 156 00aa 3046     		mov	r0, r6
+ 157 00ac FFF7FEFF 		bl	set_Direction
+ 158              	.LVL17:
+ 102:Core/Src/robot.c **** 				set_Direction(&Wheel_arr[1], DIR_HALT);
+ 159              		.loc 1 102 0
+ 160 00b0 0221     		movs	r1, #2
+ 161 00b2 06F12800 		add	r0, r6, #40
+ 162 00b6 FFF7FEFF 		bl	set_Direction
+ 163              	.LVL18:
+ 103:Core/Src/robot.c **** 				//set_Direction(&Wheel_arr[2], DIR_HALT);
+ 104:Core/Src/robot.c **** 				//set_Direction(&Wheel_arr[3], DIR_HALT);
+ 105:Core/Src/robot.c **** 				break;
+ 164              		.loc 1 105 0
+ 165 00ba C1E7     		b	.L2
+ 166              	.L17:
+ 167              		.align	2
+ 168              	.L16:
+ 169 00bc 000C0240 		.word	1073875968
+ 170 00c0 00000000 		.word	Wheel_arr
+ 171 00c4 00000000 		.word	huart3
+ 172              		.cfi_endproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 6
+
+
+ 173              	.LFE126:
+ 175              		.text
+ 176              	.Letext0:
+ 177              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 178              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 179              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 180              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 181              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 182              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 183              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 184              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 185              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 186              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 187              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 188              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 189              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 190              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 191              		.file 16 "Core/Inc/tim.h"
+ 192              		.file 17 "Core/Inc/usart.h"
+ 193              		.file 18 "Core/Inc/wheel.h"
+ 194              		.file 19 "Core/Inc/robo_init.h"
+ 195              		.file 20 "Core/Inc/drive.h"
+ 196              		.file 21 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robot.c
+C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s:18     .text.play:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s:25     .text.play:00000000 play
+C:\Users\Prashant\AppData\Local\Temp\ccCvwkok.s:169    .text.play:000000bc $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_TogglePin
+putchar
+HAL_GPIO_WritePin
+set_Direction
+HAL_UART_Receive
+robot_speed
+Wheel_arr
+huart3

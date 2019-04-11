@@ -1,0 +1,1327 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"encoder.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.init_encoder,"ax",%progbits
+  18              		.align	1
+  19              		.p2align 2,,3
+  20              		.global	init_encoder
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	init_encoder:
+  27              	.LFB126:
+  28              		.file 1 "Core/Src/encoder.c"
+   1:Core/Src/encoder.c **** #include "encoder.h"
+   2:Core/Src/encoder.c **** 
+   3:Core/Src/encoder.c **** struct encoder e[4];
+   4:Core/Src/encoder.c **** float robotx = 0, roboty = 0;
+   5:Core/Src/encoder.c **** //int16_t counts[4] = {0,0,0,0};
+   6:Core/Src/encoder.c **** 
+   7:Core/Src/encoder.c **** void init_encoder()
+   8:Core/Src/encoder.c **** {
+  29              		.loc 1 8 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34              	.LVL0:
+  35              	.LBB2:
+   9:Core/Src/encoder.c **** 	for(int i=0; i<4; i++)
+  10:Core/Src/encoder.c **** 	{
+  11:Core/Src/encoder.c **** 		e[i].id = i;
+  36              		.loc 1 11 0
+  37 0000 064B     		ldr	r3, .L4
+  38              	.LBE2:
+   8:Core/Src/encoder.c **** 	for(int i=0; i<4; i++)
+  39              		.loc 1 8 0
+  40 0002 10B4     		push	{r4}
+  41              	.LCFI0:
+  42              		.cfi_def_cfa_offset 4
+  43              		.cfi_offset 4, -4
+  44              	.LBB3:
+  45              		.loc 1 11 0
+  46 0004 0120     		movs	r0, #1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 2
+
+
+  47 0006 0024     		movs	r4, #0
+  48 0008 0221     		movs	r1, #2
+  49 000a 0322     		movs	r2, #3
+  50 000c 1C70     		strb	r4, [r3]
+  51              	.LVL1:
+  52 000e 1873     		strb	r0, [r3, #12]
+  53              	.LVL2:
+  54 0010 1976     		strb	r1, [r3, #24]
+  55              	.LVL3:
+  56 0012 83F82420 		strb	r2, [r3, #36]
+  57              	.LVL4:
+  58              	.LBE3:
+  12:Core/Src/encoder.c **** 	}
+  13:Core/Src/encoder.c **** }	
+  59              		.loc 1 13 0
+  60 0016 5DF8044B 		ldr	r4, [sp], #4
+  61              	.LCFI1:
+  62              		.cfi_restore 4
+  63              		.cfi_def_cfa_offset 0
+  64 001a 7047     		bx	lr
+  65              	.L5:
+  66              		.align	2
+  67              	.L4:
+  68 001c 00000000 		.word	e
+  69              		.cfi_endproc
+  70              	.LFE126:
+  72              		.global	__aeabi_i2d
+  73              		.global	__aeabi_dmul
+  74              		.global	__aeabi_d2f
+  75              		.section	.text.calculate_encoder_distance,"ax",%progbits
+  76              		.align	1
+  77              		.p2align 2,,3
+  78              		.global	calculate_encoder_distance
+  79              		.syntax unified
+  80              		.thumb
+  81              		.thumb_func
+  82              		.fpu fpv4-sp-d16
+  84              	calculate_encoder_distance:
+  85              	.LFB127:
+  14:Core/Src/encoder.c **** 
+  15:Core/Src/encoder.c **** void calculate_encoder_distance(struct encoder *e)
+  16:Core/Src/encoder.c **** {
+  86              		.loc 1 16 0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 0
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              	.LVL5:
+  91 0000 2DE9D043 		push	{r4, r6, r7, r8, r9, lr}
+  92              	.LCFI2:
+  93              		.cfi_def_cfa_offset 24
+  94              		.cfi_offset 4, -24
+  95              		.cfi_offset 6, -20
+  96              		.cfi_offset 7, -16
+  97              		.cfi_offset 8, -12
+  98              		.cfi_offset 9, -8
+  99              		.cfi_offset 14, -4
+  17:Core/Src/encoder.c **** 	if(e->id==0)
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 3
+
+
+ 100              		.loc 1 17 0
+ 101 0004 90F90030 		ldrsb	r3, [r0]
+  16:Core/Src/encoder.c **** 	if(e->id==0)
+ 102              		.loc 1 16 0
+ 103 0008 0446     		mov	r4, r0
+ 104              		.loc 1 17 0
+ 105 000a 3BB1     		cbz	r3, .L14
+  18:Core/Src/encoder.c **** 	{
+  19:Core/Src/encoder.c **** 		e->distancex = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  20:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  21:Core/Src/encoder.c **** 	}
+  22:Core/Src/encoder.c **** 	else if(e->id==1)
+ 106              		.loc 1 22 0
+ 107 000c 012B     		cmp	r3, #1
+ 108 000e 19D0     		beq	.L15
+  23:Core/Src/encoder.c **** 	{
+  24:Core/Src/encoder.c **** 		e->distancex = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  25:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  26:Core/Src/encoder.c **** 	}
+  27:Core/Src/encoder.c **** 	else if(e->id==2)
+ 109              		.loc 1 27 0
+ 110 0010 022B     		cmp	r3, #2
+ 111 0012 52D0     		beq	.L16
+  28:Core/Src/encoder.c **** 	{
+  29:Core/Src/encoder.c **** 		e->distancex = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  30:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  31:Core/Src/encoder.c **** 	}
+  32:Core/Src/encoder.c **** 	else if(e->id==3)
+ 112              		.loc 1 32 0
+ 113 0014 032B     		cmp	r3, #3
+ 114 0016 37D0     		beq	.L17
+  33:Core/Src/encoder.c **** 	{
+  34:Core/Src/encoder.c **** 		e->distancex = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  35:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+  36:Core/Src/encoder.c **** 	}
+  37:Core/Src/encoder.c **** 	else{}
+  38:Core/Src/encoder.c **** 	
+  39:Core/Src/encoder.c **** }
+ 115              		.loc 1 39 0
+ 116 0018 BDE8D083 		pop	{r4, r6, r7, r8, r9, pc}
+ 117              	.L14:
+  19:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 118              		.loc 1 19 0
+ 119 001c B0F90200 		ldrsh	r0, [r0, #2]
+ 120              	.LVL6:
+ 121 0020 FFF7FEFF 		bl	__aeabi_i2d
+ 122              	.LVL7:
+ 123 0024 2CA3     		adr	r3, .L18
+ 124 0026 D3E90023 		ldrd	r2, [r3]
+ 125 002a FFF7FEFF 		bl	__aeabi_dmul
+ 126              	.LVL8:
+ 127              	.L12:
+  29:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 128              		.loc 1 29 0
+ 129 002e 2CA3     		adr	r3, .L18+8
+ 130 0030 D3E90023 		ldrd	r2, [r3]
+ 131 0034 FFF7FEFF 		bl	__aeabi_dmul
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 4
+
+
+ 132              	.LVL9:
+ 133 0038 FFF7FEFF 		bl	__aeabi_d2f
+ 134              	.LVL10:
+ 135 003c 6060     		str	r0, [r4, #4]	@ float
+  30:Core/Src/encoder.c **** 	}
+ 136              		.loc 1 30 0
+ 137 003e A060     		str	r0, [r4, #8]	@ float
+ 138              		.loc 1 39 0
+ 139 0040 BDE8D083 		pop	{r4, r6, r7, r8, r9, pc}
+ 140              	.LVL11:
+ 141              	.L15:
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 142              		.loc 1 24 0
+ 143 0044 B0F90200 		ldrsh	r0, [r0, #2]
+ 144              	.LVL12:
+ 145 0048 FFF7FEFF 		bl	__aeabi_i2d
+ 146              	.LVL13:
+ 147 004c 22A3     		adr	r3, .L18
+ 148 004e D3E90023 		ldrd	r2, [r3]
+ 149 0052 FFF7FEFF 		bl	__aeabi_dmul
+ 150              	.LVL14:
+ 151 0056 22A3     		adr	r3, .L18+8
+ 152 0058 D3E90023 		ldrd	r2, [r3]
+ 153 005c 8046     		mov	r8, r0
+ 154 005e 8946     		mov	r9, r1
+ 155 0060 FFF7FEFF 		bl	__aeabi_dmul
+ 156              	.LVL15:
+ 157 0064 FFF7FEFF 		bl	__aeabi_d2f
+ 158              	.LVL16:
+  25:Core/Src/encoder.c **** 	}
+ 159              		.loc 1 25 0
+ 160 0068 1DA3     		adr	r3, .L18+8
+ 161 006a D3E90023 		ldrd	r2, [r3]
+ 162 006e 4646     		mov	r6, r8
+ 163 0070 09F10047 		add	r7, r9, #-2147483648
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 164              		.loc 1 24 0
+ 165 0074 6060     		str	r0, [r4, #4]	@ float
+ 166              	.L13:
+ 167              	.LBB6:
+ 168              	.LBB7:
+  35:Core/Src/encoder.c **** 	}
+ 169              		.loc 1 35 0
+ 170 0076 3046     		mov	r0, r6
+ 171 0078 3946     		mov	r1, r7
+ 172 007a FFF7FEFF 		bl	__aeabi_dmul
+ 173              	.LVL17:
+ 174 007e FFF7FEFF 		bl	__aeabi_d2f
+ 175              	.LVL18:
+ 176 0082 A060     		str	r0, [r4, #8]	@ float
+ 177              	.LBE7:
+ 178              	.LBE6:
+ 179              		.loc 1 39 0
+ 180 0084 BDE8D083 		pop	{r4, r6, r7, r8, r9, pc}
+ 181              	.LVL19:
+ 182              	.L17:
+ 183              	.LBB9:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 5
+
+
+ 184              	.LBB8:
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 185              		.loc 1 34 0
+ 186 0088 B0F90200 		ldrsh	r0, [r0, #2]
+ 187              	.LVL20:
+ 188 008c FFF7FEFF 		bl	__aeabi_i2d
+ 189              	.LVL21:
+ 190 0090 11A3     		adr	r3, .L18
+ 191 0092 D3E90023 		ldrd	r2, [r3]
+ 192 0096 FFF7FEFF 		bl	__aeabi_dmul
+ 193              	.LVL22:
+ 194 009a 11A3     		adr	r3, .L18+8
+ 195 009c D3E90023 		ldrd	r2, [r3]
+ 196 00a0 0F46     		mov	r7, r1
+ 197 00a2 01F10041 		add	r1, r1, #-2147483648
+ 198 00a6 0646     		mov	r6, r0
+ 199 00a8 FFF7FEFF 		bl	__aeabi_dmul
+ 200              	.LVL23:
+ 201 00ac FFF7FEFF 		bl	__aeabi_d2f
+ 202              	.LVL24:
+  35:Core/Src/encoder.c **** 	}
+ 203              		.loc 1 35 0
+ 204 00b0 0BA3     		adr	r3, .L18+8
+ 205 00b2 D3E90023 		ldrd	r2, [r3]
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 206              		.loc 1 34 0
+ 207 00b6 6060     		str	r0, [r4, #4]	@ float
+ 208 00b8 DDE7     		b	.L13
+ 209              	.LVL25:
+ 210              	.L16:
+ 211              	.LBE8:
+ 212              	.LBE9:
+  29:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 213              		.loc 1 29 0
+ 214 00ba B0F90200 		ldrsh	r0, [r0, #2]
+ 215              	.LVL26:
+ 216 00be FFF7FEFF 		bl	__aeabi_i2d
+ 217              	.LVL27:
+ 218 00c2 05A3     		adr	r3, .L18
+ 219 00c4 D3E90023 		ldrd	r2, [r3]
+ 220 00c8 FFF7FEFF 		bl	__aeabi_dmul
+ 221              	.LVL28:
+ 222 00cc 01F10043 		add	r3, r1, #-2147483648
+ 223 00d0 1946     		mov	r1, r3
+ 224 00d2 ACE7     		b	.L12
+ 225              	.L19:
+ 226 00d4 AFF30080 		.align	3
+ 227              	.L18:
+ 228 00d8 DF27DC65 		.word	1708926943
+ 229 00dc 9EA0E63F 		.word	1072079006
+ 230 00e0 FCC00FFC 		.word	-66076420
+ 231 00e4 C02FFB3F 		.word	1073426368
+ 232              		.cfi_endproc
+ 233              	.LFE127:
+ 235              		.section	.text.calculate_robot_distance,"ax",%progbits
+ 236              		.align	1
+ 237              		.p2align 2,,3
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 6
+
+
+ 238              		.global	calculate_robot_distance
+ 239              		.syntax unified
+ 240              		.thumb
+ 241              		.thumb_func
+ 242              		.fpu fpv4-sp-d16
+ 244              	calculate_robot_distance:
+ 245              	.LFB128:
+  40:Core/Src/encoder.c **** void calculate_robot_distance()
+  41:Core/Src/encoder.c **** {
+ 246              		.loc 1 41 0
+ 247              		.cfi_startproc
+ 248              		@ args = 0, pretend = 0, frame = 0
+ 249              		@ frame_needed = 0, uses_anonymous_args = 0
+ 250              	.LVL29:
+ 251 0000 2DE9704F 		push	{r4, r5, r6, r8, r9, r10, fp, lr}
+ 252              	.LCFI3:
+ 253              		.cfi_def_cfa_offset 32
+ 254              		.cfi_offset 4, -32
+ 255              		.cfi_offset 5, -28
+ 256              		.cfi_offset 6, -24
+ 257              		.cfi_offset 8, -20
+ 258              		.cfi_offset 9, -16
+ 259              		.cfi_offset 10, -12
+ 260              		.cfi_offset 11, -8
+ 261              		.cfi_offset 14, -4
+ 262              	.LBB15:
+ 263              	.LBB16:
+ 264              	.LBB17:
+  17:Core/Src/encoder.c **** 	{
+ 265              		.loc 1 17 0
+ 266 0004 C84C     		ldr	r4, .L49+16
+ 267 0006 C94E     		ldr	r6, .L49+20
+ 268 0008 C94D     		ldr	r5, .L49+24
+ 269 000a 94F90030 		ldrsb	r3, [r4]
+ 270              	.LBE17:
+ 271              	.LBE16:
+ 272              	.LBE15:
+ 273              		.loc 1 41 0
+ 274 000e 2DED028B 		vpush.64	{d8}
+ 275              	.LCFI4:
+ 276              		.cfi_def_cfa_offset 40
+ 277              		.cfi_offset 80, -40
+ 278              		.cfi_offset 81, -36
+ 279 0012 96ED008A 		vldr.32	s16, [r6]
+ 280 0016 D5ED008A 		vldr.32	s17, [r5]
+ 281              	.LVL30:
+ 282              	.LBB36:
+ 283              	.LBB28:
+ 284              	.LBB20:
+  17:Core/Src/encoder.c **** 	{
+ 285              		.loc 1 17 0
+ 286 001a 5BB1     		cbz	r3, .L21
+  22:Core/Src/encoder.c **** 	{
+ 287              		.loc 1 22 0
+ 288 001c 012B     		cmp	r3, #1
+ 289 001e 00F0AC80 		beq	.L22
+  27:Core/Src/encoder.c **** 	{
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 7
+
+
+ 290              		.loc 1 27 0
+ 291 0022 022B     		cmp	r3, #2
+ 292 0024 00F0E481 		beq	.L23
+  32:Core/Src/encoder.c **** 	{
+ 293              		.loc 1 32 0
+ 294 0028 032B     		cmp	r3, #3
+ 295 002a 00F0EA80 		beq	.L24
+ 296 002e D4ED027A 		vldr.32	s15, [r4, #8]
+ 297 0032 13E0     		b	.L25
+ 298              	.L21:
+  19:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 299              		.loc 1 19 0
+ 300 0034 B4F90200 		ldrsh	r0, [r4, #2]
+ 301 0038 FFF7FEFF 		bl	__aeabi_i2d
+ 302              	.LVL31:
+ 303 003c B6A3     		adr	r3, .L49
+ 304 003e D3E90023 		ldrd	r2, [r3]
+ 305 0042 FFF7FEFF 		bl	__aeabi_dmul
+ 306              	.LVL32:
+ 307              	.L42:
+ 308 0046 B6A3     		adr	r3, .L49+8
+ 309 0048 D3E90023 		ldrd	r2, [r3]
+ 310 004c FFF7FEFF 		bl	__aeabi_dmul
+ 311              	.LVL33:
+ 312 0050 FFF7FEFF 		bl	__aeabi_d2f
+ 313              	.LVL34:
+ 314 0054 07EE900A 		vmov	s15, r0
+ 315 0058 6060     		str	r0, [r4, #4]	@ float
+  20:Core/Src/encoder.c **** 	}
+ 316              		.loc 1 20 0
+ 317 005a A060     		str	r0, [r4, #8]	@ float
+ 318              	.L25:
+ 319              	.LVL35:
+ 320              	.LBE20:
+ 321              	.LBE28:
+  42:Core/Src/encoder.c **** 	
+  43:Core/Src/encoder.c **** 	for(int i=0;i<4;i++)
+  44:Core/Src/encoder.c **** 	{
+  45:Core/Src/encoder.c **** 		calculate_encoder_distance(&e[i]);
+  46:Core/Src/encoder.c **** 		robotx += e[i].distancex;
+ 322              		.loc 1 46 0
+ 323 005c 94ED017A 		vldr.32	s14, [r4, #4]
+ 324              	.LBB29:
+ 325              	.LBB21:
+  17:Core/Src/encoder.c **** 	{
+ 326              		.loc 1 17 0
+ 327 0060 94F90C30 		ldrsb	r3, [r4, #12]
+ 328              	.LBE21:
+ 329              	.LBE29:
+  47:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 330              		.loc 1 47 0
+ 331 0064 78EEA78A 		vadd.f32	s17, s17, s15
+ 332              	.LVL36:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 333              		.loc 1 46 0
+ 334 0068 38EE078A 		vadd.f32	s16, s16, s14
+ 335              	.LBB30:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 8
+
+
+ 336              	.LBB22:
+  17:Core/Src/encoder.c **** 	{
+ 337              		.loc 1 17 0
+ 338 006c 5BB1     		cbz	r3, .L26
+  22:Core/Src/encoder.c **** 	{
+ 339              		.loc 1 22 0
+ 340 006e 012B     		cmp	r3, #1
+ 341 0070 00F06081 		beq	.L27
+  27:Core/Src/encoder.c **** 	{
+ 342              		.loc 1 27 0
+ 343 0074 022B     		cmp	r3, #2
+ 344 0076 00F0A181 		beq	.L28
+  32:Core/Src/encoder.c **** 	{
+ 345              		.loc 1 32 0
+ 346 007a 032B     		cmp	r3, #3
+ 347 007c 00F09F80 		beq	.L29
+ 348 0080 94ED057A 		vldr.32	s14, [r4, #20]
+ 349 0084 13E0     		b	.L30
+ 350              	.L26:
+  19:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 351              		.loc 1 19 0
+ 352 0086 B4F90E00 		ldrsh	r0, [r4, #14]
+ 353 008a FFF7FEFF 		bl	__aeabi_i2d
+ 354              	.LVL37:
+ 355 008e A2A3     		adr	r3, .L49
+ 356 0090 D3E90023 		ldrd	r2, [r3]
+ 357 0094 FFF7FEFF 		bl	__aeabi_dmul
+ 358              	.LVL38:
+ 359              	.L43:
+ 360 0098 A1A3     		adr	r3, .L49+8
+ 361 009a D3E90023 		ldrd	r2, [r3]
+ 362 009e FFF7FEFF 		bl	__aeabi_dmul
+ 363              	.LVL39:
+ 364 00a2 FFF7FEFF 		bl	__aeabi_d2f
+ 365              	.LVL40:
+ 366 00a6 07EE100A 		vmov	s14, r0
+ 367 00aa 2061     		str	r0, [r4, #16]	@ float
+  20:Core/Src/encoder.c **** 	}
+ 368              		.loc 1 20 0
+ 369 00ac 6061     		str	r0, [r4, #20]	@ float
+ 370              	.L30:
+ 371              	.LVL41:
+ 372              	.LBE22:
+ 373              	.LBE30:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 374              		.loc 1 46 0
+ 375 00ae D4ED047A 		vldr.32	s15, [r4, #16]
+ 376              	.LBB31:
+ 377              	.LBB23:
+  17:Core/Src/encoder.c **** 	{
+ 378              		.loc 1 17 0
+ 379 00b2 94F91830 		ldrsb	r3, [r4, #24]
+ 380              	.LBE23:
+ 381              	.LBE31:
+ 382              		.loc 1 47 0
+ 383 00b6 78EE878A 		vadd.f32	s17, s17, s14
+ 384              	.LVL42:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 9
+
+
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 385              		.loc 1 46 0
+ 386 00ba 38EE278A 		vadd.f32	s16, s16, s15
+ 387              	.LBB32:
+ 388              	.LBB24:
+  17:Core/Src/encoder.c **** 	{
+ 389              		.loc 1 17 0
+ 390 00be 5BB1     		cbz	r3, .L31
+  22:Core/Src/encoder.c **** 	{
+ 391              		.loc 1 22 0
+ 392 00c0 012B     		cmp	r3, #1
+ 393 00c2 00F00481 		beq	.L32
+  27:Core/Src/encoder.c **** 	{
+ 394              		.loc 1 27 0
+ 395 00c6 022B     		cmp	r3, #2
+ 396 00c8 00F09F81 		beq	.L33
+  32:Core/Src/encoder.c **** 	{
+ 397              		.loc 1 32 0
+ 398 00cc 032B     		cmp	r3, #3
+ 399 00ce 00F0DC80 		beq	.L34
+ 400 00d2 94ED087A 		vldr.32	s14, [r4, #32]
+ 401 00d6 13E0     		b	.L35
+ 402              	.L31:
+  19:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 403              		.loc 1 19 0
+ 404 00d8 B4F91A00 		ldrsh	r0, [r4, #26]
+ 405 00dc FFF7FEFF 		bl	__aeabi_i2d
+ 406              	.LVL43:
+ 407 00e0 8DA3     		adr	r3, .L49
+ 408 00e2 D3E90023 		ldrd	r2, [r3]
+ 409 00e6 FFF7FEFF 		bl	__aeabi_dmul
+ 410              	.LVL44:
+ 411              	.L44:
+ 412 00ea 8DA3     		adr	r3, .L49+8
+ 413 00ec D3E90023 		ldrd	r2, [r3]
+ 414 00f0 FFF7FEFF 		bl	__aeabi_dmul
+ 415              	.LVL45:
+ 416 00f4 FFF7FEFF 		bl	__aeabi_d2f
+ 417              	.LVL46:
+ 418 00f8 07EE100A 		vmov	s14, r0
+ 419 00fc E061     		str	r0, [r4, #28]	@ float
+  20:Core/Src/encoder.c **** 	}
+ 420              		.loc 1 20 0
+ 421 00fe 2062     		str	r0, [r4, #32]	@ float
+ 422              	.L35:
+ 423              	.LVL47:
+ 424              	.LBE24:
+ 425              	.LBE32:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 426              		.loc 1 46 0
+ 427 0100 D4ED077A 		vldr.32	s15, [r4, #28]
+ 428              	.LBB33:
+ 429              	.LBB25:
+  17:Core/Src/encoder.c **** 	{
+ 430              		.loc 1 17 0
+ 431 0104 94F92430 		ldrsb	r3, [r4, #36]
+ 432              	.LBE25:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 10
+
+
+ 433              	.LBE33:
+ 434              		.loc 1 47 0
+ 435 0108 78EE878A 		vadd.f32	s17, s17, s14
+ 436              	.LVL48:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 437              		.loc 1 46 0
+ 438 010c 38EE278A 		vadd.f32	s16, s16, s15
+ 439              	.LBB34:
+ 440              	.LBB26:
+  17:Core/Src/encoder.c **** 	{
+ 441              		.loc 1 17 0
+ 442 0110 5BB1     		cbz	r3, .L46
+  22:Core/Src/encoder.c **** 	{
+ 443              		.loc 1 22 0
+ 444 0112 012B     		cmp	r3, #1
+ 445 0114 00F03081 		beq	.L47
+  27:Core/Src/encoder.c **** 	{
+ 446              		.loc 1 27 0
+ 447 0118 022B     		cmp	r3, #2
+ 448 011a 00F05C81 		beq	.L48
+  32:Core/Src/encoder.c **** 	{
+ 449              		.loc 1 32 0
+ 450 011e 032B     		cmp	r3, #3
+ 451 0120 00F09180 		beq	.L40
+ 452 0124 94ED0B7A 		vldr.32	s14, [r4, #44]
+ 453 0128 13E0     		b	.L37
+ 454              	.L46:
+  19:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 455              		.loc 1 19 0
+ 456 012a B4F92600 		ldrsh	r0, [r4, #38]
+ 457 012e FFF7FEFF 		bl	__aeabi_i2d
+ 458              	.LVL49:
+ 459 0132 79A3     		adr	r3, .L49
+ 460 0134 D3E90023 		ldrd	r2, [r3]
+ 461 0138 FFF7FEFF 		bl	__aeabi_dmul
+ 462              	.LVL50:
+ 463              	.L45:
+  29:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 464              		.loc 1 29 0
+ 465 013c 78A3     		adr	r3, .L49+8
+ 466 013e D3E90023 		ldrd	r2, [r3]
+ 467 0142 FFF7FEFF 		bl	__aeabi_dmul
+ 468              	.LVL51:
+ 469 0146 FFF7FEFF 		bl	__aeabi_d2f
+ 470              	.LVL52:
+ 471 014a 07EE100A 		vmov	s14, r0
+ 472 014e A062     		str	r0, [r4, #40]	@ float
+  30:Core/Src/encoder.c **** 	}
+ 473              		.loc 1 30 0
+ 474 0150 E062     		str	r0, [r4, #44]	@ float
+ 475              	.L37:
+ 476              	.LVL53:
+ 477              	.LBE26:
+ 478              	.LBE34:
+ 479              		.loc 1 47 0 discriminator 3
+ 480 0152 77EE288A 		vadd.f32	s17, s14, s17
+ 481              	.LBE36:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 11
+
+
+  48:Core/Src/encoder.c **** 	}
+  49:Core/Src/encoder.c **** 	robotx /= 4;
+ 482              		.loc 1 49 0 discriminator 3
+ 483 0156 B5EE007A 		vmov.f32	s14, #2.5e-1
+  50:Core/Src/encoder.c **** 	roboty /= 4;
+ 484              		.loc 1 50 0 discriminator 3
+ 485 015a 68EE878A 		vmul.f32	s17, s17, s14
+ 486              	.LBB37:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 487              		.loc 1 46 0 discriminator 3
+ 488 015e D4ED0A7A 		vldr.32	s15, [r4, #40]
+ 489              	.LBE37:
+ 490              		.loc 1 50 0 discriminator 3
+ 491 0162 C5ED008A 		vstr.32	s17, [r5]
+ 492              	.LBB38:
+  46:Core/Src/encoder.c **** 		roboty += e[i].distancey;
+ 493              		.loc 1 46 0 discriminator 3
+ 494 0166 78EE277A 		vadd.f32	s15, s16, s15
+ 495              	.LBE38:
+  51:Core/Src/encoder.c **** }
+ 496              		.loc 1 51 0 discriminator 3
+ 497 016a BDEC028B 		vldm	sp!, {d8}
+ 498              	.LCFI5:
+ 499              		.cfi_remember_state
+ 500              		.cfi_restore 80
+ 501              		.cfi_restore 81
+ 502              		.cfi_def_cfa_offset 32
+  49:Core/Src/encoder.c **** 	roboty /= 4;
+ 503              		.loc 1 49 0 discriminator 3
+ 504 016e 67EE877A 		vmul.f32	s15, s15, s14
+ 505 0172 C6ED007A 		vstr.32	s15, [r6]
+ 506              		.loc 1 51 0 discriminator 3
+ 507 0176 BDE8708F 		pop	{r4, r5, r6, r8, r9, r10, fp, pc}
+ 508              	.LVL54:
+ 509              	.L22:
+ 510              	.LCFI6:
+ 511              		.cfi_restore_state
+ 512              	.LBB39:
+ 513              	.LBB35:
+ 514              	.LBB27:
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 515              		.loc 1 24 0
+ 516 017a B4F90200 		ldrsh	r0, [r4, #2]
+ 517 017e FFF7FEFF 		bl	__aeabi_i2d
+ 518              	.LVL55:
+ 519 0182 65A3     		adr	r3, .L49
+ 520 0184 D3E90023 		ldrd	r2, [r3]
+ 521 0188 FFF7FEFF 		bl	__aeabi_dmul
+ 522              	.LVL56:
+ 523 018c 64A3     		adr	r3, .L49+8
+ 524 018e D3E90023 		ldrd	r2, [r3]
+ 525 0192 8046     		mov	r8, r0
+ 526 0194 8946     		mov	r9, r1
+ 527 0196 FFF7FEFF 		bl	__aeabi_dmul
+ 528              	.LVL57:
+ 529 019a FFF7FEFF 		bl	__aeabi_d2f
+ 530              	.LVL58:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 12
+
+
+  25:Core/Src/encoder.c **** 	}
+ 531              		.loc 1 25 0
+ 532 019e 09F1004B 		add	fp, r9, #-2147483648
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 533              		.loc 1 24 0
+ 534 01a2 6060     		str	r0, [r4, #4]	@ float
+  25:Core/Src/encoder.c **** 	}
+ 535              		.loc 1 25 0
+ 536 01a4 5EA3     		adr	r3, .L49+8
+ 537 01a6 D3E90023 		ldrd	r2, [r3]
+ 538 01aa 4046     		mov	r0, r8
+ 539 01ac 5946     		mov	r1, fp
+ 540 01ae FFF7FEFF 		bl	__aeabi_dmul
+ 541              	.LVL59:
+ 542 01b2 FFF7FEFF 		bl	__aeabi_d2f
+ 543              	.LVL60:
+ 544 01b6 07EE900A 		vmov	s15, r0
+ 545 01ba A060     		str	r0, [r4, #8]	@ float
+ 546 01bc 4EE7     		b	.L25
+ 547              	.LVL61:
+ 548              	.L29:
+ 549              	.LBB18:
+ 550              	.LBB19:
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 551              		.loc 1 34 0
+ 552 01be B4F90E00 		ldrsh	r0, [r4, #14]
+ 553 01c2 FFF7FEFF 		bl	__aeabi_i2d
+ 554              	.LVL62:
+ 555 01c6 54A3     		adr	r3, .L49
+ 556 01c8 D3E90023 		ldrd	r2, [r3]
+ 557 01cc FFF7FEFF 		bl	__aeabi_dmul
+ 558              	.LVL63:
+ 559 01d0 53A3     		adr	r3, .L49+8
+ 560 01d2 D3E90023 		ldrd	r2, [r3]
+ 561 01d6 8946     		mov	r9, r1
+ 562 01d8 01F10041 		add	r1, r1, #-2147483648
+ 563 01dc 8046     		mov	r8, r0
+ 564 01de FFF7FEFF 		bl	__aeabi_dmul
+ 565              	.LVL64:
+ 566 01e2 FFF7FEFF 		bl	__aeabi_d2f
+ 567              	.LVL65:
+  35:Core/Src/encoder.c **** 	}
+ 568              		.loc 1 35 0
+ 569 01e6 4EA3     		adr	r3, .L49+8
+ 570 01e8 D3E90023 		ldrd	r2, [r3]
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 571              		.loc 1 34 0
+ 572 01ec 2061     		str	r0, [r4, #16]	@ float
+  35:Core/Src/encoder.c **** 	}
+ 573              		.loc 1 35 0
+ 574 01ee 4946     		mov	r1, r9
+ 575 01f0 4046     		mov	r0, r8
+ 576 01f2 FFF7FEFF 		bl	__aeabi_dmul
+ 577              	.LVL66:
+ 578 01f6 FFF7FEFF 		bl	__aeabi_d2f
+ 579              	.LVL67:
+ 580 01fa 07EE100A 		vmov	s14, r0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 13
+
+
+ 581 01fe 6061     		str	r0, [r4, #20]	@ float
+ 582 0200 55E7     		b	.L30
+ 583              	.LVL68:
+ 584              	.L24:
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 585              		.loc 1 34 0
+ 586 0202 B4F90200 		ldrsh	r0, [r4, #2]
+ 587 0206 FFF7FEFF 		bl	__aeabi_i2d
+ 588              	.LVL69:
+ 589 020a 43A3     		adr	r3, .L49
+ 590 020c D3E90023 		ldrd	r2, [r3]
+ 591 0210 FFF7FEFF 		bl	__aeabi_dmul
+ 592              	.LVL70:
+ 593 0214 42A3     		adr	r3, .L49+8
+ 594 0216 D3E90023 		ldrd	r2, [r3]
+ 595 021a 8946     		mov	r9, r1
+ 596 021c 01F10041 		add	r1, r1, #-2147483648
+ 597 0220 8046     		mov	r8, r0
+ 598 0222 FFF7FEFF 		bl	__aeabi_dmul
+ 599              	.LVL71:
+ 600 0226 FFF7FEFF 		bl	__aeabi_d2f
+ 601              	.LVL72:
+  35:Core/Src/encoder.c **** 	}
+ 602              		.loc 1 35 0
+ 603 022a 3DA3     		adr	r3, .L49+8
+ 604 022c D3E90023 		ldrd	r2, [r3]
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 605              		.loc 1 34 0
+ 606 0230 6060     		str	r0, [r4, #4]	@ float
+  35:Core/Src/encoder.c **** 	}
+ 607              		.loc 1 35 0
+ 608 0232 4946     		mov	r1, r9
+ 609 0234 4046     		mov	r0, r8
+ 610 0236 FFF7FEFF 		bl	__aeabi_dmul
+ 611              	.LVL73:
+ 612 023a FFF7FEFF 		bl	__aeabi_d2f
+ 613              	.LVL74:
+ 614 023e 07EE900A 		vmov	s15, r0
+ 615 0242 A060     		str	r0, [r4, #8]	@ float
+ 616 0244 0AE7     		b	.L25
+ 617              	.LVL75:
+ 618              	.L40:
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 619              		.loc 1 34 0
+ 620 0246 B4F92600 		ldrsh	r0, [r4, #38]
+ 621 024a FFF7FEFF 		bl	__aeabi_i2d
+ 622              	.LVL76:
+ 623 024e 32A3     		adr	r3, .L49
+ 624 0250 D3E90023 		ldrd	r2, [r3]
+ 625 0254 FFF7FEFF 		bl	__aeabi_dmul
+ 626              	.LVL77:
+ 627 0258 31A3     		adr	r3, .L49+8
+ 628 025a D3E90023 		ldrd	r2, [r3]
+ 629 025e 8946     		mov	r9, r1
+ 630 0260 01F10041 		add	r1, r1, #-2147483648
+ 631 0264 8046     		mov	r8, r0
+ 632 0266 FFF7FEFF 		bl	__aeabi_dmul
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 14
+
+
+ 633              	.LVL78:
+ 634 026a FFF7FEFF 		bl	__aeabi_d2f
+ 635              	.LVL79:
+  35:Core/Src/encoder.c **** 	}
+ 636              		.loc 1 35 0
+ 637 026e 2CA3     		adr	r3, .L49+8
+ 638 0270 D3E90023 		ldrd	r2, [r3]
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 639              		.loc 1 34 0
+ 640 0274 A062     		str	r0, [r4, #40]	@ float
+  35:Core/Src/encoder.c **** 	}
+ 641              		.loc 1 35 0
+ 642 0276 4946     		mov	r1, r9
+ 643 0278 4046     		mov	r0, r8
+ 644 027a FFF7FEFF 		bl	__aeabi_dmul
+ 645              	.LVL80:
+ 646 027e FFF7FEFF 		bl	__aeabi_d2f
+ 647              	.LVL81:
+ 648 0282 07EE100A 		vmov	s14, r0
+ 649 0286 E062     		str	r0, [r4, #44]	@ float
+ 650 0288 63E7     		b	.L37
+ 651              	.LVL82:
+ 652              	.L34:
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 653              		.loc 1 34 0
+ 654 028a B4F91A00 		ldrsh	r0, [r4, #26]
+ 655 028e FFF7FEFF 		bl	__aeabi_i2d
+ 656              	.LVL83:
+ 657 0292 21A3     		adr	r3, .L49
+ 658 0294 D3E90023 		ldrd	r2, [r3]
+ 659 0298 FFF7FEFF 		bl	__aeabi_dmul
+ 660              	.LVL84:
+ 661 029c 20A3     		adr	r3, .L49+8
+ 662 029e D3E90023 		ldrd	r2, [r3]
+ 663 02a2 8946     		mov	r9, r1
+ 664 02a4 01F10041 		add	r1, r1, #-2147483648
+ 665 02a8 8046     		mov	r8, r0
+ 666 02aa FFF7FEFF 		bl	__aeabi_dmul
+ 667              	.LVL85:
+ 668 02ae FFF7FEFF 		bl	__aeabi_d2f
+ 669              	.LVL86:
+  35:Core/Src/encoder.c **** 	}
+ 670              		.loc 1 35 0
+ 671 02b2 1BA3     		adr	r3, .L49+8
+ 672 02b4 D3E90023 		ldrd	r2, [r3]
+  34:Core/Src/encoder.c **** 		e->distancey = (e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 673              		.loc 1 34 0
+ 674 02b8 E061     		str	r0, [r4, #28]	@ float
+  35:Core/Src/encoder.c **** 	}
+ 675              		.loc 1 35 0
+ 676 02ba 4946     		mov	r1, r9
+ 677 02bc 4046     		mov	r0, r8
+ 678 02be FFF7FEFF 		bl	__aeabi_dmul
+ 679              	.LVL87:
+ 680 02c2 FFF7FEFF 		bl	__aeabi_d2f
+ 681              	.LVL88:
+ 682 02c6 07EE100A 		vmov	s14, r0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 15
+
+
+ 683 02ca 2062     		str	r0, [r4, #32]	@ float
+ 684 02cc 18E7     		b	.L35
+ 685              	.LVL89:
+ 686              	.L32:
+ 687              	.LBE19:
+ 688              	.LBE18:
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 689              		.loc 1 24 0
+ 690 02ce B4F91A00 		ldrsh	r0, [r4, #26]
+ 691 02d2 FFF7FEFF 		bl	__aeabi_i2d
+ 692              	.LVL90:
+ 693 02d6 10A3     		adr	r3, .L49
+ 694 02d8 D3E90023 		ldrd	r2, [r3]
+ 695 02dc FFF7FEFF 		bl	__aeabi_dmul
+ 696              	.LVL91:
+ 697 02e0 0FA3     		adr	r3, .L49+8
+ 698 02e2 D3E90023 		ldrd	r2, [r3]
+ 699 02e6 8046     		mov	r8, r0
+ 700 02e8 8946     		mov	r9, r1
+ 701 02ea FFF7FEFF 		bl	__aeabi_dmul
+ 702              	.LVL92:
+ 703 02ee FFF7FEFF 		bl	__aeabi_d2f
+ 704              	.LVL93:
+  25:Core/Src/encoder.c **** 	}
+ 705              		.loc 1 25 0
+ 706 02f2 09F1004B 		add	fp, r9, #-2147483648
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 707              		.loc 1 24 0
+ 708 02f6 E061     		str	r0, [r4, #28]	@ float
+  25:Core/Src/encoder.c **** 	}
+ 709              		.loc 1 25 0
+ 710 02f8 09A3     		adr	r3, .L49+8
+ 711 02fa D3E90023 		ldrd	r2, [r3]
+ 712 02fe 4046     		mov	r0, r8
+ 713 0300 5946     		mov	r1, fp
+ 714 0302 FFF7FEFF 		bl	__aeabi_dmul
+ 715              	.LVL94:
+ 716 0306 FFF7FEFF 		bl	__aeabi_d2f
+ 717              	.LVL95:
+ 718 030a 07EE100A 		vmov	s14, r0
+ 719 030e 2062     		str	r0, [r4, #32]	@ float
+ 720 0310 F6E6     		b	.L35
+ 721              	.L50:
+ 722 0312 00BFAFF3 		.align	3
+ 722      0080
+ 723              	.L49:
+ 724 0318 DF27DC65 		.word	1708926943
+ 725 031c 9EA0E63F 		.word	1072079006
+ 726 0320 FCC00FFC 		.word	-66076420
+ 727 0324 C02FFB3F 		.word	1073426368
+ 728 0328 00000000 		.word	e
+ 729 032c 00000000 		.word	.LANCHOR0
+ 730 0330 00000000 		.word	.LANCHOR1
+ 731              	.LVL96:
+ 732              	.L27:
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 733              		.loc 1 24 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 16
+
+
+ 734 0334 B4F90E00 		ldrsh	r0, [r4, #14]
+ 735 0338 FFF7FEFF 		bl	__aeabi_i2d
+ 736              	.LVL97:
+ 737 033c 3AA3     		adr	r3, .L51
+ 738 033e D3E90023 		ldrd	r2, [r3]
+ 739 0342 FFF7FEFF 		bl	__aeabi_dmul
+ 740              	.LVL98:
+ 741 0346 3AA3     		adr	r3, .L51+8
+ 742 0348 D3E90023 		ldrd	r2, [r3]
+ 743 034c 8046     		mov	r8, r0
+ 744 034e 8946     		mov	r9, r1
+ 745 0350 FFF7FEFF 		bl	__aeabi_dmul
+ 746              	.LVL99:
+ 747 0354 FFF7FEFF 		bl	__aeabi_d2f
+ 748              	.LVL100:
+  25:Core/Src/encoder.c **** 	}
+ 749              		.loc 1 25 0
+ 750 0358 09F1004B 		add	fp, r9, #-2147483648
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 751              		.loc 1 24 0
+ 752 035c 2061     		str	r0, [r4, #16]	@ float
+  25:Core/Src/encoder.c **** 	}
+ 753              		.loc 1 25 0
+ 754 035e 34A3     		adr	r3, .L51+8
+ 755 0360 D3E90023 		ldrd	r2, [r3]
+ 756 0364 4046     		mov	r0, r8
+ 757 0366 5946     		mov	r1, fp
+ 758 0368 FFF7FEFF 		bl	__aeabi_dmul
+ 759              	.LVL101:
+ 760 036c FFF7FEFF 		bl	__aeabi_d2f
+ 761              	.LVL102:
+ 762 0370 07EE100A 		vmov	s14, r0
+ 763 0374 6061     		str	r0, [r4, #20]	@ float
+ 764 0376 9AE6     		b	.L30
+ 765              	.LVL103:
+ 766              	.L47:
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 767              		.loc 1 24 0
+ 768 0378 B4F92600 		ldrsh	r0, [r4, #38]
+ 769 037c FFF7FEFF 		bl	__aeabi_i2d
+ 770              	.LVL104:
+ 771 0380 29A3     		adr	r3, .L51
+ 772 0382 D3E90023 		ldrd	r2, [r3]
+ 773 0386 FFF7FEFF 		bl	__aeabi_dmul
+ 774              	.LVL105:
+ 775 038a 29A3     		adr	r3, .L51+8
+ 776 038c D3E90023 		ldrd	r2, [r3]
+ 777 0390 8046     		mov	r8, r0
+ 778 0392 8946     		mov	r9, r1
+ 779 0394 FFF7FEFF 		bl	__aeabi_dmul
+ 780              	.LVL106:
+ 781 0398 FFF7FEFF 		bl	__aeabi_d2f
+ 782              	.LVL107:
+  25:Core/Src/encoder.c **** 	}
+ 783              		.loc 1 25 0
+ 784 039c 09F1004B 		add	fp, r9, #-2147483648
+  24:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 17
+
+
+ 785              		.loc 1 24 0
+ 786 03a0 A062     		str	r0, [r4, #40]	@ float
+  25:Core/Src/encoder.c **** 	}
+ 787              		.loc 1 25 0
+ 788 03a2 23A3     		adr	r3, .L51+8
+ 789 03a4 D3E90023 		ldrd	r2, [r3]
+ 790 03a8 4046     		mov	r0, r8
+ 791 03aa 5946     		mov	r1, fp
+ 792 03ac FFF7FEFF 		bl	__aeabi_dmul
+ 793              	.LVL108:
+ 794 03b0 FFF7FEFF 		bl	__aeabi_d2f
+ 795              	.LVL109:
+ 796 03b4 07EE100A 		vmov	s14, r0
+ 797 03b8 E062     		str	r0, [r4, #44]	@ float
+ 798 03ba CAE6     		b	.L37
+ 799              	.LVL110:
+ 800              	.L28:
+  29:Core/Src/encoder.c **** 		e->distancey = -(e->count*0.70710678)*(CIRCUMFERENCE_OF_WHEEL/PPR);
+ 801              		.loc 1 29 0
+ 802 03bc B4F90E00 		ldrsh	r0, [r4, #14]
+ 803 03c0 FFF7FEFF 		bl	__aeabi_i2d
+ 804              	.LVL111:
+ 805 03c4 18A3     		adr	r3, .L51
+ 806 03c6 D3E90023 		ldrd	r2, [r3]
+ 807 03ca FFF7FEFF 		bl	__aeabi_dmul
+ 808              	.LVL112:
+ 809 03ce 01F10043 		add	r3, r1, #-2147483648
+ 810 03d2 1946     		mov	r1, r3
+ 811 03d4 60E6     		b	.L43
+ 812              	.LVL113:
+ 813              	.L48:
+ 814 03d6 B4F92600 		ldrsh	r0, [r4, #38]
+ 815 03da FFF7FEFF 		bl	__aeabi_i2d
+ 816              	.LVL114:
+ 817 03de 12A3     		adr	r3, .L51
+ 818 03e0 D3E90023 		ldrd	r2, [r3]
+ 819 03e4 FFF7FEFF 		bl	__aeabi_dmul
+ 820              	.LVL115:
+ 821 03e8 01F10043 		add	r3, r1, #-2147483648
+ 822 03ec 1946     		mov	r1, r3
+ 823 03ee A5E6     		b	.L45
+ 824              	.LVL116:
+ 825              	.L23:
+ 826 03f0 B4F90200 		ldrsh	r0, [r4, #2]
+ 827 03f4 FFF7FEFF 		bl	__aeabi_i2d
+ 828              	.LVL117:
+ 829 03f8 0BA3     		adr	r3, .L51
+ 830 03fa D3E90023 		ldrd	r2, [r3]
+ 831 03fe FFF7FEFF 		bl	__aeabi_dmul
+ 832              	.LVL118:
+ 833 0402 01F10043 		add	r3, r1, #-2147483648
+ 834 0406 1946     		mov	r1, r3
+ 835 0408 1DE6     		b	.L42
+ 836              	.LVL119:
+ 837              	.L33:
+ 838 040a B4F91A00 		ldrsh	r0, [r4, #26]
+ 839 040e FFF7FEFF 		bl	__aeabi_i2d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 18
+
+
+ 840              	.LVL120:
+ 841 0412 05A3     		adr	r3, .L51
+ 842 0414 D3E90023 		ldrd	r2, [r3]
+ 843 0418 FFF7FEFF 		bl	__aeabi_dmul
+ 844              	.LVL121:
+ 845 041c 01F10043 		add	r3, r1, #-2147483648
+ 846 0420 1946     		mov	r1, r3
+ 847 0422 62E6     		b	.L44
+ 848              	.L52:
+ 849 0424 AFF30080 		.align	3
+ 850              	.L51:
+ 851 0428 DF27DC65 		.word	1708926943
+ 852 042c 9EA0E63F 		.word	1072079006
+ 853 0430 FCC00FFC 		.word	-66076420
+ 854 0434 C02FFB3F 		.word	1073426368
+ 855              	.LBE27:
+ 856              	.LBE35:
+ 857              	.LBE39:
+ 858              		.cfi_endproc
+ 859              	.LFE128:
+ 861              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+ 862              		.align	1
+ 863              		.p2align 2,,3
+ 864              		.global	HAL_GPIO_EXTI_Callback
+ 865              		.syntax unified
+ 866              		.thumb
+ 867              		.thumb_func
+ 868              		.fpu fpv4-sp-d16
+ 870              	HAL_GPIO_EXTI_Callback:
+ 871              	.LFB129:
+  52:Core/Src/encoder.c **** 
+  53:Core/Src/encoder.c **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+  54:Core/Src/encoder.c **** {
+ 872              		.loc 1 54 0
+ 873              		.cfi_startproc
+ 874              		@ args = 0, pretend = 0, frame = 0
+ 875              		@ frame_needed = 0, uses_anonymous_args = 0
+ 876              	.LVL122:
+  55:Core/Src/encoder.c ****         switch (GPIO_Pin) {
+ 877              		.loc 1 55 0
+ 878 0000 8028     		cmp	r0, #128
+  54:Core/Src/encoder.c ****         switch (GPIO_Pin) {
+ 879              		.loc 1 54 0
+ 880 0002 08B5     		push	{r3, lr}
+ 881              	.LCFI7:
+ 882              		.cfi_def_cfa_offset 8
+ 883              		.cfi_offset 3, -8
+ 884              		.cfi_offset 14, -4
+ 885              		.loc 1 55 0
+ 886 0004 28D0     		beq	.L55
+ 887 0006 1BD9     		bls	.L65
+ 888 0008 B0F5006F 		cmp	r0, #2048
+ 889 000c 0DD0     		beq	.L58
+ 890 000e B0F5005F 		cmp	r0, #8192
+ 891 0012 09D1     		bne	.L53
+  56:Core/Src/encoder.c ****                 case GPIO_PIN_1 : {             // PA1
+  57:Core/Src/encoder.c ****                         if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 19
+
+
+  58:Core/Src/encoder.c ****                         {
+  59:Core/Src/encoder.c ****                                 ++e[0].count;
+  60:Core/Src/encoder.c ****                         }
+  61:Core/Src/encoder.c ****                         else
+  62:Core/Src/encoder.c ****                         {
+  63:Core/Src/encoder.c ****                                 --e[0].count;
+  64:Core/Src/encoder.c ****                         }
+  65:Core/Src/encoder.c ****                 } break;
+  66:Core/Src/encoder.c **** 
+  67:Core/Src/encoder.c ****                 case GPIO_PIN_7 : {             // PA7
+  68:Core/Src/encoder.c ****                         if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6))
+  69:Core/Src/encoder.c ****                         {
+  70:Core/Src/encoder.c ****                                 ++e[1].count;
+  71:Core/Src/encoder.c ****                         }
+  72:Core/Src/encoder.c ****                         else
+  73:Core/Src/encoder.c ****                         {
+  74:Core/Src/encoder.c ****                                 --e[1].count;
+  75:Core/Src/encoder.c ****                         }
+  76:Core/Src/encoder.c ****                 } break;
+  77:Core/Src/encoder.c **** 
+  78:Core/Src/encoder.c ****                 case GPIO_PIN_11 : {            // PE11
+  79:Core/Src/encoder.c ****                         if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9))
+  80:Core/Src/encoder.c ****                         {
+  81:Core/Src/encoder.c ****                                 ++e[2].count;
+  82:Core/Src/encoder.c ****                         }
+  83:Core/Src/encoder.c ****                         else 
+  84:Core/Src/encoder.c ****                         {
+  85:Core/Src/encoder.c ****                                 --e[2].count;
+  86:Core/Src/encoder.c ****                         }
+  87:Core/Src/encoder.c ****                 } break;
+  88:Core/Src/encoder.c **** 
+  89:Core/Src/encoder.c ****                 case GPIO_PIN_13 : {            // PD13
+  90:Core/Src/encoder.c ****                         if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_12))
+ 892              		.loc 1 90 0
+ 893 0014 4FF48051 		mov	r1, #4096
+ 894 0018 1A48     		ldr	r0, .L67
+ 895              	.LVL123:
+ 896 001a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 897              	.LVL124:
+  91:Core/Src/encoder.c ****                         {
+  92:Core/Src/encoder.c ****                                 ++e[3].count; 
+ 898              		.loc 1 92 0
+ 899 001e 1A4A     		ldr	r2, .L67+4
+ 900 0020 D38C     		ldrh	r3, [r2, #38]
+  90:Core/Src/encoder.c ****                         {
+ 901              		.loc 1 90 0
+ 902 0022 60BB     		cbnz	r0, .L66
+  93:Core/Src/encoder.c ****                         }
+  94:Core/Src/encoder.c ****                         else
+  95:Core/Src/encoder.c ****                         {
+  96:Core/Src/encoder.c ****                                 --e[3].count;
+ 903              		.loc 1 96 0
+ 904 0024 013B     		subs	r3, r3, #1
+ 905 0026 D384     		strh	r3, [r2, #38]	@ movhi
+ 906              	.L53:
+  97:Core/Src/encoder.c ****                         }
+  98:Core/Src/encoder.c ****                 } break;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 20
+
+
+  99:Core/Src/encoder.c **** 
+ 100:Core/Src/encoder.c ****                 default : {
+ 101:Core/Src/encoder.c **** 
+ 102:Core/Src/encoder.c ****                 }
+ 103:Core/Src/encoder.c ****         }
+ 104:Core/Src/encoder.c **** }
+ 907              		.loc 1 104 0
+ 908 0028 08BD     		pop	{r3, pc}
+ 909              	.LVL125:
+ 910              	.L58:
+  79:Core/Src/encoder.c ****                         {
+ 911              		.loc 1 79 0
+ 912 002a 4FF40071 		mov	r1, #512
+ 913 002e 1748     		ldr	r0, .L67+8
+ 914              	.LVL126:
+ 915 0030 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 916              	.LVL127:
+  81:Core/Src/encoder.c ****                         }
+ 917              		.loc 1 81 0
+ 918 0034 144A     		ldr	r2, .L67+4
+ 919 0036 538B     		ldrh	r3, [r2, #26]
+  79:Core/Src/encoder.c ****                         {
+ 920              		.loc 1 79 0
+ 921 0038 F0B1     		cbz	r0, .L62
+  81:Core/Src/encoder.c ****                         }
+ 922              		.loc 1 81 0
+ 923 003a 0133     		adds	r3, r3, #1
+ 924 003c 5383     		strh	r3, [r2, #26]	@ movhi
+ 925              		.loc 1 104 0
+ 926 003e 08BD     		pop	{r3, pc}
+ 927              	.LVL128:
+ 928              	.L65:
+  55:Core/Src/encoder.c ****                 case GPIO_PIN_1 : {             // PA1
+ 929              		.loc 1 55 0
+ 930 0040 0228     		cmp	r0, #2
+ 931 0042 F1D1     		bne	.L53
+  57:Core/Src/encoder.c ****                         {
+ 932              		.loc 1 57 0
+ 933 0044 0121     		movs	r1, #1
+ 934 0046 1248     		ldr	r0, .L67+12
+ 935              	.LVL129:
+ 936 0048 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 937              	.LVL130:
+  59:Core/Src/encoder.c ****                         }
+ 938              		.loc 1 59 0
+ 939 004c 0E4A     		ldr	r2, .L67+4
+ 940 004e 5388     		ldrh	r3, [r2, #2]
+  57:Core/Src/encoder.c ****                         {
+ 941              		.loc 1 57 0
+ 942 0050 78B1     		cbz	r0, .L60
+  59:Core/Src/encoder.c ****                         }
+ 943              		.loc 1 59 0
+ 944 0052 0133     		adds	r3, r3, #1
+ 945 0054 5380     		strh	r3, [r2, #2]	@ movhi
+ 946              		.loc 1 104 0
+ 947 0056 08BD     		pop	{r3, pc}
+ 948              	.LVL131:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 21
+
+
+ 949              	.L55:
+  68:Core/Src/encoder.c ****                         {
+ 950              		.loc 1 68 0
+ 951 0058 4021     		movs	r1, #64
+ 952 005a 0D48     		ldr	r0, .L67+12
+ 953              	.LVL132:
+ 954 005c FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 955              	.LVL133:
+  70:Core/Src/encoder.c ****                         }
+ 956              		.loc 1 70 0
+ 957 0060 094A     		ldr	r2, .L67+4
+ 958 0062 D389     		ldrh	r3, [r2, #14]
+  68:Core/Src/encoder.c ****                         {
+ 959              		.loc 1 68 0
+ 960 0064 10B1     		cbz	r0, .L61
+  70:Core/Src/encoder.c ****                         }
+ 961              		.loc 1 70 0
+ 962 0066 0133     		adds	r3, r3, #1
+ 963 0068 D381     		strh	r3, [r2, #14]	@ movhi
+ 964              		.loc 1 104 0
+ 965 006a 08BD     		pop	{r3, pc}
+ 966              	.L61:
+  74:Core/Src/encoder.c ****                         }
+ 967              		.loc 1 74 0
+ 968 006c 013B     		subs	r3, r3, #1
+ 969 006e D381     		strh	r3, [r2, #14]	@ movhi
+ 970              		.loc 1 104 0
+ 971 0070 08BD     		pop	{r3, pc}
+ 972              	.L60:
+  63:Core/Src/encoder.c ****                         }
+ 973              		.loc 1 63 0
+ 974 0072 013B     		subs	r3, r3, #1
+ 975 0074 5380     		strh	r3, [r2, #2]	@ movhi
+ 976              		.loc 1 104 0
+ 977 0076 08BD     		pop	{r3, pc}
+ 978              	.L62:
+  85:Core/Src/encoder.c ****                         }
+ 979              		.loc 1 85 0
+ 980 0078 013B     		subs	r3, r3, #1
+ 981 007a 5383     		strh	r3, [r2, #26]	@ movhi
+ 982              		.loc 1 104 0
+ 983 007c 08BD     		pop	{r3, pc}
+ 984              	.L66:
+  92:Core/Src/encoder.c ****                         }
+ 985              		.loc 1 92 0
+ 986 007e 0133     		adds	r3, r3, #1
+ 987 0080 D384     		strh	r3, [r2, #38]	@ movhi
+ 988              		.loc 1 104 0
+ 989 0082 08BD     		pop	{r3, pc}
+ 990              	.L68:
+ 991              		.align	2
+ 992              	.L67:
+ 993 0084 000C0240 		.word	1073875968
+ 994 0088 00000000 		.word	e
+ 995 008c 00100240 		.word	1073876992
+ 996 0090 00000240 		.word	1073872896
+ 997              		.cfi_endproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 22
+
+
+ 998              	.LFE129:
+ 1000              		.global	roboty
+ 1001              		.global	robotx
+ 1002              		.comm	e,48,4
+ 1003              		.section	.bss.robotx,"aw",%nobits
+ 1004              		.align	2
+ 1005              		.set	.LANCHOR0,. + 0
+ 1008              	robotx:
+ 1009 0000 00000000 		.space	4
+ 1010              		.section	.bss.roboty,"aw",%nobits
+ 1011              		.align	2
+ 1012              		.set	.LANCHOR1,. + 0
+ 1015              	roboty:
+ 1016 0000 00000000 		.space	4
+ 1017              		.text
+ 1018              	.Letext0:
+ 1019              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1020              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1021              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1022              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1023              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 1024              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1025              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1026              		.file 9 "Drivers/CMSIS/Include/core_cm4.h"
+ 1027              		.file 10 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1028              		.file 11 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1029              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1030              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1031              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1032              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 1033              		.file 16 "Core/Inc/tim.h"
+ 1034              		.file 17 "Core/Inc/usart.h"
+ 1035              		.file 18 "Core/Inc/encoder.h"
+ 1036              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 encoder.c
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:18     .text.init_encoder:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:26     .text.init_encoder:00000000 init_encoder
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:68     .text.init_encoder:0000001c $d
+                            *COM*:00000030 e
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:76     .text.calculate_encoder_distance:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:84     .text.calculate_encoder_distance:00000000 calculate_encoder_distance
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:228    .text.calculate_encoder_distance:000000d8 $d
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:236    .text.calculate_robot_distance:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:244    .text.calculate_robot_distance:00000000 calculate_robot_distance
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:724    .text.calculate_robot_distance:00000318 $d
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:734    .text.calculate_robot_distance:00000334 $t
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:851    .text.calculate_robot_distance:00000428 $d
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:862    .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:870    .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:993    .text.HAL_GPIO_EXTI_Callback:00000084 $d
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:1015   .bss.roboty:00000000 roboty
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:1008   .bss.robotx:00000000 robotx
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:1004   .bss.robotx:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccASfi3e.s:1011   .bss.roboty:00000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_d2f
+HAL_GPIO_ReadPin
