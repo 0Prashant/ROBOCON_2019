@@ -144,7 +144,6 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM8_Init();
   MX_USART3_UART_Init();
-  HAL_UART_MspInit(&huart3);
   /* USER CODE BEGIN 2 */
   wheel_init();        
   HAL_TIM_Base_Start(&htim8);

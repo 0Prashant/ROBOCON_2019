@@ -11,7 +11,7 @@ struct Wheel Wheel_arr[4];
 void wheel_init(void)
 {
         int i;
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < 3; i++)
         {
                 Wheel_arr[i].id = i;
                 Wheel_arr[i].radius = 0.067;
@@ -32,5 +32,11 @@ void wheel_init(void)
         Wheel_arr[1].in2_port = GPIOC;
         Wheel_arr[1].in2_pin = GPIO_PIN_11 ;
         Wheel_arr[1].channel = TIM_CHANNEL_2;
+	
+        Wheel_arr[1].in1_port = GPIOA;
+        Wheel_arr[1].in1_pin = GPIO_PIN_9;
+        Wheel_arr[1].in2_port = GPIOC;
+        Wheel_arr[1].in2_pin = GPIO_PIN_10 ;
+        Wheel_arr[1].channel = TIM_CHANNEL_4;
 }
 

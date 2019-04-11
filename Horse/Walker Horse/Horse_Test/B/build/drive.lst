@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -17,59 +17,21 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.section	.text.robot_speed,"ax",%progbits
+  17              		.section	.text.robot_direction,"ax",%progbits
   18              		.align	1
-  19              		.global	robot_speed
+  19              		.global	robot_direction
   20              		.syntax unified
   21              		.thumb
   22              		.thumb_func
   23              		.fpu fpv4-sp-d16
-  25              	robot_speed:
+  25              	robot_direction:
   26              	.LFB126:
   27              		.file 1 "Core/Src/drive.c"
    1:Core/Src/drive.c **** #include "drive.h"
-   2:Core/Src/drive.c **** /*
+   2:Core/Src/drive.c **** 
    3:Core/Src/drive.c **** void robot_direction(enum robot_direction dir)
    4:Core/Src/drive.c **** {
-   5:Core/Src/drive.c **** 	
-   6:Core/Src/drive.c **** 	if(dir == FORWARD)
-   7:Core/Src/drive.c **** 	{
-   8:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
-   9:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
-  10:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_CLOCKWISE);
-  11:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[3], DIR_ANTICLOCKWISE);
-  12:Core/Src/drive.c **** 	}
-  13:Core/Src/drive.c **** 	if(dir == BACKWARD)
-  14:Core/Src/drive.c **** 	{
-  15:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_CLOCKWISE);
-  16:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
-  17:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_ANTICLOCKWISE);
-  18:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[3], DIR_CLOCKWISE);
-  19:Core/Src/drive.c **** 	}
-  20:Core/Src/drive.c **** 	if(dir == ROTATE)
-  21:Core/Src/drive.c **** 	{
-  22:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
-  23:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
-  24:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_ANTICLOCKWISE);
-  25:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[3], DIR_ANTICLOCKWISE);
-  26:Core/Src/drive.c **** 	}
-  27:Core/Src/drive.c **** 	if(dir == STOP)
-  28:Core/Src/drive.c **** 	{
-  29:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_HALT);
-  30:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_HALT);
-  31:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_HALT);
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 2
-
-
-  32:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[3], DIR_HALT);
-  33:Core/Src/drive.c **** 	}
-  34:Core/Src/drive.c **** 	
-  35:Core/Src/drive.c **** 	
-  36:Core/Src/drive.c **** }*/
-  37:Core/Src/drive.c **** 
-  38:Core/Src/drive.c **** void robot_speed(int16_t speed)
-  39:Core/Src/drive.c **** {
-  28              		.loc 1 39 0
+  28              		.loc 1 4 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -81,77 +43,286 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 1
   37              		.cfi_offset 4, -12
   38              		.cfi_offset 5, -8
   39              		.cfi_offset 14, -4
-  40 0002 0546     		mov	r5, r0
-  41              	.LVL1:
-  42              	.LBB2:
-  40:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
-  43              		.loc 1 40 0
-  44 0004 0024     		movs	r4, #0
-  45 0006 08E0     		b	.L2
-  46              	.LVL2:
-  47              	.L3:
-  41:Core/Src/drive.c **** 	{
-  42:Core/Src/drive.c **** 	set_DutyCycle(&Wheel_arr[i], speed);
-  48              		.loc 1 42 0 discriminator 3
-  49 0008 04EB8402 		add	r2, r4, r4, lsl #2
-  50 000c D300     		lsls	r3, r2, #3
-  51 000e A9B2     		uxth	r1, r5
-  52 0010 0348     		ldr	r0, .L5
-  53 0012 1844     		add	r0, r0, r3
-  54 0014 FFF7FEFF 		bl	set_DutyCycle
-  55              	.LVL3:
-  40:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
-  56              		.loc 1 40 0 discriminator 3
-  57 0018 0134     		adds	r4, r4, #1
-  58              	.LVL4:
-  59              	.L2:
-  40:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
-  60              		.loc 1 40 0 is_stmt 0 discriminator 1
-  61 001a 012C     		cmp	r4, #1
-  62 001c F4DD     		ble	.L3
-  63              	.LBE2:
-  43:Core/Src/drive.c **** 	}
+   5:Core/Src/drive.c **** 	
+   6:Core/Src/drive.c **** 	if(dir == FORWARD)
+  40              		.loc 1 6 0
+  41 0002 0446     		mov	r4, r0
+  42 0004 40B1     		cbz	r0, .L8
+  43              	.LVL1:
+  44              	.L2:
+   7:Core/Src/drive.c **** 	{
+   8:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_ANTICLOCKWISE);
+   9:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  10:Core/Src/drive.c **** 	}
+  11:Core/Src/drive.c **** 	if(dir == BACKWARD)
+  45              		.loc 1 11 0
+  46 0006 012C     		cmp	r4, #1
+  47 0008 11D0     		beq	.L9
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 2
+
+
+  48              	.L3:
+  12:Core/Src/drive.c **** 	{
+  13:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_CLOCKWISE);
+  14:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
+  15:Core/Src/drive.c **** 	}
+  16:Core/Src/drive.c **** 	if(dir == ROTATE_LEFT)
+  49              		.loc 1 16 0
+  50 000a 022C     		cmp	r4, #2
+  51 000c 1AD0     		beq	.L10
+  52              	.L4:
+  17:Core/Src/drive.c **** 	{
+  18:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_ANTICLOCKWISE);
+  19:Core/Src/drive.c **** 	}
+  20:Core/Src/drive.c **** 	if(dir == ROTATE_RIGHT)
+  53              		.loc 1 20 0
+  54 000e 032C     		cmp	r4, #3
+  55 0010 1DD0     		beq	.L11
+  56              	.L5:
+  21:Core/Src/drive.c **** 	{
+  22:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_CLOCKWISE);
+  23:Core/Src/drive.c **** 	}
+  24:Core/Src/drive.c **** 	if(dir == STOP)
+  57              		.loc 1 24 0
+  58 0012 042C     		cmp	r4, #4
+  59 0014 20D0     		beq	.L12
+  60              	.L1:
+  25:Core/Src/drive.c **** 	{
+  26:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[0], DIR_HALT);
+  27:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_HALT);
+  28:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_HALT);
+  29:Core/Src/drive.c **** 	}
+  30:Core/Src/drive.c **** 	
+  31:Core/Src/drive.c **** 	
+  32:Core/Src/drive.c **** }
+  61              		.loc 1 32 0
+  62 0016 38BD     		pop	{r3, r4, r5, pc}
+  63              	.LVL2:
+  64              	.L8:
+   8:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_CLOCKWISE);
+  65              		.loc 1 8 0
+  66 0018 174D     		ldr	r5, .L13
+  67 001a 0121     		movs	r1, #1
+  68 001c 2846     		mov	r0, r5
+  69              	.LVL3:
+  70 001e FFF7FEFF 		bl	set_Direction
+  71              	.LVL4:
+   9:Core/Src/drive.c **** 	}
+  72              		.loc 1 9 0
+  73 0022 0021     		movs	r1, #0
+  74 0024 05F12800 		add	r0, r5, #40
+  75 0028 FFF7FEFF 		bl	set_Direction
+  76              	.LVL5:
+  77 002c EBE7     		b	.L2
+  78              	.L9:
+  13:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_ANTICLOCKWISE);
+  79              		.loc 1 13 0
+  80 002e 124D     		ldr	r5, .L13
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 3
+
+
+  81 0030 0021     		movs	r1, #0
+  82 0032 2846     		mov	r0, r5
+  83 0034 FFF7FEFF 		bl	set_Direction
+  84              	.LVL6:
+  14:Core/Src/drive.c **** 	}
+  85              		.loc 1 14 0
+  86 0038 0121     		movs	r1, #1
+  87 003a 05F12800 		add	r0, r5, #40
+  88 003e FFF7FEFF 		bl	set_Direction
+  89              	.LVL7:
+  90 0042 E2E7     		b	.L3
+  91              	.L10:
+  18:Core/Src/drive.c **** 	}
+  92              		.loc 1 18 0
+  93 0044 0121     		movs	r1, #1
+  94 0046 0D48     		ldr	r0, .L13+4
+  95 0048 FFF7FEFF 		bl	set_Direction
+  96              	.LVL8:
+  97 004c DFE7     		b	.L4
+  98              	.L11:
+  22:Core/Src/drive.c **** 	}
+  99              		.loc 1 22 0
+ 100 004e 0021     		movs	r1, #0
+ 101 0050 0A48     		ldr	r0, .L13+4
+ 102 0052 FFF7FEFF 		bl	set_Direction
+ 103              	.LVL9:
+ 104 0056 DCE7     		b	.L5
+ 105              	.L12:
+  26:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[1], DIR_HALT);
+ 106              		.loc 1 26 0
+ 107 0058 074C     		ldr	r4, .L13
+ 108 005a 0221     		movs	r1, #2
+ 109 005c 2046     		mov	r0, r4
+ 110 005e FFF7FEFF 		bl	set_Direction
+ 111              	.LVL10:
+  27:Core/Src/drive.c **** 		set_Direction(&Wheel_arr[2], DIR_HALT);
+ 112              		.loc 1 27 0
+ 113 0062 0221     		movs	r1, #2
+ 114 0064 04F12800 		add	r0, r4, #40
+ 115 0068 FFF7FEFF 		bl	set_Direction
+ 116              	.LVL11:
+  28:Core/Src/drive.c **** 	}
+ 117              		.loc 1 28 0
+ 118 006c 0221     		movs	r1, #2
+ 119 006e 04F15000 		add	r0, r4, #80
+ 120 0072 FFF7FEFF 		bl	set_Direction
+ 121              	.LVL12:
+ 122              		.loc 1 32 0
+ 123 0076 CEE7     		b	.L1
+ 124              	.L14:
+ 125              		.align	2
+ 126              	.L13:
+ 127 0078 00000000 		.word	Wheel_arr
+ 128 007c 50000000 		.word	Wheel_arr+80
+ 129              		.cfi_endproc
+ 130              	.LFE126:
+ 132              		.section	.text.robot_speed,"ax",%progbits
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 4
+
+
+ 133              		.align	1
+ 134              		.global	robot_speed
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ 138              		.fpu fpv4-sp-d16
+ 140              	robot_speed:
+ 141              	.LFB127:
+  33:Core/Src/drive.c **** 
+  34:Core/Src/drive.c **** void robot_speed(int16_t speed)
+  35:Core/Src/drive.c **** {
+ 142              		.loc 1 35 0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146              	.LVL13:
+ 147 0000 38B5     		push	{r3, r4, r5, lr}
+ 148              	.LCFI1:
+ 149              		.cfi_def_cfa_offset 16
+ 150              		.cfi_offset 3, -16
+ 151              		.cfi_offset 4, -12
+ 152              		.cfi_offset 5, -8
+ 153              		.cfi_offset 14, -4
+ 154 0002 0546     		mov	r5, r0
+ 155              	.LVL14:
+ 156              	.LBB2:
+  36:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
+ 157              		.loc 1 36 0
+ 158 0004 0024     		movs	r4, #0
+ 159 0006 08E0     		b	.L16
+ 160              	.LVL15:
+ 161              	.L17:
+  37:Core/Src/drive.c **** 	{
+  38:Core/Src/drive.c **** 	set_DutyCycle(&Wheel_arr[i], speed);
+ 162              		.loc 1 38 0 discriminator 3
+ 163 0008 04EB8402 		add	r2, r4, r4, lsl #2
+ 164 000c D300     		lsls	r3, r2, #3
+ 165 000e A9B2     		uxth	r1, r5
+ 166 0010 0348     		ldr	r0, .L19
+ 167 0012 1844     		add	r0, r0, r3
+ 168 0014 FFF7FEFF 		bl	set_DutyCycle
+ 169              	.LVL16:
+  36:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
+ 170              		.loc 1 36 0 discriminator 3
+ 171 0018 0134     		adds	r4, r4, #1
+ 172              	.LVL17:
+ 173              	.L16:
+  36:Core/Src/drive.c **** 	for(int i=0; i<2; i++)
+ 174              		.loc 1 36 0 is_stmt 0 discriminator 1
+ 175 001a 012C     		cmp	r4, #1
+ 176 001c F4DD     		ble	.L17
+ 177              	.LBE2:
+  39:Core/Src/drive.c **** 	}
+  40:Core/Src/drive.c **** }
+ 178              		.loc 1 40 0 is_stmt 1
+ 179 001e 38BD     		pop	{r3, r4, r5, pc}
+ 180              	.LVL18:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 5
+
+
+ 181              	.L20:
+ 182              		.align	2
+ 183              	.L19:
+ 184 0020 00000000 		.word	Wheel_arr
+ 185              		.cfi_endproc
+ 186              	.LFE127:
+ 188              		.section	.text.robot_yaw,"ax",%progbits
+ 189              		.align	1
+ 190              		.global	robot_yaw
+ 191              		.syntax unified
+ 192              		.thumb
+ 193              		.thumb_func
+ 194              		.fpu fpv4-sp-d16
+ 196              	robot_yaw:
+ 197              	.LFB128:
+  41:Core/Src/drive.c **** void robot_yaw(int16_t speed)
+  42:Core/Src/drive.c **** {
+ 198              		.loc 1 42 0
+ 199              		.cfi_startproc
+ 200              		@ args = 0, pretend = 0, frame = 0
+ 201              		@ frame_needed = 0, uses_anonymous_args = 0
+ 202              	.LVL19:
+ 203 0000 08B5     		push	{r3, lr}
+ 204              	.LCFI2:
+ 205              		.cfi_def_cfa_offset 8
+ 206              		.cfi_offset 3, -8
+ 207              		.cfi_offset 14, -4
+  43:Core/Src/drive.c **** 	set_DutyCycle(&Wheel_arr[2], speed);
+ 208              		.loc 1 43 0
+ 209 0002 81B2     		uxth	r1, r0
+ 210 0004 0148     		ldr	r0, .L23
+ 211              	.LVL20:
+ 212 0006 FFF7FEFF 		bl	set_DutyCycle
+ 213              	.LVL21:
   44:Core/Src/drive.c **** }
-  64              		.loc 1 44 0 is_stmt 1
-  65 001e 38BD     		pop	{r3, r4, r5, pc}
-  66              	.LVL5:
-  67              	.L6:
-  68              		.align	2
-  69              	.L5:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 3
+ 214              		.loc 1 44 0
+ 215 000a 08BD     		pop	{r3, pc}
+ 216              	.L24:
+ 217              		.align	2
+ 218              	.L23:
+ 219 000c 50000000 		.word	Wheel_arr+80
+ 220              		.cfi_endproc
+ 221              	.LFE128:
+ 223              		.text
+ 224              	.Letext0:
+ 225              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 226              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 227              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 228              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 229              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 230              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 231              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 232              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 233              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 234              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 235              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 236              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 6
 
 
-  70 0020 00000000 		.word	Wheel_arr
-  71              		.cfi_endproc
-  72              	.LFE126:
-  74              		.text
-  75              	.Letext0:
-  76              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-  77              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-  78              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
-  79              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
-  80              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
-  81              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-  82              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-  83              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
-  84              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
-  85              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
-  86              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
-  87              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
-  88              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
-  89              		.file 15 "Core/Inc/tim.h"
-  90              		.file 16 "Core/Inc/wheel.h"
-  91              		.file 17 "Core/Inc/usart.h"
-  92              		.file 18 "Core/Inc/robo_init.h"
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s 			page 4
+ 237              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 238              		.file 15 "Core/Inc/tim.h"
+ 239              		.file 16 "Core/Inc/wheel.h"
+ 240              		.file 17 "Core/Inc/usart.h"
+ 241              		.file 18 "Core/Inc/robo_init.h"
+ 242              		.file 19 "Core/Inc/drive.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 drive.c
-C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s:18     .text.robot_speed:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s:25     .text.robot_speed:00000000 robot_speed
-C:\Users\Prashant\AppData\Local\Temp\ccJ8PDQ0.s:70     .text.robot_speed:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:18     .text.robot_direction:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:25     .text.robot_direction:00000000 robot_direction
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:127    .text.robot_direction:00000078 $d
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:133    .text.robot_speed:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:140    .text.robot_speed:00000000 robot_speed
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:184    .text.robot_speed:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:189    .text.robot_yaw:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:196    .text.robot_yaw:00000000 robot_yaw
+C:\Users\Prashant\AppData\Local\Temp\ccRP8e8H.s:219    .text.robot_yaw:0000000c $d
 
 UNDEFINED SYMBOLS
-set_DutyCycle
+set_Direction
 Wheel_arr
+set_DutyCycle

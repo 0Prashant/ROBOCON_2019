@@ -8,11 +8,13 @@ enum robot_direction
 {
 	FORWARD,
 	BACKWARD,
-	ROTATE,
+	ROTATE_LEFT,
+	ROTATE_RIGHT,
 	STOP
 };
 
-//void robot_direction(enum robot_direction);
+void robot_direction(enum robot_direction);
 void robot_speed(int16_t speed);
+void robot_yaw(int16_t speed);
 
 #endif //_DRIVE_H_
