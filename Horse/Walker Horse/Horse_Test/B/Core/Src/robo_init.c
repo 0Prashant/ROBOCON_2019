@@ -27,16 +27,16 @@ void wheel_init(void)
         Wheel_arr[0].in2_pin = GPIO_PIN_4;
         Wheel_arr[0].channel = TIM_CHANNEL_1;
 
-        Wheel_arr[1].in1_port = GPIOA;
-        Wheel_arr[1].in1_pin = GPIO_PIN_15;
-        Wheel_arr[1].in2_port = GPIOC;
-        Wheel_arr[1].in2_pin = GPIO_PIN_11 ;
+        Wheel_arr[1].in1_port = GPIOC;
+        Wheel_arr[1].in1_pin = GPIO_PIN_11;
+        Wheel_arr[1].in2_port = GPIOA;
+        Wheel_arr[1].in2_pin = GPIO_PIN_15 ;
         Wheel_arr[1].channel = TIM_CHANNEL_2;
 	
-        Wheel_arr[1].in1_port = GPIOA;
-        Wheel_arr[1].in1_pin = GPIO_PIN_9;
-        Wheel_arr[1].in2_port = GPIOC;
-        Wheel_arr[1].in2_pin = GPIO_PIN_10 ;
-        Wheel_arr[1].channel = TIM_CHANNEL_4;
+        Wheel_arr[2].in1_port = GPIOA;
+        Wheel_arr[2].in1_pin = GPIO_PIN_9;
+        Wheel_arr[2].in2_port = GPIOA;
+        Wheel_arr[2].in2_pin = GPIO_PIN_10 ;
+        Wheel_arr[2].channel = TIM_CHANNEL_4;
 }
 

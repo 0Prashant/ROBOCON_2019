@@ -6,10 +6,11 @@
 
 #include "robo_init.h"
 extern struct Wheel Wheel_arr[4];
-uint16_t max_front_velocity = 30000;
-uint16_t max_rotation_velocity = 40000;
+uint16_t max_front_velocity = 35000;
+uint16_t max_rotation_velocity = 50000;
 uint16_t front_velocity = 0;
 uint16_t rotation_velocity = 0;
+uint8_t ramp_speed = 250; 
 
 void play(void)
 {
@@ -33,47 +34,45 @@ void play(void)
 			{
 				robot_direction(FORWARD);
 				if(front_velocity<max_front_velocity)
-					front_velocity++;
+					front_velocity+=ramp_speed;
 				if(rotation_velocity>0)
-					rotation_velocity--;
+					rotation_velocity-=ramp_speed;
 				break;
 			}
 			case 'B':
 			{
 				robot_direction(BACKWARD);
 				if(front_velocity<max_front_velocity)
-					front_velocity++;
+					front_velocity+=ramp_speed;
 				if(rotation_velocity>0)
-					rotation_velocity--;
+					rotation_velocity-=ramp_speed;
 				break;
 			}
 			case 'L':
 			{
 				robot_direction(ROTATE_LEFT);
 				if(front_velocity>0)
-					front_velocity--;
+					front_velocity-=ramp_speed;
 				if(rotation_velocity<max_rotation_velocity)
-					rotation_velocity++;
+					rotation_velocity+=ramp_speed;
 				break;
 			}
 			case 'R':
 			{
 				robot_direction(ROTATE_RIGHT);
 				if(front_velocity>0)
-					front_velocity--;
+					front_velocity-=ramp_speed;
 				if(rotation_velocity<max_rotation_velocity)
-					rotation_velocity++;
-				robot_speed(front_velocity);
-				robot_yaw(rotation_velocity);
+					rotation_velocity+=ramp_speed;
 				break;
 			}
 			case 'S':
 			{
 				robot_direction(STOP);
 				if(front_velocity>0)
-					front_velocity--;
+					front_velocity-=ramp_speed;
 				if(rotation_velocity>0)
-					rotation_velocity--;
+					rotation_velocity-=ramp_speed;
 				break; 
 			}
 			default:

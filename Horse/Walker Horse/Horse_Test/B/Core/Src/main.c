@@ -149,6 +149,7 @@ int main(void)
   HAL_TIM_Base_Start(&htim8);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
