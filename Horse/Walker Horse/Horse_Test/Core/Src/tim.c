@@ -39,7 +39,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
-#include "wheel.h"
+
 /* USER CODE BEGIN 0 */
    
 /* USER CODE END 0 */
@@ -56,7 +56,7 @@ void MX_TIM8_Init(void)
   htim8.Instance = TIM8;
   htim8.Init.Prescaler = 0;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = time_period(8000);
+  htim8.Init.Period = 0;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)

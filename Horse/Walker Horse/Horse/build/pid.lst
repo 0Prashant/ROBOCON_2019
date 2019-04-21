@@ -1,0 +1,227 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"pid.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN3pid17set_pid_constantsEfff,"ax",%progbits
+  18              		.align	1
+  19              		.global	_ZN3pid17set_pid_constantsEfff
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN3pid17set_pid_constantsEfff:
+  26              	.LFB6:
+  27              		.file 1 "Core/Src/devs/pid.cpp"
+   1:Core/Src/devs/pid.cpp **** #include "pid.h"
+   2:Core/Src/devs/pid.cpp **** 
+   3:Core/Src/devs/pid.cpp **** void pid::set_pid_constants(float kp, float ki, float kd){
+  28              		.loc 1 3 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+   4:Core/Src/devs/pid.cpp **** 	kp_ = kp;
+  34              		.loc 1 4 0
+  35 0000 80ED000A 		vstr.32	s0, [r0]
+   5:Core/Src/devs/pid.cpp **** 	ki_ = ki; 
+  36              		.loc 1 5 0
+  37 0004 C0ED010A 		vstr.32	s1, [r0, #4]
+   6:Core/Src/devs/pid.cpp **** 	kd_ = kd;
+  38              		.loc 1 6 0
+  39 0008 80ED021A 		vstr.32	s2, [r0, #8]
+   7:Core/Src/devs/pid.cpp **** }
+  40              		.loc 1 7 0
+  41 000c 7047     		bx	lr
+  42              		.cfi_endproc
+  43              	.LFE6:
+  45              		.global	__aeabi_f2d
+  46              		.global	__aeabi_dmul
+  47              		.global	__aeabi_ddiv
+  48              		.global	__aeabi_d2f
+  49              		.section	.text._ZN3pid11compute_pidEff,"ax",%progbits
+  50              		.align	1
+  51              		.global	_ZN3pid11compute_pidEff
+  52              		.syntax unified
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s 			page 2
+
+
+  53              		.thumb
+  54              		.thumb_func
+  55              		.fpu fpv4-sp-d16
+  57              	_ZN3pid11compute_pidEff:
+  58              	.LFB7:
+   8:Core/Src/devs/pid.cpp **** 	
+   9:Core/Src/devs/pid.cpp **** float pid::compute_pid(float current_value, float set_point){
+  59              		.loc 1 9 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              	.LVL1:
+  64 0000 10B5     		push	{r4, lr}
+  65              	.LCFI0:
+  66              		.cfi_def_cfa_offset 8
+  67              		.cfi_offset 4, -8
+  68              		.cfi_offset 14, -4
+  69 0002 2DED048B 		vpush.64	{d8, d9}
+  70              	.LCFI1:
+  71              		.cfi_def_cfa_offset 24
+  72              		.cfi_offset 80, -24
+  73              		.cfi_offset 81, -20
+  74              		.cfi_offset 82, -16
+  75              		.cfi_offset 83, -12
+  76 0006 0446     		mov	r4, r0
+  10:Core/Src/devs/pid.cpp **** 	
+  11:Core/Src/devs/pid.cpp **** 	float error = set_point - current_value;
+  77              		.loc 1 11 0
+  78 0008 30EEC08A 		vsub.f32	s16, s1, s0
+  79              	.LVL2:
+  12:Core/Src/devs/pid.cpp **** 
+  13:Core/Src/devs/pid.cpp **** 	float i_term = SAMPLE_TIME * error / 1000 ;
+  80              		.loc 1 13 0
+  81 000c F2EE047A 		vmov.f32	s15, #1.0e+1
+  82 0010 68EE277A 		vmul.f32	s15, s16, s15
+  83 0014 9FED267A 		vldr.32	s14, .L8
+  84 0018 87EE879A 		vdiv.f32	s18, s15, s14
+  85              	.LVL3:
+  14:Core/Src/devs/pid.cpp **** 	float d_term = (error - 2*last_error_ + prev_error_) * 1000.0 /(float)SAMPLE_TIME;
+  86              		.loc 1 14 0
+  87 001c D0ED058A 		vldr.32	s17, [r0, #20]
+  88 0020 78EEA87A 		vadd.f32	s15, s17, s17
+  89 0024 78EE677A 		vsub.f32	s15, s16, s15
+  90 0028 90ED047A 		vldr.32	s14, [r0, #16]
+  91 002c 77EE877A 		vadd.f32	s15, s15, s14
+  92 0030 17EE900A 		vmov	r0, s15
+  93              	.LVL4:
+  94 0034 FFF7FEFF 		bl	__aeabi_f2d
+  95              	.LVL5:
+  96 0038 0022     		movs	r2, #0
+  97 003a 1E4B     		ldr	r3, .L8+4
+  98 003c FFF7FEFF 		bl	__aeabi_dmul
+  99              	.LVL6:
+ 100 0040 0022     		movs	r2, #0
+ 101 0042 1D4B     		ldr	r3, .L8+8
+ 102 0044 FFF7FEFF 		bl	__aeabi_ddiv
+ 103              	.LVL7:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s 			page 3
+
+
+ 104 0048 FFF7FEFF 		bl	__aeabi_d2f
+ 105              	.LVL8:
+  15:Core/Src/devs/pid.cpp **** 
+  16:Core/Src/devs/pid.cpp **** 	float output = last_output_  + kp_*error + ki_*i_term + kd_*d_term ;
+ 106              		.loc 1 16 0
+ 107 004c 94ED030A 		vldr.32	s0, [r4, #12]
+ 108 0050 D4ED007A 		vldr.32	s15, [r4]
+ 109 0054 67EE887A 		vmul.f32	s15, s15, s16
+ 110 0058 30EE270A 		vadd.f32	s0, s0, s15
+ 111 005c D4ED017A 		vldr.32	s15, [r4, #4]
+ 112 0060 67EE897A 		vmul.f32	s15, s15, s18
+ 113 0064 30EE270A 		vadd.f32	s0, s0, s15
+ 114 0068 D4ED027A 		vldr.32	s15, [r4, #8]
+ 115 006c 07EE100A 		vmov	s14, r0
+ 116 0070 67EE877A 		vmul.f32	s15, s15, s14
+ 117 0074 30EE270A 		vadd.f32	s0, s0, s15
+ 118              	.LVL9:
+  17:Core/Src/devs/pid.cpp **** 
+  18:Core/Src/devs/pid.cpp **** 	last_output_  = output ;
+ 119              		.loc 1 18 0
+ 120 0078 84ED030A 		vstr.32	s0, [r4, #12]
+  19:Core/Src/devs/pid.cpp **** 	prev_error_   = last_error_;
+ 121              		.loc 1 19 0
+ 122 007c C4ED048A 		vstr.32	s17, [r4, #16]
+  20:Core/Src/devs/pid.cpp **** 	last_error_   = error;
+ 123              		.loc 1 20 0
+ 124 0080 84ED058A 		vstr.32	s16, [r4, #20]
+  21:Core/Src/devs/pid.cpp **** 	
+  22:Core/Src/devs/pid.cpp **** 	
+  23:Core/Src/devs/pid.cpp **** 	//printf("  iterm = %d\n", (int)(i_term*100));
+  24:Core/Src/devs/pid.cpp **** 
+  25:Core/Src/devs/pid.cpp **** 	if(output > 70 ) 
+ 125              		.loc 1 25 0
+ 126 0084 DFED0D7A 		vldr.32	s15, .L8+12
+ 127 0088 B4EEE70A 		vcmpe.f32	s0, s15
+ 128 008c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 129 0090 01DD     		ble	.L3
+  26:Core/Src/devs/pid.cpp **** 	{
+  27:Core/Src/devs/pid.cpp **** 		output = 70;
+ 130              		.loc 1 27 0
+ 131 0092 B0EE670A 		vmov.f32	s0, s15
+ 132              	.LVL10:
+ 133              	.L3:
+  28:Core/Src/devs/pid.cpp **** 	}
+  29:Core/Src/devs/pid.cpp **** 
+  30:Core/Src/devs/pid.cpp **** 	if(output < -70)
+ 134              		.loc 1 30 0
+ 135 0096 DFED0A7A 		vldr.32	s15, .L8+16
+ 136 009a B4EEE70A 		vcmpe.f32	s0, s15
+ 137 009e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 138 00a2 01D5     		bpl	.L2
+  31:Core/Src/devs/pid.cpp **** 	{
+  32:Core/Src/devs/pid.cpp **** 		output = -70; 	
+ 139              		.loc 1 32 0
+ 140 00a4 B0EE670A 		vmov.f32	s0, s15
+ 141              	.LVL11:
+ 142              	.L2:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s 			page 4
+
+
+  33:Core/Src/devs/pid.cpp **** 	
+  34:Core/Src/devs/pid.cpp **** 	}
+  35:Core/Src/devs/pid.cpp **** 	return output;
+  36:Core/Src/devs/pid.cpp **** }...
+ 143              		.loc 1 36 0
+ 144 00a8 BDEC048B 		vldm	sp!, {d8-d9}
+ 145              	.LCFI2:
+ 146              		.cfi_restore 82
+ 147              		.cfi_restore 83
+ 148              		.cfi_restore 80
+ 149              		.cfi_restore 81
+ 150              		.cfi_def_cfa_offset 8
+ 151              	.LVL12:
+ 152 00ac 10BD     		pop	{r4, pc}
+ 153              	.LVL13:
+ 154              	.L9:
+ 155 00ae 00BF     		.align	2
+ 156              	.L8:
+ 157 00b0 00007A44 		.word	1148846080
+ 158 00b4 00408F40 		.word	1083129856
+ 159 00b8 00002440 		.word	1076101120
+ 160 00bc 00008C42 		.word	1116471296
+ 161 00c0 00008CC2 		.word	-1031012352
+ 162              		.cfi_endproc
+ 163              	.LFE7:
+ 165              		.text
+ 166              	.Letext0:
+ 167              		.file 2 "Core/Inc/devs/pid.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 pid.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s:18     .text._ZN3pid17set_pid_constantsEfff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s:25     .text._ZN3pid17set_pid_constantsEfff:00000000 _ZN3pid17set_pid_constantsEfff
+C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s:50     .text._ZN3pid11compute_pidEff:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s:57     .text._ZN3pid11compute_pidEff:00000000 _ZN3pid11compute_pidEff
+C:\Users\Prashant\AppData\Local\Temp\ccVnmbJ3.s:157    .text._ZN3pid11compute_pidEff:000000b0 $d
+
+UNDEFINED SYMBOLS
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_d2f

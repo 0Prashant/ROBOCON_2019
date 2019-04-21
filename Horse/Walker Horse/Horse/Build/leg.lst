@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc7RkKha.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -17,11 +17,479 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc7RkKha.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              	.Letext0:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc7RkKha.s 			page 2
+  17              		.section	.text._ZN3leg9set_omegaEf,"ax",%progbits
+  18              		.align	1
+  19              		.global	_ZN3leg9set_omegaEf
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN3leg9set_omegaEf:
+  26              	.LFB383:
+  27              		.file 1 "Core/Src/devs/leg.cpp"
+   1:Core/Src/devs/leg.cpp **** #include "leg.h"
+   2:Core/Src/devs/leg.cpp **** 
+   3:Core/Src/devs/leg.cpp **** float gravity_compensator_factor;
+   4:Core/Src/devs/leg.cpp **** float omeg;
+   5:Core/Src/devs/leg.cpp **** float ang;
+   6:Core/Src/devs/leg.cpp **** 
+   7:Core/Src/devs/leg.cpp **** void leg::set_omega(float omega){
+  28              		.loc 1 7 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40 0002 2DED028B 		vpush.64	{d8}
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 24
+  43              		.cfi_offset 80, -24
+  44              		.cfi_offset 81, -20
+  45 0006 0446     		mov	r4, r0
+  46 0008 B0EE408A 		vmov.f32	s16, s0
+   8:Core/Src/devs/leg.cpp **** 	encoder__.calculate_omega();
+  47              		.loc 1 8 0
+  48 000c 00F11C05 		add	r5, r0, #28
+  49 0010 2846     		mov	r0, r5
+  50              	.LVL1:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 2
+
+
+  51 0012 FFF7FEFF 		bl	_ZN7encoder15calculate_omegaEv
+  52              	.LVL2:
+   9:Core/Src/devs/leg.cpp **** 	omeg = encoder__.get_omega();
+  53              		.loc 1 9 0
+  54 0016 2846     		mov	r0, r5
+  55 0018 FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
+  56              	.LVL3:
+  57 001c 104B     		ldr	r3, .L3
+  58 001e 83ED000A 		vstr.32	s0, [r3]
+  10:Core/Src/devs/leg.cpp **** 	ang = encoder__.get_angle();
+  59              		.loc 1 10 0
+  60 0022 2846     		mov	r0, r5
+  61 0024 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+  62              	.LVL4:
+  63 0028 0E4B     		ldr	r3, .L3+4
+  64 002a 83ED000A 		vstr.32	s0, [r3]
+  11:Core/Src/devs/leg.cpp **** 	// if(this->is_raised()){
+  12:Core/Src/devs/leg.cpp **** 	// 	gravity_compensator_factor = cos(encoder__.get_angle()) * BODY_WEIGHT * kg_;
+  13:Core/Src/devs/leg.cpp **** 	// }
+  14:Core/Src/devs/leg.cpp **** 	// else{
+  15:Core/Src/devs/leg.cpp **** 	// 	gravity_compensator_factor = cos(encoder__.get_angle()) * LEG_WEIGHT * kg_;
+  16:Core/Src/devs/leg.cpp **** 	// }
+  17:Core/Src/devs/leg.cpp **** 
+  18:Core/Src/devs/leg.cpp **** 	float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
+  65              		.loc 1 18 0
+  66 002e 04F12C06 		add	r6, r4, #44
+  67 0032 2846     		mov	r0, r5
+  68 0034 FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
+  69              	.LVL5:
+  70 0038 F0EE480A 		vmov.f32	s1, s16
+  71 003c 3046     		mov	r0, r6
+  72 003e FFF7FEFF 		bl	_ZN3pid11compute_pidEff
+  73              	.LVL6:
+  74 0042 B0EE408A 		vmov.f32	s16, s0
+  75              	.LVL7:
+  19:Core/Src/devs/leg.cpp **** 	//computed_omega += gravity_compensator_factor; 
+  20:Core/Src/devs/leg.cpp **** 	motor__[0].set_omega(computed_omega);
+  76              		.loc 1 20 0
+  77 0046 04F11400 		add	r0, r4, #20
+  78 004a FFF7FEFF 		bl	_ZN5motor9set_omegaEf
+  79              	.LVL8:
+  21:Core/Src/devs/leg.cpp **** 	motor__[1].set_omega(computed_omega);
+  80              		.loc 1 21 0
+  81 004e B0EE480A 		vmov.f32	s0, s16
+  82 0052 04F11800 		add	r0, r4, #24
+  83 0056 FFF7FEFF 		bl	_ZN5motor9set_omegaEf
+  84              	.LVL9:
+  22:Core/Src/devs/leg.cpp **** 
+  23:Core/Src/devs/leg.cpp **** 	// printf ("%d \t %d \t %d \t %d \t ", (int)(omega*100), (int)(computed_omega), (int)steps, (int)(
+  24:Core/Src/devs/leg.cpp **** 	// if(is_raised()){
+  25:Core/Src/devs/leg.cpp **** 	// 	printf("Raised\n");
+  26:Core/Src/devs/leg.cpp **** 	// }
+  27:Core/Src/devs/leg.cpp **** 	// else{
+  28:Core/Src/devs/leg.cpp **** 	// 	printf("Fallen\n");
+  29:Core/Src/devs/leg.cpp **** 	// }
+  30:Core/Src/devs/leg.cpp **** }
+  85              		.loc 1 30 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 3
+
+
+  86 005a BDEC028B 		vldm	sp!, {d8}
+  87              	.LCFI2:
+  88              		.cfi_restore 80
+  89              		.cfi_restore 81
+  90              		.cfi_def_cfa_offset 16
+  91              	.LVL10:
+  92 005e 70BD     		pop	{r4, r5, r6, pc}
+  93              	.LVL11:
+  94              	.L4:
+  95              		.align	2
+  96              	.L3:
+  97 0060 00000000 		.word	.LANCHOR0
+  98 0064 00000000 		.word	.LANCHOR1
+  99              		.cfi_endproc
+ 100              	.LFE383:
+ 102              		.section	.text._ZN3leg9get_omegaEv,"ax",%progbits
+ 103              		.align	1
+ 104              		.global	_ZN3leg9get_omegaEv
+ 105              		.syntax unified
+ 106              		.thumb
+ 107              		.thumb_func
+ 108              		.fpu fpv4-sp-d16
+ 110              	_ZN3leg9get_omegaEv:
+ 111              	.LFB384:
+  31:Core/Src/devs/leg.cpp **** float leg::get_omega(void){
+ 112              		.loc 1 31 0
+ 113              		.cfi_startproc
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116              	.LVL12:
+ 117 0000 08B5     		push	{r3, lr}
+ 118              	.LCFI3:
+ 119              		.cfi_def_cfa_offset 8
+ 120              		.cfi_offset 3, -8
+ 121              		.cfi_offset 14, -4
+  32:Core/Src/devs/leg.cpp **** 	return encoder__.get_omega();
+ 122              		.loc 1 32 0
+ 123 0002 1C30     		adds	r0, r0, #28
+ 124              	.LVL13:
+ 125 0004 FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
+ 126              	.LVL14:
+  33:Core/Src/devs/leg.cpp **** }
+ 127              		.loc 1 33 0
+ 128 0008 08BD     		pop	{r3, pc}
+ 129              		.cfi_endproc
+ 130              	.LFE384:
+ 132              		.section	.text._ZN3leg11reset_angleEf,"ax",%progbits
+ 133              		.align	1
+ 134              		.global	_ZN3leg11reset_angleEf
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ 138              		.fpu fpv4-sp-d16
+ 140              	_ZN3leg11reset_angleEf:
+ 141              	.LFB386:
+  34:Core/Src/devs/leg.cpp **** bool leg::is_raised(){
+  35:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=0) && (this->get_angle()<=(PI)))  ||  ((this->get_angle()<=(-PI)) && (this
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 4
+
+
+  36:Core/Src/devs/leg.cpp **** 		return true;
+  37:Core/Src/devs/leg.cpp **** 	}
+  38:Core/Src/devs/leg.cpp **** 	else{
+  39:Core/Src/devs/leg.cpp **** 		return false;
+  40:Core/Src/devs/leg.cpp **** 	}
+  41:Core/Src/devs/leg.cpp **** 
+  42:Core/Src/devs/leg.cpp **** }
+  43:Core/Src/devs/leg.cpp **** void leg::reset_angle(float angle_in_radians){
+ 142              		.loc 1 43 0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146              	.LVL15:
+ 147 0000 08B5     		push	{r3, lr}
+ 148              	.LCFI4:
+ 149              		.cfi_def_cfa_offset 8
+ 150              		.cfi_offset 3, -8
+ 151              		.cfi_offset 14, -4
+  44:Core/Src/devs/leg.cpp **** 	encoder__.reset_angle(angle_in_radians);
+ 152              		.loc 1 44 0
+ 153 0002 1C30     		adds	r0, r0, #28
+ 154              	.LVL16:
+ 155 0004 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+ 156              	.LVL17:
+  45:Core/Src/devs/leg.cpp **** }
+ 157              		.loc 1 45 0
+ 158 0008 08BD     		pop	{r3, pc}
+ 159              		.cfi_endproc
+ 160              	.LFE386:
+ 162              		.section	.text._ZN3leg9get_angleEv,"ax",%progbits
+ 163              		.align	1
+ 164              		.global	_ZN3leg9get_angleEv
+ 165              		.syntax unified
+ 166              		.thumb
+ 167              		.thumb_func
+ 168              		.fpu fpv4-sp-d16
+ 170              	_ZN3leg9get_angleEv:
+ 171              	.LFB387:
+  46:Core/Src/devs/leg.cpp **** float leg::get_angle(void){
+ 172              		.loc 1 46 0
+ 173              		.cfi_startproc
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              	.LVL18:
+ 177 0000 08B5     		push	{r3, lr}
+ 178              	.LCFI5:
+ 179              		.cfi_def_cfa_offset 8
+ 180              		.cfi_offset 3, -8
+ 181              		.cfi_offset 14, -4
+  47:Core/Src/devs/leg.cpp **** 	return encoder__.get_angle();
+ 182              		.loc 1 47 0
+ 183 0002 1C30     		adds	r0, r0, #28
+ 184              	.LVL19:
+ 185 0004 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 186              	.LVL20:
+  48:Core/Src/devs/leg.cpp **** }
+ 187              		.loc 1 48 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 5
+
+
+ 188 0008 08BD     		pop	{r3, pc}
+ 189              		.cfi_endproc
+ 190              	.LFE387:
+ 192              		.global	__aeabi_f2d
+ 193              		.global	__aeabi_dcmple
+ 194              		.global	__aeabi_dcmpge
+ 195              		.section	.text._ZN3leg9is_raisedEv,"ax",%progbits
+ 196              		.align	1
+ 197              		.global	_ZN3leg9is_raisedEv
+ 198              		.syntax unified
+ 199              		.thumb
+ 200              		.thumb_func
+ 201              		.fpu fpv4-sp-d16
+ 203              	_ZN3leg9is_raisedEv:
+ 204              	.LFB385:
+  34:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=0) && (this->get_angle()<=(PI)))  ||  ((this->get_angle()<=(-PI)) && (this
+ 205              		.loc 1 34 0
+ 206              		.cfi_startproc
+ 207              		@ args = 0, pretend = 0, frame = 0
+ 208              		@ frame_needed = 0, uses_anonymous_args = 0
+ 209              	.LVL21:
+ 210 0000 10B5     		push	{r4, lr}
+ 211              	.LCFI6:
+ 212              		.cfi_def_cfa_offset 8
+ 213              		.cfi_offset 4, -8
+ 214              		.cfi_offset 14, -4
+ 215 0002 0446     		mov	r4, r0
+  35:Core/Src/devs/leg.cpp **** 		return true;
+ 216              		.loc 1 35 0
+ 217 0004 FFF7FEFF 		bl	_ZN3leg9get_angleEv
+ 218              	.LVL22:
+ 219 0008 B5EEC00A 		vcmpe.f32	s0, #0
+ 220 000c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 221 0010 0CDB     		blt	.L12
+  35:Core/Src/devs/leg.cpp **** 		return true;
+ 222              		.loc 1 35 0 is_stmt 0 discriminator 1
+ 223 0012 2046     		mov	r0, r4
+ 224 0014 FFF7FEFF 		bl	_ZN3leg9get_angleEv
+ 225              	.LVL23:
+ 226 0018 10EE100A 		vmov	r0, s0
+ 227 001c FFF7FEFF 		bl	__aeabi_f2d
+ 228              	.LVL24:
+ 229 0020 13A3     		adr	r3, .L24
+ 230 0022 D3E90023 		ldrd	r2, [r3]
+ 231 0026 FFF7FEFF 		bl	__aeabi_dcmple
+ 232              	.LVL25:
+ 233 002a F0B9     		cbnz	r0, .L16
+ 234              	.L12:
+  35:Core/Src/devs/leg.cpp **** 		return true;
+ 235              		.loc 1 35 0 discriminator 4
+ 236 002c 2046     		mov	r0, r4
+ 237 002e FFF7FEFF 		bl	_ZN3leg9get_angleEv
+ 238              	.LVL26:
+ 239 0032 10EE100A 		vmov	r0, s0
+ 240 0036 FFF7FEFF 		bl	__aeabi_f2d
+ 241              	.LVL27:
+ 242 003a 0FA3     		adr	r3, .L24+8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 6
+
+
+ 243 003c D3E90023 		ldrd	r2, [r3]
+ 244 0040 FFF7FEFF 		bl	__aeabi_dcmple
+ 245              	.LVL28:
+ 246 0044 08B9     		cbnz	r0, .L23
+  39:Core/Src/devs/leg.cpp **** 	}
+ 247              		.loc 1 39 0 is_stmt 1
+ 248 0046 0020     		movs	r0, #0
+ 249              	.L14:
+  42:Core/Src/devs/leg.cpp **** void leg::reset_angle(float angle_in_radians){
+ 250              		.loc 1 42 0
+ 251 0048 10BD     		pop	{r4, pc}
+ 252              	.LVL29:
+ 253              	.L23:
+  35:Core/Src/devs/leg.cpp **** 		return true;
+ 254              		.loc 1 35 0 discriminator 5
+ 255 004a 2046     		mov	r0, r4
+ 256 004c FFF7FEFF 		bl	_ZN3leg9get_angleEv
+ 257              	.LVL30:
+ 258 0050 10EE100A 		vmov	r0, s0
+ 259 0054 FFF7FEFF 		bl	__aeabi_f2d
+ 260              	.LVL31:
+ 261 0058 09A3     		adr	r3, .L24+16
+ 262 005a D3E90023 		ldrd	r2, [r3]
+ 263 005e FFF7FEFF 		bl	__aeabi_dcmpge
+ 264              	.LVL32:
+ 265 0062 0028     		cmp	r0, #0
+ 266 0064 F0D0     		beq	.L14
+  36:Core/Src/devs/leg.cpp **** 	}
+ 267              		.loc 1 36 0
+ 268 0066 0120     		movs	r0, #1
+ 269 0068 EEE7     		b	.L14
+ 270              	.L16:
+ 271 006a 0120     		movs	r0, #1
+ 272 006c ECE7     		b	.L14
+ 273              	.L25:
+ 274 006e 00BF     		.align	3
+ 275              	.L24:
+ 276 0070 182D4454 		.word	1413754136
+ 277 0074 FB210940 		.word	1074340347
+ 278 0078 182D4454 		.word	1413754136
+ 279 007c FB2109C0 		.word	-1073143301
+ 280 0080 182D4454 		.word	1413754136
+ 281 0084 FB2119C0 		.word	-1072094725
+ 282              		.cfi_endproc
+ 283              	.LFE385:
+ 285              		.section	.text._ZN3leg9get_stepsEv,"ax",%progbits
+ 286              		.align	1
+ 287              		.global	_ZN3leg9get_stepsEv
+ 288              		.syntax unified
+ 289              		.thumb
+ 290              		.thumb_func
+ 291              		.fpu fpv4-sp-d16
+ 293              	_ZN3leg9get_stepsEv:
+ 294              	.LFB388:
+  49:Core/Src/devs/leg.cpp **** int leg::get_steps(){
+ 295              		.loc 1 49 0
+ 296              		.cfi_startproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 7
+
+
+ 297              		@ args = 0, pretend = 0, frame = 0
+ 298              		@ frame_needed = 0, uses_anonymous_args = 0
+ 299              		@ link register save eliminated.
+ 300              	.LVL33:
+  50:Core/Src/devs/leg.cpp **** 	return steps;
+  51:Core/Src/devs/leg.cpp **** }
+ 301              		.loc 1 51 0
+ 302 0000 0069     		ldr	r0, [r0, #16]
+ 303              	.LVL34:
+ 304 0002 7047     		bx	lr
+ 305              		.cfi_endproc
+ 306              	.LFE388:
+ 308              		.section	.text._ZN3leg17get_encoder_countEv,"ax",%progbits
+ 309              		.align	1
+ 310              		.global	_ZN3leg17get_encoder_countEv
+ 311              		.syntax unified
+ 312              		.thumb
+ 313              		.thumb_func
+ 314              		.fpu fpv4-sp-d16
+ 316              	_ZN3leg17get_encoder_countEv:
+ 317              	.LFB389:
+  52:Core/Src/devs/leg.cpp **** 
+  53:Core/Src/devs/leg.cpp **** int16_t leg::get_encoder_count(){
+ 318              		.loc 1 53 0
+ 319              		.cfi_startproc
+ 320              		@ args = 0, pretend = 0, frame = 0
+ 321              		@ frame_needed = 0, uses_anonymous_args = 0
+ 322              	.LVL35:
+ 323 0000 08B5     		push	{r3, lr}
+ 324              	.LCFI7:
+ 325              		.cfi_def_cfa_offset 8
+ 326              		.cfi_offset 3, -8
+ 327              		.cfi_offset 14, -4
+  54:Core/Src/devs/leg.cpp **** 	return encoder__.get_count();
+ 328              		.loc 1 54 0
+ 329 0002 1C30     		adds	r0, r0, #28
+ 330              	.LVL36:
+ 331 0004 FFF7FEFF 		bl	_ZN7encoder9get_countEv
+ 332              	.LVL37:
+  55:Core/Src/devs/leg.cpp **** }...
+ 333              		.loc 1 55 0
+ 334 0008 08BD     		pop	{r3, pc}
+ 335              		.cfi_endproc
+ 336              	.LFE389:
+ 338              		.global	ang
+ 339              		.global	omeg
+ 340              		.global	gravity_compensator_factor
+ 341              		.section	.bss.ang,"aw",%nobits
+ 342              		.align	2
+ 343              		.set	.LANCHOR1,. + 0
+ 346              	ang:
+ 347 0000 00000000 		.space	4
+ 348              		.section	.bss.gravity_compensator_factor,"aw",%nobits
+ 349              		.align	2
+ 352              	gravity_compensator_factor:
+ 353 0000 00000000 		.space	4
+ 354              		.section	.bss.omeg,"aw",%nobits
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 8
+
+
+ 355              		.align	2
+ 356              		.set	.LANCHOR0,. + 0
+ 359              	omeg:
+ 360 0000 00000000 		.space	4
+ 361              		.text
+ 362              	.Letext0:
+ 363              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 364              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 365              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 366              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 367              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 368              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 369              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 370              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 371              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 372              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 373              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 374              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 375              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 376              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 377              		.file 16 "Core/Inc/periphs/tim.h"
+ 378              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 379              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 380              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 381              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 382              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 383              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 384              		.file 23 "Core/Inc/devs/motor.h"
+ 385              		.file 24 "Core/Inc/devs/encoder.h"
+ 386              		.file 25 "Core/Inc/devs/pid.h"
+ 387              		.file 26 "Core/Inc/devs/limit_switch.h"
+ 388              		.file 27 "Core/Inc/devs/leg.h"
+ 389              		.file 28 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 leg.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:18     .text._ZN3leg9set_omegaEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:25     .text._ZN3leg9set_omegaEf:00000000 _ZN3leg9set_omegaEf
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:97     .text._ZN3leg9set_omegaEf:00000060 $d
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:103    .text._ZN3leg9get_omegaEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:110    .text._ZN3leg9get_omegaEv:00000000 _ZN3leg9get_omegaEv
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:133    .text._ZN3leg11reset_angleEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:140    .text._ZN3leg11reset_angleEf:00000000 _ZN3leg11reset_angleEf
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:163    .text._ZN3leg9get_angleEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:170    .text._ZN3leg9get_angleEv:00000000 _ZN3leg9get_angleEv
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:196    .text._ZN3leg9is_raisedEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:203    .text._ZN3leg9is_raisedEv:00000000 _ZN3leg9is_raisedEv
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:276    .text._ZN3leg9is_raisedEv:00000070 $d
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:286    .text._ZN3leg9get_stepsEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:293    .text._ZN3leg9get_stepsEv:00000000 _ZN3leg9get_stepsEv
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:309    .text._ZN3leg17get_encoder_countEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:316    .text._ZN3leg17get_encoder_countEv:00000000 _ZN3leg17get_encoder_countEv
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:346    .bss.ang:00000000 ang
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:359    .bss.omeg:00000000 omeg
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:352    .bss.gravity_compensator_factor:00000000 gravity_compensator_factor
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:342    .bss.ang:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:349    .bss.gravity_compensator_factor:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccGFYOVU.s:355    .bss.omeg:00000000 $d
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+_ZN7encoder15calculate_omegaEv
+_ZN7encoder9get_omegaEv
+_ZN7encoder9get_angleEv
+_ZN3pid11compute_pidEff
+_ZN5motor9set_omegaEf
+_ZN7encoder11reset_angleEf
+__aeabi_f2d
+__aeabi_dcmple
+__aeabi_dcmpge
+_ZN7encoder9get_countEv
