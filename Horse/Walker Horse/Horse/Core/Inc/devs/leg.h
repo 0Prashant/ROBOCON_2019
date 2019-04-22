@@ -28,8 +28,9 @@ public:
 	bool is_raised();
 	void reset_angle(float angle_in_radians);
 	float get_angle(void);
+	float get_max_omega(){return motor__[0].get_max_omega();}
 	void set_pid_constants(float kp, float ki, float kd){pid__.set_pid_constants(kp, ki, kd);}
-	void set_gravity_compensator_constant(float kg){kg_ = kg;}
+	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
 	limit_switch limit_switch__[2];
 	int steps;
 
@@ -37,7 +38,7 @@ private:
 	motor motor__[2];
 	encoder encoder__;
 	pid pid__;
-	float kg_ = 0;
+	float kb_ = 0, kl_ = 0;
 };
 
 #endif // !_LEG_H_

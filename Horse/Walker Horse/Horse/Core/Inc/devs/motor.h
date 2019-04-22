@@ -34,7 +34,7 @@ public:
 	motor &operator=(const motor &) = default;
 	~motor(){}
         void set_config(motor_config *motor) { motor_ = motor;}
-
+	float get_max_omega(){return motor_->max_omega;}
 	void set_direction(enum Direction dir);
 	void set_omega(float omega);
 private:

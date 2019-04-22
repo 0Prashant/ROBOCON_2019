@@ -1,6 +1,7 @@
 #include "robot.h"
 
-static float leg_speed = 3;	 //38 is the 100%
+static const float robot_speed = 9;
+static float leg_speed = robot_speed;	 //38 is the 100%
 static const float steering_speed = 0.35; // 1.35 is the 100%
 static const float steering_angle_limit = 0.2;
 extern leg leg[1];
@@ -21,19 +22,27 @@ bool go(int steps, float angle)
 {
 	angle *= PI / 180;
 	if(steps == 38 || steps == 80) {
-		leg_speed = 6;
+		leg_speed = robot_speed/1.5;
 	}
 	else
 	{
-		leg_speed = 7.5;
+		leg_speed = robot_speed;
 	}
-
+	
+	if((leg[0].get_angle()>((3*PI)/4))&&(leg[0].get_angle()<PI)){
+		leg_speed = robot_speed/2;
+	}
+	else if((leg[0].get_angle()>((6*PI)/4))&&(leg[0].get_angle()<(2*PI-(PI/6)))){
+		//leg_speed = -robot_speed/3;
+		leg_speed = 1;
+	}
 	if (leg[0].get_steps() < steps)
 	{
 		leg[0].set_omega(leg_speed);
 	}
 
-	printf("%d \t %d \t", (int)(100 * angle), (int)(100 * robot_angle));
+	//printf("%d \t %d \t", (int)(100 * angle), (int)(100 * robot_angle));
+	printf("%d \t ", (int)(100 * leg[0].get_angle()));
 	if (fabs(angle) != fabs(robot_angle))
 	{
 		if (leg[0].is_raised())
@@ -83,7 +92,8 @@ bool go(int steps, float angle)
 		steering.set_omega(0);
 	}
 
-	printf("%d \t %d \t %d\n", (int)(steering.get_omega() * 100), (int)(steering.get_angle() * 100), (int)(robot_angle * 100));
+	// printf("%d \t %d \t %d\n", (int)(steering.get_omega() * 100), (int)(steering.get_angle() * 100), (int)(robot_angle * 100));
+	printf("%d\n", (int)(leg[0].get_omega() * 100));
 
 	if (leg[0].is_raised())
 	{
@@ -111,18 +121,27 @@ bool go(int steps, float angle)
 bool play()
 {
 	uint32_t dt = HAL_GetTick();
-	for (int i = 0; i < 6; i++)
-	{
-		while (true)
+	while (true)
 		{
 			if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
 			{
 				dt = HAL_GetTick();
-				if (go(steps[i], angles[i]) == true)
+				if (go(10, 0) == true)
 					break;
 			}
 		}
-		printf ("\tstep=%d\t", i);
-	}
+	// for (int i = 0; i < 6; i++)
+	// {
+	// 	while (true)
+	// 	{
+	// 		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+	// 		{
+	// 			dt = HAL_GetTick();
+	// 			if (go(steps[i], angles[i]) == true)
+	// 				break;
+	// 		}
+	// 	}
+	// 	printf ("\tstep=%d\t", i);
+	// }
 	return true;
 }

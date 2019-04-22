@@ -3,30 +3,25 @@
 float gravity_compensator_factor;
 float omeg;
 float ang;
+float comp_omg;
 
 void leg::set_omega(float omega){
 	encoder__.calculate_omega();
 	omeg = encoder__.get_omega();
 	ang = encoder__.get_angle();
-	// if(this->is_raised()){
-	// 	gravity_compensator_factor = cos(encoder__.get_angle()) * BODY_WEIGHT * kg_;
-	// }
-	// else{
-	// 	gravity_compensator_factor = cos(encoder__.get_angle()) * LEG_WEIGHT * kg_;
-	// }
+	if(this->is_raised()){
+		gravity_compensator_factor = cos(encoder__.get_angle()) * LEG_WEIGHT * kl_ * (fabs(omeg-omega) / this->get_max_omega());
+	}
+	else{
+		gravity_compensator_factor = cos(encoder__.get_angle()) * BODY_WEIGHT * kb_ * (fabs(omeg-omega) / this->get_max_omega());
+	}
 
 	float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
+	comp_omg = computed_omega;
+	//float computed_omega = omega;
 	//computed_omega += gravity_compensator_factor; 
 	motor__[0].set_omega(computed_omega);
 	motor__[1].set_omega(computed_omega);
-
-	// printf ("%d \t %d \t %d \t %d \t ", (int)(omega*100), (int)(computed_omega), (int)steps, (int)(this->get_angle()*180/PI));
-	// if(is_raised()){
-	// 	printf("Raised\n");
-	// }
-	// else{
-	// 	printf("Fallen\n");
-	// }
 }
 float leg::get_omega(void){
 	return encoder__.get_omega();

@@ -7,7 +7,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         switch (GPIO_Pin) {
                 case GPIO_PIN_0 : {		
                         leg[0].steps++;		//leg[0].limit_switch__[0].int_pin
-                        leg[0].reset_angle(215*PI/180);
+                        leg[0].reset_angle(155*PI/180);
 			//printf("\tRobot interrupt 0\t");
                 } break;
 
