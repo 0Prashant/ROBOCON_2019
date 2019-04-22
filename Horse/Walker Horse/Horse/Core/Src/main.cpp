@@ -48,6 +48,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "robot.h"
+#include "vec3.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,6 +79,8 @@ extern steering steering;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+int Angle_Init();
+Vec3<float> read_Orientation(uint32_t dt_millis);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -123,14 +126,17 @@ int main(void)
 	MX_USART3_UART_Init();
 	/* USER CODE BEGIN 2 */
 
-	robo_init();
+	 robo_init();
+	Angle_Init();
 
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	printf("\n\nAll initialized\n\n");
-	
+
+	uint32_t sample_time = HAL_GetTick();
+
 	play();
 	while (1)
 	{
@@ -138,6 +144,13 @@ int main(void)
 		steering.set_omega(0);
 		HAL_Delay(9);
 		/* USER CODE END WHILE */
+
+		if (HAL_GetTick() - sample_time >= 10) {
+			sample_time = HAL_GetTick();
+			Vec3<float> angle = read_Orientation(10);
+			angle.print();
+			printf("\n");
+		}
 
 		/* USER CODE BEGIN 3 */
 	}
@@ -197,8 +210,15 @@ void Error_Handler(void)
 {
 	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
-
+	_Error_Handler(__FILE__, __LINE__);
 	/* USER CODE END Error_Handler_Debug */
+}
+
+void _Error_Handler(const char *file, size_t line)
+{
+	while (1)
+	{
+	}
 }
 
 #ifdef USE_FULL_ASSERT

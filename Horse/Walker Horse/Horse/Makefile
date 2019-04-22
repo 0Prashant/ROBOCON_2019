@@ -78,12 +78,17 @@ CXX_SOURCES = \
 Core/Src/main.cpp \
 Core/Src/robot/robot.cpp \
 Core/Src/robot/robo_init.cpp \
+Core/Src/robot/robo_orientation.cpp \
 Core/Src/devs/pid.cpp \
 Core/Src/devs/motor.cpp \
 Core/Src/devs/encoder.cpp \
 Core/Src/devs/leg.cpp \
+Core/Src/devs/hmc5883.cpp \
+Core/Src/devs/mpu6050.cpp \
 Core/Src/devs/interrupt.cpp \
-Core/Src/devs/steering.cpp 
+Core/Src/devs/steering.cpp \
+Core/Src/utils/exp_smooth.cpp \
+Core/Src/utils/mat.cpp
 ##
 
 #######################################
@@ -179,7 +184,7 @@ LDSCRIPT = STM32F407VGTx_FLASH.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -specs=nano.specs -specs=nosys.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
