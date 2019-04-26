@@ -1,6 +1,6 @@
 #include "robot.h"
 
-static const float robot_speed = 9;
+static const float robot_speed = 5;
 static float leg_speed = robot_speed;	 //38 is the 100%
 static const float steering_speed = 0.35; // 1.35 is the 100%
 static const float steering_angle_limit = 0.2;
@@ -42,7 +42,7 @@ bool go(int steps, float angle)
 	}
 
 	//printf("%d \t %d \t", (int)(100 * angle), (int)(100 * robot_angle));
-	printf("%d \t ", (int)(100 * leg[0].get_angle()));
+	//printf("%d \t ", (int)(100 * leg[0].get_angle()));
 	if (fabs(angle) != fabs(robot_angle))
 	{
 		if (leg[0].is_raised())
@@ -93,7 +93,7 @@ bool go(int steps, float angle)
 	}
 
 	// printf("%d \t %d \t %d\n", (int)(steering.get_omega() * 100), (int)(steering.get_angle() * 100), (int)(robot_angle * 100));
-	printf("%d\n", (int)(leg[0].get_omega() * 100));
+	//printf("%d\n", (int)(leg[0].get_omega() * 100));
 
 	if (leg[0].is_raised())
 	{

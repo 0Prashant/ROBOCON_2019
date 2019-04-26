@@ -16,8 +16,8 @@ void leg::set_omega(float omega){
 		gravity_compensator_factor = cos(encoder__.get_angle()) * BODY_WEIGHT * kb_ * (fabs(omeg-omega) / this->get_max_omega());
 	}
 
-	float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
-	comp_omg = computed_omega;
+	 float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
+	// comp_omg = computed_omega;
 	//float computed_omega = omega;
 	//computed_omega += gravity_compensator_factor; 
 	motor__[0].set_omega(computed_omega);

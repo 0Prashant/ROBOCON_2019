@@ -13,6 +13,7 @@ static void set_DutyCycle_Primary(TIM_HandleTypeDef *htim, uint32_t Channel, uin
 {
         uint16_t mapped_value;
         mapped_value = (time_period(8000) * dutyCycle) / 65535;	 
+	printf("\tmapped value = %d\t", (int)mapped_value);
         __HAL_TIM_SET_COMPARE(htim, Channel, mapped_value);		
 }
 
