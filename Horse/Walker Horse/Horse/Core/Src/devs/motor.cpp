@@ -5,7 +5,7 @@ static uint16_t time_period(uint16_t PWM_frequency)
         if (PWM_frequency < 2000) { //MIN PWM_FREQUENCY = 1281.738 for time period to be 16 bit
                 //_Error_Handler(__FILE__, __LINE__);
         }
-        return ((168000000 / 2) / PWM_frequency) - 1; // In Center aligned mode period doubles hence we divide by 2
+        return ((168000000 / 2) / PWM_frequency) - 1; 		// In Center aligned mode period doubles hence we divide by 2
 }
 
 /* SET DUTYCYCLE primary function */
@@ -13,7 +13,6 @@ static void set_DutyCycle_Primary(TIM_HandleTypeDef *htim, uint32_t Channel, uin
 {
         uint16_t mapped_value;
         mapped_value = (time_period(8000) * dutyCycle) / 65535;	 
-	printf("\tmapped value = %d\t", (int)mapped_value);
         __HAL_TIM_SET_COMPARE(htim, Channel, mapped_value);		
 }
 

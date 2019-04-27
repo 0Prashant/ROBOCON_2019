@@ -140,13 +140,14 @@ int main(void)
 	play();
 	while (1)
 	{
-		leg[0].set_omega(0);
-		steering.set_omega(0);
-		HAL_Delay(9);
+		
+		printf("\nEND\n");
 		/* USER CODE END WHILE */
 
 		if (HAL_GetTick() - sample_time >= 10) {
 			sample_time = HAL_GetTick();
+			leg[0].set_omega(0);
+			steering.set_omega(0);
 			Vec3<float> angle = read_Orientation(10);
 			angle.print();
 			printf("\n");

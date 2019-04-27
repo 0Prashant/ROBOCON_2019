@@ -27,8 +27,9 @@ build/leg.o: Core/Src/devs/leg.cpp Core/Inc/devs/leg.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  Core/Inc/periphs/tim.h Core/Inc/main.h Core/Inc/devs/encoder.h \
- Core/Inc/utils/defines.h Core/Inc/devs/pid.h \
- Core/Inc/devs/limit_switch.h
+ Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
+ Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
+ Core/Inc/utils/pid_algorithms.h
 
 Core/Inc/devs/leg.h:
 
@@ -100,6 +101,10 @@ Core/Inc/devs/encoder.h:
 
 Core/Inc/utils/defines.h:
 
-Core/Inc/devs/pid.h:
+Core/Inc/utils/pid.h:
+
+Core/Inc/utils/pid_algorithms.h:
 
 Core/Inc/devs/limit_switch.h:
+
+Core/Inc/utils/pid_algorithms.h:

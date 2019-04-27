@@ -29,8 +29,9 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Core/Inc/periphs/i2c.h Core/Inc/periphs/tim.h Core/Inc/periphs/usart.h \
  Core/Inc/periphs/gpio.h Core/Inc/robot/robot.h \
  Core/Inc/robot/robo_init.h Core/Inc/devs/leg.h Core/Inc/devs/motor.h \
- Core/Inc/devs/encoder.h Core/Inc/utils/defines.h Core/Inc/devs/pid.h \
- Core/Inc/devs/limit_switch.h Core/Inc/devs/steering.h \
+ Core/Inc/devs/encoder.h Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
+ Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
+ Core/Inc/utils/pid_algorithms.h Core/Inc/devs/steering.h \
  Core/Inc/utils/vec3.h
 
 Core/Inc/main.h:
@@ -113,9 +114,13 @@ Core/Inc/devs/encoder.h:
 
 Core/Inc/utils/defines.h:
 
-Core/Inc/devs/pid.h:
+Core/Inc/utils/pid.h:
+
+Core/Inc/utils/pid_algorithms.h:
 
 Core/Inc/devs/limit_switch.h:
+
+Core/Inc/utils/pid_algorithms.h:
 
 Core/Inc/devs/steering.h:
 

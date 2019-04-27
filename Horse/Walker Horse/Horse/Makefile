@@ -79,7 +79,6 @@ Core/Src/main.cpp \
 Core/Src/robot/robot.cpp \
 Core/Src/robot/robo_init.cpp \
 Core/Src/robot/robo_orientation.cpp \
-Core/Src/devs/pid.cpp \
 Core/Src/devs/motor.cpp \
 Core/Src/devs/encoder.cpp \
 Core/Src/devs/leg.cpp \
@@ -218,7 +217,7 @@ $(BUILD_DIR)/%.o: %.cpp Makefile | $(BUILD_DIR)
 ##
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)

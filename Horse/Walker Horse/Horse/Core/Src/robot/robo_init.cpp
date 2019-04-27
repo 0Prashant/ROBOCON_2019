@@ -6,6 +6,7 @@ steering steering;
 static motor_config motor_configurations[3];
 static  encoder_config encoder_configurations[2];
 
+
 static void motor_init();
 static void encoder_init();
 static void pid_init();
@@ -24,7 +25,7 @@ void robo_init(){
 
 void leg_init(){
 	leg[0].set_config(&motor_configurations[0], &motor_configurations[1], &encoder_configurations[0]);	
-	leg[0].set_gravity_compensator_constant(4, 15);
+	leg[0].set_gravity_compensator_constant(0.35, 0.8);
 
 }	
 
@@ -33,8 +34,9 @@ void steering_init(){
 }
 
 static void pid_init(){
-	leg[0].set_pid_constants( 0.4086, 0.37648, 0);		//for crank = 70  // 1.4586, 0.012648, 0	
-	steering.set_pid_constants(1,0.01,0);			//for crank = 100 // 4.0895, 0.037971, 0	loaded = 4.5906, 0.06479, 0
+
+	leg[0].set_PID_constants( 10, 125, 0, -38, 38);		//for crank = 70  // 25.42, 3.082, 2.385	
+	steering.set_PID_constants( 1.5, 0.2, 0, -7, 7);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 }
 
 static void limit_switch_init(){

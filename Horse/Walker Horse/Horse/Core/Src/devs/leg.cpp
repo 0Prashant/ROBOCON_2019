@@ -3,23 +3,24 @@
 float gravity_compensator_factor;
 float omeg;
 float ang;
+float input_omega;
 float comp_omg;
 
 void leg::set_omega(float omega){
 	encoder__.calculate_omega();
+	//printf("setting");
 	omeg = encoder__.get_omega();
 	ang = encoder__.get_angle();
-	if(this->is_raised()){
-		gravity_compensator_factor = cos(encoder__.get_angle()) * LEG_WEIGHT * kl_ * (fabs(omeg-omega) / this->get_max_omega());
+	input_omega = omega;
+	if(!is_raised()){
+		gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
 	}
 	else{
-		gravity_compensator_factor = cos(encoder__.get_angle()) * BODY_WEIGHT * kb_ * (fabs(omeg-omega) / this->get_max_omega());
+		gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
 	}
-
-	 float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
-	// comp_omg = computed_omega;
-	//float computed_omega = omega;
-	//computed_omega += gravity_compensator_factor; 
+	omega += gravity_compensator_factor;
+	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
+	comp_omg = computed_omega;
 	motor__[0].set_omega(computed_omega);
 	motor__[1].set_omega(computed_omega);
 }

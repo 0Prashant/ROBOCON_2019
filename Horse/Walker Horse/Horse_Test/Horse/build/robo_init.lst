@@ -1,0 +1,1126 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_init.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN8steeringD2Ev,"axG",%progbits,_ZN8steeringD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN8steeringD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN8steeringD2Ev:
+  26              	.LFB389:
+  27              		.file 1 "Core/Inc/devs/steering.h"
+   1:Core/Inc/devs/steering.h **** #ifndef _STEERING_H_
+   2:Core/Inc/devs/steering.h **** #define _STEERING_H_
+   3:Core/Inc/devs/steering.h **** 
+   4:Core/Inc/devs/steering.h **** #include "motor.h"
+   5:Core/Inc/devs/steering.h **** #include "encoder.h"
+   6:Core/Inc/devs/steering.h **** #include "pid.h"
+   7:Core/Inc/devs/steering.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/steering.h **** 
+   9:Core/Inc/devs/steering.h **** class steering
+  10:Core/Inc/devs/steering.h **** {
+  11:Core/Inc/devs/steering.h **** public:
+  12:Core/Inc/devs/steering.h **** 	steering(){}
+  13:Core/Inc/devs/steering.h **** 	steering(steering &&) = default;
+  14:Core/Inc/devs/steering.h **** 	steering(const steering &) = default;
+  15:Core/Inc/devs/steering.h **** 	steering &operator=(steering &&) = default;
+  16:Core/Inc/devs/steering.h **** 	steering &operator=(const steering &) = default;
+  17:Core/Inc/devs/steering.h **** 	~steering(){}
+  28              		.loc 1 17 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 17 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE389:
+  39              		.weak	_ZN8steeringD1Ev
+  40              		.thumb_set _ZN8steeringD1Ev,_ZN8steeringD2Ev
+  41              		.section	.text._ZL8leg_initv,"ax",%progbits
+  42              		.align	1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 2
+
+
+  43              		.syntax unified
+  44              		.thumb
+  45              		.thumb_func
+  46              		.fpu fpv4-sp-d16
+  48              	_ZL8leg_initv:
+  49              	.LFB394:
+  50              		.file 2 "Core/Src/robot/robo_init.cpp"
+   1:Core/Src/robot/robo_init.cpp **** #include "robo_init.h"
+   2:Core/Src/robot/robo_init.cpp **** 
+   3:Core/Src/robot/robo_init.cpp **** leg leg[1];
+   4:Core/Src/robot/robo_init.cpp **** steering steering;
+   5:Core/Src/robot/robo_init.cpp **** 
+   6:Core/Src/robot/robo_init.cpp **** static motor_config motor_configurations[3];
+   7:Core/Src/robot/robo_init.cpp **** static  encoder_config encoder_configurations[2];
+   8:Core/Src/robot/robo_init.cpp **** 
+   9:Core/Src/robot/robo_init.cpp **** static void motor_init();
+  10:Core/Src/robot/robo_init.cpp **** static void encoder_init();
+  11:Core/Src/robot/robo_init.cpp **** static void pid_init();
+  12:Core/Src/robot/robo_init.cpp **** static void limit_switch_init(); 
+  13:Core/Src/robot/robo_init.cpp **** static void leg_init();
+  14:Core/Src/robot/robo_init.cpp **** static void steering_init();
+  15:Core/Src/robot/robo_init.cpp **** 
+  16:Core/Src/robot/robo_init.cpp **** void robo_init(){ 
+  17:Core/Src/robot/robo_init.cpp **** 	motor_init();
+  18:Core/Src/robot/robo_init.cpp **** 	encoder_init();	
+  19:Core/Src/robot/robo_init.cpp **** 	pid_init();
+  20:Core/Src/robot/robo_init.cpp **** 	limit_switch_init();
+  21:Core/Src/robot/robo_init.cpp **** 	leg_init();
+  22:Core/Src/robot/robo_init.cpp **** 	steering_init();
+  23:Core/Src/robot/robo_init.cpp **** }
+  24:Core/Src/robot/robo_init.cpp **** 
+  25:Core/Src/robot/robo_init.cpp **** void leg_init(){
+  51              		.loc 2 25 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  57              	.LBB104:
+  58              	.LBB105:
+  59              	.LBB106:
+  60              		.file 3 "Core/Inc/devs/motor.h"
+   1:Core/Inc/devs/motor.h **** #ifndef _MOTOR_H_
+   2:Core/Inc/devs/motor.h **** #define _MOTOR_H_
+   3:Core/Inc/devs/motor.h **** 
+   4:Core/Inc/devs/motor.h **** #include "stm32f4xx_hal.h"
+   5:Core/Inc/devs/motor.h **** #include "tim.h"
+   6:Core/Inc/devs/motor.h **** #include <math.h>
+   7:Core/Inc/devs/motor.h **** 
+   8:Core/Inc/devs/motor.h **** enum Direction{
+   9:Core/Inc/devs/motor.h **** 	CLOCKWISE,
+  10:Core/Inc/devs/motor.h **** 	ANTICLOCKWISE,
+  11:Core/Inc/devs/motor.h **** 	STOP
+  12:Core/Inc/devs/motor.h **** };
+  13:Core/Inc/devs/motor.h **** 
+  14:Core/Inc/devs/motor.h **** struct motor_config{
+  15:Core/Inc/devs/motor.h **** 	float max_omega;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 3
+
+
+  16:Core/Inc/devs/motor.h **** 	float tolerance;
+  17:Core/Inc/devs/motor.h **** 
+  18:Core/Inc/devs/motor.h **** 	GPIO_TypeDef *in1_port;	
+  19:Core/Inc/devs/motor.h ****         uint16_t in1_pin;
+  20:Core/Inc/devs/motor.h ****         GPIO_TypeDef *in2_port;
+  21:Core/Inc/devs/motor.h ****         uint16_t in2_pin;
+  22:Core/Inc/devs/motor.h ****         TIM_HandleTypeDef *htim;        // PWM Generating Timer
+  23:Core/Inc/devs/motor.h ****         uint32_t channel;               // PWM Channel
+  24:Core/Inc/devs/motor.h **** };
+  25:Core/Inc/devs/motor.h **** 
+  26:Core/Inc/devs/motor.h **** class motor
+  27:Core/Inc/devs/motor.h **** {
+  28:Core/Inc/devs/motor.h **** public:
+  29:Core/Inc/devs/motor.h **** 	motor(){motor_ = 0;}
+  30:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+  31:Core/Inc/devs/motor.h **** 	motor(motor &&) = default;
+  32:Core/Inc/devs/motor.h **** 	motor(const motor &) = default;
+  33:Core/Inc/devs/motor.h **** 	motor &operator=(motor &&) = default;
+  34:Core/Inc/devs/motor.h **** 	motor &operator=(const motor &) = default;
+  35:Core/Inc/devs/motor.h **** 	~motor(){}
+  36:Core/Inc/devs/motor.h ****         void set_config(motor_config *motor) { motor_ = motor;}
+  61              		.loc 3 36 0
+  62 0000 064B     		ldr	r3, .L3
+  63 0002 074A     		ldr	r2, .L3+4
+  64 0004 5A61     		str	r2, [r3, #20]
+  65              	.LVL2:
+  66              	.LBE106:
+  67              	.LBE105:
+  68              	.LBB107:
+  69              	.LBB108:
+  70 0006 2032     		adds	r2, r2, #32
+  71 0008 9A61     		str	r2, [r3, #24]
+  72              	.LVL3:
+  73              	.LBE108:
+  74              	.LBE107:
+  75              	.LBB109:
+  76              	.LBB110:
+  77              		.file 4 "Core/Inc/devs/encoder.h"
+   1:Core/Inc/devs/encoder.h **** #ifndef _ENCODER_H_
+   2:Core/Inc/devs/encoder.h **** #define _ENCODER_H_
+   3:Core/Inc/devs/encoder.h **** 
+   4:Core/Inc/devs/encoder.h **** #include "defines.h"
+   5:Core/Inc/devs/encoder.h **** #include "stm32f4xx_hal.h"
+   6:Core/Inc/devs/encoder.h **** #include "tim.h"
+   7:Core/Inc/devs/encoder.h **** #include "math.h"
+   8:Core/Inc/devs/encoder.h **** 
+   9:Core/Inc/devs/encoder.h **** 
+  10:Core/Inc/devs/encoder.h **** struct encoder_config{
+  11:Core/Inc/devs/encoder.h **** 	TIM_HandleTypeDef *henc;
+  12:Core/Inc/devs/encoder.h **** 	uint16_t ppr;
+  13:Core/Inc/devs/encoder.h **** };
+  14:Core/Inc/devs/encoder.h **** 
+  15:Core/Inc/devs/encoder.h **** class encoder
+  16:Core/Inc/devs/encoder.h **** {
+  17:Core/Inc/devs/encoder.h **** public:
+  18:Core/Inc/devs/encoder.h **** 	encoder(){encoder_ = 0;}
+  19:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 4
+
+
+  20:Core/Inc/devs/encoder.h **** 	encoder(encoder &&) = default;
+  21:Core/Inc/devs/encoder.h **** 	encoder(const encoder &) = default;
+  22:Core/Inc/devs/encoder.h **** 	encoder &operator=(encoder &&) = default;
+  23:Core/Inc/devs/encoder.h **** 	encoder &operator=(const encoder &) = default;
+  24:Core/Inc/devs/encoder.h **** 	~encoder(){}
+  25:Core/Inc/devs/encoder.h ****         void set_config(encoder_config *encoder) { encoder_ = encoder; }
+  78              		.loc 4 25 0
+  79 000a 064A     		ldr	r2, .L3+8
+  80 000c DA61     		str	r2, [r3, #28]
+  81              	.LVL4:
+  82              	.LBE110:
+  83              	.LBE109:
+  84              	.LBE104:
+  85              	.LBB111:
+  86              	.LBB112:
+  87              		.file 5 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** 
+  10:Core/Inc/devs/leg.h **** class leg
+  11:Core/Inc/devs/leg.h **** {
+  12:Core/Inc/devs/leg.h **** public:
+  13:Core/Inc/devs/leg.h **** 	leg(){}
+  14:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  15:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  16:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  17:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  18:Core/Inc/devs/leg.h **** 	~leg(){}
+  19:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor0, motor_config *motor1, encoder_config *encoder) { 
+  20:Core/Inc/devs/leg.h **** 		motor__[0].set_config(motor0);
+  21:Core/Inc/devs/leg.h **** 		motor__[1].set_config(motor1);
+  22:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  23:Core/Inc/devs/leg.h **** 	}
+  24:Core/Inc/devs/leg.h **** 	int get_steps();
+  25:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  26:Core/Inc/devs/leg.h **** 	float get_omega(void);
+  27:Core/Inc/devs/leg.h **** 	int16_t get_encoder_count(void);
+  28:Core/Inc/devs/leg.h **** 	bool is_raised();
+  29:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  30:Core/Inc/devs/leg.h **** 	float get_angle(void);
+  31:Core/Inc/devs/leg.h **** 	float get_max_omega(){return motor__[0].get_max_omega();}
+  32:Core/Inc/devs/leg.h **** 	void set_pid_constants(float kp, float ki, float kd){pid__.set_pid_constants(kp, ki, kd);}
+  33:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
+  88              		.loc 5 33 0
+  89 000e 4FF08142 		mov	r2, #1082130432
+  90 0012 5A64     		str	r2, [r3, #68]	@ float
+  91 0014 044A     		ldr	r2, .L3+12
+  92 0016 9A64     		str	r2, [r3, #72]	@ float
+  93              	.LVL5:
+  94              	.LBE112:
+  95              	.LBE111:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 5
+
+
+  26:Core/Src/robot/robo_init.cpp **** 	leg[0].set_config(&motor_configurations[0], &motor_configurations[1], &encoder_configurations[0]);
+  27:Core/Src/robot/robo_init.cpp **** 	leg[0].set_gravity_compensator_constant(4, 15);
+  28:Core/Src/robot/robo_init.cpp **** 
+  29:Core/Src/robot/robo_init.cpp **** }	
+  96              		.loc 2 29 0
+  97 0018 7047     		bx	lr
+  98              	.L4:
+  99 001a 00BF     		.align	2
+ 100              	.L3:
+ 101 001c 00000000 		.word	.LANCHOR0
+ 102 0020 00000000 		.word	.LANCHOR1
+ 103 0024 00000000 		.word	.LANCHOR2
+ 104 0028 00007041 		.word	1097859072
+ 105              		.cfi_endproc
+ 106              	.LFE394:
+ 108              		.section	.text._ZL13steering_initv,"ax",%progbits
+ 109              		.align	1
+ 110              		.syntax unified
+ 111              		.thumb
+ 112              		.thumb_func
+ 113              		.fpu fpv4-sp-d16
+ 115              	_ZL13steering_initv:
+ 116              	.LFB395:
+  30:Core/Src/robot/robo_init.cpp **** 
+  31:Core/Src/robot/robo_init.cpp **** void steering_init(){
+ 117              		.loc 2 31 0
+ 118              		.cfi_startproc
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121              		@ link register save eliminated.
+ 122              	.LVL6:
+ 123              	.LBB113:
+ 124              	.LBB114:
+ 125              	.LBB115:
+ 126              		.loc 3 36 0
+ 127 0000 024B     		ldr	r3, .L6
+ 128 0002 034A     		ldr	r2, .L6+4
+ 129 0004 9A60     		str	r2, [r3, #8]
+ 130              	.LVL7:
+ 131              	.LBE115:
+ 132              	.LBE114:
+ 133              	.LBB116:
+ 134              	.LBB117:
+ 135              		.loc 4 25 0
+ 136 0006 034A     		ldr	r2, .L6+8
+ 137 0008 DA60     		str	r2, [r3, #12]
+ 138              	.LVL8:
+ 139              	.LBE117:
+ 140              	.LBE116:
+ 141              	.LBE113:
+  32:Core/Src/robot/robo_init.cpp **** 	steering.set_config(&motor_configurations[2], &encoder_configurations[1]);
+  33:Core/Src/robot/robo_init.cpp **** }
+ 142              		.loc 2 33 0
+ 143 000a 7047     		bx	lr
+ 144              	.L7:
+ 145              		.align	2
+ 146              	.L6:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 6
+
+
+ 147 000c 00000000 		.word	.LANCHOR3
+ 148 0010 40000000 		.word	.LANCHOR1+64
+ 149 0014 08000000 		.word	.LANCHOR2+8
+ 150              		.cfi_endproc
+ 151              	.LFE395:
+ 153              		.section	.text._ZL17limit_switch_initv,"ax",%progbits
+ 154              		.align	1
+ 155              		.syntax unified
+ 156              		.thumb
+ 157              		.thumb_func
+ 158              		.fpu fpv4-sp-d16
+ 160              	_ZL17limit_switch_initv:
+ 161              	.LFB397:
+  34:Core/Src/robot/robo_init.cpp **** 
+  35:Core/Src/robot/robo_init.cpp **** static void pid_init(){
+  36:Core/Src/robot/robo_init.cpp **** 	leg[0].set_pid_constants( 0.4086, 0.37648, 0);		//for crank = 70  // 1.4586, 0.012648, 0	
+  37:Core/Src/robot/robo_init.cpp **** 	steering.set_pid_constants(1,0.01,0);			//for crank = 100 // 4.0895, 0.037971, 0	loaded = 4.5906, 
+  38:Core/Src/robot/robo_init.cpp **** }
+  39:Core/Src/robot/robo_init.cpp **** 
+  40:Core/Src/robot/robo_init.cpp **** static void limit_switch_init(){
+ 162              		.loc 2 40 0
+ 163              		.cfi_startproc
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166              		@ link register save eliminated.
+  41:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[0].int_port = GPIOC;
+ 167              		.loc 2 41 0
+ 168 0000 044B     		ldr	r3, .L9
+ 169 0002 054A     		ldr	r2, .L9+4
+ 170 0004 1A60     		str	r2, [r3]
+  42:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[0].int_pin = GPIO_PIN_0;
+ 171              		.loc 2 42 0
+ 172 0006 0122     		movs	r2, #1
+ 173 0008 9A80     		strh	r2, [r3, #4]	@ movhi
+  43:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[1].int_port = GPIOA;
+ 174              		.loc 2 43 0
+ 175 000a 044A     		ldr	r2, .L9+8
+ 176 000c 9A60     		str	r2, [r3, #8]
+  44:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[1].int_pin = GPIO_PIN_2;
+ 177              		.loc 2 44 0
+ 178 000e 0422     		movs	r2, #4
+ 179 0010 9A81     		strh	r2, [r3, #12]	@ movhi
+  45:Core/Src/robot/robo_init.cpp **** 
+  46:Core/Src/robot/robo_init.cpp **** 	//steering.limit_switch__[0].int_port = GPIOD;
+  47:Core/Src/robot/robo_init.cpp **** 	//steering.limit_switch__[0].int_pin = GPIO_PIN_4;
+  48:Core/Src/robot/robo_init.cpp **** }
+ 180              		.loc 2 48 0
+ 181 0012 7047     		bx	lr
+ 182              	.L10:
+ 183              		.align	2
+ 184              	.L9:
+ 185 0014 00000000 		.word	.LANCHOR0
+ 186 0018 00080240 		.word	1073874944
+ 187 001c 00000240 		.word	1073872896
+ 188              		.cfi_endproc
+ 189              	.LFE397:
+ 191              		.section	.text.__tcf_0,"ax",%progbits
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 7
+
+
+ 192              		.align	1
+ 193              		.syntax unified
+ 194              		.thumb
+ 195              		.thumb_func
+ 196              		.fpu fpv4-sp-d16
+ 198              	__tcf_0:
+ 199              	.LFB401:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 200              		.loc 2 3 0
+ 201              		.cfi_startproc
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204              		@ link register save eliminated.
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 205              		.loc 2 3 0
+ 206 0000 074A     		ldr	r2, .L16
+ 207              	.L15:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 208              		.loc 2 3 0 is_stmt 0 discriminator 5
+ 209 0002 084B     		ldr	r3, .L16+4
+ 210 0004 9A42     		cmp	r2, r3
+ 211 0006 09D0     		beq	.L11
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 212              		.loc 2 3 0 discriminator 4
+ 213 0008 4C3A     		subs	r2, r2, #76
+ 214              	.LVL9:
+ 215              	.LBB118:
+ 216              	.LBB119:
+  18:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor0, motor_config *motor1, encoder_config *encoder) { 
+ 217              		.loc 5 18 0 is_stmt 1 discriminator 4
+ 218 000a 12F11401 		adds	r1, r2, #20
+ 219 000e F8D0     		beq	.L15
+  18:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor0, motor_config *motor1, encoder_config *encoder) { 
+ 220              		.loc 5 18 0 is_stmt 0
+ 221 0010 02F11C03 		add	r3, r2, #28
+ 222              	.L14:
+ 223 0014 9942     		cmp	r1, r3
+ 224 0016 F4D0     		beq	.L15
+ 225 0018 043B     		subs	r3, r3, #4
+ 226              	.LVL10:
+ 227 001a FBE7     		b	.L14
+ 228              	.LVL11:
+ 229              	.L11:
+ 230              	.LBE119:
+ 231              	.LBE118:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 232              		.loc 2 3 0 is_stmt 1
+ 233 001c 7047     		bx	lr
+ 234              	.L17:
+ 235 001e 00BF     		.align	2
+ 236              	.L16:
+ 237 0020 4C000000 		.word	.LANCHOR0+76
+ 238 0024 00000000 		.word	.LANCHOR0
+ 239              		.cfi_endproc
+ 240              	.LFE401:
+ 242              		.section	.text._ZL10motor_initv,"ax",%progbits
+ 243              		.align	1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 8
+
+
+ 244              		.syntax unified
+ 245              		.thumb
+ 246              		.thumb_func
+ 247              		.fpu fpv4-sp-d16
+ 249              	_ZL10motor_initv:
+ 250              	.LFB398:
+  49:Core/Src/robot/robo_init.cpp **** 
+  50:Core/Src/robot/robo_init.cpp **** void motor_init(){
+ 251              		.loc 2 50 0
+ 252              		.cfi_startproc
+ 253              		@ args = 0, pretend = 0, frame = 0
+ 254              		@ frame_needed = 0, uses_anonymous_args = 0
+ 255 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 256              	.LCFI0:
+ 257              		.cfi_def_cfa_offset 24
+ 258              		.cfi_offset 3, -24
+ 259              		.cfi_offset 4, -20
+ 260              		.cfi_offset 5, -16
+ 261              		.cfi_offset 6, -12
+ 262              		.cfi_offset 7, -8
+ 263              		.cfi_offset 14, -4
+  51:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].htim = &htim8;
+ 264              		.loc 2 51 0
+ 265 0002 204C     		ldr	r4, .L20
+ 266 0004 2048     		ldr	r0, .L20+4
+ 267 0006 A061     		str	r0, [r4, #24]
+  52:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in1_port = GPIOD;
+ 268              		.loc 2 52 0
+ 269 0008 204B     		ldr	r3, .L20+8
+ 270 000a A360     		str	r3, [r4, #8]
+  53:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in1_pin = GPIO_PIN_4; 
+ 271              		.loc 2 53 0
+ 272 000c 1022     		movs	r2, #16
+ 273 000e A281     		strh	r2, [r4, #12]	@ movhi
+  54:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in2_port = GPIOD;
+ 274              		.loc 2 54 0
+ 275 0010 2361     		str	r3, [r4, #16]
+  55:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in2_pin = GPIO_PIN_2;
+ 276              		.loc 2 55 0
+ 277 0012 0425     		movs	r5, #4
+ 278 0014 A582     		strh	r5, [r4, #20]	@ movhi
+  56:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].channel = TIM_CHANNEL_3;
+ 279              		.loc 2 56 0
+ 280 0016 0826     		movs	r6, #8
+ 281 0018 E661     		str	r6, [r4, #28]
+  57:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].max_omega = 95/2.5;
+ 282              		.loc 2 57 0
+ 283 001a 1D49     		ldr	r1, .L20+12
+ 284 001c 2160     		str	r1, [r4]	@ float
+  58:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].tolerance = 0.2;
+ 285              		.loc 2 58 0
+ 286 001e 1D4A     		ldr	r2, .L20+16
+ 287 0020 6260     		str	r2, [r4, #4]	@ float
+  59:Core/Src/robot/robo_init.cpp **** 
+  60:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].htim = &htim8;
+ 288              		.loc 2 60 0
+ 289 0022 A063     		str	r0, [r4, #56]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 9
+
+
+  61:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in1_port = GPIOC;
+ 290              		.loc 2 61 0
+ 291 0024 A3F58063 		sub	r3, r3, #1024
+ 292 0028 A362     		str	r3, [r4, #40]
+  62:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in1_pin = GPIO_PIN_11;
+ 293              		.loc 2 62 0
+ 294 002a 4FF40063 		mov	r3, #2048
+ 295 002e A385     		strh	r3, [r4, #44]	@ movhi
+  63:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in2_port = GPIOA;
+ 296              		.loc 2 63 0
+ 297 0030 194B     		ldr	r3, .L20+20
+ 298 0032 2363     		str	r3, [r4, #48]
+  64:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in2_pin = GPIO_PIN_15;
+ 299              		.loc 2 64 0
+ 300 0034 4FF40047 		mov	r7, #32768
+ 301 0038 A786     		strh	r7, [r4, #52]	@ movhi
+  65:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].channel = TIM_CHANNEL_2;
+ 302              		.loc 2 65 0
+ 303 003a E563     		str	r5, [r4, #60]
+  66:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].max_omega = 95/2.5;
+ 304              		.loc 2 66 0
+ 305 003c 2162     		str	r1, [r4, #32]	@ float
+  67:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].tolerance = 0.2;
+ 306              		.loc 2 67 0
+ 307 003e 6262     		str	r2, [r4, #36]	@ float
+  68:Core/Src/robot/robo_init.cpp ****         
+  69:Core/Src/robot/robo_init.cpp **** 
+  70:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].htim = &htim8;
+ 308              		.loc 2 70 0
+ 309 0040 A065     		str	r0, [r4, #88]
+  71:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in1_port = GPIOA;
+ 310              		.loc 2 71 0
+ 311 0042 A364     		str	r3, [r4, #72]
+  72:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in1_pin = GPIO_PIN_10;
+ 312              		.loc 2 72 0
+ 313 0044 4FF48063 		mov	r3, #1024
+ 314 0048 A4F84C30 		strh	r3, [r4, #76]	@ movhi
+  73:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in2_port = GPIOE;
+ 315              		.loc 2 73 0
+ 316 004c 03F18043 		add	r3, r3, #1073741824
+ 317 0050 03F50333 		add	r3, r3, #134144
+ 318 0054 2365     		str	r3, [r4, #80]
+  74:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in2_pin = GPIO_PIN_3;
+ 319              		.loc 2 74 0
+ 320 0056 A4F85460 		strh	r6, [r4, #84]	@ movhi
+  75:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].channel = TIM_CHANNEL_4;
+ 321              		.loc 2 75 0
+ 322 005a 0C27     		movs	r7, #12
+ 323 005c E765     		str	r7, [r4, #92]
+  76:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].max_omega = 7/5.04;
+ 324              		.loc 2 76 0
+ 325 005e 0F4B     		ldr	r3, .L20+24
+ 326 0060 2364     		str	r3, [r4, #64]	@ float
+  77:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].tolerance = 0.1;
+ 327              		.loc 2 77 0
+ 328 0062 0F4B     		ldr	r3, .L20+28
+ 329 0064 6364     		str	r3, [r4, #68]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 10
+
+
+  78:Core/Src/robot/robo_init.cpp **** 
+  79:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Base_Start(&htim8);
+ 330              		.loc 2 79 0
+ 331 0066 FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 332              	.LVL12:
+  80:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_PWM_Start(motor_configurations[0].htim, TIM_CHANNEL_3);
+ 333              		.loc 2 80 0
+ 334 006a 3146     		mov	r1, r6
+ 335 006c A069     		ldr	r0, [r4, #24]
+ 336 006e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 337              	.LVL13:
+  81:Core/Src/robot/robo_init.cpp ****         HAL_TIM_PWM_Start(motor_configurations[1].htim, TIM_CHANNEL_2);
+ 338              		.loc 2 81 0
+ 339 0072 2946     		mov	r1, r5
+ 340 0074 A06B     		ldr	r0, [r4, #56]
+ 341 0076 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 342              	.LVL14:
+  82:Core/Src/robot/robo_init.cpp ****         HAL_TIM_PWM_Start(motor_configurations[1].htim, TIM_CHANNEL_4);
+ 343              		.loc 2 82 0
+ 344 007a 3946     		mov	r1, r7
+ 345 007c A06B     		ldr	r0, [r4, #56]
+ 346 007e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 347              	.LVL15:
+  83:Core/Src/robot/robo_init.cpp **** }
+ 348              		.loc 2 83 0
+ 349 0082 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 350              	.L21:
+ 351              		.align	2
+ 352              	.L20:
+ 353 0084 00000000 		.word	.LANCHOR1
+ 354 0088 00000000 		.word	htim8
+ 355 008c 000C0240 		.word	1073875968
+ 356 0090 00001842 		.word	1108869120
+ 357 0094 CDCC4C3E 		.word	1045220557
+ 358 0098 00000240 		.word	1073872896
+ 359 009c 1CC7B13F 		.word	1068615452
+ 360 00a0 CDCCCC3D 		.word	1036831949
+ 361              		.cfi_endproc
+ 362              	.LFE398:
+ 364              		.section	.text._ZL12encoder_initv,"ax",%progbits
+ 365              		.align	1
+ 366              		.syntax unified
+ 367              		.thumb
+ 368              		.thumb_func
+ 369              		.fpu fpv4-sp-d16
+ 371              	_ZL12encoder_initv:
+ 372              	.LFB399:
+  84:Core/Src/robot/robo_init.cpp **** 
+  85:Core/Src/robot/robo_init.cpp **** void encoder_init(){
+ 373              		.loc 2 85 0
+ 374              		.cfi_startproc
+ 375              		@ args = 0, pretend = 0, frame = 0
+ 376              		@ frame_needed = 0, uses_anonymous_args = 0
+ 377 0000 10B5     		push	{r4, lr}
+ 378              	.LCFI1:
+ 379              		.cfi_def_cfa_offset 8
+ 380              		.cfi_offset 4, -8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 11
+
+
+ 381              		.cfi_offset 14, -4
+  86:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[0].ppr = 200*LEG_TO_ENCODER_RATIO*4;
+ 382              		.loc 2 86 0
+ 383 0002 094C     		ldr	r4, .L24
+ 384 0004 4FF48753 		mov	r3, #4320
+ 385 0008 A380     		strh	r3, [r4, #4]	@ movhi
+  87:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[0].henc = &htim2;
+ 386              		.loc 2 87 0
+ 387 000a 0848     		ldr	r0, .L24+4
+ 388 000c 2060     		str	r0, [r4]
+  88:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Encoder_Start(encoder_configurations[0].henc, TIM_CHANNEL_ALL);
+ 389              		.loc 2 88 0
+ 390 000e 1821     		movs	r1, #24
+ 391 0010 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 392              	.LVL16:
+  89:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[1].ppr = 200*BEARING_TO_STEERING_RATIO*4;
+ 393              		.loc 2 89 0
+ 394 0014 4FF47C63 		mov	r3, #4032
+ 395 0018 A381     		strh	r3, [r4, #12]	@ movhi
+  90:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[1].henc = &htim3;
+ 396              		.loc 2 90 0
+ 397 001a 0548     		ldr	r0, .L24+8
+ 398 001c A060     		str	r0, [r4, #8]
+  91:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Encoder_Start(encoder_configurations[1].henc, TIM_CHANNEL_ALL);
+ 399              		.loc 2 91 0
+ 400 001e 1821     		movs	r1, #24
+ 401 0020 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 402              	.LVL17:
+  92:Core/Src/robot/robo_init.cpp **** }
+ 403              		.loc 2 92 0
+ 404 0024 10BD     		pop	{r4, pc}
+ 405              	.L25:
+ 406 0026 00BF     		.align	2
+ 407              	.L24:
+ 408 0028 00000000 		.word	.LANCHOR2
+ 409 002c 00000000 		.word	htim2
+ 410 0030 00000000 		.word	htim3
+ 411              		.cfi_endproc
+ 412              	.LFE399:
+ 414              		.section	.text._ZL8pid_initv,"ax",%progbits
+ 415              		.align	1
+ 416              		.syntax unified
+ 417              		.thumb
+ 418              		.thumb_func
+ 419              		.fpu fpv4-sp-d16
+ 421              	_ZL8pid_initv:
+ 422              	.LFB396:
+  35:Core/Src/robot/robo_init.cpp **** 	leg[0].set_pid_constants( 0.4086, 0.37648, 0);		//for crank = 70  // 1.4586, 0.012648, 0	
+ 423              		.loc 2 35 0
+ 424              		.cfi_startproc
+ 425              		@ args = 0, pretend = 0, frame = 0
+ 426              		@ frame_needed = 0, uses_anonymous_args = 0
+ 427 0000 08B5     		push	{r3, lr}
+ 428              	.LCFI2:
+ 429              		.cfi_def_cfa_offset 8
+ 430              		.cfi_offset 3, -8
+ 431              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 12
+
+
+ 432 0002 2DED028B 		vpush.64	{d8}
+ 433              	.LCFI3:
+ 434              		.cfi_def_cfa_offset 16
+ 435              		.cfi_offset 80, -16
+ 436              		.cfi_offset 81, -12
+ 437              	.LVL18:
+ 438              	.LBB120:
+ 439              	.LBB121:
+  32:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
+ 440              		.loc 5 32 0
+ 441 0006 9FED0B8A 		vldr.32	s16, .L28
+ 442 000a B0EE481A 		vmov.f32	s2, s16
+ 443 000e DFED0A0A 		vldr.32	s1, .L28+4
+ 444 0012 9FED0A0A 		vldr.32	s0, .L28+8
+ 445 0016 0A48     		ldr	r0, .L28+12
+ 446 0018 FFF7FEFF 		bl	_ZN3pid17set_pid_constantsEfff
+ 447              	.LVL19:
+ 448              	.LBE121:
+ 449              	.LBE120:
+ 450              	.LBB122:
+ 451              	.LBB123:
+  18:Core/Inc/devs/steering.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  19:Core/Inc/devs/steering.h **** 		motor__.set_config(motor);
+  20:Core/Inc/devs/steering.h **** 		encoder__.set_config(encoder);
+  21:Core/Inc/devs/steering.h **** 	}
+  22:Core/Inc/devs/steering.h **** 
+  23:Core/Inc/devs/steering.h **** 	void set_omega(float omega);
+  24:Core/Inc/devs/steering.h **** 	float get_omega(void);
+  25:Core/Inc/devs/steering.h **** 	void reset_angle(float angle_in_radians);
+  26:Core/Inc/devs/steering.h **** 	float get_angle(void);
+  27:Core/Inc/devs/steering.h **** 	void set_pid_constants(float kp, float ki, float kd){pid__.set_pid_constants(kp, ki, kd);}
+ 452              		.loc 1 27 0
+ 453 001c B0EE481A 		vmov.f32	s2, s16
+ 454 0020 DFED080A 		vldr.32	s1, .L28+16
+ 455 0024 B7EE000A 		vmov.f32	s0, #1.0e+0
+ 456 0028 0748     		ldr	r0, .L28+20
+ 457 002a FFF7FEFF 		bl	_ZN3pid17set_pid_constantsEfff
+ 458              	.LVL20:
+ 459              	.LBE123:
+ 460              	.LBE122:
+  38:Core/Src/robot/robo_init.cpp **** 
+ 461              		.loc 2 38 0
+ 462 002e BDEC028B 		vldm	sp!, {d8}
+ 463              	.LCFI4:
+ 464              		.cfi_restore 80
+ 465              		.cfi_restore 81
+ 466              		.cfi_def_cfa_offset 8
+ 467 0032 08BD     		pop	{r3, pc}
+ 468              	.L29:
+ 469              		.align	2
+ 470              	.L28:
+ 471 0034 00000000 		.word	0
+ 472 0038 FDC1C03E 		.word	1052819965
+ 473 003c 0534D13E 		.word	1053897733
+ 474 0040 2C000000 		.word	.LANCHOR0+44
+ 475 0044 0AD7233C 		.word	1008981770
+ 476 0048 1C000000 		.word	.LANCHOR3+28
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 13
+
+
+ 477              		.cfi_endproc
+ 478              	.LFE396:
+ 480              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 481              		.align	1
+ 482              		.syntax unified
+ 483              		.thumb
+ 484              		.thumb_func
+ 485              		.fpu fpv4-sp-d16
+ 487              	_Z41__static_initialization_and_destruction_0ii:
+ 488              	.LFB400:
+ 489              		.loc 2 92 0
+ 490              		.cfi_startproc
+ 491              		@ args = 0, pretend = 0, frame = 0
+ 492              		@ frame_needed = 0, uses_anonymous_args = 0
+ 493              	.LVL21:
+ 494 0000 0128     		cmp	r0, #1
+ 495 0002 00D0     		beq	.L40
+ 496 0004 7047     		bx	lr
+ 497              	.L40:
+ 498              		.loc 2 92 0 is_stmt 0 discriminator 1
+ 499 0006 38B5     		push	{r3, r4, r5, lr}
+ 500              	.LCFI5:
+ 501              		.cfi_def_cfa_offset 16
+ 502              		.cfi_offset 3, -16
+ 503              		.cfi_offset 4, -12
+ 504              		.cfi_offset 5, -8
+ 505              		.cfi_offset 14, -4
+ 506              		.loc 2 92 0 is_stmt 1 discriminator 1
+ 507 0008 4FF6FF73 		movw	r3, #65535
+ 508 000c 9942     		cmp	r1, r3
+ 509 000e 00D0     		beq	.L41
+ 510              	.LVL22:
+ 511              	.L30:
+ 512              		.loc 2 92 0 is_stmt 0
+ 513 0010 38BD     		pop	{r3, r4, r5, pc}
+ 514              	.LVL23:
+ 515              	.L41:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 516              		.loc 2 3 0 is_stmt 1
+ 517 0012 0021     		movs	r1, #0
+ 518              	.LVL24:
+ 519 0014 1B4B     		ldr	r3, .L42
+ 520              	.L35:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 521              		.loc 2 3 0 is_stmt 0 discriminator 4
+ 522 0016 0029     		cmp	r1, #0
+ 523 0018 1ADB     		blt	.L32
+ 524              	.LVL25:
+ 525              	.LBB124:
+ 526              	.LBB125:
+  13:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+ 527              		.loc 5 13 0 is_stmt 1
+ 528 001a 03F11404 		add	r4, r3, #20
+ 529 001e 0246     		mov	r2, r0
+ 530              	.L34:
+ 531 0020 002A     		cmp	r2, #0
+ 532 0022 04DB     		blt	.L33
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 14
+
+
+ 533              	.LVL26:
+ 534              	.LBB126:
+ 535              	.LBB127:
+  29:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+ 536              		.loc 3 29 0
+ 537 0024 0025     		movs	r5, #0
+ 538 0026 44F8045B 		str	r5, [r4], #4
+ 539              	.LVL27:
+ 540              	.LBE127:
+ 541              	.LBE126:
+  13:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+ 542              		.loc 5 13 0
+ 543 002a 013A     		subs	r2, r2, #1
+ 544 002c F8E7     		b	.L34
+ 545              	.L33:
+ 546              	.LVL28:
+ 547              	.LBB128:
+ 548              	.LBB129:
+  18:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+ 549              		.loc 4 18 0
+ 550 002e 0024     		movs	r4, #0
+ 551 0030 1C84     		strh	r4, [r3, #32]	@ movhi
+ 552 0032 0022     		movs	r2, #0
+ 553 0034 5A62     		str	r2, [r3, #36]	@ float
+ 554 0036 9A62     		str	r2, [r3, #40]	@ float
+ 555 0038 DC61     		str	r4, [r3, #28]
+ 556              	.LVL29:
+ 557              	.LBE129:
+ 558              	.LBE128:
+ 559              	.LBB130:
+ 560              	.LBB131:
+ 561              		.file 6 "Core/Inc/devs/pid.h"
+   1:Core/Inc/devs/pid.h **** #ifndef _PID_H_
+   2:Core/Inc/devs/pid.h **** #define _PID_H_
+   3:Core/Inc/devs/pid.h **** 
+   4:Core/Inc/devs/pid.h **** #include "defines.h"
+   5:Core/Inc/devs/pid.h **** class pid
+   6:Core/Inc/devs/pid.h **** {
+   7:Core/Inc/devs/pid.h **** public:
+   8:Core/Inc/devs/pid.h **** 	pid(){}
+ 562              		.loc 6 8 0
+ 563 003a DA62     		str	r2, [r3, #44]	@ float
+ 564 003c 1A63     		str	r2, [r3, #48]	@ float
+ 565 003e 5A63     		str	r2, [r3, #52]	@ float
+ 566 0040 9A63     		str	r2, [r3, #56]	@ float
+ 567 0042 DA63     		str	r2, [r3, #60]	@ float
+ 568 0044 1A64     		str	r2, [r3, #64]	@ float
+ 569              	.LVL30:
+ 570              	.LBE131:
+ 571              	.LBE130:
+  13:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+ 572              		.loc 5 13 0
+ 573 0046 5A64     		str	r2, [r3, #68]	@ float
+ 574 0048 9A64     		str	r2, [r3, #72]	@ float
+ 575              	.LVL31:
+ 576              	.LBE125:
+ 577              	.LBE124:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 15
+
+
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 578              		.loc 2 3 0
+ 579 004a 4C33     		adds	r3, r3, #76
+ 580 004c 0139     		subs	r1, r1, #1
+ 581 004e E2E7     		b	.L35
+ 582              	.L32:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 583              		.loc 2 3 0 is_stmt 0 discriminator 2
+ 584 0050 0D4C     		ldr	r4, .L42+4
+ 585 0052 2246     		mov	r2, r4
+ 586 0054 0D49     		ldr	r1, .L42+8
+ 587 0056 0020     		movs	r0, #0
+ 588              	.LVL32:
+ 589 0058 FFF7FEFF 		bl	__aeabi_atexit
+ 590              	.LVL33:
+ 591              	.LBB132:
+ 592              	.LBB133:
+ 593              	.LBB134:
+ 594              	.LBB135:
+ 595              	.LBB136:
+  29:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+ 596              		.loc 3 29 0 is_stmt 1 discriminator 2
+ 597 005c 0C48     		ldr	r0, .L42+12
+ 598 005e 0022     		movs	r2, #0
+ 599 0060 8260     		str	r2, [r0, #8]
+ 600              	.LVL34:
+ 601              	.LBE136:
+ 602              	.LBE135:
+ 603              	.LBE134:
+ 604              	.LBB137:
+ 605              	.LBB138:
+ 606              	.LBB139:
+  18:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+ 607              		.loc 4 18 0 discriminator 2
+ 608 0062 0282     		strh	r2, [r0, #16]	@ movhi
+ 609 0064 0023     		movs	r3, #0
+ 610 0066 4361     		str	r3, [r0, #20]	@ float
+ 611 0068 8361     		str	r3, [r0, #24]	@ float
+ 612 006a C260     		str	r2, [r0, #12]
+ 613              	.LVL35:
+ 614              	.LBE139:
+ 615              	.LBE138:
+ 616              	.LBE137:
+ 617              	.LBB140:
+ 618              	.LBB141:
+ 619              	.LBB142:
+ 620              		.loc 6 8 0 discriminator 2
+ 621 006c C361     		str	r3, [r0, #28]	@ float
+ 622 006e 0362     		str	r3, [r0, #32]	@ float
+ 623 0070 4362     		str	r3, [r0, #36]	@ float
+ 624 0072 8362     		str	r3, [r0, #40]	@ float
+ 625 0074 C362     		str	r3, [r0, #44]	@ float
+ 626 0076 0363     		str	r3, [r0, #48]	@ float
+ 627              	.LVL36:
+ 628              	.LBE142:
+ 629              	.LBE141:
+ 630              	.LBE140:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 16
+
+
+ 631              	.LBE133:
+ 632              	.LBE132:
+   4:Core/Src/robot/robo_init.cpp **** 
+ 633              		.loc 2 4 0 discriminator 2
+ 634 0078 2246     		mov	r2, r4
+ 635 007a 0649     		ldr	r1, .L42+16
+ 636 007c FFF7FEFF 		bl	__aeabi_atexit
+ 637              	.LVL37:
+ 638              		.loc 2 92 0 discriminator 2
+ 639 0080 C6E7     		b	.L30
+ 640              	.L43:
+ 641 0082 00BF     		.align	2
+ 642              	.L42:
+ 643 0084 00000000 		.word	.LANCHOR0
+ 644 0088 00000000 		.word	__dso_handle
+ 645 008c 00000000 		.word	__tcf_0
+ 646 0090 00000000 		.word	.LANCHOR3
+ 647 0094 00000000 		.word	_ZN8steeringD1Ev
+ 648              		.cfi_endproc
+ 649              	.LFE400:
+ 651              		.section	.text._Z9robo_initv,"ax",%progbits
+ 652              		.align	1
+ 653              		.global	_Z9robo_initv
+ 654              		.syntax unified
+ 655              		.thumb
+ 656              		.thumb_func
+ 657              		.fpu fpv4-sp-d16
+ 659              	_Z9robo_initv:
+ 660              	.LFB393:
+  16:Core/Src/robot/robo_init.cpp **** 	motor_init();
+ 661              		.loc 2 16 0
+ 662              		.cfi_startproc
+ 663              		@ args = 0, pretend = 0, frame = 0
+ 664              		@ frame_needed = 0, uses_anonymous_args = 0
+ 665 0000 08B5     		push	{r3, lr}
+ 666              	.LCFI6:
+ 667              		.cfi_def_cfa_offset 8
+ 668              		.cfi_offset 3, -8
+ 669              		.cfi_offset 14, -4
+  17:Core/Src/robot/robo_init.cpp **** 	encoder_init();	
+ 670              		.loc 2 17 0
+ 671 0002 FFF7FEFF 		bl	_ZL10motor_initv
+ 672              	.LVL38:
+  18:Core/Src/robot/robo_init.cpp **** 	pid_init();
+ 673              		.loc 2 18 0
+ 674 0006 FFF7FEFF 		bl	_ZL12encoder_initv
+ 675              	.LVL39:
+  19:Core/Src/robot/robo_init.cpp **** 	limit_switch_init();
+ 676              		.loc 2 19 0
+ 677 000a FFF7FEFF 		bl	_ZL8pid_initv
+ 678              	.LVL40:
+  20:Core/Src/robot/robo_init.cpp **** 	leg_init();
+ 679              		.loc 2 20 0
+ 680 000e FFF7FEFF 		bl	_ZL17limit_switch_initv
+ 681              	.LVL41:
+  21:Core/Src/robot/robo_init.cpp **** 	steering_init();
+ 682              		.loc 2 21 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 17
+
+
+ 683 0012 FFF7FEFF 		bl	_ZL8leg_initv
+ 684              	.LVL42:
+  22:Core/Src/robot/robo_init.cpp **** }
+ 685              		.loc 2 22 0
+ 686 0016 FFF7FEFF 		bl	_ZL13steering_initv
+ 687              	.LVL43:
+  23:Core/Src/robot/robo_init.cpp **** 
+ 688              		.loc 2 23 0
+ 689 001a 08BD     		pop	{r3, pc}
+ 690              		.cfi_endproc
+ 691              	.LFE393:
+ 693              		.section	.text._GLOBAL__sub_I_leg,"ax",%progbits
+ 694              		.align	1
+ 695              		.syntax unified
+ 696              		.thumb
+ 697              		.thumb_func
+ 698              		.fpu fpv4-sp-d16
+ 700              	_GLOBAL__sub_I_leg:
+ 701              	.LFB402:
+ 702              		.loc 2 92 0
+ 703              		.cfi_startproc
+ 704              		@ args = 0, pretend = 0, frame = 0
+ 705              		@ frame_needed = 0, uses_anonymous_args = 0
+ 706 0000 08B5     		push	{r3, lr}
+ 707              	.LCFI7:
+ 708              		.cfi_def_cfa_offset 8
+ 709              		.cfi_offset 3, -8
+ 710              		.cfi_offset 14, -4
+ 711              		.loc 2 92 0
+ 712 0002 4FF6FF71 		movw	r1, #65535
+ 713 0006 0120     		movs	r0, #1
+ 714 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 715              	.LVL44:
+ 716 000c 08BD     		pop	{r3, pc}
+ 717              		.cfi_endproc
+ 718              	.LFE402:
+ 720              		.section	.init_array,"aw",%init_array
+ 721              		.align	2
+ 722 0000 00000000 		.word	_GLOBAL__sub_I_leg(target1)
+ 723              		.global	steering
+ 724              		.global	leg
+ 725              		.section	.bss._ZL20motor_configurations,"aw",%nobits
+ 726              		.align	2
+ 727              		.set	.LANCHOR1,. + 0
+ 730              	_ZL20motor_configurations:
+ 731 0000 00000000 		.space	96
+ 731      00000000 
+ 731      00000000 
+ 731      00000000 
+ 731      00000000 
+ 732              		.section	.bss._ZL22encoder_configurations,"aw",%nobits
+ 733              		.align	2
+ 734              		.set	.LANCHOR2,. + 0
+ 737              	_ZL22encoder_configurations:
+ 738 0000 00000000 		.space	16
+ 738      00000000 
+ 738      00000000 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 18
+
+
+ 738      00000000 
+ 739              		.section	.bss.leg,"aw",%nobits
+ 740              		.align	2
+ 741              		.set	.LANCHOR0,. + 0
+ 744              	leg:
+ 745 0000 00000000 		.space	76
+ 745      00000000 
+ 745      00000000 
+ 745      00000000 
+ 745      00000000 
+ 746              		.section	.bss.steering,"aw",%nobits
+ 747              		.align	2
+ 748              		.set	.LANCHOR3,. + 0
+ 751              	steering:
+ 752 0000 00000000 		.space	52
+ 752      00000000 
+ 752      00000000 
+ 752      00000000 
+ 752      00000000 
+ 753              		.text
+ 754              	.Letext0:
+ 755              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 756              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 757              		.file 9 "Drivers/CMSIS/Include/core_cm4.h"
+ 758              		.file 10 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 759              		.file 11 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 760              		.file 12 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 761              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 762              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 763              		.file 15 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 764              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 765              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 766              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 767              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 768              		.file 20 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 769              		.file 21 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 770              		.file 22 "Core/Inc/periphs/tim.h"
+ 771              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 772              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 773              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 774              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 775              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 776              		.file 28 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 777              		.file 29 "Core/Inc/devs/limit_switch.h"
+ 778              		.file 30 "Core/Inc/periphs/usart.h"
+ 779              		.file 31 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_init.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:18     .text._ZN8steeringD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:25     .text._ZN8steeringD2Ev:00000000 _ZN8steeringD2Ev
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:25     .text._ZN8steeringD2Ev:00000000 _ZN8steeringD1Ev
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:42     .text._ZL8leg_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:48     .text._ZL8leg_initv:00000000 _ZL8leg_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:101    .text._ZL8leg_initv:0000001c $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:109    .text._ZL13steering_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:115    .text._ZL13steering_initv:00000000 _ZL13steering_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:147    .text._ZL13steering_initv:0000000c $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:154    .text._ZL17limit_switch_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:160    .text._ZL17limit_switch_initv:00000000 _ZL17limit_switch_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:185    .text._ZL17limit_switch_initv:00000014 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:192    .text.__tcf_0:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:198    .text.__tcf_0:00000000 __tcf_0
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:237    .text.__tcf_0:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:243    .text._ZL10motor_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:249    .text._ZL10motor_initv:00000000 _ZL10motor_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:353    .text._ZL10motor_initv:00000084 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:365    .text._ZL12encoder_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:371    .text._ZL12encoder_initv:00000000 _ZL12encoder_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:408    .text._ZL12encoder_initv:00000028 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:415    .text._ZL8pid_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:421    .text._ZL8pid_initv:00000000 _ZL8pid_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:471    .text._ZL8pid_initv:00000034 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:481    .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:487    .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:643    .text._Z41__static_initialization_and_destruction_0ii:00000084 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:652    .text._Z9robo_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:659    .text._Z9robo_initv:00000000 _Z9robo_initv
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:694    .text._GLOBAL__sub_I_leg:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:700    .text._GLOBAL__sub_I_leg:00000000 _GLOBAL__sub_I_leg
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:721    .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:751    .bss.steering:00000000 steering
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:744    .bss.leg:00000000 leg
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:726    .bss._ZL20motor_configurations:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:730    .bss._ZL20motor_configurations:00000000 _ZL20motor_configurations
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:733    .bss._ZL22encoder_configurations:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:737    .bss._ZL22encoder_configurations:00000000 _ZL22encoder_configurations
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:740    .bss.leg:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccpeMHT6.s:747    .bss.steering:00000000 $d
+                           .group:00000000 _ZN8steeringD5Ev
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Start
+HAL_TIM_PWM_Start
+htim8
+HAL_TIM_Encoder_Start
+htim2
+htim3
+_ZN3pid17set_pid_constantsEfff
+__aeabi_atexit
+__dso_handle

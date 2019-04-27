@@ -3,8 +3,9 @@
 void steering::set_omega(float omega){
 	encoder__.calculate_omega();
 	motor__.set_omega(omega);
-	float computed_omega = pid__.compute_pid(encoder__.get_omega(), omega);
+	float computed_omega = dpid_.compute(omega-encoder__.get_omega(), 10);
 	motor__.set_omega(computed_omega);
+	printf("\tsetting %d", (int)(omega*100));
 }
 
 float steering::get_omega(void){
