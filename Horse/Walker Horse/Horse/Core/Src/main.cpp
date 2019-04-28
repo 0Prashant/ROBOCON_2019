@@ -146,6 +146,7 @@ int main(void)
 
 		if (HAL_GetTick() - sample_time >= 10) {
 			sample_time = HAL_GetTick();
+			calculate_datas();
 			leg[0].set_omega(0);
 			steering.set_omega(0);
 			Vec3<float> angle = read_Orientation(10);

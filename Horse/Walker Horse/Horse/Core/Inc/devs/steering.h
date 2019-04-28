@@ -19,17 +19,20 @@ public:
 		motor__.set_config(motor);
 		encoder__.set_config(encoder);
 	}
-
-	void set_omega(float omega);
-	float get_omega(void);
-	void reset_angle(float angle_in_radians);
-	float get_angle(void);
 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
 		dpid_.set_P(kp);
 		dpid_.set_I(ki);
 		dpid_.set_D(kd);
 		dpid_.set_Limits(upper_limit, lower_limit);
 	}
+
+	void set_omega(float omega);
+	void reset_angle(float angle_in_radians);
+	void calculate_omega();
+
+	float get_omega(void){return encoder__.get_omega();}
+	float get_angle(void){return encoder__.get_angle();}
+	int16_t get_encoder_count(void){return encoder__.get_count();}
 	limit_switch limit_switch__[1];
 	
 

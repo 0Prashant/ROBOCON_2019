@@ -8,6 +8,10 @@
 #include "defines.h"
 #include "pid_algorithms.h"
 
+enum Leg_condition{	RAISED, 
+			FALLEN, 
+			UNDEFINED};
+
 class leg
 {
 public:
@@ -29,15 +33,20 @@ public:
 		dpid_.set_Limits(upper_limit, lower_limit);
 	}
 
-	int get_steps();
+	
 	void set_omega(float omega);
-	float get_omega(void);
-	int16_t get_encoder_count(void);
-	bool is_raised();
-	void reset_angle(float angle_in_radians);
-	float get_angle(void);
-	float get_max_omega(){return motor__[0].get_max_omega();}
 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
+	void reset_angle(float angle_in_radians);
+	void calculate_omega();
+	Leg_condition is_raised();
+	bool is_raised_without_deadzone();
+
+	int get_steps(){return steps;}
+	float get_omega(void){return encoder__.get_omega();}
+	float get_angle(void){return encoder__.get_angle();}
+	float get_max_omega(){return motor__[0].get_max_omega();}
+	int16_t get_encoder_count(void){return encoder__.get_count();}
+
 	limit_switch limit_switch__[2];
 	int steps = 0;
 

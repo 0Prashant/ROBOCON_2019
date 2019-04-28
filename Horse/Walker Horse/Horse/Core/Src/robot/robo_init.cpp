@@ -36,7 +36,7 @@ void steering_init(){
 static void pid_init(){
 
 	leg[0].set_PID_constants( 10, 125, 0, -38, 38);		//for crank = 70  // 25.42, 3.082, 2.385	
-	steering.set_PID_constants( 1.5, 0.2, 0, -7, 7);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
+	steering.set_PID_constants( 1.5, 2, 0, -7, 7);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 }
 
 static void limit_switch_init(){
