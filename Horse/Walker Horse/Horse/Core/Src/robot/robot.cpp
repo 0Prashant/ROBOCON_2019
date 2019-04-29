@@ -2,7 +2,7 @@
 extern leg leg[1];
 extern steering steering;
 
-static const float robot_speed = 8;
+static const float robot_speed = 12;
 static float leg_speed = robot_speed;    //38 is the 100%
 static const float steering_speed = 0.7; // 1.35 is the 100%
 static const float steering_angle_limit = 8 * PI / 180;
@@ -14,8 +14,8 @@ float tolerance = 0.5 * PI / 180;
 // float steps[6] = {12, 17, 23, 30, 45, 80};
 // float angles[6] = {0, 45, 45, 55, -15, 0};
 
-float steps[6] = {12, 17, 23, 30, 45, 80};
-float angles[6] = {0, 45, 45, 55, -15, 0};
+float steps[6] = {12, 17, 23, 25, 45, 80};
+float angles[6] = {0, 45, 45, 55, -10, 0};
 
 bool go(int steps, float angle)
 {
@@ -25,7 +25,7 @@ bool go(int steps, float angle)
 
 	calculate_robot_angle();
 	// printf("steps = %d \trobot angle = %d \t steering angle = %d\n",leg[0].steps,  (int)(robot_angle*180/PI), (int)(steering.get_angle()*180/PI));
-	printf("inputangle = %d\trobotangle = %d \n", (int)(angle*180/PI), (int)(robot_angle*180/PI));
+	//printf("inputangle = %d\trobotangle = %d \n", (int)(angle*180/PI), (int)(robot_angle*180/PI));
 	if ((leg[0].get_steps() >= steps) && (fabs(angle - robot_angle) <= 0.04))
 	{
 		leg[0].set_omega(0);
@@ -48,7 +48,7 @@ void move_steering(int steps, float angle)
 {
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
-		printf("raised");
+		//printf("raised");
 		if ((steering.get_angle() > -steering_angle_limit) && (steering.get_angle() < steering_angle_limit))
 		{
 			if (angle > (robot_angle + tolerance))
@@ -66,7 +66,7 @@ void move_steering(int steps, float angle)
 	}
 	else if (leg[0].is_raised() == Leg_condition::FALLEN)
 	{
-		printf ("fallen");
+		//printf ("fallen");
 		if (fabs(angle - robot_angle) <= steering_angle_limit)
 		{
 			if (steering.get_angle() > (tolerance)){
@@ -77,7 +77,7 @@ void move_steering(int steps, float angle)
 
 			else{
 				steering.set_omega(0);}
-			printf("center_alligned\t");
+			// printf("center_alligned\t");
 		}
 		else{
 			
@@ -87,12 +87,12 @@ void move_steering(int steps, float angle)
 			else{
 				steering.set_omega(0);
 			}			
-			printf("peak_alligned\t");
+			//printf("peak_alligned\t");
 		}
 	}
 	else
 	{
-		printf("nothing");
+		// printf("nothing");
 		steering.set_omega(0);
 	}
 }
