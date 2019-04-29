@@ -16,7 +16,7 @@ void leg::set_omega(float omega){
 }
 
 Leg_condition leg::is_raised(){
-	float dead_angle = 10*PI/180;
+	float dead_angle = 15*PI/180;
 	if(((this->get_angle()>=(0+dead_angle)) && (this->get_angle()<=(PI-dead_angle)))  ||
 	   ((this->get_angle()<=(-PI-dead_angle)) && (this->get_angle()>=(-2*PI+dead_angle)))){
 		return RAISED;

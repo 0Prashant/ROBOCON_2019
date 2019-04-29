@@ -4,7 +4,7 @@ void steering::set_omega(float omega){
 	motor__.set_omega(omega);
 	float computed_omega = dpid_.compute(omega-encoder__.get_omega(), 10);
 	motor__.set_omega(computed_omega);
-	printf("\tsetting %d \t", (int)(omega*100));
+	printf("\tsettingg %d \t", (int)(omega*100));
 }
 
 void steering::reset_angle(float angle_in_radians){
