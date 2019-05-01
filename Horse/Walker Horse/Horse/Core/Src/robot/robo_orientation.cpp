@@ -172,6 +172,8 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         float bx = gXMagAlpha35.smooth(mag.getX());
         float by = gYMagAlpha35.smooth(mag.getY());
         float bz = gZMagAlpha35.smooth(mag.getZ());
+
+	// printf("%ld, %ld, %ld\n", (int32_t)(bx), (int32_t)(by), (int32_t)(bz));
         
         float roll = atan2f(ay, az) * 57.3;
 
@@ -190,6 +192,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         float cos_pitch = cos(pitch / 57.3);
         // Tilt Compensated Yaw
         float yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*cos_roll*sin_pitch)) * 57.3;
+        // printf("%ld\n", (int32_t)(yaw*1000));
 
         yaw = gYaw_Filter.filter(yaw, gz, dt_millis);
         // printf("%ld\n", (int32_t)(yaw*1000));

@@ -31,7 +31,7 @@ build/robo_init.o: Core/Src/robot/robo_init.cpp \
  Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
  Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
  Core/Inc/utils/pid_algorithms.h Core/Inc/devs/steering.h \
- Core/Inc/periphs/usart.h Core/Inc/periphs/gpio.h
+ Core/Inc/periphs/usart.h Core/Inc/periphs/gpio.h Core/Inc/utils/vec3.h
 
 Core/Inc/robot/robo_init.h:
 
@@ -118,3 +118,5 @@ Core/Inc/devs/steering.h:
 Core/Inc/periphs/usart.h:
 
 Core/Inc/periphs/gpio.h:
+
+Core/Inc/utils/vec3.h:

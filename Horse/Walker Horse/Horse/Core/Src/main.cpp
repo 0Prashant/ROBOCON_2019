@@ -126,7 +126,7 @@ int main(void)
 	MX_USART3_UART_Init();
 	/* USER CODE BEGIN 2 */
 
-	 robo_init();
+	robo_init();
 	Angle_Init();
 
 	/* USER CODE END 2 */

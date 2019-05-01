@@ -1,5 +1,5 @@
 #include "leg.h"
-
+static float ramped_value = 0;
 
 void leg::set_omega(float omega){
 	float gravity_compensator_factor;
@@ -10,9 +10,24 @@ void leg::set_omega(float omega){
 		gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
 	}
 	omega += gravity_compensator_factor;
+	if (omega>motor__[0].get_max_omega())
+	{
+		omega = motor__[0].get_max_omega();
+	}
+	omega = ramp(omega);
 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
 	motor__[0].set_omega(computed_omega);
 	motor__[1].set_omega(computed_omega);
+}
+
+float leg::ramp(float omega){
+	if(ramped_value < omega){
+		ramped_value += 3;
+	}
+	else{
+		ramped_value -= 3;
+	}
+	return ramped_value;
 }
 
 Leg_condition leg::is_raised(){

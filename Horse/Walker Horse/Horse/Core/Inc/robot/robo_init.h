@@ -7,6 +7,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "main.h"
+#include "vec3.h"
 
 void robo_init(void);
 
