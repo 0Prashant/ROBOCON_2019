@@ -25,7 +25,7 @@ void robo_init(){
 
 void leg_init(){
 	leg[0].set_config(&motor_configurations[0], &motor_configurations[1], &encoder_configurations[0]);	
-	leg[0].set_gravity_compensator_constant(0.85, 0.95);
+	leg[0].set_gravity_compensator_constant(0.8, 0.95);
 
 }	
 
@@ -35,7 +35,7 @@ void steering_init(){
 
 static void pid_init(){
 
-	leg[0].set_PID_constants( 10, 125, 0, -38, 38);		//for crank = 70  // 25.42, 3.082, 2.385	
+	leg[0].set_PID_constants( 10, 125, 0, -35, 35);		//for crank = 70  // 25.42, 3.082, 2.385	
 	steering.set_PID_constants( 2, 4, 0, -1.35, 1.35);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 }
 

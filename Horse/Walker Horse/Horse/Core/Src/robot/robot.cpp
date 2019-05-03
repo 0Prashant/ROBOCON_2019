@@ -2,18 +2,18 @@
 extern leg leg[1];
 extern steering steering;
 
-
 Vec3<float> read_Orientation(uint32_t dt_millis);
 Vec3<float> initial_angle;
 Vec3<float> angle;
 
 static const float robot_speed = 20;
-static float leg_speed = robot_speed;    //38 is the 100%
+static float leg_speed = robot_speed;    //35 is the maximum with safe zone
 static const float steering_speed = 0.7; // 1.35 is the 100%
 static const float steering_angle_limit = 9 * PI / 180;
+static float number_of_samples = 0;
+static bool orientation_flag = false;
 
 float robot_angle = 0, temp_robot_angle = 0;
-bool robo_angle_flag = true;
 float tolerance = 0.5 * PI / 180;
 
 // float steps[6] = {12, 17, 23, 30, 45, 80};
@@ -29,7 +29,8 @@ bool go(int steps, float angle)
 	move_steering(steps, angle);
 
 	calculate_robot_angle();
-	// printf("steps = %d \trobot angle = %d \t steering angle = %d\n",leg[0].steps,  (int)(robot_angle*180/PI), (int)(steering.get_angle()*180/PI));
+	//printf("steps = %d \trobot_angle = %d, leg_omega = %d \t steering_angle = %d, st_omega = %d\n",
+	//leg[0].steps,  (int)(robot_angle*180/PI), (int)(leg[0].get_omega()*100), (int)(steering.get_angle()*180/PI), (int)(steering.get_omega()*100));
 	
 	if ((leg[0].get_steps() >= steps) && (fabs(angle - robot_angle) <= 0.04))
 	{
@@ -48,6 +49,7 @@ void move_leg(int steps, float angle)
 {
 	//Setting the slow speed in sand dune and tussok
 	leg_speed = (steps == 23 || steps == 40) ? robot_speed / 1.35 : robot_speed;
+	leg[0].set_omega(leg_speed);
 }
 void move_steering(int steps, float angle)
 {
@@ -116,7 +118,24 @@ void calculate_robot_angle()
 	/*/
 
 	//Alternate code to calculate robot_angle using IMU
-	robot_angle = (initial_angle.getZ() - angle.getZ())*PI/180;
+	// robot_angle = -(initial_angle.getZ() - angle.getZ())*PI/180;
+
+	if(leg[0].is_raised() == Leg_condition::RAISED){
+		temp_robot_angle += -(initial_angle.getZ() - angle.getZ())*PI/180;
+		number_of_samples++;
+		orientation_flag = true;
+		printf("\tcalculating");
+	}
+	else{
+		if(orientation_flag){
+			robot_angle = temp_robot_angle / number_of_samples;
+			temp_robot_angle = 0;
+			number_of_samples = 0;
+			orientation_flag = false;
+			printf("displayed");
+		}
+		printf("still");
+	}
 
 	//*/
 }
@@ -134,7 +153,7 @@ bool play()
 {
 	uint32_t dt = HAL_GetTick();
 	initial_angle = read_Orientation(10);
-	while (true)
+		// while (true)
 		// {
 		// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
 		// 	{

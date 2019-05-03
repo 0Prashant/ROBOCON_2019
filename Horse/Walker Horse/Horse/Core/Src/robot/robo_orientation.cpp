@@ -113,11 +113,13 @@ int init_OriFilters(uint32_t dt_millis)
  * 1) Read the values from Accelerometer and the Gyroscope
  * </pre>
  */
+
 Vec3<float> read_Orientation(uint32_t dt_millis)
 {
         Vec3<float> accel;
         Vec3<float> gyro;
         Vec3<float> mag;
+	Vec3<float> mag_offset(-249, -261, 40);
         Vec3<float> angles;
 
 #ifdef _ENABLE_I2C_ERROR_DETECTION
@@ -152,7 +154,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         accel = Body_IMU.norm_a_axis;
         gyro = Body_IMU.norm_g_axis - gOmega_Bias;
         mag = Body_HMC.raw_axis;
-
+	mag -= mag_offset;
         // (accel.mult_EW(1000)).print();
         // printf("    ");
         // (gyro.mult_EW(4)).print();
@@ -173,7 +175,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         float by = gYMagAlpha35.smooth(mag.getY());
         float bz = gZMagAlpha35.smooth(mag.getZ());
 
-	// printf("%ld, %ld, %ld\n", (int32_t)(bx), (int32_t)(by), (int32_t)(bz));
+	// printf("%ld %ld %ld\n", (int32_t)(bx), (int32_t)(by), (int32_t)(bz));
         
         float roll = atan2f(ay, az) * 57.3;
 
