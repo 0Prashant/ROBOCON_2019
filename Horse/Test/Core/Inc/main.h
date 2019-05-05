@@ -1,9 +1,15 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.h
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @file           : main.h
+  * @brief          : Header for main.c file.
+  *                   This file contains the common defines of the application.
   ******************************************************************************
+  ** This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * COPYRIGHT(c) 2019 STMicroelectronics
   *
@@ -34,12 +40,16 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -62,27 +72,38 @@
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void EXTI0_IRQHandler(void);
-void EXTI2_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
+void Error_Handler(void);
+
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
+
+/* Private defines -----------------------------------------------------------*/
+#define MOTOR3_OUT_Pin GPIO_PIN_3
+#define MOTOR3_OUT_GPIO_Port GPIOE
+#define EXT_INT_Pin GPIO_PIN_0
+#define EXT_INT_GPIO_Port GPIOC
+#define EXT_INT_EXTI_IRQn EXTI0_IRQn
+#define Test_LED_OUT_Pin GPIO_PIN_4
+#define Test_LED_OUT_GPIO_Port GPIOA
+#define MOTOR3_OUTA10_Pin GPIO_PIN_10
+#define MOTOR3_OUTA10_GPIO_Port GPIOA
+#define MOTOR1_OUT_Pin GPIO_PIN_15
+#define MOTOR1_OUT_GPIO_Port GPIOA
+#define MOTOR1_OUTC11_Pin GPIO_PIN_11
+#define MOTOR1_OUTC11_GPIO_Port GPIOC
+#define MOTOR2_OUT_Pin GPIO_PIN_2
+#define MOTOR2_OUT_GPIO_Port GPIOD
+#define MOTOR2_OUTD4_Pin GPIO_PIN_4
+#define MOTOR2_OUTD4_GPIO_Port GPIOD
+/* USER CODE BEGIN Private defines */
+
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __STM32F4xx_IT_H */
+#endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

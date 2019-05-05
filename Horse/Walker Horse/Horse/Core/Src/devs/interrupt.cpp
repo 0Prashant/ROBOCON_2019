@@ -2,6 +2,8 @@
 #include "robo_init.h"
 
 extern leg leg[1];
+extern bool sand_dune_crossed_flag;
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
         switch (GPIO_Pin) {
@@ -14,5 +16,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                 case GPIO_PIN_2: {	//leg[0].limit_switch__[1].int_pin
 			//printf("\tRobot interrupt 1 \t");
                 } break;
+		
+		case GPIO_PIN_8: {
+			sand_dune_crossed_flag = true;
+			printf("\nSand_Dune_Crossed \n");
+		}
+
+		case GPIO_PIN_10: {
+			sand_dune_crossed_flag = true;
+			printf("\nSand_Dune_Crossed \n");
+		}
         }
 }

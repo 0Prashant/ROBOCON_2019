@@ -13,8 +13,10 @@ static const float steering_angle_limit = 9 * PI / 180;
 static float number_of_samples = 0;
 static bool orientation_flag = false;
 
+bool sand_dune_crossed_flag = false;
 float robot_angle = 0, temp_robot_angle = 0;
 float tolerance = 0.5 * PI / 180;
+
 
 // float steps[6] = {12, 17, 23, 30, 45, 80};
 // float angles[6] = {0, 45, 45, 55, -15, 0};
@@ -124,7 +126,7 @@ void calculate_robot_angle()
 		temp_robot_angle += -(initial_angle.getZ() - angle.getZ())*PI/180;
 		number_of_samples++;
 		orientation_flag = true;
-		printf("\tcalculating");
+		// printf("\tcalculating");
 	}
 	else{
 		if(orientation_flag){
@@ -132,9 +134,9 @@ void calculate_robot_angle()
 			temp_robot_angle = 0;
 			number_of_samples = 0;
 			orientation_flag = false;
-			printf("displayed");
+			// printf("displayed");
 		}
-		printf("still");
+		// printf("still");
 	}
 
 	//*/
@@ -164,8 +166,14 @@ bool play()
 		// 			break;
 		// 	}
 		// }
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 3; i++)
 		{
+			if (!sand_dune_crossed_flag && (i==2)){
+				i--;
+				go(steps[1]+1, 0);
+				leg[0].steps = steps[2];
+				break;
+			}
 			while (true)
 			{
 				if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
