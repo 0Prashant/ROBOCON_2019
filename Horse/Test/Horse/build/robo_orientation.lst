@@ -1,0 +1,4040 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_orientation.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN10Exp_SmoothD2Ev,"axG",%progbits,_ZN10Exp_SmoothD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN10Exp_SmoothD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN10Exp_SmoothD2Ev:
+  26              	.LFB152:
+  27              		.file 1 "Core/Inc/utils/smoothing_algorithm.h"
+   1:Core/Inc/utils/smoothing_algorithm.h **** 
+   2:Core/Inc/utils/smoothing_algorithm.h **** #ifndef _SMOOTHING_ALGORITHM_H_
+   3:Core/Inc/utils/smoothing_algorithm.h **** #define _SMOOTHING_ALGORITHM_H_
+   4:Core/Inc/utils/smoothing_algorithm.h **** 
+   5:Core/Inc/utils/smoothing_algorithm.h **** #include "vec3.h"
+   6:Core/Inc/utils/smoothing_algorithm.h **** 
+   7:Core/Inc/utils/smoothing_algorithm.h **** // class Smoothing_Algorithm
+   8:Core/Inc/utils/smoothing_algorithm.h **** // {
+   9:Core/Inc/utils/smoothing_algorithm.h **** // public:
+  10:Core/Inc/utils/smoothing_algorithm.h **** //         virtual float smooth(const float &input) = 0;
+  11:Core/Inc/utils/smoothing_algorithm.h **** //         virtual ~Smoothing_Algorithm() { }
+  12:Core/Inc/utils/smoothing_algorithm.h **** // };
+  13:Core/Inc/utils/smoothing_algorithm.h **** 
+  14:Core/Inc/utils/smoothing_algorithm.h **** class Exp_Smooth // : public Smoothing_Algorithm
+  15:Core/Inc/utils/smoothing_algorithm.h **** {
+  16:Core/Inc/utils/smoothing_algorithm.h **** public:
+  17:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth();
+  18:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(float alpha);
+  19:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(Exp_Smooth &&) = default;
+  20:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth(const Exp_Smooth &) = default;
+  21:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(Exp_Smooth &&) = default;
+  22:Core/Inc/utils/smoothing_algorithm.h ****         Exp_Smooth &operator=(const Exp_Smooth &) = default;
+  23:Core/Inc/utils/smoothing_algorithm.h ****         ~Exp_Smooth() { }
+  28              		.loc 1 23 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 23 0
+  35 0000 7047     		bx	lr
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 2
+
+
+  36              		.cfi_endproc
+  37              	.LFE152:
+  39              		.weak	_ZN10Exp_SmoothD1Ev
+  40              		.thumb_set _ZN10Exp_SmoothD1Ev,_ZN10Exp_SmoothD2Ev
+  41              		.section	.text._ZN13Kalman_FilterD2Ev,"axG",%progbits,_ZN13Kalman_FilterD5Ev,comdat
+  42              		.align	1
+  43              		.weak	_ZN13Kalman_FilterD2Ev
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN13Kalman_FilterD2Ev:
+  50              	.LFB412:
+  51              		.file 2 "Core/Inc/utils/kalman.h"
+   1:Core/Inc/utils/kalman.h **** /*
+   2:Core/Inc/utils/kalman.h ****  * kalman.h
+   3:Core/Inc/utils/kalman.h ****  * 
+   4:Core/Inc/utils/kalman.h ****  * Created : 11/13/2018
+   5:Core/Inc/utils/kalman.h ****  *  Author : n-is
+   6:Core/Inc/utils/kalman.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/kalman.h ****  */
+   8:Core/Inc/utils/kalman.h **** 
+   9:Core/Inc/utils/kalman.h **** #ifndef _KALMAN_H_
+  10:Core/Inc/utils/kalman.h **** #define _KALMAN_H_
+  11:Core/Inc/utils/kalman.h **** 
+  12:Core/Inc/utils/kalman.h **** #include "mat.h"
+  13:Core/Inc/utils/kalman.h **** 
+  14:Core/Inc/utils/kalman.h **** class Kalman_Filter;
+  15:Core/Inc/utils/kalman.h **** 
+  16:Core/Inc/utils/kalman.h **** struct Kalman_Vars
+  17:Core/Inc/utils/kalman.h **** {
+  18:Core/Inc/utils/kalman.h **** public:
+  19:Core/Inc/utils/kalman.h ****         void set_F(const Mat &f) { F_ = f; }
+  20:Core/Inc/utils/kalman.h ****         void set_B(const Mat &b) { B_ = b; }
+  21:Core/Inc/utils/kalman.h ****         void set_H(const Mat &h) { H_ = h; }
+  22:Core/Inc/utils/kalman.h ****         void set_I(uint8_t n)    { I_ = Mat::eye(n); }
+  23:Core/Inc/utils/kalman.h ****         void set_P(const Mat &p) { P_ = p; }
+  24:Core/Inc/utils/kalman.h ****         void set_Q(const Mat &q) { Q_ = q; }
+  25:Core/Inc/utils/kalman.h ****         void set_R(const Mat &r) { R_ = r; }
+  26:Core/Inc/utils/kalman.h **** 
+  27:Core/Inc/utils/kalman.h ****         friend class Kalman_Filter;
+  28:Core/Inc/utils/kalman.h **** 
+  29:Core/Inc/utils/kalman.h **** private:
+  30:Core/Inc/utils/kalman.h ****         Mat F_, B_, H_, I_, P_, Q_, R_;
+  31:Core/Inc/utils/kalman.h **** };
+  32:Core/Inc/utils/kalman.h **** 
+  33:Core/Inc/utils/kalman.h **** // Trying a Simple Sensor Fusion : Gyroscope and (Accelerometer/Magnetometer)
+  34:Core/Inc/utils/kalman.h **** class Kalman_Filter
+  35:Core/Inc/utils/kalman.h **** {
+  36:Core/Inc/utils/kalman.h **** public:
+  37:Core/Inc/utils/kalman.h ****         Kalman_Filter(Kalman_Vars *kv, int (*kv_init)(uint32_t)) :
+  38:Core/Inc/utils/kalman.h ****         x_(2,1), u_(1,1), z_(1,1), K_(2,1)
+  39:Core/Inc/utils/kalman.h ****         {
+  40:Core/Inc/utils/kalman.h ****                 is_first_ = true;
+  41:Core/Inc/utils/kalman.h ****                 kv_ = kv;
+  42:Core/Inc/utils/kalman.h ****                 kv_init_ = kv_init;
+  43:Core/Inc/utils/kalman.h ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 3
+
+
+  44:Core/Inc/utils/kalman.h ****         Kalman_Filter(Kalman_Filter &&) = default;
+  45:Core/Inc/utils/kalman.h ****         Kalman_Filter(const Kalman_Filter &) = default;
+  46:Core/Inc/utils/kalman.h ****         Kalman_Filter &operator=(Kalman_Filter &&) = default;
+  47:Core/Inc/utils/kalman.h ****         Kalman_Filter &operator=(const Kalman_Filter &) = default;
+  48:Core/Inc/utils/kalman.h ****         ~Kalman_Filter() { }
+  52              		.loc 2 48 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  58              		.loc 2 48 0
+  59 0000 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE412:
+  63              		.weak	_ZN13Kalman_FilterD1Ev
+  64              		.thumb_set _ZN13Kalman_FilterD1Ev,_ZN13Kalman_FilterD2Ev
+  65              		.section	.text._ZN4Vec3IfED2Ev,"axG",%progbits,_ZN4Vec3IfED5Ev,comdat
+  66              		.align	1
+  67              		.weak	_ZN4Vec3IfED2Ev
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  71              		.fpu fpv4-sp-d16
+  73              	_ZN4Vec3IfED2Ev:
+  74              	.LFB551:
+  75              		.file 3 "Core/Inc/utils/vec3.h"
+   1:Core/Inc/utils/vec3.h **** /*
+   2:Core/Inc/utils/vec3.h ****  * vec3.h
+   3:Core/Inc/utils/vec3.h ****  * 
+   4:Core/Inc/utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc/utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/vec3.h ****  */
+   8:Core/Inc/utils/vec3.h **** 
+   9:Core/Inc/utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc/utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc/utils/vec3.h **** 
+  12:Core/Inc/utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/vec3.h **** #include "main.h"
+  14:Core/Inc/utils/vec3.h **** 
+  15:Core/Inc/utils/vec3.h **** template <typename T>
+  16:Core/Inc/utils/vec3.h **** void swap_Element(T &first, T &second)
+  17:Core/Inc/utils/vec3.h **** {
+  18:Core/Inc/utils/vec3.h ****         T temp = first;
+  19:Core/Inc/utils/vec3.h ****         first = second;
+  20:Core/Inc/utils/vec3.h ****         second = temp;
+  21:Core/Inc/utils/vec3.h **** }
+  22:Core/Inc/utils/vec3.h **** 
+  23:Core/Inc/utils/vec3.h **** template <class T>
+  24:Core/Inc/utils/vec3.h **** class Vec3
+  25:Core/Inc/utils/vec3.h **** {
+  26:Core/Inc/utils/vec3.h **** public:
+  27:Core/Inc/utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  28:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  29:Core/Inc/utils/vec3.h **** 
+  30:Core/Inc/utils/vec3.h ****         Vec3(Vec3 &&) = default;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 4
+
+
+  31:Core/Inc/utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  32:Core/Inc/utils/vec3.h ****         ~Vec3() { }
+  76              		.loc 3 32 0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		@ link register save eliminated.
+  81              	.LVL2:
+  82              		.loc 3 32 0
+  83 0000 7047     		bx	lr
+  84              		.cfi_endproc
+  85              	.LFE551:
+  87              		.weak	_ZN4Vec3IfED1Ev
+  88              		.thumb_set _ZN4Vec3IfED1Ev,_ZN4Vec3IfED2Ev
+  89              		.section	.text._ZN7MPU6050D2Ev,"axG",%progbits,_ZN7MPU6050D5Ev,comdat
+  90              		.align	1
+  91              		.weak	_ZN7MPU6050D2Ev
+  92              		.syntax unified
+  93              		.thumb
+  94              		.thumb_func
+  95              		.fpu fpv4-sp-d16
+  97              	_ZN7MPU6050D2Ev:
+  98              	.LFB577:
+  99              		.file 4 "Core/Inc/devs/mpu6050.h"
+   1:Core/Inc/devs/mpu6050.h **** /*
+   2:Core/Inc/devs/mpu6050.h ****  * mpu6050.h
+   3:Core/Inc/devs/mpu6050.h ****  * 
+   4:Core/Inc/devs/mpu6050.h ****  * Created : 9/27/2018
+   5:Core/Inc/devs/mpu6050.h ****  *  Author : n-is
+   6:Core/Inc/devs/mpu6050.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/devs/mpu6050.h ****  */
+   8:Core/Inc/devs/mpu6050.h **** 
+   9:Core/Inc/devs/mpu6050.h **** #ifndef _MPU6050_H_
+  10:Core/Inc/devs/mpu6050.h **** #define _MPU6050_H_
+  11:Core/Inc/devs/mpu6050.h **** 
+  12:Core/Inc/devs/mpu6050.h **** #include "vec3.h"
+  13:Core/Inc/devs/mpu6050.h **** #include "i2c.h"
+  14:Core/Inc/devs/mpu6050.h **** #include "mpu6050_reg.h"
+  15:Core/Inc/devs/mpu6050.h **** 
+  16:Core/Inc/devs/mpu6050.h **** #define I2C_TIMEOUT     (5)
+  17:Core/Inc/devs/mpu6050.h **** 
+  18:Core/Inc/devs/mpu6050.h **** enum Accel_Scale
+  19:Core/Inc/devs/mpu6050.h **** {
+  20:Core/Inc/devs/mpu6050.h ****         SCALE_2G = 0,
+  21:Core/Inc/devs/mpu6050.h ****         SCALE_4G,
+  22:Core/Inc/devs/mpu6050.h ****         SCALE_8G,
+  23:Core/Inc/devs/mpu6050.h ****         SCALE_16G
+  24:Core/Inc/devs/mpu6050.h **** };
+  25:Core/Inc/devs/mpu6050.h **** 
+  26:Core/Inc/devs/mpu6050.h **** enum Gyro_Scale
+  27:Core/Inc/devs/mpu6050.h **** {
+  28:Core/Inc/devs/mpu6050.h ****         SCALE_250 = 0,
+  29:Core/Inc/devs/mpu6050.h ****         SCALE_500,
+  30:Core/Inc/devs/mpu6050.h ****         SCALE_1000,
+  31:Core/Inc/devs/mpu6050.h ****         SCALE_2000
+  32:Core/Inc/devs/mpu6050.h **** };
+  33:Core/Inc/devs/mpu6050.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 5
+
+
+  34:Core/Inc/devs/mpu6050.h **** struct MPU6050
+ 100              		.loc 4 34 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104              		@ link register save eliminated.
+ 105              	.LVL3:
+ 106              		.loc 4 34 0
+ 107 0000 7047     		bx	lr
+ 108              		.cfi_endproc
+ 109              	.LFE577:
+ 111              		.weak	_ZN7MPU6050D1Ev
+ 112              		.thumb_set _ZN7MPU6050D1Ev,_ZN7MPU6050D2Ev
+ 113              		.section	.text._ZN7HMC5883D2Ev,"axG",%progbits,_ZN7HMC5883D5Ev,comdat
+ 114              		.align	1
+ 115              		.weak	_ZN7HMC5883D2Ev
+ 116              		.syntax unified
+ 117              		.thumb
+ 118              		.thumb_func
+ 119              		.fpu fpv4-sp-d16
+ 121              	_ZN7HMC5883D2Ev:
+ 122              	.LFB580:
+ 123              		.file 5 "Core/Inc/devs/hmc5883.h"
+   1:Core/Inc/devs/hmc5883.h **** /*
+   2:Core/Inc/devs/hmc5883.h ****  * hmc5883.c
+   3:Core/Inc/devs/hmc5883.h ****  * 
+   4:Core/Inc/devs/hmc5883.h ****  * Created : 11/13/2018
+   5:Core/Inc/devs/hmc5883.h ****  *  Author : n-is & ane
+   6:Core/Inc/devs/hmc5883.h ****  *   email : 073bex421.nischal@pcampus.edu.np
+   7:Core/Inc/devs/hmc5883.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   8:Core/Inc/devs/hmc5883.h ****  */
+   9:Core/Inc/devs/hmc5883.h **** 
+  10:Core/Inc/devs/hmc5883.h **** #ifndef _HMC5883_H_
+  11:Core/Inc/devs/hmc5883.h **** #define _HMC5883_H_
+  12:Core/Inc/devs/hmc5883.h **** 
+  13:Core/Inc/devs/hmc5883.h **** #include "i2c.h"
+  14:Core/Inc/devs/hmc5883.h **** #include "vec3.h"
+  15:Core/Inc/devs/hmc5883.h **** #include "a4988.h"
+  16:Core/Inc/devs/hmc5883.h **** 
+  17:Core/Inc/devs/hmc5883.h **** struct HMC5883
+ 124              		.loc 5 17 0
+ 125              		.cfi_startproc
+ 126              		@ args = 0, pretend = 0, frame = 0
+ 127              		@ frame_needed = 0, uses_anonymous_args = 0
+ 128              		@ link register save eliminated.
+ 129              	.LVL4:
+ 130              		.loc 5 17 0
+ 131 0000 7047     		bx	lr
+ 132              		.cfi_endproc
+ 133              	.LFE580:
+ 135              		.weak	_ZN7HMC5883D1Ev
+ 136              		.thumb_set _ZN7HMC5883D1Ev,_ZN7HMC5883D2Ev
+ 137              		.section	.text._ZN11Kalman_VarsD2Ev,"axG",%progbits,_ZN11Kalman_VarsD5Ev,comdat
+ 138              		.align	1
+ 139              		.weak	_ZN11Kalman_VarsD2Ev
+ 140              		.syntax unified
+ 141              		.thumb
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 6
+
+
+ 142              		.thumb_func
+ 143              		.fpu fpv4-sp-d16
+ 145              	_ZN11Kalman_VarsD2Ev:
+ 146              	.LFB583:
+  16:Core/Inc/utils/kalman.h **** {
+ 147              		.loc 2 16 0
+ 148              		.cfi_startproc
+ 149              		@ args = 0, pretend = 0, frame = 0
+ 150              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151              		@ link register save eliminated.
+ 152              	.LVL5:
+  16:Core/Inc/utils/kalman.h **** {
+ 153              		.loc 2 16 0
+ 154 0000 7047     		bx	lr
+ 155              		.cfi_endproc
+ 156              	.LFE583:
+ 158              		.weak	_ZN11Kalman_VarsD1Ev
+ 159              		.thumb_set _ZN11Kalman_VarsD1Ev,_ZN11Kalman_VarsD2Ev
+ 160              		.section	.text._ZL8IMU_Initv,"ax",%progbits
+ 161              		.align	1
+ 162              		.syntax unified
+ 163              		.thumb
+ 164              		.thumb_func
+ 165              		.fpu fpv4-sp-d16
+ 167              	_ZL8IMU_Initv:
+ 168              	.LFB537:
+ 169              		.file 6 "Core/Src/robot/robo_orientation.cpp"
+   1:Core/Src/robot/robo_orientation.cpp **** #include "smoothing_algorithm.h"
+   2:Core/Src/robot/robo_orientation.cpp **** #include "kalman.h"
+   3:Core/Src/robot/robo_orientation.cpp **** #include "mpu6050.h"
+   4:Core/Src/robot/robo_orientation.cpp **** #include "hmc5883.h"
+   5:Core/Src/robot/robo_orientation.cpp **** #include "robo_init.h"
+   6:Core/Src/robot/robo_orientation.cpp **** #include "imu.h"
+   7:Core/Src/robot/robo_orientation.cpp **** 
+   8:Core/Src/robot/robo_orientation.cpp **** int init_OriFilters(uint32_t dt_millis);
+   9:Core/Src/robot/robo_orientation.cpp **** 
+  10:Core/Src/robot/robo_orientation.cpp **** 
+  11:Core/Src/robot/robo_orientation.cpp **** struct MPU6050 Body_IMU;
+  12:Core/Src/robot/robo_orientation.cpp **** struct HMC5883 Body_HMC;
+  13:Core/Src/robot/robo_orientation.cpp **** TM_AHRSIMU_t IMU;
+  14:Core/Src/robot/robo_orientation.cpp **** 
+  15:Core/Src/robot/robo_orientation.cpp **** static Vec3<float> gOmega_Bias;
+  16:Core/Src/robot/robo_orientation.cpp **** 
+  17:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXAccelAlpha35(0.35);
+  18:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYAccelAlpha35(0.35);
+  19:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZAccelAlpha35(0.35);
+  20:Core/Src/robot/robo_orientation.cpp **** 
+  21:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXGyroAlpha35(0.35);
+  22:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYGyroAlpha35(0.35);
+  23:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZGyroAlpha35(0.35);
+  24:Core/Src/robot/robo_orientation.cpp **** 
+  25:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXMagAlpha35(0.35);
+  26:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYMagAlpha35(0.35);
+  27:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZMagAlpha35(0.35);
+  28:Core/Src/robot/robo_orientation.cpp **** 
+  29:Core/Src/robot/robo_orientation.cpp **** static Kalman_Vars gAccel_Gyro;
+  30:Core/Src/robot/robo_orientation.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 7
+
+
+  31:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gRoll_Filter(&gAccel_Gyro, init_OriFilters);
+  32:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gPitch_Filter(&gAccel_Gyro, init_OriFilters);
+  33:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gYaw_Filter(&gAccel_Gyro, init_OriFilters);
+  34:Core/Src/robot/robo_orientation.cpp **** 
+  35:Core/Src/robot/robo_orientation.cpp **** static void IMU_Init()
+  36:Core/Src/robot/robo_orientation.cpp **** {
+ 170              		.loc 6 36 0
+ 171              		.cfi_startproc
+ 172              		@ args = 0, pretend = 0, frame = 0
+ 173              		@ frame_needed = 0, uses_anonymous_args = 0
+ 174 0000 10B5     		push	{r4, lr}
+ 175              	.LCFI0:
+ 176              		.cfi_def_cfa_offset 8
+ 177              		.cfi_offset 4, -8
+ 178              		.cfi_offset 14, -4
+  37:Core/Src/robot/robo_orientation.cpp ****         Body_IMU.hi2c = &hi2c1;
+ 179              		.loc 6 37 0
+ 180 0002 0F48     		ldr	r0, .L9
+ 181 0004 0F4B     		ldr	r3, .L9+4
+ 182 0006 0360     		str	r3, [r0]
+  38:Core/Src/robot/robo_orientation.cpp ****         Body_IMU.address = 0xD0;
+ 183              		.loc 6 38 0
+ 184 0008 D022     		movs	r2, #208
+ 185 000a 80F82820 		strb	r2, [r0, #40]
+  39:Core/Src/robot/robo_orientation.cpp ****         Body_IMU.a_scale = Accel_Scale::SCALE_2G;
+ 186              		.loc 6 39 0
+ 187 000e 0022     		movs	r2, #0
+ 188 0010 80F83020 		strb	r2, [r0, #48]
+  40:Core/Src/robot/robo_orientation.cpp ****         Body_IMU.g_scale = Gyro_Scale::SCALE_250;
+ 189              		.loc 6 40 0
+ 190 0014 80F83120 		strb	r2, [r0, #49]
+  41:Core/Src/robot/robo_orientation.cpp **** 
+  42:Core/Src/robot/robo_orientation.cpp ****         Body_HMC.hi2c = &hi2c1;
+ 191              		.loc 6 42 0
+ 192 0018 0B4C     		ldr	r4, .L9+8
+ 193 001a 2360     		str	r3, [r4]
+  43:Core/Src/robot/robo_orientation.cpp ****         Body_HMC.address = 0x3C;
+ 194              		.loc 6 43 0
+ 195 001c 3C23     		movs	r3, #60
+ 196 001e 2374     		strb	r3, [r4, #16]
+  44:Core/Src/robot/robo_orientation.cpp ****         // Body_HMC.hard_iron_offset.set_Values(43, 45, 0);
+  45:Core/Src/robot/robo_orientation.cpp **** 
+  46:Core/Src/robot/robo_orientation.cpp ****         MPU6050_Init(&Body_IMU);
+ 197              		.loc 6 46 0
+ 198 0020 FFF7FEFF 		bl	_Z12MPU6050_InitP7MPU6050
+ 199              	.LVL6:
+  47:Core/Src/robot/robo_orientation.cpp ****         HMC5883_Init(&Body_HMC);
+ 200              		.loc 6 47 0
+ 201 0024 2046     		mov	r0, r4
+ 202 0026 FFF7FEFF 		bl	_Z12HMC5883_InitP7HMC5883
+ 203              	.LVL7:
+  48:Core/Src/robot/robo_orientation.cpp **** 
+  49:Core/Src/robot/robo_orientation.cpp **** 	TM_AHRSIMU_Init(&IMU, 0.0, 100, 0);
+ 204              		.loc 6 49 0
+ 205 002a 9FED080A 		vldr.32	s0, .L9+12
+ 206 002e B0EE401A 		vmov.f32	s2, s0
+ 207 0032 DFED070A 		vldr.32	s1, .L9+16
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 8
+
+
+ 208 0036 0748     		ldr	r0, .L9+20
+ 209 0038 FFF7FEFF 		bl	TM_AHRSIMU_Init
+ 210              	.LVL8:
+  50:Core/Src/robot/robo_orientation.cpp **** }
+ 211              		.loc 6 50 0
+ 212 003c 10BD     		pop	{r4, pc}
+ 213              	.L10:
+ 214 003e 00BF     		.align	2
+ 215              	.L9:
+ 216 0040 00000000 		.word	.LANCHOR0
+ 217 0044 00000000 		.word	hi2c1
+ 218 0048 00000000 		.word	.LANCHOR1
+ 219 004c 00000000 		.word	0
+ 220 0050 0000C842 		.word	1120403456
+ 221 0054 00000000 		.word	.LANCHOR2
+ 222              		.cfi_endproc
+ 223              	.LFE537:
+ 225              		.section	.text._Z15init_OriFiltersm,"ax",%progbits
+ 226              		.align	1
+ 227              		.global	_Z15init_OriFiltersm
+ 228              		.syntax unified
+ 229              		.thumb
+ 230              		.thumb_func
+ 231              		.fpu fpv4-sp-d16
+ 233              	_Z15init_OriFiltersm:
+ 234              	.LFB539:
+  51:Core/Src/robot/robo_orientation.cpp **** 
+  52:Core/Src/robot/robo_orientation.cpp **** int Angle_Init()
+  53:Core/Src/robot/robo_orientation.cpp **** {
+  54:Core/Src/robot/robo_orientation.cpp **** 	IMU_Init();
+  55:Core/Src/robot/robo_orientation.cpp **** 
+  56:Core/Src/robot/robo_orientation.cpp **** 	gOmega_Bias = MPU6050_Calc_OmegaBias(&Body_IMU, 1000);
+  57:Core/Src/robot/robo_orientation.cpp **** 
+  58:Core/Src/robot/robo_orientation.cpp **** 	return 0;
+  59:Core/Src/robot/robo_orientation.cpp **** }
+  60:Core/Src/robot/robo_orientation.cpp **** 
+  61:Core/Src/robot/robo_orientation.cpp **** int init_OriFilters(uint32_t dt_millis)
+  62:Core/Src/robot/robo_orientation.cpp **** {
+ 235              		.loc 6 62 0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 480
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239              	.LVL9:
+ 240 0000 10B5     		push	{r4, lr}
+ 241              	.LCFI1:
+ 242              		.cfi_def_cfa_offset 8
+ 243              		.cfi_offset 4, -8
+ 244              		.cfi_offset 14, -4
+ 245 0002 2DED028B 		vpush.64	{d8}
+ 246              	.LCFI2:
+ 247              		.cfi_def_cfa_offset 16
+ 248              		.cfi_offset 80, -16
+ 249              		.cfi_offset 81, -12
+ 250 0006 F8B0     		sub	sp, sp, #480
+ 251              	.LCFI3:
+ 252              		.cfi_def_cfa_offset 496
+  63:Core/Src/robot/robo_orientation.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 9
+
+
+  64:Core/Src/robot/robo_orientation.cpp ****         float dt = (float)dt_millis / 1000.0;
+ 253              		.loc 6 64 0
+ 254 0008 07EE900A 		vmov	s15, r0	@ int
+ 255 000c B8EE677A 		vcvt.f32.u32	s14, s15
+ 256 0010 DFEDA67A 		vldr.32	s15, .L47
+ 257 0014 87EE278A 		vdiv.f32	s16, s14, s15
+ 258              	.LVL10:
+  65:Core/Src/robot/robo_orientation.cpp **** 
+  66:Core/Src/robot/robo_orientation.cpp ****         // For Orientation Purpose
+  67:Core/Src/robot/robo_orientation.cpp ****         Mat state_model(2,2);
+ 259              		.loc 6 67 0
+ 260 0018 0222     		movs	r2, #2
+ 261 001a 1146     		mov	r1, r2
+ 262 001c 67A8     		add	r0, sp, #412
+ 263              	.LVL11:
+ 264 001e FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 265              	.LVL12:
+ 266              	.LBB678:
+ 267              	.LBB679:
+ 268              		.file 7 "Core/Inc/utils/mat.h"
+   1:Core/Inc/utils/mat.h **** /*
+   2:Core/Inc/utils/mat.h ****  * mat.h
+   3:Core/Inc/utils/mat.h ****  * 
+   4:Core/Inc/utils/mat.h ****  * Created : 12/31/2018
+   5:Core/Inc/utils/mat.h ****  *  Author : n-is
+   6:Core/Inc/utils/mat.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/mat.h ****  */
+   8:Core/Inc/utils/mat.h **** 
+   9:Core/Inc/utils/mat.h **** #ifndef _MAT_H_
+  10:Core/Inc/utils/mat.h **** #define _MAT_H_
+  11:Core/Inc/utils/mat.h **** 
+  12:Core/Inc/utils/mat.h **** #include <math.h>
+  13:Core/Inc/utils/mat.h **** #include "vec3.h"
+  14:Core/Inc/utils/mat.h **** 
+  15:Core/Inc/utils/mat.h **** #define MAX_MATRIX_ROWS         4
+  16:Core/Inc/utils/mat.h **** #define MAX_MATRIX_COLS         4
+  17:Core/Inc/utils/mat.h **** 
+  18:Core/Inc/utils/mat.h **** class Mat
+  19:Core/Inc/utils/mat.h **** {
+  20:Core/Inc/utils/mat.h **** public:
+  21:Core/Inc/utils/mat.h ****         Mat() : Mat(0,0) { }
+  22:Core/Inc/utils/mat.h ****         
+  23:Core/Inc/utils/mat.h ****         template <size_t M, size_t N>
+  24:Core/Inc/utils/mat.h ****         Mat(const float (&mat)[M][N]) : Mat(M,N){
+  25:Core/Inc/utils/mat.h ****                 fill(mat);
+  26:Core/Inc/utils/mat.h ****         }
+  27:Core/Inc/utils/mat.h **** 
+  28:Core/Inc/utils/mat.h ****         Mat(uint8_t rows, uint8_t columns);
+  29:Core/Inc/utils/mat.h ****         Mat(Mat &&) = default;
+  30:Core/Inc/utils/mat.h ****         Mat &operator=(Mat &&) = default;
+  31:Core/Inc/utils/mat.h ****         ~Mat() { }
+  32:Core/Inc/utils/mat.h **** 
+  33:Core/Inc/utils/mat.h ****         uint8_t rows() const { return rows_; }
+  34:Core/Inc/utils/mat.h ****         uint8_t cols() const { return cols_; }
+  35:Core/Inc/utils/mat.h **** 
+  36:Core/Inc/utils/mat.h ****         inline float &at(uint8_t i, uint8_t j) {
+  37:Core/Inc/utils/mat.h ****                 if (!(i < rows_ && j < cols_)) {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 10
+
+
+ 269              		.loc 7 37 0
+ 270 0022 9DF8DC31 		ldrb	r3, [sp, #476]	@ zero_extendqisi2
+ 271 0026 13B1     		cbz	r3, .L12
+ 272 0028 9DF8DD31 		ldrb	r3, [sp, #477]	@ zero_extendqisi2
+ 273 002c 1BB9     		cbnz	r3, .L13
+ 274              	.L12:
+  38:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 275              		.loc 7 38 0
+ 276 002e 2621     		movs	r1, #38
+ 277 0030 9F48     		ldr	r0, .L47+4
+ 278 0032 FFF7FEFF 		bl	_Error_Handler
+ 279              	.LVL13:
+ 280              	.L13:
+ 281              	.LBE679:
+ 282              	.LBE678:
+  68:Core/Src/robot/robo_orientation.cpp ****         state_model.at(0,0) = 1;
+ 283              		.loc 6 68 0
+ 284 0036 4FF07E53 		mov	r3, #1065353216
+ 285 003a 6793     		str	r3, [sp, #412]	@ float
+ 286              	.LVL14:
+ 287              	.LBB680:
+ 288              	.LBB681:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 289              		.loc 7 37 0
+ 290 003c 9DF8DC31 		ldrb	r3, [sp, #476]	@ zero_extendqisi2
+ 291 0040 1BB1     		cbz	r3, .L14
+ 292 0042 9DF8DD31 		ldrb	r3, [sp, #477]	@ zero_extendqisi2
+ 293 0046 012B     		cmp	r3, #1
+ 294 0048 03D8     		bhi	.L15
+ 295              	.L14:
+ 296              		.loc 7 38 0
+ 297 004a 2621     		movs	r1, #38
+ 298 004c 9848     		ldr	r0, .L47+4
+ 299 004e FFF7FEFF 		bl	_Error_Handler
+ 300              	.LVL15:
+ 301              	.L15:
+ 302              	.LBE681:
+ 303              	.LBE680:
+  69:Core/Src/robot/robo_orientation.cpp ****         state_model.at(0,1) = -dt;
+ 304              		.loc 6 69 0
+ 305 0052 F1EE487A 		vneg.f32	s15, s16
+ 306 0056 CDED687A 		vstr.32	s15, [sp, #416]
+ 307              	.LVL16:
+ 308              	.LBB682:
+ 309              	.LBB683:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 310              		.loc 7 37 0
+ 311 005a 9DF8DC31 		ldrb	r3, [sp, #476]	@ zero_extendqisi2
+ 312 005e 012B     		cmp	r3, #1
+ 313 0060 02D9     		bls	.L16
+ 314 0062 9DF8DD31 		ldrb	r3, [sp, #477]	@ zero_extendqisi2
+ 315 0066 1BB9     		cbnz	r3, .L17
+ 316              	.L16:
+ 317              		.loc 7 38 0
+ 318 0068 2621     		movs	r1, #38
+ 319 006a 9148     		ldr	r0, .L47+4
+ 320 006c FFF7FEFF 		bl	_Error_Handler
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 11
+
+
+ 321              	.LVL17:
+ 322              	.L17:
+ 323              	.LBE683:
+ 324              	.LBE682:
+  70:Core/Src/robot/robo_orientation.cpp ****         state_model.at(1,0) = 0;
+ 325              		.loc 6 70 0
+ 326 0070 0023     		movs	r3, #0
+ 327 0072 6B93     		str	r3, [sp, #428]	@ float
+ 328              	.LVL18:
+ 329              	.LBB684:
+ 330              	.LBB685:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 331              		.loc 7 37 0
+ 332 0074 9DF8DC31 		ldrb	r3, [sp, #476]	@ zero_extendqisi2
+ 333 0078 012B     		cmp	r3, #1
+ 334 007a 40F20781 		bls	.L18
+ 335 007e 9DF8DD31 		ldrb	r3, [sp, #477]	@ zero_extendqisi2
+ 336 0082 012B     		cmp	r3, #1
+ 337 0084 40F20281 		bls	.L18
+ 338              	.L19:
+ 339              	.LVL19:
+ 340              	.LBE685:
+ 341              	.LBE684:
+  71:Core/Src/robot/robo_orientation.cpp ****         state_model.at(1,1) = 1;
+ 342              		.loc 6 71 0
+ 343 0088 4FF07E53 		mov	r3, #1065353216
+ 344 008c 6C93     		str	r3, [sp, #432]	@ float
+  72:Core/Src/robot/robo_orientation.cpp **** 
+  73:Core/Src/robot/robo_orientation.cpp ****         Mat control_model(2,1);
+ 345              		.loc 6 73 0
+ 346 008e 0122     		movs	r2, #1
+ 347 0090 0221     		movs	r1, #2
+ 348 0092 56A8     		add	r0, sp, #344
+ 349 0094 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 350              	.LVL20:
+ 351              	.LBB687:
+ 352              	.LBB688:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 353              		.loc 7 37 0
+ 354 0098 9DF89831 		ldrb	r3, [sp, #408]	@ zero_extendqisi2
+ 355 009c 13B1     		cbz	r3, .L20
+ 356 009e 9DF89931 		ldrb	r3, [sp, #409]	@ zero_extendqisi2
+ 357 00a2 1BB9     		cbnz	r3, .L21
+ 358              	.L20:
+ 359              		.loc 7 38 0
+ 360 00a4 2621     		movs	r1, #38
+ 361 00a6 8248     		ldr	r0, .L47+4
+ 362 00a8 FFF7FEFF 		bl	_Error_Handler
+ 363              	.LVL21:
+ 364              	.L21:
+ 365              	.LBE688:
+ 366              	.LBE687:
+  74:Core/Src/robot/robo_orientation.cpp ****         control_model.at(0,0) = dt;
+ 367              		.loc 6 74 0
+ 368 00ac 8DED568A 		vstr.32	s16, [sp, #344]
+ 369              	.LVL22:
+ 370              	.LBB689:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 12
+
+
+ 371              	.LBB690:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 372              		.loc 7 37 0
+ 373 00b0 9DF89831 		ldrb	r3, [sp, #408]	@ zero_extendqisi2
+ 374 00b4 012B     		cmp	r3, #1
+ 375 00b6 02D9     		bls	.L22
+ 376 00b8 9DF89931 		ldrb	r3, [sp, #409]	@ zero_extendqisi2
+ 377 00bc 1BB9     		cbnz	r3, .L23
+ 378              	.L22:
+ 379              		.loc 7 38 0
+ 380 00be 2621     		movs	r1, #38
+ 381 00c0 7B48     		ldr	r0, .L47+4
+ 382 00c2 FFF7FEFF 		bl	_Error_Handler
+ 383              	.LVL23:
+ 384              	.L23:
+ 385              	.LBE690:
+ 386              	.LBE689:
+  75:Core/Src/robot/robo_orientation.cpp ****         control_model.at(1,0) = 0;
+ 387              		.loc 6 75 0
+ 388 00c6 0023     		movs	r3, #0
+ 389 00c8 5A93     		str	r3, [sp, #360]	@ float
+  76:Core/Src/robot/robo_orientation.cpp **** 
+  77:Core/Src/robot/robo_orientation.cpp ****         Mat obs_model(1,2);
+ 390              		.loc 6 77 0
+ 391 00ca 0222     		movs	r2, #2
+ 392 00cc 0121     		movs	r1, #1
+ 393 00ce 45A8     		add	r0, sp, #276
+ 394 00d0 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 395              	.LVL24:
+ 396              	.LBB691:
+ 397              	.LBB692:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 398              		.loc 7 37 0
+ 399 00d4 9DF85431 		ldrb	r3, [sp, #340]	@ zero_extendqisi2
+ 400 00d8 13B1     		cbz	r3, .L24
+ 401 00da 9DF85531 		ldrb	r3, [sp, #341]	@ zero_extendqisi2
+ 402 00de 1BB9     		cbnz	r3, .L25
+ 403              	.L24:
+ 404              		.loc 7 38 0
+ 405 00e0 2621     		movs	r1, #38
+ 406 00e2 7348     		ldr	r0, .L47+4
+ 407 00e4 FFF7FEFF 		bl	_Error_Handler
+ 408              	.LVL25:
+ 409              	.L25:
+ 410              	.LBE692:
+ 411              	.LBE691:
+  78:Core/Src/robot/robo_orientation.cpp ****         obs_model.at(0,0) = 1;
+ 412              		.loc 6 78 0
+ 413 00e8 4FF07E53 		mov	r3, #1065353216
+ 414 00ec 4593     		str	r3, [sp, #276]	@ float
+ 415              	.LVL26:
+ 416              	.LBB693:
+ 417              	.LBB694:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 418              		.loc 7 37 0
+ 419 00ee 9DF85431 		ldrb	r3, [sp, #340]	@ zero_extendqisi2
+ 420 00f2 1BB1     		cbz	r3, .L26
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 13
+
+
+ 421 00f4 9DF85531 		ldrb	r3, [sp, #341]	@ zero_extendqisi2
+ 422 00f8 012B     		cmp	r3, #1
+ 423 00fa 03D8     		bhi	.L27
+ 424              	.L26:
+ 425              		.loc 7 38 0
+ 426 00fc 2621     		movs	r1, #38
+ 427 00fe 6C48     		ldr	r0, .L47+4
+ 428 0100 FFF7FEFF 		bl	_Error_Handler
+ 429              	.LVL27:
+ 430              	.L27:
+ 431              	.LBE694:
+ 432              	.LBE693:
+  79:Core/Src/robot/robo_orientation.cpp ****         obs_model.at(0,1) = 0;
+ 433              		.loc 6 79 0
+ 434 0104 0023     		movs	r3, #0
+ 435 0106 4693     		str	r3, [sp, #280]	@ float
+  80:Core/Src/robot/robo_orientation.cpp **** 
+  81:Core/Src/robot/robo_orientation.cpp ****         Mat priori_error(2,2);
+ 436              		.loc 6 81 0
+ 437 0108 0222     		movs	r2, #2
+ 438 010a 1146     		mov	r1, r2
+ 439 010c 34A8     		add	r0, sp, #208
+ 440 010e FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 441              	.LVL28:
+ 442              	.LBB695:
+ 443              	.LBB696:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 444              		.loc 7 37 0
+ 445 0112 9DF81031 		ldrb	r3, [sp, #272]	@ zero_extendqisi2
+ 446 0116 13B1     		cbz	r3, .L28
+ 447 0118 9DF81131 		ldrb	r3, [sp, #273]	@ zero_extendqisi2
+ 448 011c 1BB9     		cbnz	r3, .L29
+ 449              	.L28:
+ 450              		.loc 7 38 0
+ 451 011e 2621     		movs	r1, #38
+ 452 0120 6348     		ldr	r0, .L47+4
+ 453 0122 FFF7FEFF 		bl	_Error_Handler
+ 454              	.LVL29:
+ 455              	.L29:
+ 456              	.LBE696:
+ 457              	.LBE695:
+  82:Core/Src/robot/robo_orientation.cpp ****         priori_error.at(0,0) = 10;
+ 458              		.loc 6 82 0
+ 459 0126 634B     		ldr	r3, .L47+8
+ 460 0128 3493     		str	r3, [sp, #208]	@ float
+ 461              	.LVL30:
+ 462              	.LBB697:
+ 463              	.LBB698:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 464              		.loc 7 37 0
+ 465 012a 9DF81031 		ldrb	r3, [sp, #272]	@ zero_extendqisi2
+ 466 012e 1BB1     		cbz	r3, .L30
+ 467 0130 9DF81131 		ldrb	r3, [sp, #273]	@ zero_extendqisi2
+ 468 0134 012B     		cmp	r3, #1
+ 469 0136 03D8     		bhi	.L31
+ 470              	.L30:
+ 471              		.loc 7 38 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 14
+
+
+ 472 0138 2621     		movs	r1, #38
+ 473 013a 5D48     		ldr	r0, .L47+4
+ 474 013c FFF7FEFF 		bl	_Error_Handler
+ 475              	.LVL31:
+ 476              	.L31:
+ 477              	.LBE698:
+ 478              	.LBE697:
+  83:Core/Src/robot/robo_orientation.cpp ****         priori_error.at(0,1) = 0;
+ 479              		.loc 6 83 0
+ 480 0140 0023     		movs	r3, #0
+ 481 0142 3593     		str	r3, [sp, #212]	@ float
+ 482              	.LVL32:
+ 483              	.LBB699:
+ 484              	.LBB700:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 485              		.loc 7 37 0
+ 486 0144 9DF81031 		ldrb	r3, [sp, #272]	@ zero_extendqisi2
+ 487 0148 012B     		cmp	r3, #1
+ 488 014a 02D9     		bls	.L32
+ 489 014c 9DF81131 		ldrb	r3, [sp, #273]	@ zero_extendqisi2
+ 490 0150 1BB9     		cbnz	r3, .L33
+ 491              	.L32:
+ 492              		.loc 7 38 0
+ 493 0152 2621     		movs	r1, #38
+ 494 0154 5648     		ldr	r0, .L47+4
+ 495 0156 FFF7FEFF 		bl	_Error_Handler
+ 496              	.LVL33:
+ 497              	.L33:
+ 498              	.LBE700:
+ 499              	.LBE699:
+  84:Core/Src/robot/robo_orientation.cpp ****         priori_error.at(1,0) = 0;
+ 500              		.loc 6 84 0
+ 501 015a 0023     		movs	r3, #0
+ 502 015c 3893     		str	r3, [sp, #224]	@ float
+ 503              	.LVL34:
+ 504              	.LBB701:
+ 505              	.LBB702:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 506              		.loc 7 37 0
+ 507 015e 9DF81031 		ldrb	r3, [sp, #272]	@ zero_extendqisi2
+ 508 0162 012B     		cmp	r3, #1
+ 509 0164 40F29780 		bls	.L34
+ 510 0168 9DF81131 		ldrb	r3, [sp, #273]	@ zero_extendqisi2
+ 511 016c 012B     		cmp	r3, #1
+ 512 016e 40F29280 		bls	.L34
+ 513              	.L35:
+ 514              	.LVL35:
+ 515              	.LBE702:
+ 516              	.LBE701:
+  85:Core/Src/robot/robo_orientation.cpp ****         priori_error.at(1,1) = 10;
+ 517              		.loc 6 85 0
+ 518 0172 504B     		ldr	r3, .L47+8
+ 519 0174 3993     		str	r3, [sp, #228]	@ float
+  86:Core/Src/robot/robo_orientation.cpp **** 
+  87:Core/Src/robot/robo_orientation.cpp ****         Mat process_error(2,2);
+ 520              		.loc 6 87 0
+ 521 0176 0222     		movs	r2, #2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 15
+
+
+ 522 0178 1146     		mov	r1, r2
+ 523 017a 23A8     		add	r0, sp, #140
+ 524 017c FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 525              	.LVL36:
+ 526              	.LBB704:
+ 527              	.LBB705:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 528              		.loc 7 37 0
+ 529 0180 9DF8CC30 		ldrb	r3, [sp, #204]	@ zero_extendqisi2
+ 530 0184 13B1     		cbz	r3, .L36
+ 531 0186 9DF8CD30 		ldrb	r3, [sp, #205]	@ zero_extendqisi2
+ 532 018a 1BB9     		cbnz	r3, .L37
+ 533              	.L36:
+ 534              		.loc 7 38 0
+ 535 018c 2621     		movs	r1, #38
+ 536 018e 4848     		ldr	r0, .L47+4
+ 537 0190 FFF7FEFF 		bl	_Error_Handler
+ 538              	.LVL37:
+ 539              	.L37:
+ 540              	.LBE705:
+ 541              	.LBE704:
+  88:Core/Src/robot/robo_orientation.cpp ****         process_error.at(0,0) = 0.001;
+ 542              		.loc 6 88 0
+ 543 0194 484B     		ldr	r3, .L47+12
+ 544 0196 2393     		str	r3, [sp, #140]	@ float
+ 545              	.LVL38:
+ 546              	.LBB706:
+ 547              	.LBB707:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 548              		.loc 7 37 0
+ 549 0198 9DF8CC30 		ldrb	r3, [sp, #204]	@ zero_extendqisi2
+ 550 019c 1BB1     		cbz	r3, .L38
+ 551 019e 9DF8CD30 		ldrb	r3, [sp, #205]	@ zero_extendqisi2
+ 552 01a2 012B     		cmp	r3, #1
+ 553 01a4 03D8     		bhi	.L39
+ 554              	.L38:
+ 555              		.loc 7 38 0
+ 556 01a6 2621     		movs	r1, #38
+ 557 01a8 4148     		ldr	r0, .L47+4
+ 558 01aa FFF7FEFF 		bl	_Error_Handler
+ 559              	.LVL39:
+ 560              	.L39:
+ 561              	.LBE707:
+ 562              	.LBE706:
+  89:Core/Src/robot/robo_orientation.cpp ****         process_error.at(0,1) = 0;
+ 563              		.loc 6 89 0
+ 564 01ae 0023     		movs	r3, #0
+ 565 01b0 2493     		str	r3, [sp, #144]	@ float
+ 566              	.LVL40:
+ 567              	.LBB708:
+ 568              	.LBB709:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 569              		.loc 7 37 0
+ 570 01b2 9DF8CC30 		ldrb	r3, [sp, #204]	@ zero_extendqisi2
+ 571 01b6 012B     		cmp	r3, #1
+ 572 01b8 02D9     		bls	.L40
+ 573 01ba 9DF8CD30 		ldrb	r3, [sp, #205]	@ zero_extendqisi2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 16
+
+
+ 574 01be 1BB9     		cbnz	r3, .L41
+ 575              	.L40:
+ 576              		.loc 7 38 0
+ 577 01c0 2621     		movs	r1, #38
+ 578 01c2 3B48     		ldr	r0, .L47+4
+ 579 01c4 FFF7FEFF 		bl	_Error_Handler
+ 580              	.LVL41:
+ 581              	.L41:
+ 582              	.LBE709:
+ 583              	.LBE708:
+  90:Core/Src/robot/robo_orientation.cpp ****         process_error.at(1,0) = 0;
+ 584              		.loc 6 90 0
+ 585 01c8 0023     		movs	r3, #0
+ 586 01ca 2793     		str	r3, [sp, #156]	@ float
+ 587              	.LVL42:
+ 588              	.LBB710:
+ 589              	.LBB711:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 590              		.loc 7 37 0
+ 591 01cc 9DF8CC30 		ldrb	r3, [sp, #204]	@ zero_extendqisi2
+ 592 01d0 012B     		cmp	r3, #1
+ 593 01d2 65D9     		bls	.L42
+ 594 01d4 9DF8CD30 		ldrb	r3, [sp, #205]	@ zero_extendqisi2
+ 595 01d8 012B     		cmp	r3, #1
+ 596 01da 61D9     		bls	.L42
+ 597              	.L43:
+ 598              	.LVL43:
+ 599              	.LBE711:
+ 600              	.LBE710:
+  91:Core/Src/robot/robo_orientation.cpp ****         process_error.at(1,1) = 0.003;
+ 601              		.loc 6 91 0
+ 602 01dc 374B     		ldr	r3, .L47+16
+ 603 01de 2893     		str	r3, [sp, #160]	@ float
+  92:Core/Src/robot/robo_orientation.cpp ****         
+  93:Core/Src/robot/robo_orientation.cpp ****         Mat measure_error(1,1);
+ 604              		.loc 6 93 0
+ 605 01e0 0122     		movs	r2, #1
+ 606 01e2 1146     		mov	r1, r2
+ 607 01e4 12A8     		add	r0, sp, #72
+ 608 01e6 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 609              	.LVL44:
+ 610              	.LBB713:
+ 611              	.LBB714:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 612              		.loc 7 37 0
+ 613 01ea 9DF88830 		ldrb	r3, [sp, #136]	@ zero_extendqisi2
+ 614 01ee 13B1     		cbz	r3, .L44
+ 615 01f0 9DF88930 		ldrb	r3, [sp, #137]	@ zero_extendqisi2
+ 616 01f4 1BB9     		cbnz	r3, .L45
+ 617              	.L44:
+ 618              		.loc 7 38 0
+ 619 01f6 2621     		movs	r1, #38
+ 620 01f8 2D48     		ldr	r0, .L47+4
+ 621 01fa FFF7FEFF 		bl	_Error_Handler
+ 622              	.LVL45:
+ 623              	.L45:
+ 624              	.LBE714:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 17
+
+
+ 625              	.LBE713:
+  94:Core/Src/robot/robo_orientation.cpp ****         measure_error.at(0,0) = 0.04;
+ 626              		.loc 6 94 0
+ 627 01fe 304B     		ldr	r3, .L47+20
+ 628 0200 1293     		str	r3, [sp, #72]	@ float
+ 629              	.LVL46:
+ 630              	.LBB715:
+ 631              	.LBB716:
+ 632              	.LBB717:
+  39:Core/Inc/utils/mat.h ****                 }
+  40:Core/Inc/utils/mat.h ****                 return matrix_[i][j];
+  41:Core/Inc/utils/mat.h ****         }
+  42:Core/Inc/utils/mat.h **** 
+  43:Core/Inc/utils/mat.h **** 
+  44:Core/Inc/utils/mat.h ****         Mat(const Mat &m);
+  45:Core/Inc/utils/mat.h **** 
+  46:Core/Inc/utils/mat.h ****         Mat &operator=(const Mat &m) {
+  47:Core/Inc/utils/mat.h ****                 Mat temp(m);
+ 633              		.loc 7 47 0
+ 634 0202 67A9     		add	r1, sp, #412
+ 635              	.LVL47:
+ 636 0204 01A8     		add	r0, sp, #4
+ 637 0206 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 638              	.LVL48:
+  48:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 639              		.loc 7 48 0
+ 640 020a 2E4C     		ldr	r4, .L47+24
+ 641 020c 01A9     		add	r1, sp, #4
+ 642 020e 2046     		mov	r0, r4
+ 643 0210 FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 644              	.LVL49:
+ 645              	.LBE717:
+ 646              	.LBE716:
+ 647              	.LBE715:
+ 648              	.LBB718:
+ 649              	.LBB719:
+ 650              	.LBB720:
+  47:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 651              		.loc 7 47 0
+ 652 0214 56A9     		add	r1, sp, #344
+ 653              	.LVL50:
+ 654 0216 01A8     		add	r0, sp, #4
+ 655 0218 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 656              	.LVL51:
+ 657              		.loc 7 48 0
+ 658 021c 01A9     		add	r1, sp, #4
+ 659 021e 04F14400 		add	r0, r4, #68
+ 660 0222 FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 661              	.LVL52:
+ 662              	.LBE720:
+ 663              	.LBE719:
+ 664              	.LBE718:
+ 665              	.LBB721:
+ 666              	.LBB722:
+ 667              	.LBB723:
+  47:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 668              		.loc 7 47 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 18
+
+
+ 669 0226 45A9     		add	r1, sp, #276
+ 670              	.LVL53:
+ 671 0228 01A8     		add	r0, sp, #4
+ 672 022a FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 673              	.LVL54:
+ 674              		.loc 7 48 0
+ 675 022e 01A9     		add	r1, sp, #4
+ 676 0230 04F18800 		add	r0, r4, #136
+ 677 0234 FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 678              	.LVL55:
+ 679              	.LBE723:
+ 680              	.LBE722:
+ 681              	.LBE721:
+ 682              	.LBB724:
+ 683              	.LBB725:
+  22:Core/Inc/utils/kalman.h ****         void set_P(const Mat &p) { P_ = p; }
+ 684              		.loc 2 22 0
+ 685 0238 0221     		movs	r1, #2
+ 686 023a 01A8     		add	r0, sp, #4
+ 687 023c FFF7FEFF 		bl	_ZN3Mat3eyeEh
+ 688              	.LVL56:
+ 689 0240 4222     		movs	r2, #66
+ 690 0242 01A9     		add	r1, sp, #4
+ 691 0244 04F1CC00 		add	r0, r4, #204
+ 692 0248 FFF7FEFF 		bl	memcpy
+ 693              	.LVL57:
+ 694              	.LBE725:
+ 695              	.LBE724:
+ 696              	.LBB726:
+ 697              	.LBB727:
+ 698              	.LBB728:
+  47:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 699              		.loc 7 47 0
+ 700 024c 34A9     		add	r1, sp, #208
+ 701              	.LVL58:
+ 702 024e 01A8     		add	r0, sp, #4
+ 703 0250 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 704              	.LVL59:
+ 705              		.loc 7 48 0
+ 706 0254 01A9     		add	r1, sp, #4
+ 707 0256 04F58870 		add	r0, r4, #272
+ 708 025a FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 709              	.LVL60:
+ 710              	.LBE728:
+ 711              	.LBE727:
+ 712              	.LBE726:
+ 713              	.LBB729:
+ 714              	.LBB730:
+ 715              	.LBB731:
+  47:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 716              		.loc 7 47 0
+ 717 025e 23A9     		add	r1, sp, #140
+ 718              	.LVL61:
+ 719 0260 01A8     		add	r0, sp, #4
+ 720 0262 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 721              	.LVL62:
+ 722              		.loc 7 48 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 19
+
+
+ 723 0266 01A9     		add	r1, sp, #4
+ 724 0268 04F5AA70 		add	r0, r4, #340
+ 725 026c FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 726              	.LVL63:
+ 727              	.LBE731:
+ 728              	.LBE730:
+ 729              	.LBE729:
+ 730              	.LBB732:
+ 731              	.LBB733:
+ 732              	.LBB734:
+  47:Core/Inc/utils/mat.h ****                 swap(*this, temp);
+ 733              		.loc 7 47 0
+ 734 0270 12A9     		add	r1, sp, #72
+ 735              	.LVL64:
+ 736 0272 01A8     		add	r0, sp, #4
+ 737 0274 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 738              	.LVL65:
+ 739              		.loc 7 48 0
+ 740 0278 01A9     		add	r1, sp, #4
+ 741 027a 04F5CC70 		add	r0, r4, #408
+ 742 027e FFF7FEFF 		bl	_Z4swapR3MatS0_
+ 743              	.LVL66:
+ 744              	.LBE734:
+ 745              	.LBE733:
+ 746              	.LBE732:
+  95:Core/Src/robot/robo_orientation.cpp **** 
+  96:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_F(state_model);
+  97:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_B(control_model);
+  98:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_H(obs_model);
+  99:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_I(2);
+ 100:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_P(priori_error);
+ 101:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_Q(process_error);
+ 102:Core/Src/robot/robo_orientation.cpp ****         gAccel_Gyro.set_R(measure_error);
+ 103:Core/Src/robot/robo_orientation.cpp **** 
+ 104:Core/Src/robot/robo_orientation.cpp ****         return 0;
+ 105:Core/Src/robot/robo_orientation.cpp **** }
+ 747              		.loc 6 105 0
+ 748 0282 0020     		movs	r0, #0
+ 749 0284 78B0     		add	sp, sp, #480
+ 750              	.LCFI4:
+ 751              		.cfi_remember_state
+ 752              		.cfi_def_cfa_offset 16
+ 753              		@ sp needed
+ 754 0286 BDEC028B 		vldm	sp!, {d8}
+ 755              	.LCFI5:
+ 756              		.cfi_restore 80
+ 757              		.cfi_restore 81
+ 758              		.cfi_def_cfa_offset 8
+ 759              	.LVL67:
+ 760 028a 10BD     		pop	{r4, pc}
+ 761              	.LVL68:
+ 762              	.L18:
+ 763              	.LCFI6:
+ 764              		.cfi_restore_state
+ 765              	.LBB735:
+ 766              	.LBB686:
+  38:Core/Inc/utils/mat.h ****                 }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 20
+
+
+ 767              		.loc 7 38 0
+ 768 028c 2621     		movs	r1, #38
+ 769 028e 0848     		ldr	r0, .L47+4
+ 770 0290 FFF7FEFF 		bl	_Error_Handler
+ 771              	.LVL69:
+ 772 0294 F8E6     		b	.L19
+ 773              	.LVL70:
+ 774              	.L34:
+ 775              	.LBE686:
+ 776              	.LBE735:
+ 777              	.LBB736:
+ 778              	.LBB703:
+ 779 0296 2621     		movs	r1, #38
+ 780 0298 0548     		ldr	r0, .L47+4
+ 781 029a FFF7FEFF 		bl	_Error_Handler
+ 782              	.LVL71:
+ 783 029e 68E7     		b	.L35
+ 784              	.LVL72:
+ 785              	.L42:
+ 786              	.LBE703:
+ 787              	.LBE736:
+ 788              	.LBB737:
+ 789              	.LBB712:
+ 790 02a0 2621     		movs	r1, #38
+ 791 02a2 0348     		ldr	r0, .L47+4
+ 792 02a4 FFF7FEFF 		bl	_Error_Handler
+ 793              	.LVL73:
+ 794 02a8 98E7     		b	.L43
+ 795              	.L48:
+ 796 02aa 00BF     		.align	2
+ 797              	.L47:
+ 798 02ac 00007A44 		.word	1148846080
+ 799 02b0 00000000 		.word	.LC0
+ 800 02b4 00002041 		.word	1092616192
+ 801 02b8 6F12833A 		.word	981668463
+ 802 02bc A69B443B 		.word	994352038
+ 803 02c0 0AD7233D 		.word	1025758986
+ 804 02c4 00000000 		.word	.LANCHOR3
+ 805              	.LBE712:
+ 806              	.LBE737:
+ 807              		.cfi_endproc
+ 808              	.LFE539:
+ 810              		.section	.text._ZN13Kalman_FilterC2EP11Kalman_VarsPFimE,"axG",%progbits,_ZN13Kalman_FilterC5EP11Ka
+ 811              		.align	1
+ 812              		.weak	_ZN13Kalman_FilterC2EP11Kalman_VarsPFimE
+ 813              		.syntax unified
+ 814              		.thumb
+ 815              		.thumb_func
+ 816              		.fpu fpv4-sp-d16
+ 818              	_ZN13Kalman_FilterC2EP11Kalman_VarsPFimE:
+ 819              	.LFB409:
+  37:Core/Inc/utils/kalman.h ****         x_(2,1), u_(1,1), z_(1,1), K_(2,1)
+ 820              		.loc 2 37 0
+ 821              		.cfi_startproc
+ 822              		@ args = 0, pretend = 0, frame = 0
+ 823              		@ frame_needed = 0, uses_anonymous_args = 0
+ 824              	.LVL74:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 21
+
+
+ 825 0000 70B5     		push	{r4, r5, r6, lr}
+ 826              	.LCFI7:
+ 827              		.cfi_def_cfa_offset 16
+ 828              		.cfi_offset 4, -16
+ 829              		.cfi_offset 5, -12
+ 830              		.cfi_offset 6, -8
+ 831              		.cfi_offset 14, -4
+ 832 0002 0446     		mov	r4, r0
+ 833 0004 0E46     		mov	r6, r1
+ 834 0006 1546     		mov	r5, r2
+ 835              	.LBB738:
+  38:Core/Inc/utils/kalman.h ****         {
+ 836              		.loc 2 38 0
+ 837 0008 0122     		movs	r2, #1
+ 838              	.LVL75:
+ 839 000a 0221     		movs	r1, #2
+ 840              	.LVL76:
+ 841 000c 0C30     		adds	r0, r0, #12
+ 842              	.LVL77:
+ 843 000e FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 844              	.LVL78:
+ 845 0012 0122     		movs	r2, #1
+ 846 0014 1146     		mov	r1, r2
+ 847 0016 04F15000 		add	r0, r4, #80
+ 848 001a FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 849              	.LVL79:
+ 850 001e 0122     		movs	r2, #1
+ 851 0020 1146     		mov	r1, r2
+ 852 0022 04F19400 		add	r0, r4, #148
+ 853 0026 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 854              	.LVL80:
+ 855 002a 0122     		movs	r2, #1
+ 856 002c 0221     		movs	r1, #2
+ 857 002e 04F1D800 		add	r0, r4, #216
+ 858 0032 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 859              	.LVL81:
+  40:Core/Inc/utils/kalman.h ****                 kv_ = kv;
+ 860              		.loc 2 40 0
+ 861 0036 0123     		movs	r3, #1
+ 862 0038 2371     		strb	r3, [r4, #4]
+  41:Core/Inc/utils/kalman.h ****                 kv_init_ = kv_init;
+ 863              		.loc 2 41 0
+ 864 003a A660     		str	r6, [r4, #8]
+  42:Core/Inc/utils/kalman.h ****         }
+ 865              		.loc 2 42 0
+ 866 003c 2560     		str	r5, [r4]
+ 867              	.LBE738:
+  43:Core/Inc/utils/kalman.h ****         Kalman_Filter(Kalman_Filter &&) = default;
+ 868              		.loc 2 43 0
+ 869 003e 2046     		mov	r0, r4
+ 870 0040 70BD     		pop	{r4, r5, r6, pc}
+ 871              		.cfi_endproc
+ 872              	.LFE409:
+ 874              		.weak	_ZN13Kalman_FilterC1EP11Kalman_VarsPFimE
+ 875              		.thumb_set _ZN13Kalman_FilterC1EP11Kalman_VarsPFimE,_ZN13Kalman_FilterC2EP11Kalman_VarsPFimE
+ 876              		.section	.text._ZN13Kalman_Filter6filterEffm,"axG",%progbits,_ZN13Kalman_Filter6filterEffm,comdat
+ 877              		.align	1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 22
+
+
+ 878              		.weak	_ZN13Kalman_Filter6filterEffm
+ 879              		.syntax unified
+ 880              		.thumb
+ 881              		.thumb_func
+ 882              		.fpu fpv4-sp-d16
+ 884              	_ZN13Kalman_Filter6filterEffm:
+ 885              	.LFB414:
+  49:Core/Inc/utils/kalman.h ****         
+  50:Core/Inc/utils/kalman.h ****         float filter(float measured, float control_input, uint32_t dt_millis) {
+ 886              		.loc 2 50 0
+ 887              		.cfi_startproc
+ 888              		@ args = 0, pretend = 0, frame = 680
+ 889              		@ frame_needed = 0, uses_anonymous_args = 0
+ 890              	.LVL82:
+ 891 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 892              	.LCFI8:
+ 893              		.cfi_def_cfa_offset 24
+ 894              		.cfi_offset 4, -24
+ 895              		.cfi_offset 5, -20
+ 896              		.cfi_offset 6, -16
+ 897              		.cfi_offset 7, -12
+ 898              		.cfi_offset 8, -8
+ 899              		.cfi_offset 14, -4
+ 900 0004 2DED028B 		vpush.64	{d8}
+ 901              	.LCFI9:
+ 902              		.cfi_def_cfa_offset 32
+ 903              		.cfi_offset 80, -32
+ 904              		.cfi_offset 81, -28
+ 905 0008 ADF52A7D 		sub	sp, sp, #680
+ 906              	.LCFI10:
+ 907              		.cfi_def_cfa_offset 712
+ 908 000c 0446     		mov	r4, r0
+ 909 000e B0EE408A 		vmov.f32	s16, s0
+  51:Core/Inc/utils/kalman.h ****                 // float dt = (float)dt_millis / 1000.0;
+  52:Core/Inc/utils/kalman.h ****                 // For first element of vector
+  53:Core/Inc/utils/kalman.h ****                 if (is_first_) {
+ 910              		.loc 2 53 0
+ 911 0012 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+ 912 0014 13B3     		cbz	r3, .L52
+  54:Core/Inc/utils/kalman.h ****                         // Initiaize all the variables at the first call
+  55:Core/Inc/utils/kalman.h ****                         kv_init_(dt_millis);
+ 913              		.loc 2 55 0
+ 914 0016 0368     		ldr	r3, [r0]
+ 915 0018 0846     		mov	r0, r1
+ 916              	.LVL83:
+ 917 001a 9847     		blx	r3
+ 918              	.LVL84:
+  56:Core/Inc/utils/kalman.h **** 
+  57:Core/Inc/utils/kalman.h ****                         is_first_ = false;
+ 919              		.loc 2 57 0
+ 920 001c 0023     		movs	r3, #0
+ 921 001e 2371     		strb	r3, [r4, #4]
+ 922              	.LVL85:
+ 923              	.LBB823:
+ 924              	.LBB824:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 925              		.loc 7 37 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 23
+
+
+ 926 0020 94F84C30 		ldrb	r3, [r4, #76]	@ zero_extendqisi2
+ 927 0024 13B1     		cbz	r3, .L53
+ 928 0026 94F84D30 		ldrb	r3, [r4, #77]	@ zero_extendqisi2
+ 929 002a 1BB9     		cbnz	r3, .L54
+ 930              	.L53:
+  38:Core/Inc/utils/mat.h ****                 }
+ 931              		.loc 7 38 0
+ 932 002c 2621     		movs	r1, #38
+ 933 002e AF48     		ldr	r0, .L67
+ 934 0030 FFF7FEFF 		bl	_Error_Handler
+ 935              	.LVL86:
+ 936              	.L54:
+ 937              	.LBE824:
+ 938              	.LBE823:
+  58:Core/Inc/utils/kalman.h ****                         x_.at(0,0) = measured;
+ 939              		.loc 2 58 0
+ 940 0034 84ED038A 		vstr.32	s16, [r4, #12]
+ 941              	.L55:
+ 942              	.LVL87:
+ 943              	.LBB825:
+ 944              	.LBB826:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 945              		.loc 7 37 0
+ 946 0038 94F84C30 		ldrb	r3, [r4, #76]	@ zero_extendqisi2
+ 947 003c 13B1     		cbz	r3, .L64
+ 948 003e 94F84D30 		ldrb	r3, [r4, #77]	@ zero_extendqisi2
+ 949 0042 1BB9     		cbnz	r3, .L65
+ 950              	.L64:
+  38:Core/Inc/utils/mat.h ****                 }
+ 951              		.loc 7 38 0
+ 952 0044 2621     		movs	r1, #38
+ 953 0046 A948     		ldr	r0, .L67
+ 954 0048 FFF7FEFF 		bl	_Error_Handler
+ 955              	.LVL88:
+ 956              	.L65:
+ 957              	.LBE826:
+ 958              	.LBE825:
+  59:Core/Inc/utils/kalman.h ****                         // u_.at(0,0) = control_input;
+  60:Core/Inc/utils/kalman.h ****                 }
+  61:Core/Inc/utils/kalman.h ****                 else {
+  62:Core/Inc/utils/kalman.h ****                         u_.at(0,0) = control_input;
+  63:Core/Inc/utils/kalman.h ****                         z_.at(0,0) = measured;
+  64:Core/Inc/utils/kalman.h **** 
+  65:Core/Inc/utils/kalman.h ****                         // Predict
+  66:Core/Inc/utils/kalman.h ****                         x_ = (kv_->F_)*(x_) + (kv_->B_)*(u_);
+  67:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->F_)*(kv_->P_)*((kv_->F_).trans()) + kv_->Q_;
+  68:Core/Inc/utils/kalman.h **** 
+  69:Core/Inc/utils/kalman.h ****                         // Update
+  70:Core/Inc/utils/kalman.h ****                         K_ = kv_->P_*(kv_->H_.trans())*(((kv_->H_*(kv_->P_)*(kv_->H_.trans())) + kv
+  71:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+  72:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->I_ - K_*(kv_->H_))*(kv_->P_);
+  73:Core/Inc/utils/kalman.h ****                 }
+  74:Core/Inc/utils/kalman.h **** 
+  75:Core/Inc/utils/kalman.h ****                 return x_.at(0,0);
+  76:Core/Inc/utils/kalman.h ****         }
+ 959              		.loc 2 76 0
+ 960 004c 94ED030A 		vldr.32	s0, [r4, #12]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 24
+
+
+ 961 0050 0DF52A7D 		add	sp, sp, #680
+ 962              	.LCFI11:
+ 963              		.cfi_remember_state
+ 964              		.cfi_def_cfa_offset 32
+ 965              		@ sp needed
+ 966 0054 BDEC028B 		vldm	sp!, {d8}
+ 967              	.LCFI12:
+ 968              		.cfi_restore 80
+ 969              		.cfi_restore 81
+ 970              		.cfi_def_cfa_offset 24
+ 971              	.LVL89:
+ 972 0058 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 973              	.LVL90:
+ 974              	.L52:
+ 975              	.LCFI13:
+ 976              		.cfi_restore_state
+ 977 005c F0EE608A 		vmov.f32	s17, s1
+ 978              	.LVL91:
+ 979              	.LBB827:
+ 980              	.LBB828:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 981              		.loc 7 37 0
+ 982 0060 90F89030 		ldrb	r3, [r0, #144]	@ zero_extendqisi2
+ 983 0064 13B1     		cbz	r3, .L56
+ 984 0066 90F89130 		ldrb	r3, [r0, #145]	@ zero_extendqisi2
+ 985 006a 1BB9     		cbnz	r3, .L57
+ 986              	.L56:
+  38:Core/Inc/utils/mat.h ****                 }
+ 987              		.loc 7 38 0
+ 988 006c 2621     		movs	r1, #38
+ 989              	.LVL92:
+ 990 006e 9F48     		ldr	r0, .L67
+ 991              	.LVL93:
+ 992 0070 FFF7FEFF 		bl	_Error_Handler
+ 993              	.LVL94:
+ 994              	.L57:
+ 995              	.LBE828:
+ 996              	.LBE827:
+  62:Core/Inc/utils/kalman.h ****                         z_.at(0,0) = measured;
+ 997              		.loc 2 62 0
+ 998 0074 C4ED148A 		vstr.32	s17, [r4, #80]
+ 999              	.LVL95:
+ 1000              	.LBB829:
+ 1001              	.LBB830:
+  37:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+ 1002              		.loc 7 37 0
+ 1003 0078 94F8D430 		ldrb	r3, [r4, #212]	@ zero_extendqisi2
+ 1004 007c 13B1     		cbz	r3, .L58
+ 1005 007e 94F8D530 		ldrb	r3, [r4, #213]	@ zero_extendqisi2
+ 1006 0082 1BB9     		cbnz	r3, .L59
+ 1007              	.L58:
+  38:Core/Inc/utils/mat.h ****                 }
+ 1008              		.loc 7 38 0
+ 1009 0084 2621     		movs	r1, #38
+ 1010 0086 9948     		ldr	r0, .L67
+ 1011 0088 FFF7FEFF 		bl	_Error_Handler
+ 1012              	.LVL96:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 25
+
+
+ 1013              	.L59:
+ 1014              	.LBE830:
+ 1015              	.LBE829:
+  63:Core/Inc/utils/kalman.h **** 
+ 1016              		.loc 2 63 0
+ 1017 008c 84ED258A 		vstr.32	s16, [r4, #148]
+  66:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->F_)*(kv_->P_)*((kv_->F_).trans()) + kv_->Q_;
+ 1018              		.loc 2 66 0
+ 1019 0090 A168     		ldr	r1, [r4, #8]
+ 1020 0092 55A8     		add	r0, sp, #340
+ 1021 0094 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1022              	.LVL97:
+ 1023 0098 04F10C05 		add	r5, r4, #12
+ 1024              	.LVL98:
+ 1025              	.LBB831:
+ 1026              	.LBB832:
+  49:Core/Inc/utils/mat.h **** 
+  50:Core/Inc/utils/mat.h ****                 return *this;
+  51:Core/Inc/utils/mat.h ****         }
+  52:Core/Inc/utils/mat.h **** 
+  53:Core/Inc/utils/mat.h ****         Mat &operator+=(const Mat &rhs);
+  54:Core/Inc/utils/mat.h ****         Mat &operator-=(const Mat &rhs);
+  55:Core/Inc/utils/mat.h ****         Mat &operator*=(const Mat &rhs);
+  56:Core/Inc/utils/mat.h ****         Mat &operator*=(const Vec3<float> &rhs);
+  57:Core/Inc/utils/mat.h **** 
+  58:Core/Inc/utils/mat.h ****         friend Mat operator+(Mat lhs, const Mat &rhs) {
+  59:Core/Inc/utils/mat.h ****                 lhs += rhs;
+  60:Core/Inc/utils/mat.h ****                 return lhs;
+  61:Core/Inc/utils/mat.h ****         }
+  62:Core/Inc/utils/mat.h **** 
+  63:Core/Inc/utils/mat.h ****         friend Mat operator-(Mat lhs, const Mat &rhs) {
+  64:Core/Inc/utils/mat.h ****                 lhs -= rhs;
+  65:Core/Inc/utils/mat.h ****                 return lhs;
+  66:Core/Inc/utils/mat.h ****         }
+  67:Core/Inc/utils/mat.h **** 
+  68:Core/Inc/utils/mat.h ****         friend Mat operator*(Mat lhs, const Mat &rhs) {
+  69:Core/Inc/utils/mat.h ****                 lhs *= rhs;
+ 1027              		.loc 7 69 0
+ 1028 009c 2946     		mov	r1, r5
+ 1029 009e 55A8     		add	r0, sp, #340
+ 1030              	.LVL99:
+ 1031 00a0 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1032              	.LVL100:
+  70:Core/Inc/utils/mat.h ****                 return lhs;
+ 1033              		.loc 7 70 0
+ 1034 00a4 4426     		movs	r6, #68
+ 1035 00a6 3246     		mov	r2, r6
+ 1036 00a8 55A9     		add	r1, sp, #340
+ 1037              	.LVL101:
+ 1038 00aa 66A8     		add	r0, sp, #408
+ 1039 00ac FFF7FEFF 		bl	memcpy
+ 1040              	.LVL102:
+ 1041              	.LBE832:
+ 1042              	.LBE831:
+  66:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->F_)*(kv_->P_)*((kv_->F_).trans()) + kv_->Q_;
+ 1043              		.loc 2 66 0
+ 1044 00b0 A168     		ldr	r1, [r4, #8]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 26
+
+
+ 1045 00b2 3144     		add	r1, r1, r6
+ 1046 00b4 77A8     		add	r0, sp, #476
+ 1047 00b6 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1048              	.LVL103:
+ 1049              	.LBB833:
+ 1050              	.LBB834:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1051              		.loc 7 69 0
+ 1052 00ba 04F15001 		add	r1, r4, #80
+ 1053              	.LVL104:
+ 1054 00be 77A8     		add	r0, sp, #476
+ 1055              	.LVL105:
+ 1056 00c0 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1057              	.LVL106:
+ 1058              		.loc 7 70 0
+ 1059 00c4 3246     		mov	r2, r6
+ 1060 00c6 77A9     		add	r1, sp, #476
+ 1061              	.LVL107:
+ 1062 00c8 88A8     		add	r0, sp, #544
+ 1063 00ca FFF7FEFF 		bl	memcpy
+ 1064              	.LVL108:
+ 1065              	.LBE834:
+ 1066              	.LBE833:
+ 1067              	.LBB835:
+ 1068              	.LBB836:
+  59:Core/Inc/utils/mat.h ****                 return lhs;
+ 1069              		.loc 7 59 0
+ 1070 00ce 88A9     		add	r1, sp, #544
+ 1071              	.LVL109:
+ 1072 00d0 66A8     		add	r0, sp, #408
+ 1073              	.LVL110:
+ 1074 00d2 FFF7FEFF 		bl	_ZN3MatpLERKS_
+ 1075              	.LVL111:
+  60:Core/Inc/utils/mat.h ****         }
+ 1076              		.loc 7 60 0
+ 1077 00d6 3246     		mov	r2, r6
+ 1078 00d8 66A9     		add	r1, sp, #408
+ 1079              	.LVL112:
+ 1080 00da 99A8     		add	r0, sp, #612
+ 1081 00dc FFF7FEFF 		bl	memcpy
+ 1082              	.LVL113:
+ 1083              	.LBE836:
+ 1084              	.LBE835:
+  66:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->F_)*(kv_->P_)*((kv_->F_).trans()) + kv_->Q_;
+ 1085              		.loc 2 66 0
+ 1086 00e0 4227     		movs	r7, #66
+ 1087 00e2 3A46     		mov	r2, r7
+ 1088 00e4 99A9     		add	r1, sp, #612
+ 1089 00e6 2846     		mov	r0, r5
+ 1090 00e8 FFF7FEFF 		bl	memcpy
+ 1091              	.LVL114:
+  67:Core/Inc/utils/kalman.h **** 
+ 1092              		.loc 2 67 0
+ 1093 00ec A168     		ldr	r1, [r4, #8]
+ 1094 00ee 55A8     		add	r0, sp, #340
+ 1095 00f0 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1096              	.LVL115:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 27
+
+
+ 1097 00f4 A168     		ldr	r1, [r4, #8]
+ 1098              	.LVL116:
+ 1099              	.LBB837:
+ 1100              	.LBB838:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1101              		.loc 7 69 0
+ 1102 00f6 01F58871 		add	r1, r1, #272
+ 1103              	.LVL117:
+ 1104 00fa 55A8     		add	r0, sp, #340
+ 1105              	.LVL118:
+ 1106 00fc FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1107              	.LVL119:
+ 1108              		.loc 7 70 0
+ 1109 0100 3246     		mov	r2, r6
+ 1110 0102 55A9     		add	r1, sp, #340
+ 1111              	.LVL120:
+ 1112 0104 66A8     		add	r0, sp, #408
+ 1113 0106 FFF7FEFF 		bl	memcpy
+ 1114              	.LVL121:
+ 1115              	.LBE838:
+ 1116              	.LBE837:
+ 1117              	.LBB839:
+ 1118              	.LBB840:
+  71:Core/Inc/utils/mat.h ****         }
+  72:Core/Inc/utils/mat.h **** 
+  73:Core/Inc/utils/mat.h ****         friend Mat operator*(Mat lhs, const Vec3<float> &rhs) {
+  74:Core/Inc/utils/mat.h ****                 lhs *= rhs;
+  75:Core/Inc/utils/mat.h ****                 return lhs;
+  76:Core/Inc/utils/mat.h ****         }
+  77:Core/Inc/utils/mat.h **** 
+  78:Core/Inc/utils/mat.h ****         Mat mult(const Mat &m);
+  79:Core/Inc/utils/mat.h ****         Mat mult_EW(float num);
+  80:Core/Inc/utils/mat.h ****         Mat transpose();
+  81:Core/Inc/utils/mat.h **** 
+  82:Core/Inc/utils/mat.h ****         // Just an alias for getting transpose of a matrix
+  83:Core/Inc/utils/mat.h ****         inline Mat trans() { return transpose(); }
+ 1119              		.loc 7 83 0
+ 1120 010a A168     		ldr	r1, [r4, #8]
+ 1121 010c 77A8     		add	r0, sp, #476
+ 1122 010e FFF7FEFF 		bl	_ZN3Mat9transposeEv
+ 1123              	.LVL122:
+ 1124              	.LBE840:
+ 1125              	.LBE839:
+ 1126              	.LBB841:
+ 1127              	.LBB842:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1128              		.loc 7 69 0
+ 1129 0112 77A9     		add	r1, sp, #476
+ 1130              	.LVL123:
+ 1131 0114 66A8     		add	r0, sp, #408
+ 1132              	.LVL124:
+ 1133 0116 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1134              	.LVL125:
+  70:Core/Inc/utils/mat.h ****         }
+ 1135              		.loc 7 70 0
+ 1136 011a 3246     		mov	r2, r6
+ 1137 011c 66A9     		add	r1, sp, #408
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 28
+
+
+ 1138              	.LVL126:
+ 1139 011e 88A8     		add	r0, sp, #544
+ 1140 0120 FFF7FEFF 		bl	memcpy
+ 1141              	.LVL127:
+ 1142              	.LBE842:
+ 1143              	.LBE841:
+  67:Core/Inc/utils/kalman.h **** 
+ 1144              		.loc 2 67 0
+ 1145 0124 A168     		ldr	r1, [r4, #8]
+ 1146              	.LVL128:
+ 1147              	.LBB843:
+ 1148              	.LBB844:
+  59:Core/Inc/utils/mat.h ****                 return lhs;
+ 1149              		.loc 7 59 0
+ 1150 0126 01F5AA71 		add	r1, r1, #340
+ 1151              	.LVL129:
+ 1152 012a 88A8     		add	r0, sp, #544
+ 1153              	.LVL130:
+ 1154 012c FFF7FEFF 		bl	_ZN3MatpLERKS_
+ 1155              	.LVL131:
+  60:Core/Inc/utils/mat.h ****         }
+ 1156              		.loc 7 60 0
+ 1157 0130 3246     		mov	r2, r6
+ 1158 0132 88A9     		add	r1, sp, #544
+ 1159              	.LVL132:
+ 1160 0134 99A8     		add	r0, sp, #612
+ 1161 0136 FFF7FEFF 		bl	memcpy
+ 1162              	.LVL133:
+ 1163              	.LBE844:
+ 1164              	.LBE843:
+  67:Core/Inc/utils/kalman.h **** 
+ 1165              		.loc 2 67 0
+ 1166 013a A068     		ldr	r0, [r4, #8]
+ 1167 013c 3A46     		mov	r2, r7
+ 1168 013e 99A9     		add	r1, sp, #612
+ 1169 0140 00F58870 		add	r0, r0, #272
+ 1170 0144 FFF7FEFF 		bl	memcpy
+ 1171              	.LVL134:
+  70:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+ 1172              		.loc 2 70 0
+ 1173 0148 A168     		ldr	r1, [r4, #8]
+ 1174 014a 01F58871 		add	r1, r1, #272
+ 1175 014e 0DEB0600 		add	r0, sp, r6
+ 1176 0152 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1177              	.LVL135:
+ 1178 0156 A168     		ldr	r1, [r4, #8]
+ 1179              	.LVL136:
+ 1180              	.LBB845:
+ 1181              	.LBB846:
+ 1182              		.loc 7 83 0
+ 1183 0158 8831     		adds	r1, r1, #136
+ 1184              	.LVL137:
+ 1185 015a 6846     		mov	r0, sp
+ 1186 015c FFF7FEFF 		bl	_ZN3Mat9transposeEv
+ 1187              	.LVL138:
+ 1188              	.LBE846:
+ 1189              	.LBE845:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 29
+
+
+ 1190              	.LBB847:
+ 1191              	.LBB848:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1192              		.loc 7 69 0
+ 1193 0160 6946     		mov	r1, sp
+ 1194 0162 0DEB0600 		add	r0, sp, r6
+ 1195 0166 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1196              	.LVL139:
+  70:Core/Inc/utils/mat.h ****         }
+ 1197              		.loc 7 70 0
+ 1198 016a 3246     		mov	r2, r6
+ 1199 016c 0DEB0601 		add	r1, sp, r6
+ 1200 0170 22A8     		add	r0, sp, #136
+ 1201 0172 FFF7FEFF 		bl	memcpy
+ 1202              	.LVL140:
+ 1203              	.LBE848:
+ 1204              	.LBE847:
+  70:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+ 1205              		.loc 2 70 0
+ 1206 0176 A168     		ldr	r1, [r4, #8]
+ 1207 0178 8831     		adds	r1, r1, #136
+ 1208 017a 33A8     		add	r0, sp, #204
+ 1209 017c FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1210              	.LVL141:
+ 1211 0180 A168     		ldr	r1, [r4, #8]
+ 1212              	.LVL142:
+ 1213              	.LBB849:
+ 1214              	.LBB850:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1215              		.loc 7 69 0
+ 1216 0182 01F58871 		add	r1, r1, #272
+ 1217              	.LVL143:
+ 1218 0186 33A8     		add	r0, sp, #204
+ 1219              	.LVL144:
+ 1220 0188 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1221              	.LVL145:
+  70:Core/Inc/utils/mat.h ****         }
+ 1222              		.loc 7 70 0
+ 1223 018c 3246     		mov	r2, r6
+ 1224 018e 33A9     		add	r1, sp, #204
+ 1225              	.LVL146:
+ 1226 0190 44A8     		add	r0, sp, #272
+ 1227 0192 FFF7FEFF 		bl	memcpy
+ 1228              	.LVL147:
+ 1229              	.LBE850:
+ 1230              	.LBE849:
+  70:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+ 1231              		.loc 2 70 0
+ 1232 0196 A168     		ldr	r1, [r4, #8]
+ 1233              	.LVL148:
+ 1234              	.LBB851:
+ 1235              	.LBB852:
+ 1236              		.loc 7 83 0
+ 1237 0198 8831     		adds	r1, r1, #136
+ 1238              	.LVL149:
+ 1239 019a 55A8     		add	r0, sp, #340
+ 1240 019c FFF7FEFF 		bl	_ZN3Mat9transposeEv
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 30
+
+
+ 1241              	.LVL150:
+ 1242              	.LBE852:
+ 1243              	.LBE851:
+ 1244              	.LBB853:
+ 1245              	.LBB854:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1246              		.loc 7 69 0
+ 1247 01a0 55A9     		add	r1, sp, #340
+ 1248              	.LVL151:
+ 1249 01a2 44A8     		add	r0, sp, #272
+ 1250              	.LVL152:
+ 1251 01a4 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1252              	.LVL153:
+  70:Core/Inc/utils/mat.h ****         }
+ 1253              		.loc 7 70 0
+ 1254 01a8 3246     		mov	r2, r6
+ 1255 01aa 44A9     		add	r1, sp, #272
+ 1256              	.LVL154:
+ 1257 01ac 66A8     		add	r0, sp, #408
+ 1258 01ae FFF7FEFF 		bl	memcpy
+ 1259              	.LVL155:
+ 1260              	.LBE854:
+ 1261              	.LBE853:
+  70:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+ 1262              		.loc 2 70 0
+ 1263 01b2 A168     		ldr	r1, [r4, #8]
+ 1264              	.LVL156:
+ 1265              	.LBB855:
+ 1266              	.LBB856:
+  59:Core/Inc/utils/mat.h ****                 return lhs;
+ 1267              		.loc 7 59 0
+ 1268 01b4 01F5CC71 		add	r1, r1, #408
+ 1269              	.LVL157:
+ 1270 01b8 66A8     		add	r0, sp, #408
+ 1271              	.LVL158:
+ 1272 01ba FFF7FEFF 		bl	_ZN3MatpLERKS_
+ 1273              	.LVL159:
+  60:Core/Inc/utils/mat.h ****         }
+ 1274              		.loc 7 60 0
+ 1275 01be 3246     		mov	r2, r6
+ 1276 01c0 66A9     		add	r1, sp, #408
+ 1277              	.LVL160:
+ 1278 01c2 77A8     		add	r0, sp, #476
+ 1279 01c4 FFF7FEFF 		bl	memcpy
+ 1280              	.LVL161:
+ 1281              	.LBE856:
+ 1282              	.LBE855:
+ 1283              	.LBB857:
+ 1284              	.LBB858:
+  84:Core/Inc/utils/mat.h **** 
+  85:Core/Inc/utils/mat.h ****         void fill(float num) {
+  86:Core/Inc/utils/mat.h ****                 for (uint8_t i = 0; i < rows_; ++i) {
+  87:Core/Inc/utils/mat.h ****                         for (uint8_t j = 0; j < cols_; ++j) {
+  88:Core/Inc/utils/mat.h ****                                 matrix_[i][j] = num;
+  89:Core/Inc/utils/mat.h ****                         }
+  90:Core/Inc/utils/mat.h ****                 }
+  91:Core/Inc/utils/mat.h ****         }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 31
+
+
+  92:Core/Inc/utils/mat.h **** 
+  93:Core/Inc/utils/mat.h ****         template <size_t M, size_t N>
+  94:Core/Inc/utils/mat.h ****         void fill(const float (&mat)[M][N]) {
+  95:Core/Inc/utils/mat.h ****                 if (M != rows_ && N != cols_) {
+  96:Core/Inc/utils/mat.h ****                         _Error_Handler(__FILE__, __LINE__);
+  97:Core/Inc/utils/mat.h ****                 }
+  98:Core/Inc/utils/mat.h ****                 for (uint8_t i = 0; i < M; ++i) {
+  99:Core/Inc/utils/mat.h ****                         for (uint8_t j = 0; j < N; ++j) {
+ 100:Core/Inc/utils/mat.h ****                                 matrix_[i][j] = mat[i][j];
+ 101:Core/Inc/utils/mat.h ****                         }
+ 102:Core/Inc/utils/mat.h ****                 }
+ 103:Core/Inc/utils/mat.h ****         }
+ 104:Core/Inc/utils/mat.h **** 
+ 105:Core/Inc/utils/mat.h ****         void add_Rows(uint8_t r) {
+ 106:Core/Inc/utils/mat.h ****                 if (r + rows_ <= MAX_MATRIX_ROWS) {
+ 107:Core/Inc/utils/mat.h ****                         rows_ += r;
+ 108:Core/Inc/utils/mat.h ****                 }
+ 109:Core/Inc/utils/mat.h ****         }
+ 110:Core/Inc/utils/mat.h **** 
+ 111:Core/Inc/utils/mat.h ****         void add_Cols(uint8_t c) {
+ 112:Core/Inc/utils/mat.h ****                 if (c + cols_ <= MAX_MATRIX_COLS) {
+ 113:Core/Inc/utils/mat.h ****                         cols_ += c;
+ 114:Core/Inc/utils/mat.h ****                 }
+ 115:Core/Inc/utils/mat.h ****         }
+ 116:Core/Inc/utils/mat.h **** 
+ 117:Core/Inc/utils/mat.h ****         static Mat eye(uint8_t n);
+ 118:Core/Inc/utils/mat.h **** 
+ 119:Core/Inc/utils/mat.h ****         bool is_Zero() const;
+ 120:Core/Inc/utils/mat.h ****         void swap_Rows(uint8_t a, uint8_t b);
+ 121:Core/Inc/utils/mat.h ****         void swap_Cols(size_t a, size_t b);        
+ 122:Core/Inc/utils/mat.h ****         bool inv(Mat &inv) const;
+ 123:Core/Inc/utils/mat.h **** 
+ 124:Core/Inc/utils/mat.h ****         Mat inv() const
+ 125:Core/Inc/utils/mat.h ****         {
+ 126:Core/Inc/utils/mat.h ****                 Mat i(rows_, cols_);
+ 1285              		.loc 7 126 0
+ 1286 01c8 9DF81D22 		ldrb	r2, [sp, #541]	@ zero_extendqisi2
+ 1287 01cc 9DF81C12 		ldrb	r1, [sp, #540]	@ zero_extendqisi2
+ 1288 01d0 88A8     		add	r0, sp, #544
+ 1289 01d2 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1290              	.LVL162:
+ 127:Core/Inc/utils/mat.h ****                 if(inv(i)) {
+ 1291              		.loc 7 127 0
+ 1292 01d6 88A9     		add	r1, sp, #544
+ 1293 01d8 77A8     		add	r0, sp, #476
+ 1294              	.LVL163:
+ 1295 01da FFF7FEFF 		bl	_ZNK3Mat3invERS_
+ 1296              	.LVL164:
+ 1297 01de 0028     		cmp	r0, #0
+ 1298 01e0 70D0     		beq	.L63
+ 1299              	.L60:
+ 1300              	.LVL165:
+ 1301              	.LBE858:
+ 1302              	.LBE857:
+ 1303              	.LBB863:
+ 1304              	.LBB864:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 32
+
+
+ 1305              		.loc 7 69 0
+ 1306 01e2 88A9     		add	r1, sp, #544
+ 1307              	.LVL166:
+ 1308 01e4 22A8     		add	r0, sp, #136
+ 1309              	.LVL167:
+ 1310 01e6 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1311              	.LVL168:
+  70:Core/Inc/utils/mat.h ****         }
+ 1312              		.loc 7 70 0
+ 1313 01ea 4426     		movs	r6, #68
+ 1314 01ec 3246     		mov	r2, r6
+ 1315 01ee 22A9     		add	r1, sp, #136
+ 1316              	.LVL169:
+ 1317 01f0 99A8     		add	r0, sp, #612
+ 1318 01f2 FFF7FEFF 		bl	memcpy
+ 1319              	.LVL170:
+ 1320              	.LBE864:
+ 1321              	.LBE863:
+  70:Core/Inc/utils/kalman.h ****                         x_ += K_*(z_ - (kv_->H_)*(x_));
+ 1322              		.loc 2 70 0
+ 1323 01f6 04F1D807 		add	r7, r4, #216
+ 1324 01fa 4FF04208 		mov	r8, #66
+ 1325 01fe 4246     		mov	r2, r8
+ 1326 0200 99A9     		add	r1, sp, #612
+ 1327 0202 3846     		mov	r0, r7
+ 1328 0204 FFF7FEFF 		bl	memcpy
+ 1329              	.LVL171:
+  71:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->I_ - K_*(kv_->H_))*(kv_->P_);
+ 1330              		.loc 2 71 0
+ 1331 0208 3946     		mov	r1, r7
+ 1332 020a 88A8     		add	r0, sp, #544
+ 1333 020c FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1334              	.LVL172:
+ 1335 0210 04F19401 		add	r1, r4, #148
+ 1336 0214 66A8     		add	r0, sp, #408
+ 1337 0216 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1338              	.LVL173:
+ 1339 021a A168     		ldr	r1, [r4, #8]
+ 1340 021c 8831     		adds	r1, r1, #136
+ 1341 021e 44A8     		add	r0, sp, #272
+ 1342 0220 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1343              	.LVL174:
+ 1344              	.LBB865:
+ 1345              	.LBB866:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1346              		.loc 7 69 0
+ 1347 0224 2946     		mov	r1, r5
+ 1348 0226 44A8     		add	r0, sp, #272
+ 1349              	.LVL175:
+ 1350 0228 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1351              	.LVL176:
+  70:Core/Inc/utils/mat.h ****         }
+ 1352              		.loc 7 70 0
+ 1353 022c 3246     		mov	r2, r6
+ 1354 022e 44A9     		add	r1, sp, #272
+ 1355              	.LVL177:
+ 1356 0230 55A8     		add	r0, sp, #340
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 33
+
+
+ 1357 0232 FFF7FEFF 		bl	memcpy
+ 1358              	.LVL178:
+ 1359              	.LBE866:
+ 1360              	.LBE865:
+ 1361              	.LBB867:
+ 1362              	.LBB868:
+  64:Core/Inc/utils/mat.h ****                 return lhs;
+ 1363              		.loc 7 64 0
+ 1364 0236 55A9     		add	r1, sp, #340
+ 1365              	.LVL179:
+ 1366 0238 66A8     		add	r0, sp, #408
+ 1367              	.LVL180:
+ 1368 023a FFF7FEFF 		bl	_ZN3MatmIERKS_
+ 1369              	.LVL181:
+  65:Core/Inc/utils/mat.h ****         }
+ 1370              		.loc 7 65 0
+ 1371 023e 3246     		mov	r2, r6
+ 1372 0240 66A9     		add	r1, sp, #408
+ 1373              	.LVL182:
+ 1374 0242 77A8     		add	r0, sp, #476
+ 1375 0244 FFF7FEFF 		bl	memcpy
+ 1376              	.LVL183:
+ 1377              	.LBE868:
+ 1378              	.LBE867:
+ 1379              	.LBB869:
+ 1380              	.LBB870:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1381              		.loc 7 69 0
+ 1382 0248 77A9     		add	r1, sp, #476
+ 1383              	.LVL184:
+ 1384 024a 88A8     		add	r0, sp, #544
+ 1385              	.LVL185:
+ 1386 024c FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1387              	.LVL186:
+  70:Core/Inc/utils/mat.h ****         }
+ 1388              		.loc 7 70 0
+ 1389 0250 3246     		mov	r2, r6
+ 1390 0252 88A9     		add	r1, sp, #544
+ 1391              	.LVL187:
+ 1392 0254 99A8     		add	r0, sp, #612
+ 1393 0256 FFF7FEFF 		bl	memcpy
+ 1394              	.LVL188:
+ 1395              	.LBE870:
+ 1396              	.LBE869:
+  71:Core/Inc/utils/kalman.h ****                         kv_->P_ = (kv_->I_ - K_*(kv_->H_))*(kv_->P_);
+ 1397              		.loc 2 71 0
+ 1398 025a 99A9     		add	r1, sp, #612
+ 1399 025c 2846     		mov	r0, r5
+ 1400 025e FFF7FEFF 		bl	_ZN3MatpLERKS_
+ 1401              	.LVL189:
+  72:Core/Inc/utils/kalman.h ****                 }
+ 1402              		.loc 2 72 0
+ 1403 0262 A168     		ldr	r1, [r4, #8]
+ 1404 0264 CC31     		adds	r1, r1, #204
+ 1405 0266 77A8     		add	r0, sp, #476
+ 1406 0268 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1407              	.LVL190:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 34
+
+
+ 1408 026c 3946     		mov	r1, r7
+ 1409 026e 55A8     		add	r0, sp, #340
+ 1410 0270 FFF7FEFF 		bl	_ZN3MatC1ERKS_
+ 1411              	.LVL191:
+ 1412 0274 A168     		ldr	r1, [r4, #8]
+ 1413              	.LVL192:
+ 1414              	.LBB871:
+ 1415              	.LBB872:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1416              		.loc 7 69 0
+ 1417 0276 8831     		adds	r1, r1, #136
+ 1418              	.LVL193:
+ 1419 0278 55A8     		add	r0, sp, #340
+ 1420              	.LVL194:
+ 1421 027a FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1422              	.LVL195:
+  70:Core/Inc/utils/mat.h ****         }
+ 1423              		.loc 7 70 0
+ 1424 027e 3246     		mov	r2, r6
+ 1425 0280 55A9     		add	r1, sp, #340
+ 1426              	.LVL196:
+ 1427 0282 66A8     		add	r0, sp, #408
+ 1428 0284 FFF7FEFF 		bl	memcpy
+ 1429              	.LVL197:
+ 1430              	.LBE872:
+ 1431              	.LBE871:
+ 1432              	.LBB873:
+ 1433              	.LBB874:
+  64:Core/Inc/utils/mat.h ****                 return lhs;
+ 1434              		.loc 7 64 0
+ 1435 0288 66A9     		add	r1, sp, #408
+ 1436              	.LVL198:
+ 1437 028a 77A8     		add	r0, sp, #476
+ 1438              	.LVL199:
+ 1439 028c FFF7FEFF 		bl	_ZN3MatmIERKS_
+ 1440              	.LVL200:
+  65:Core/Inc/utils/mat.h ****         }
+ 1441              		.loc 7 65 0
+ 1442 0290 3246     		mov	r2, r6
+ 1443 0292 77A9     		add	r1, sp, #476
+ 1444              	.LVL201:
+ 1445 0294 88A8     		add	r0, sp, #544
+ 1446 0296 FFF7FEFF 		bl	memcpy
+ 1447              	.LVL202:
+ 1448              	.LBE874:
+ 1449              	.LBE873:
+  72:Core/Inc/utils/kalman.h ****                 }
+ 1450              		.loc 2 72 0
+ 1451 029a A168     		ldr	r1, [r4, #8]
+ 1452              	.LVL203:
+ 1453              	.LBB875:
+ 1454              	.LBB876:
+  69:Core/Inc/utils/mat.h ****                 return lhs;
+ 1455              		.loc 7 69 0
+ 1456 029c 01F58871 		add	r1, r1, #272
+ 1457              	.LVL204:
+ 1458 02a0 88A8     		add	r0, sp, #544
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 35
+
+
+ 1459              	.LVL205:
+ 1460 02a2 FFF7FEFF 		bl	_ZN3MatmLERKS_
+ 1461              	.LVL206:
+  70:Core/Inc/utils/mat.h ****         }
+ 1462              		.loc 7 70 0
+ 1463 02a6 3246     		mov	r2, r6
+ 1464 02a8 88A9     		add	r1, sp, #544
+ 1465              	.LVL207:
+ 1466 02aa 99A8     		add	r0, sp, #612
+ 1467 02ac FFF7FEFF 		bl	memcpy
+ 1468              	.LVL208:
+ 1469              	.LBE876:
+ 1470              	.LBE875:
+  72:Core/Inc/utils/kalman.h ****                 }
+ 1471              		.loc 2 72 0
+ 1472 02b0 A068     		ldr	r0, [r4, #8]
+ 1473 02b2 4246     		mov	r2, r8
+ 1474 02b4 99A9     		add	r1, sp, #612
+ 1475 02b6 00F58870 		add	r0, r0, #272
+ 1476 02ba FFF7FEFF 		bl	memcpy
+ 1477              	.LVL209:
+ 1478 02be BBE6     		b	.L55
+ 1479              	.LVL210:
+ 1480              	.L61:
+ 1481              	.LBB877:
+ 1482              	.LBB862:
+ 1483              	.LBB859:
+ 1484              	.LBB860:
+  86:Core/Inc/utils/mat.h ****                         for (uint8_t j = 0; j < cols_; ++j) {
+ 1485              		.loc 7 86 0
+ 1486 02c0 0130     		adds	r0, r0, #1
+ 1487              	.LVL211:
+ 1488 02c2 C0B2     		uxtb	r0, r0
+ 1489              	.LVL212:
+ 1490              	.L63:
+ 1491 02c4 9DF86032 		ldrb	r3, [sp, #608]	@ zero_extendqisi2
+ 1492 02c8 8342     		cmp	r3, r0
+ 1493 02ca 8AD9     		bls	.L60
+ 1494              	.LBB861:
+  87:Core/Inc/utils/mat.h ****                                 matrix_[i][j] = num;
+ 1495              		.loc 7 87 0
+ 1496 02cc 0023     		movs	r3, #0
+ 1497              	.L62:
+ 1498              	.LVL213:
+ 1499 02ce 9DF86122 		ldrb	r2, [sp, #609]	@ zero_extendqisi2
+ 1500 02d2 9A42     		cmp	r2, r3
+ 1501 02d4 F4D9     		bls	.L61
+  88:Core/Inc/utils/mat.h ****                         }
+ 1502              		.loc 7 88 0
+ 1503 02d6 03EB8002 		add	r2, r3, r0, lsl #2
+ 1504 02da AAA9     		add	r1, sp, #680
+ 1505 02dc 01EB8202 		add	r2, r1, r2, lsl #2
+ 1506 02e0 0021     		movs	r1, #0
+ 1507 02e2 42F8881C 		str	r1, [r2, #-136]	@ float
+  87:Core/Inc/utils/mat.h ****                                 matrix_[i][j] = num;
+ 1508              		.loc 7 87 0
+ 1509 02e6 0133     		adds	r3, r3, #1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 36
+
+
+ 1510              	.LVL214:
+ 1511 02e8 DBB2     		uxtb	r3, r3
+ 1512              	.LVL215:
+ 1513 02ea F0E7     		b	.L62
+ 1514              	.L68:
+ 1515              		.align	2
+ 1516              	.L67:
+ 1517 02ec 00000000 		.word	.LC0
+ 1518              	.LBE861:
+ 1519              	.LBE860:
+ 1520              	.LBE859:
+ 1521              	.LBE862:
+ 1522              	.LBE877:
+ 1523              		.cfi_endproc
+ 1524              	.LFE414:
+ 1526              		.section	.text._ZN11Kalman_VarsC2Ev,"axG",%progbits,_ZN11Kalman_VarsC5Ev,comdat
+ 1527              		.align	1
+ 1528              		.weak	_ZN11Kalman_VarsC2Ev
+ 1529              		.syntax unified
+ 1530              		.thumb
+ 1531              		.thumb_func
+ 1532              		.fpu fpv4-sp-d16
+ 1534              	_ZN11Kalman_VarsC2Ev:
+ 1535              	.LFB535:
+  16:Core/Inc/utils/kalman.h **** {
+ 1536              		.loc 2 16 0
+ 1537              		.cfi_startproc
+ 1538              		@ args = 0, pretend = 0, frame = 0
+ 1539              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1540              	.LVL216:
+ 1541 0000 10B5     		push	{r4, lr}
+ 1542              	.LCFI14:
+ 1543              		.cfi_def_cfa_offset 8
+ 1544              		.cfi_offset 4, -8
+ 1545              		.cfi_offset 14, -4
+ 1546 0002 0446     		mov	r4, r0
+ 1547              	.LVL217:
+ 1548              	.LBB878:
+ 1549              	.LBB879:
+ 1550              	.LBB880:
+  21:Core/Inc/utils/mat.h ****         
+ 1551              		.loc 7 21 0
+ 1552 0004 0022     		movs	r2, #0
+ 1553 0006 1146     		mov	r1, r2
+ 1554 0008 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1555              	.LVL218:
+ 1556              	.LBE880:
+ 1557              	.LBE879:
+ 1558              	.LBB881:
+ 1559              	.LBB882:
+ 1560 000c 0022     		movs	r2, #0
+ 1561 000e 1146     		mov	r1, r2
+ 1562 0010 04F14400 		add	r0, r4, #68
+ 1563              	.LVL219:
+ 1564 0014 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1565              	.LVL220:
+ 1566              	.LBE882:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 37
+
+
+ 1567              	.LBE881:
+ 1568              	.LBB883:
+ 1569              	.LBB884:
+ 1570 0018 0022     		movs	r2, #0
+ 1571 001a 1146     		mov	r1, r2
+ 1572 001c 04F18800 		add	r0, r4, #136
+ 1573              	.LVL221:
+ 1574 0020 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1575              	.LVL222:
+ 1576              	.LBE884:
+ 1577              	.LBE883:
+ 1578              	.LBB885:
+ 1579              	.LBB886:
+ 1580 0024 0022     		movs	r2, #0
+ 1581 0026 1146     		mov	r1, r2
+ 1582 0028 04F1CC00 		add	r0, r4, #204
+ 1583              	.LVL223:
+ 1584 002c FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1585              	.LVL224:
+ 1586              	.LBE886:
+ 1587              	.LBE885:
+ 1588              	.LBB887:
+ 1589              	.LBB888:
+ 1590 0030 0022     		movs	r2, #0
+ 1591 0032 1146     		mov	r1, r2
+ 1592 0034 04F58870 		add	r0, r4, #272
+ 1593              	.LVL225:
+ 1594 0038 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1595              	.LVL226:
+ 1596              	.LBE888:
+ 1597              	.LBE887:
+ 1598              	.LBB889:
+ 1599              	.LBB890:
+ 1600 003c 0022     		movs	r2, #0
+ 1601 003e 1146     		mov	r1, r2
+ 1602 0040 04F5AA70 		add	r0, r4, #340
+ 1603              	.LVL227:
+ 1604 0044 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1605              	.LVL228:
+ 1606              	.LBE890:
+ 1607              	.LBE889:
+ 1608              	.LBB891:
+ 1609              	.LBB892:
+ 1610 0048 0022     		movs	r2, #0
+ 1611 004a 1146     		mov	r1, r2
+ 1612 004c 04F5CC70 		add	r0, r4, #408
+ 1613              	.LVL229:
+ 1614 0050 FFF7FEFF 		bl	_ZN3MatC1Ehh
+ 1615              	.LVL230:
+ 1616              	.LBE892:
+ 1617              	.LBE891:
+ 1618              	.LBE878:
+  16:Core/Inc/utils/kalman.h **** {
+ 1619              		.loc 2 16 0
+ 1620 0054 2046     		mov	r0, r4
+ 1621 0056 10BD     		pop	{r4, pc}
+ 1622              		.cfi_endproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 38
+
+
+ 1623              	.LFE535:
+ 1625              		.weak	_ZN11Kalman_VarsC1Ev
+ 1626              		.thumb_set _ZN11Kalman_VarsC1Ev,_ZN11Kalman_VarsC2Ev
+ 1627              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 1628              		.align	1
+ 1629              		.syntax unified
+ 1630              		.thumb
+ 1631              		.thumb_func
+ 1632              		.fpu fpv4-sp-d16
+ 1634              	_Z41__static_initialization_and_destruction_0ii:
+ 1635              	.LFB575:
+ 106:Core/Src/robot/robo_orientation.cpp **** 
+ 107:Core/Src/robot/robo_orientation.cpp **** /**
+ 108:Core/Src/robot/robo_orientation.cpp ****  * @brief Function that provides the orientation of the robot
+ 109:Core/Src/robot/robo_orientation.cpp ****  * @param base_state This parameter is considered as one of the possible state
+ 110:Core/Src/robot/robo_orientation.cpp ****  *                   of robot.
+ 111:Core/Src/robot/robo_orientation.cpp ****  * @param dt_millis : The time period at which this function is called periodically
+ 112:Core/Src/robot/robo_orientation.cpp ****  * 
+ 113:Core/Src/robot/robo_orientation.cpp ****  * @retval orientation of the robot in degrees
+ 114:Core/Src/robot/robo_orientation.cpp ****  * 
+ 115:Core/Src/robot/robo_orientation.cpp ****  * 
+ 116:Core/Src/robot/robo_orientation.cpp ****  * <pre>
+ 117:Core/Src/robot/robo_orientation.cpp ****  * Tasks performed by this function
+ 118:Core/Src/robot/robo_orientation.cpp ****  * 1) Read the values from Accelerometer and the Gyroscope
+ 119:Core/Src/robot/robo_orientation.cpp ****  * </pre>
+ 120:Core/Src/robot/robo_orientation.cpp ****  */
+ 121:Core/Src/robot/robo_orientation.cpp **** 
+ 122:Core/Src/robot/robo_orientation.cpp **** Vec3<float> read_Orientation(uint32_t dt_millis)
+ 123:Core/Src/robot/robo_orientation.cpp **** {
+ 124:Core/Src/robot/robo_orientation.cpp ****         Vec3<float> accel;
+ 125:Core/Src/robot/robo_orientation.cpp ****         Vec3<float> gyro;
+ 126:Core/Src/robot/robo_orientation.cpp ****         Vec3<float> mag;
+ 127:Core/Src/robot/robo_orientation.cpp **** 	Vec3<float> mag_offset(-249, -261, 40);
+ 128:Core/Src/robot/robo_orientation.cpp ****         Vec3<float> angles;
+ 129:Core/Src/robot/robo_orientation.cpp **** 
+ 130:Core/Src/robot/robo_orientation.cpp **** #ifdef _ENABLE_I2C_ERROR_DETECTION
+ 131:Core/Src/robot/robo_orientation.cpp **** 
+ 132:Core/Src/robot/robo_orientation.cpp ****         bool mpu_is_ready(true), hmc_is_ready(true);
+ 133:Core/Src/robot/robo_orientation.cpp ****         
+ 134:Core/Src/robot/robo_orientation.cpp ****         // Read MPU6050 if it is ready to be read
+ 135:Core/Src/robot/robo_orientation.cpp ****         if (MPU6050_Read_RawAxes(&Body_IMU) != HAL_OK) {
+ 136:Core/Src/robot/robo_orientation.cpp ****                 mpu_is_ready = false;
+ 137:Core/Src/robot/robo_orientation.cpp ****         }
+ 138:Core/Src/robot/robo_orientation.cpp **** 
+ 139:Core/Src/robot/robo_orientation.cpp ****         // Read HMC5883 if it is ready to be read
+ 140:Core/Src/robot/robo_orientation.cpp ****         if (HMC5883_Read(&Body_HMC) != HAL_OK) {
+ 141:Core/Src/robot/robo_orientation.cpp ****                 hmc_is_ready = false;
+ 142:Core/Src/robot/robo_orientation.cpp ****         }
+ 143:Core/Src/robot/robo_orientation.cpp **** 
+ 144:Core/Src/robot/robo_orientation.cpp ****         if (!mpu_is_ready || !hmc_is_ready) {
+ 145:Core/Src/robot/robo_orientation.cpp ****                 //! Error Condition
+ 146:Core/Src/robot/robo_orientation.cpp ****                 HAL_GPIO_WritePin(B_BlueLED_GPIO_Port, B_BlueLED_Pin, GPIO_PIN_SET);
+ 147:Core/Src/robot/robo_orientation.cpp ****                 error(Error::PERIPHERAL_ERROR);
+ 148:Core/Src/robot/robo_orientation.cpp ****                 IMU_Init();
+ 149:Core/Src/robot/robo_orientation.cpp ****                 return angles;
+ 150:Core/Src/robot/robo_orientation.cpp ****         }
+ 151:Core/Src/robot/robo_orientation.cpp ****         else {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 39
+
+
+ 152:Core/Src/robot/robo_orientation.cpp ****                 HAL_GPIO_WritePin(B_BlueLED_GPIO_Port, B_BlueLED_Pin, GPIO_PIN_RESET);
+ 153:Core/Src/robot/robo_orientation.cpp ****         }
+ 154:Core/Src/robot/robo_orientation.cpp **** #else
+ 155:Core/Src/robot/robo_orientation.cpp ****         MPU6050_Read_NormAxes(&Body_IMU);
+ 156:Core/Src/robot/robo_orientation.cpp ****         HMC5883_Read(&Body_HMC);
+ 157:Core/Src/robot/robo_orientation.cpp **** #endif  // _ENABLE_I2C_ERROR_DETECTION
+ 158:Core/Src/robot/robo_orientation.cpp **** 
+ 159:Core/Src/robot/robo_orientation.cpp ****         accel = Body_IMU.norm_a_axis;
+ 160:Core/Src/robot/robo_orientation.cpp ****         gyro = Body_IMU.norm_g_axis - gOmega_Bias;
+ 161:Core/Src/robot/robo_orientation.cpp ****         mag = Body_HMC.raw_axis;
+ 162:Core/Src/robot/robo_orientation.cpp **** 	//mag -= mag_offset;
+ 163:Core/Src/robot/robo_orientation.cpp ****         // (accel.mult_EW(1000)).print();
+ 164:Core/Src/robot/robo_orientation.cpp ****         // printf("    ");
+ 165:Core/Src/robot/robo_orientation.cpp ****         // (gyro.mult_EW(4)).print();
+ 166:Core/Src/robot/robo_orientation.cpp ****         // printf("    ");
+ 167:Core/Src/robot/robo_orientation.cpp ****         // mag.print();
+ 168:Core/Src/robot/robo_orientation.cpp ****         // printf("\n");
+ 169:Core/Src/robot/robo_orientation.cpp **** 
+ 170:Core/Src/robot/robo_orientation.cpp ****         // We will consider the rotation in order: psi-theta-phi
+ 171:Core/Src/robot/robo_orientation.cpp ****         float ax = gXAccelAlpha35.smooth(accel.getX());
+ 172:Core/Src/robot/robo_orientation.cpp ****         float ay = gYAccelAlpha35.smooth(accel.getY());
+ 173:Core/Src/robot/robo_orientation.cpp ****         float az = gZAccelAlpha35.smooth(accel.getZ());
+ 174:Core/Src/robot/robo_orientation.cpp **** 
+ 175:Core/Src/robot/robo_orientation.cpp ****         float gx = gXGyroAlpha35.smooth(gyro.getX());
+ 176:Core/Src/robot/robo_orientation.cpp ****         float gy = gYGyroAlpha35.smooth(gyro.getY());
+ 177:Core/Src/robot/robo_orientation.cpp ****         float gz = gZGyroAlpha35.smooth(gyro.getZ());
+ 178:Core/Src/robot/robo_orientation.cpp **** 
+ 179:Core/Src/robot/robo_orientation.cpp ****         float bx = gXMagAlpha35.smooth(mag.getX());
+ 180:Core/Src/robot/robo_orientation.cpp ****         float by = gYMagAlpha35.smooth(mag.getY());
+ 181:Core/Src/robot/robo_orientation.cpp ****         float bz = gZMagAlpha35.smooth(mag.getZ());
+ 182:Core/Src/robot/robo_orientation.cpp **** 
+ 183:Core/Src/robot/robo_orientation.cpp **** 	TM_AHRSIMU_UpdateAHRS(&IMU, gx, gy, gz, ax, ay, az, bx, by, bz);
+ 184:Core/Src/robot/robo_orientation.cpp **** 
+ 185:Core/Src/robot/robo_orientation.cpp **** 	// printf("%ld %ld %ld\n", (int32_t)(bx), (int32_t)(by), (int32_t)(bz));
+ 186:Core/Src/robot/robo_orientation.cpp ****         
+ 187:Core/Src/robot/robo_orientation.cpp ****         float roll = atan2f(ay, az) * 57.3;
+ 188:Core/Src/robot/robo_orientation.cpp **** 
+ 189:Core/Src/robot/robo_orientation.cpp ****         roll = gRoll_Filter.filter(roll, gx, dt_millis);
+ 190:Core/Src/robot/robo_orientation.cpp ****         // printf("%ld,   ", (int32_t)(roll*1000));
+ 191:Core/Src/robot/robo_orientation.cpp **** 
+ 192:Core/Src/robot/robo_orientation.cpp ****         float sin_roll = sin(roll / 57.3);
+ 193:Core/Src/robot/robo_orientation.cpp ****         float cos_roll = cos(roll / 57.3);
+ 194:Core/Src/robot/robo_orientation.cpp ****         // Roll Compensated Pitch
+ 195:Core/Src/robot/robo_orientation.cpp ****         float pitch = atan2f((-ax), ay*sin_roll + az*cos_roll) * 57.3;
+ 196:Core/Src/robot/robo_orientation.cpp **** 
+ 197:Core/Src/robot/robo_orientation.cpp ****         pitch = gPitch_Filter.filter(pitch, gy, dt_millis);
+ 198:Core/Src/robot/robo_orientation.cpp ****         // printf("%ld,   ", (int32_t)(pitch*1000));
+ 199:Core/Src/robot/robo_orientation.cpp **** 
+ 200:Core/Src/robot/robo_orientation.cpp ****         float sin_pitch = sin(pitch / 57.3);
+ 201:Core/Src/robot/robo_orientation.cpp ****         float cos_pitch = cos(pitch / 57.3);
+ 202:Core/Src/robot/robo_orientation.cpp ****         // Tilt Compensated Yaw
+ 203:Core/Src/robot/robo_orientation.cpp ****         float yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*
+ 204:Core/Src/robot/robo_orientation.cpp ****         // printf("%ld\n", (int32_t)(yaw*1000));
+ 205:Core/Src/robot/robo_orientation.cpp **** 
+ 206:Core/Src/robot/robo_orientation.cpp ****         yaw = gYaw_Filter.filter(yaw, gz, dt_millis);
+ 207:Core/Src/robot/robo_orientation.cpp **** 	// IMU.Yaw = gYaw_Filter.filter(IMU.Yaw, gz, dt_millis);
+ 208:Core/Src/robot/robo_orientation.cpp **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 40
+
+
+ 209:Core/Src/robot/robo_orientation.cpp ****         // printf("%ld\n", (int32_t)(yaw*1000));
+ 210:Core/Src/robot/robo_orientation.cpp **** 
+ 211:Core/Src/robot/robo_orientation.cpp ****         angles.set_Values(roll, pitch, yaw);
+ 212:Core/Src/robot/robo_orientation.cpp **** 
+ 213:Core/Src/robot/robo_orientation.cpp ****         return angles;
+ 214:Core/Src/robot/robo_orientation.cpp **** }...
+ 1636              		.loc 6 214 0
+ 1637              		.cfi_startproc
+ 1638              		@ args = 0, pretend = 0, frame = 0
+ 1639              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1640              	.LVL231:
+ 1641 0000 0128     		cmp	r0, #1
+ 1642 0002 00D0     		beq	.L77
+ 1643              	.L74:
+ 1644 0004 7047     		bx	lr
+ 1645              	.L77:
+ 1646              		.loc 6 214 0 is_stmt 0 discriminator 1
+ 1647 0006 4FF6FF73 		movw	r3, #65535
+ 1648 000a 9942     		cmp	r1, r3
+ 1649 000c FAD1     		bne	.L74
+ 1650              		.loc 6 214 0
+ 1651 000e 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 1652              	.LCFI15:
+ 1653              		.cfi_def_cfa_offset 24
+ 1654              		.cfi_offset 4, -24
+ 1655              		.cfi_offset 5, -20
+ 1656              		.cfi_offset 6, -16
+ 1657              		.cfi_offset 7, -12
+ 1658              		.cfi_offset 8, -8
+ 1659              		.cfi_offset 14, -4
+ 1660 0012 2DED028B 		vpush.64	{d8}
+ 1661              	.LCFI16:
+ 1662              		.cfi_def_cfa_offset 32
+ 1663              		.cfi_offset 80, -32
+ 1664              		.cfi_offset 81, -28
+ 1665              	.LVL232:
+ 1666              	.LBB893:
+ 1667              	.LBB894:
+ 1668              	.LBB895:
+ 1669              	.LBB896:
+ 1670              	.LBB897:
+ 1671              	.LBB898:
+  33:Core/Inc/utils/vec3.h **** 
+  34:Core/Inc/utils/vec3.h ****         T getX() const { return x_; }
+  35:Core/Inc/utils/vec3.h ****         T getY() const { return y_; }
+  36:Core/Inc/utils/vec3.h ****         T getZ() const { return z_; }
+  37:Core/Inc/utils/vec3.h ****         void setX(T x) { x_ = x; }
+ 1672              		.loc 3 37 0 is_stmt 1
+ 1673 0016 6048     		ldr	r0, .L78
+ 1674              	.LVL233:
+ 1675 0018 0023     		movs	r3, #0
+ 1676 001a 8380     		strh	r3, [r0, #4]	@ movhi
+ 1677              	.LVL234:
+ 1678              	.LBE898:
+ 1679              	.LBE897:
+ 1680              	.LBB899:
+ 1681              	.LBB900:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 41
+
+
+  38:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1682              		.loc 3 38 0
+ 1683 001c C380     		strh	r3, [r0, #6]	@ movhi
+ 1684              	.LVL235:
+ 1685              	.LBE900:
+ 1686              	.LBE899:
+ 1687              	.LBB901:
+ 1688              	.LBB902:
+  39:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 1689              		.loc 3 39 0
+ 1690 001e 0381     		strh	r3, [r0, #8]	@ movhi
+ 1691              	.LVL236:
+ 1692              	.LBE902:
+ 1693              	.LBE901:
+ 1694              	.LBE896:
+ 1695              	.LBE895:
+ 1696              	.LBE894:
+ 1697              	.LBB903:
+ 1698              	.LBB904:
+ 1699              	.LBB905:
+ 1700              	.LBB906:
+ 1701              	.LBB907:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1702              		.loc 3 37 0
+ 1703 0020 4381     		strh	r3, [r0, #10]	@ movhi
+ 1704              	.LVL237:
+ 1705              	.LBE907:
+ 1706              	.LBE906:
+ 1707              	.LBB908:
+ 1708              	.LBB909:
+  38:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1709              		.loc 3 38 0
+ 1710 0022 8381     		strh	r3, [r0, #12]	@ movhi
+ 1711              	.LVL238:
+ 1712              	.LBE909:
+ 1713              	.LBE908:
+ 1714              	.LBB910:
+ 1715              	.LBB911:
+ 1716              		.loc 3 39 0
+ 1717 0024 C381     		strh	r3, [r0, #14]	@ movhi
+ 1718              	.LVL239:
+ 1719              	.LBE911:
+ 1720              	.LBE910:
+ 1721              	.LBE905:
+ 1722              	.LBE904:
+ 1723              	.LBE903:
+ 1724              	.LBB912:
+ 1725              	.LBB913:
+ 1726              	.LBB914:
+ 1727              	.LBB915:
+ 1728              	.LBB916:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1729              		.loc 3 37 0
+ 1730 0026 0025     		movs	r5, #0
+ 1731 0028 0561     		str	r5, [r0, #16]	@ float
+ 1732              	.LVL240:
+ 1733              	.LBE916:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 42
+
+
+ 1734              	.LBE915:
+ 1735              	.LBB917:
+ 1736              	.LBB918:
+  38:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1737              		.loc 3 38 0
+ 1738 002a 4561     		str	r5, [r0, #20]	@ float
+ 1739              	.LVL241:
+ 1740              	.LBE918:
+ 1741              	.LBE917:
+ 1742              	.LBB919:
+ 1743              	.LBB920:
+ 1744              		.loc 3 39 0
+ 1745 002c 8561     		str	r5, [r0, #24]	@ float
+ 1746              	.LVL242:
+ 1747              	.LBE920:
+ 1748              	.LBE919:
+ 1749              	.LBE914:
+ 1750              	.LBE913:
+ 1751              	.LBE912:
+ 1752              	.LBB921:
+ 1753              	.LBB922:
+ 1754              	.LBB923:
+ 1755              	.LBB924:
+ 1756              	.LBB925:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1757              		.loc 3 37 0
+ 1758 002e C561     		str	r5, [r0, #28]	@ float
+ 1759              	.LVL243:
+ 1760              	.LBE925:
+ 1761              	.LBE924:
+ 1762              	.LBB926:
+ 1763              	.LBB927:
+  38:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1764              		.loc 3 38 0
+ 1765 0030 0562     		str	r5, [r0, #32]	@ float
+ 1766              	.LVL244:
+ 1767              	.LBE927:
+ 1768              	.LBE926:
+ 1769              	.LBB928:
+ 1770              	.LBB929:
+ 1771              		.loc 3 39 0
+ 1772 0032 4562     		str	r5, [r0, #36]	@ float
+ 1773              	.LVL245:
+ 1774              	.LBE929:
+ 1775              	.LBE928:
+ 1776              	.LBE923:
+ 1777              	.LBE922:
+ 1778              	.LBE921:
+ 1779              	.LBE893:
+  11:Core/Src/robot/robo_orientation.cpp **** struct MPU6050 Body_IMU;
+ 1780              		.loc 6 11 0
+ 1781 0034 594C     		ldr	r4, .L78+4
+ 1782 0036 2246     		mov	r2, r4
+ 1783 0038 5949     		ldr	r1, .L78+8
+ 1784              	.LVL246:
+ 1785 003a FFF7FEFF 		bl	__aeabi_atexit
+ 1786              	.LVL247:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 43
+
+
+ 1787              	.LBB930:
+ 1788              	.LBB931:
+ 1789              	.LBB932:
+ 1790              	.LBB933:
+ 1791              	.LBB934:
+ 1792              	.LBB935:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1793              		.loc 3 37 0
+ 1794 003e 5948     		ldr	r0, .L78+12
+ 1795 0040 4560     		str	r5, [r0, #4]	@ float
+ 1796              	.LVL248:
+ 1797              	.LBE935:
+ 1798              	.LBE934:
+ 1799              	.LBB936:
+ 1800              	.LBB937:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 1801              		.loc 3 38 0
+ 1802 0042 8560     		str	r5, [r0, #8]	@ float
+ 1803              	.LVL249:
+ 1804              	.LBE937:
+ 1805              	.LBE936:
+ 1806              	.LBB938:
+ 1807              	.LBB939:
+ 1808              		.loc 3 39 0
+ 1809 0044 C560     		str	r5, [r0, #12]	@ float
+ 1810              	.LVL250:
+ 1811              	.LBE939:
+ 1812              	.LBE938:
+ 1813              	.LBE933:
+ 1814              	.LBE932:
+ 1815              	.LBE931:
+ 1816              	.LBB940:
+ 1817              	.LBB941:
+ 1818              	.LBB942:
+ 1819              	.LBB943:
+ 1820              	.LBB944:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1821              		.loc 3 37 0
+ 1822 0046 4561     		str	r5, [r0, #20]	@ float
+ 1823              	.LVL251:
+ 1824              	.LBE944:
+ 1825              	.LBE943:
+ 1826              	.LBB945:
+ 1827              	.LBB946:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 1828              		.loc 3 38 0
+ 1829 0048 8561     		str	r5, [r0, #24]	@ float
+ 1830              	.LVL252:
+ 1831              	.LBE946:
+ 1832              	.LBE945:
+ 1833              	.LBB947:
+ 1834              	.LBB948:
+ 1835              		.loc 3 39 0
+ 1836 004a C561     		str	r5, [r0, #28]	@ float
+ 1837              	.LVL253:
+ 1838              	.LBE948:
+ 1839              	.LBE947:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 44
+
+
+ 1840              	.LBE942:
+ 1841              	.LBE941:
+ 1842              	.LBE940:
+ 1843              	.LBE930:
+  12:Core/Src/robot/robo_orientation.cpp **** struct HMC5883 Body_HMC;
+ 1844              		.loc 6 12 0
+ 1845 004c 2246     		mov	r2, r4
+ 1846 004e 5649     		ldr	r1, .L78+16
+ 1847 0050 FFF7FEFF 		bl	__aeabi_atexit
+ 1848              	.LVL254:
+ 1849              	.LBB949:
+ 1850              	.LBB950:
+ 1851              	.LBB951:
+ 1852              	.LBB952:
+ 1853              	.LBB953:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 1854              		.loc 3 37 0
+ 1855 0054 5548     		ldr	r0, .L78+20
+ 1856 0056 0560     		str	r5, [r0]	@ float
+ 1857              	.LVL255:
+ 1858              	.LBE953:
+ 1859              	.LBE952:
+ 1860              	.LBB954:
+ 1861              	.LBB955:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 1862              		.loc 3 38 0
+ 1863 0058 4560     		str	r5, [r0, #4]	@ float
+ 1864              	.LVL256:
+ 1865              	.LBE955:
+ 1866              	.LBE954:
+ 1867              	.LBB956:
+ 1868              	.LBB957:
+ 1869              		.loc 3 39 0
+ 1870 005a 8560     		str	r5, [r0, #8]	@ float
+ 1871              	.LVL257:
+ 1872              	.LBE957:
+ 1873              	.LBE956:
+ 1874              	.LBE951:
+ 1875              	.LBE950:
+ 1876              	.LBE949:
+  15:Core/Src/robot/robo_orientation.cpp **** static Vec3<float> gOmega_Bias;
+ 1877              		.loc 6 15 0
+ 1878 005c 2246     		mov	r2, r4
+ 1879 005e 5449     		ldr	r1, .L78+24
+ 1880 0060 FFF7FEFF 		bl	__aeabi_atexit
+ 1881              	.LVL258:
+  17:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXAccelAlpha35(0.35);
+ 1882              		.loc 6 17 0
+ 1883 0064 9FED538A 		vldr.32	s16, .L78+28
+ 1884 0068 534E     		ldr	r6, .L78+32
+ 1885 006a B0EE480A 		vmov.f32	s0, s16
+ 1886 006e 3046     		mov	r0, r6
+ 1887 0070 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1888              	.LVL259:
+ 1889 0074 514D     		ldr	r5, .L78+36
+ 1890 0076 2246     		mov	r2, r4
+ 1891 0078 2946     		mov	r1, r5
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 45
+
+
+ 1892 007a 3046     		mov	r0, r6
+ 1893 007c FFF7FEFF 		bl	__aeabi_atexit
+ 1894              	.LVL260:
+  18:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYAccelAlpha35(0.35);
+ 1895              		.loc 6 18 0
+ 1896 0080 4F4E     		ldr	r6, .L78+40
+ 1897 0082 B0EE480A 		vmov.f32	s0, s16
+ 1898 0086 3046     		mov	r0, r6
+ 1899 0088 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1900              	.LVL261:
+ 1901 008c 2246     		mov	r2, r4
+ 1902 008e 2946     		mov	r1, r5
+ 1903 0090 3046     		mov	r0, r6
+ 1904 0092 FFF7FEFF 		bl	__aeabi_atexit
+ 1905              	.LVL262:
+  19:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZAccelAlpha35(0.35);
+ 1906              		.loc 6 19 0
+ 1907 0096 4B4E     		ldr	r6, .L78+44
+ 1908 0098 B0EE480A 		vmov.f32	s0, s16
+ 1909 009c 3046     		mov	r0, r6
+ 1910 009e FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1911              	.LVL263:
+ 1912 00a2 2246     		mov	r2, r4
+ 1913 00a4 2946     		mov	r1, r5
+ 1914 00a6 3046     		mov	r0, r6
+ 1915 00a8 FFF7FEFF 		bl	__aeabi_atexit
+ 1916              	.LVL264:
+  21:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXGyroAlpha35(0.35);
+ 1917              		.loc 6 21 0
+ 1918 00ac 464E     		ldr	r6, .L78+48
+ 1919 00ae B0EE480A 		vmov.f32	s0, s16
+ 1920 00b2 3046     		mov	r0, r6
+ 1921 00b4 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1922              	.LVL265:
+ 1923 00b8 2246     		mov	r2, r4
+ 1924 00ba 2946     		mov	r1, r5
+ 1925 00bc 3046     		mov	r0, r6
+ 1926 00be FFF7FEFF 		bl	__aeabi_atexit
+ 1927              	.LVL266:
+  22:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYGyroAlpha35(0.35);
+ 1928              		.loc 6 22 0
+ 1929 00c2 424E     		ldr	r6, .L78+52
+ 1930 00c4 B0EE480A 		vmov.f32	s0, s16
+ 1931 00c8 3046     		mov	r0, r6
+ 1932 00ca FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1933              	.LVL267:
+ 1934 00ce 2246     		mov	r2, r4
+ 1935 00d0 2946     		mov	r1, r5
+ 1936 00d2 3046     		mov	r0, r6
+ 1937 00d4 FFF7FEFF 		bl	__aeabi_atexit
+ 1938              	.LVL268:
+  23:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZGyroAlpha35(0.35);
+ 1939              		.loc 6 23 0
+ 1940 00d8 3D4E     		ldr	r6, .L78+56
+ 1941 00da B0EE480A 		vmov.f32	s0, s16
+ 1942 00de 3046     		mov	r0, r6
+ 1943 00e0 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 46
+
+
+ 1944              	.LVL269:
+ 1945 00e4 2246     		mov	r2, r4
+ 1946 00e6 2946     		mov	r1, r5
+ 1947 00e8 3046     		mov	r0, r6
+ 1948 00ea FFF7FEFF 		bl	__aeabi_atexit
+ 1949              	.LVL270:
+  25:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gXMagAlpha35(0.35);
+ 1950              		.loc 6 25 0
+ 1951 00ee 394E     		ldr	r6, .L78+60
+ 1952 00f0 B0EE480A 		vmov.f32	s0, s16
+ 1953 00f4 3046     		mov	r0, r6
+ 1954 00f6 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1955              	.LVL271:
+ 1956 00fa 2246     		mov	r2, r4
+ 1957 00fc 2946     		mov	r1, r5
+ 1958 00fe 3046     		mov	r0, r6
+ 1959 0100 FFF7FEFF 		bl	__aeabi_atexit
+ 1960              	.LVL272:
+  26:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gYMagAlpha35(0.35);
+ 1961              		.loc 6 26 0
+ 1962 0104 344E     		ldr	r6, .L78+64
+ 1963 0106 B0EE480A 		vmov.f32	s0, s16
+ 1964 010a 3046     		mov	r0, r6
+ 1965 010c FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1966              	.LVL273:
+ 1967 0110 2246     		mov	r2, r4
+ 1968 0112 2946     		mov	r1, r5
+ 1969 0114 3046     		mov	r0, r6
+ 1970 0116 FFF7FEFF 		bl	__aeabi_atexit
+ 1971              	.LVL274:
+  27:Core/Src/robot/robo_orientation.cpp **** static Exp_Smooth gZMagAlpha35(0.35);
+ 1972              		.loc 6 27 0
+ 1973 011a 304E     		ldr	r6, .L78+68
+ 1974 011c B0EE480A 		vmov.f32	s0, s16
+ 1975 0120 3046     		mov	r0, r6
+ 1976 0122 FFF7FEFF 		bl	_ZN10Exp_SmoothC1Ef
+ 1977              	.LVL275:
+ 1978 0126 2246     		mov	r2, r4
+ 1979 0128 2946     		mov	r1, r5
+ 1980 012a 3046     		mov	r0, r6
+ 1981 012c FFF7FEFF 		bl	__aeabi_atexit
+ 1982              	.LVL276:
+  29:Core/Src/robot/robo_orientation.cpp **** static Kalman_Vars gAccel_Gyro;
+ 1983              		.loc 6 29 0
+ 1984 0130 2B4D     		ldr	r5, .L78+72
+ 1985 0132 2846     		mov	r0, r5
+ 1986 0134 FFF7FEFF 		bl	_ZN11Kalman_VarsC1Ev
+ 1987              	.LVL277:
+ 1988 0138 2246     		mov	r2, r4
+ 1989 013a 2A49     		ldr	r1, .L78+76
+ 1990 013c 2846     		mov	r0, r5
+ 1991 013e FFF7FEFF 		bl	__aeabi_atexit
+ 1992              	.LVL278:
+  31:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gRoll_Filter(&gAccel_Gyro, init_OriFilters);
+ 1993              		.loc 6 31 0
+ 1994 0142 294F     		ldr	r7, .L78+80
+ 1995 0144 DFF8A880 		ldr	r8, .L78+88
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 47
+
+
+ 1996 0148 3A46     		mov	r2, r7
+ 1997 014a 2946     		mov	r1, r5
+ 1998 014c 4046     		mov	r0, r8
+ 1999 014e FFF7FEFF 		bl	_ZN13Kalman_FilterC1EP11Kalman_VarsPFimE
+ 2000              	.LVL279:
+ 2001 0152 264E     		ldr	r6, .L78+84
+ 2002 0154 2246     		mov	r2, r4
+ 2003 0156 3146     		mov	r1, r6
+ 2004 0158 4046     		mov	r0, r8
+ 2005 015a FFF7FEFF 		bl	__aeabi_atexit
+ 2006              	.LVL280:
+  32:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gPitch_Filter(&gAccel_Gyro, init_OriFilters);
+ 2007              		.loc 6 32 0
+ 2008 015e DFF89480 		ldr	r8, .L78+92
+ 2009 0162 3A46     		mov	r2, r7
+ 2010 0164 2946     		mov	r1, r5
+ 2011 0166 4046     		mov	r0, r8
+ 2012 0168 FFF7FEFF 		bl	_ZN13Kalman_FilterC1EP11Kalman_VarsPFimE
+ 2013              	.LVL281:
+ 2014 016c 2246     		mov	r2, r4
+ 2015 016e 3146     		mov	r1, r6
+ 2016 0170 4046     		mov	r0, r8
+ 2017 0172 FFF7FEFF 		bl	__aeabi_atexit
+ 2018              	.LVL282:
+  33:Core/Src/robot/robo_orientation.cpp **** static Kalman_Filter gYaw_Filter(&gAccel_Gyro, init_OriFilters);
+ 2019              		.loc 6 33 0
+ 2020 0176 DFF88080 		ldr	r8, .L78+96
+ 2021 017a 3A46     		mov	r2, r7
+ 2022 017c 2946     		mov	r1, r5
+ 2023 017e 4046     		mov	r0, r8
+ 2024 0180 FFF7FEFF 		bl	_ZN13Kalman_FilterC1EP11Kalman_VarsPFimE
+ 2025              	.LVL283:
+ 2026 0184 2246     		mov	r2, r4
+ 2027 0186 3146     		mov	r1, r6
+ 2028 0188 4046     		mov	r0, r8
+ 2029 018a FFF7FEFF 		bl	__aeabi_atexit
+ 2030              	.LVL284:
+ 2031              		.loc 6 214 0
+ 2032 018e BDEC028B 		vldm	sp!, {d8}
+ 2033              	.LCFI17:
+ 2034              		.cfi_restore 80
+ 2035              		.cfi_restore 81
+ 2036              		.cfi_def_cfa_offset 24
+ 2037 0192 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 2038              	.L79:
+ 2039 0196 00BF     		.align	2
+ 2040              	.L78:
+ 2041 0198 00000000 		.word	.LANCHOR0
+ 2042 019c 00000000 		.word	__dso_handle
+ 2043 01a0 00000000 		.word	_ZN7MPU6050D1Ev
+ 2044 01a4 00000000 		.word	.LANCHOR1
+ 2045 01a8 00000000 		.word	_ZN7HMC5883D1Ev
+ 2046 01ac 00000000 		.word	.LANCHOR4
+ 2047 01b0 00000000 		.word	_ZN4Vec3IfED1Ev
+ 2048 01b4 3333B33E 		.word	1051931443
+ 2049 01b8 00000000 		.word	.LANCHOR5
+ 2050 01bc 00000000 		.word	_ZN10Exp_SmoothD1Ev
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 48
+
+
+ 2051 01c0 00000000 		.word	.LANCHOR6
+ 2052 01c4 00000000 		.word	.LANCHOR7
+ 2053 01c8 00000000 		.word	.LANCHOR8
+ 2054 01cc 00000000 		.word	.LANCHOR9
+ 2055 01d0 00000000 		.word	.LANCHOR10
+ 2056 01d4 00000000 		.word	.LANCHOR11
+ 2057 01d8 00000000 		.word	.LANCHOR12
+ 2058 01dc 00000000 		.word	.LANCHOR13
+ 2059 01e0 00000000 		.word	.LANCHOR3
+ 2060 01e4 00000000 		.word	_ZN11Kalman_VarsD1Ev
+ 2061 01e8 00000000 		.word	_Z15init_OriFiltersm
+ 2062 01ec 00000000 		.word	_ZN13Kalman_FilterD1Ev
+ 2063 01f0 00000000 		.word	.LANCHOR14
+ 2064 01f4 00000000 		.word	.LANCHOR15
+ 2065 01f8 00000000 		.word	.LANCHOR16
+ 2066              		.cfi_endproc
+ 2067              	.LFE575:
+ 2069              		.section	.text._Z10Angle_Initv,"ax",%progbits
+ 2070              		.align	1
+ 2071              		.global	_Z10Angle_Initv
+ 2072              		.syntax unified
+ 2073              		.thumb
+ 2074              		.thumb_func
+ 2075              		.fpu fpv4-sp-d16
+ 2077              	_Z10Angle_Initv:
+ 2078              	.LFB538:
+  53:Core/Src/robot/robo_orientation.cpp **** {
+ 2079              		.loc 6 53 0
+ 2080              		.cfi_startproc
+ 2081              		@ args = 0, pretend = 0, frame = 16
+ 2082              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2083 0000 10B5     		push	{r4, lr}
+ 2084              	.LCFI18:
+ 2085              		.cfi_def_cfa_offset 8
+ 2086              		.cfi_offset 4, -8
+ 2087              		.cfi_offset 14, -4
+ 2088 0002 84B0     		sub	sp, sp, #16
+ 2089              	.LCFI19:
+ 2090              		.cfi_def_cfa_offset 24
+  54:Core/Src/robot/robo_orientation.cpp **** 	IMU_Init();
+ 2091              		.loc 6 54 0
+ 2092 0004 FFF7FEFF 		bl	_ZL8IMU_Initv
+ 2093              	.LVL285:
+  56:Core/Src/robot/robo_orientation.cpp **** 	gOmega_Bias = MPU6050_Calc_OmegaBias(&Body_IMU, 1000);
+ 2094              		.loc 6 56 0
+ 2095 0008 01AC     		add	r4, sp, #4
+ 2096 000a 4FF47A72 		mov	r2, #1000
+ 2097 000e 0649     		ldr	r1, .L82
+ 2098 0010 2046     		mov	r0, r4
+ 2099 0012 FFF7FEFF 		bl	_Z22MPU6050_Calc_OmegaBiasP7MPU6050m
+ 2100              	.LVL286:
+ 2101 0016 054B     		ldr	r3, .L82+4
+ 2102 0018 94E80700 		ldm	r4, {r0, r1, r2}
+ 2103 001c 83E80700 		stm	r3, {r0, r1, r2}
+  59:Core/Src/robot/robo_orientation.cpp **** }
+ 2104              		.loc 6 59 0
+ 2105 0020 0020     		movs	r0, #0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 49
+
+
+ 2106 0022 04B0     		add	sp, sp, #16
+ 2107              	.LCFI20:
+ 2108              		.cfi_def_cfa_offset 8
+ 2109              		@ sp needed
+ 2110 0024 10BD     		pop	{r4, pc}
+ 2111              	.L83:
+ 2112 0026 00BF     		.align	2
+ 2113              	.L82:
+ 2114 0028 00000000 		.word	.LANCHOR0
+ 2115 002c 00000000 		.word	.LANCHOR4
+ 2116              		.cfi_endproc
+ 2117              	.LFE538:
+ 2119              		.section	.text._Z12swap_ElementIfEvRT_S1_,"axG",%progbits,_Z12swap_ElementIfEvRT_S1_,comdat
+ 2120              		.align	1
+ 2121              		.weak	_Z12swap_ElementIfEvRT_S1_
+ 2122              		.syntax unified
+ 2123              		.thumb
+ 2124              		.thumb_func
+ 2125              		.fpu fpv4-sp-d16
+ 2127              	_Z12swap_ElementIfEvRT_S1_:
+ 2128              	.LFB574:
+  16:Core/Inc/utils/vec3.h **** {
+ 2129              		.loc 3 16 0
+ 2130              		.cfi_startproc
+ 2131              		@ args = 0, pretend = 0, frame = 0
+ 2132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2133              		@ link register save eliminated.
+ 2134              	.LVL287:
+  18:Core/Inc/utils/vec3.h ****         first = second;
+ 2135              		.loc 3 18 0
+ 2136 0000 0368     		ldr	r3, [r0]	@ float
+ 2137              	.LVL288:
+  19:Core/Inc/utils/vec3.h ****         second = temp;
+ 2138              		.loc 3 19 0
+ 2139 0002 0A68     		ldr	r2, [r1]	@ float
+ 2140 0004 0260     		str	r2, [r0]	@ float
+  20:Core/Inc/utils/vec3.h **** }
+ 2141              		.loc 3 20 0
+ 2142 0006 0B60     		str	r3, [r1]	@ float
+  21:Core/Inc/utils/vec3.h **** 
+ 2143              		.loc 3 21 0
+ 2144 0008 7047     		bx	lr
+ 2145              		.cfi_endproc
+ 2146              	.LFE574:
+ 2148              		.global	__aeabi_f2d
+ 2149              		.global	__aeabi_dmul
+ 2150              		.global	__aeabi_d2f
+ 2151              		.global	__aeabi_ddiv
+ 2152              		.section	.text._Z16read_Orientationm,"ax",%progbits
+ 2153              		.align	1
+ 2154              		.global	_Z16read_Orientationm
+ 2155              		.syntax unified
+ 2156              		.thumb
+ 2157              		.thumb_func
+ 2158              		.fpu fpv4-sp-d16
+ 2160              	_Z16read_Orientationm:
+ 2161              	.LFB540:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 50
+
+
+ 123:Core/Src/robot/robo_orientation.cpp **** {
+ 2162              		.loc 6 123 0
+ 2163              		.cfi_startproc
+ 2164              		@ args = 0, pretend = 0, frame = 72
+ 2165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2166              	.LVL289:
+ 2167 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 2168              	.LCFI21:
+ 2169              		.cfi_def_cfa_offset 20
+ 2170              		.cfi_offset 4, -20
+ 2171              		.cfi_offset 5, -16
+ 2172              		.cfi_offset 6, -12
+ 2173              		.cfi_offset 7, -8
+ 2174              		.cfi_offset 14, -4
+ 2175 0002 2DED0C8B 		vpush.64	{d8, d9, d10, d11, d12, d13}
+ 2176              	.LCFI22:
+ 2177              		.cfi_def_cfa_offset 68
+ 2178              		.cfi_offset 80, -68
+ 2179              		.cfi_offset 81, -64
+ 2180              		.cfi_offset 82, -60
+ 2181              		.cfi_offset 83, -56
+ 2182              		.cfi_offset 84, -52
+ 2183              		.cfi_offset 85, -48
+ 2184              		.cfi_offset 86, -44
+ 2185              		.cfi_offset 87, -40
+ 2186              		.cfi_offset 88, -36
+ 2187              		.cfi_offset 89, -32
+ 2188              		.cfi_offset 90, -28
+ 2189              		.cfi_offset 91, -24
+ 2190 0006 93B0     		sub	sp, sp, #76
+ 2191              	.LCFI23:
+ 2192              		.cfi_def_cfa_offset 144
+ 2193 0008 0446     		mov	r4, r0
+ 2194 000a 0F46     		mov	r7, r1
+ 2195              	.LVL290:
+ 2196              	.LBB1034:
+ 2197              	.LBB1035:
+ 2198              	.LBB1036:
+ 2199              	.LBB1037:
+ 2200              	.LBB1038:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 2201              		.loc 3 37 0
+ 2202 000c 0023     		movs	r3, #0
+ 2203 000e 0693     		str	r3, [sp, #24]	@ float
+ 2204              	.LVL291:
+ 2205              	.LBE1038:
+ 2206              	.LBE1037:
+ 2207              	.LBB1039:
+ 2208              	.LBB1040:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 2209              		.loc 3 38 0
+ 2210 0010 0793     		str	r3, [sp, #28]	@ float
+ 2211              	.LVL292:
+ 2212              	.LBE1040:
+ 2213              	.LBE1039:
+ 2214              	.LBB1041:
+ 2215              	.LBB1042:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 51
+
+
+ 2216              		.loc 3 39 0
+ 2217 0012 0893     		str	r3, [sp, #32]	@ float
+ 2218              	.LVL293:
+ 2219              	.LBE1042:
+ 2220              	.LBE1041:
+ 2221              	.LBE1036:
+ 2222              	.LBE1035:
+ 2223              	.LBE1034:
+ 2224              	.LBB1043:
+ 2225              	.LBB1044:
+ 2226              	.LBB1045:
+ 2227              	.LBB1046:
+ 2228              	.LBB1047:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 2229              		.loc 3 37 0
+ 2230 0014 0393     		str	r3, [sp, #12]	@ float
+ 2231              	.LVL294:
+ 2232              	.LBE1047:
+ 2233              	.LBE1046:
+ 2234              	.LBB1048:
+ 2235              	.LBB1049:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 2236              		.loc 3 38 0
+ 2237 0016 0493     		str	r3, [sp, #16]	@ float
+ 2238              	.LVL295:
+ 2239              	.LBE1049:
+ 2240              	.LBE1048:
+ 2241              	.LBB1050:
+ 2242              	.LBB1051:
+ 2243              		.loc 3 39 0
+ 2244 0018 0593     		str	r3, [sp, #20]	@ float
+ 2245              	.LVL296:
+ 2246              	.LBE1051:
+ 2247              	.LBE1050:
+ 2248              	.LBE1045:
+ 2249              	.LBE1044:
+ 2250              	.LBE1043:
+ 2251              	.LBB1052:
+ 2252              	.LBB1053:
+ 2253              	.LBB1054:
+ 2254              	.LBB1055:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 2255              		.loc 3 37 0
+ 2256 001a 0360     		str	r3, [r0]	@ float
+ 2257              	.LVL297:
+ 2258              	.LBE1055:
+ 2259              	.LBE1054:
+ 2260              	.LBB1056:
+ 2261              	.LBB1057:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 2262              		.loc 3 38 0
+ 2263 001c 4360     		str	r3, [r0, #4]	@ float
+ 2264              	.LVL298:
+ 2265              	.LBE1057:
+ 2266              	.LBE1056:
+ 2267              	.LBB1058:
+ 2268              	.LBB1059:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 52
+
+
+ 2269              		.loc 3 39 0
+ 2270 001e 8360     		str	r3, [r0, #8]	@ float
+ 2271              	.LVL299:
+ 2272              	.LBE1059:
+ 2273              	.LBE1058:
+ 2274              	.LBE1053:
+ 2275              	.LBE1052:
+ 155:Core/Src/robot/robo_orientation.cpp ****         MPU6050_Read_NormAxes(&Body_IMU);
+ 2276              		.loc 6 155 0
+ 2277 0020 AD4D     		ldr	r5, .L87+8
+ 2278 0022 2846     		mov	r0, r5
+ 2279              	.LVL300:
+ 2280 0024 FFF7FEFF 		bl	_Z21MPU6050_Read_NormAxesP7MPU6050
+ 2281              	.LVL301:
+ 156:Core/Src/robot/robo_orientation.cpp ****         HMC5883_Read(&Body_HMC);
+ 2282              		.loc 6 156 0
+ 2283 0028 AC4E     		ldr	r6, .L87+12
+ 2284 002a 3046     		mov	r0, r6
+ 2285 002c FFF7FEFF 		bl	_Z12HMC5883_ReadP7HMC5883
+ 2286              	.LVL302:
+ 2287              	.LBB1060:
+ 2288              	.LBB1061:
+ 2289              	.LBB1062:
+ 2290              	.LBB1063:
+ 2291              	.LBB1064:
+  40:Core/Inc/utils/vec3.h **** 
+  41:Core/Inc/utils/vec3.h ****         void set_Values(T x, T y, T z) {
+  42:Core/Inc/utils/vec3.h ****                 setX(x);
+  43:Core/Inc/utils/vec3.h ****                 setY(y);
+  44:Core/Inc/utils/vec3.h ****                 setZ(z);
+  45:Core/Inc/utils/vec3.h ****         }
+  46:Core/Inc/utils/vec3.h **** 
+  47:Core/Inc/utils/vec3.h **** 
+  48:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(float num) {
+  49:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  50:Core/Inc/utils/vec3.h ****                 temp.x_ *= num;
+  51:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+  52:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+  53:Core/Inc/utils/vec3.h **** 
+  54:Core/Inc/utils/vec3.h ****                 return temp;
+  55:Core/Inc/utils/vec3.h ****         }
+  56:Core/Inc/utils/vec3.h **** 
+  57:Core/Inc/utils/vec3.h ****         template <typename T1>
+  58:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  59:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  60:Core/Inc/utils/vec3.h ****                 temp.x_ *= x_;
+  61:Core/Inc/utils/vec3.h ****                 temp.y_ *= y_;
+  62:Core/Inc/utils/vec3.h ****                 temp.z_ *= z_;
+  63:Core/Inc/utils/vec3.h **** 
+  64:Core/Inc/utils/vec3.h ****                 return temp;
+  65:Core/Inc/utils/vec3.h ****         }
+  66:Core/Inc/utils/vec3.h **** 
+  67:Core/Inc/utils/vec3.h **** 
+  68:Core/Inc/utils/vec3.h ****         Vec3 add_EW(float num) {
+  69:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  70:Core/Inc/utils/vec3.h ****                 temp.x_ += num;
+  71:Core/Inc/utils/vec3.h ****                 temp.y_ += num;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 53
+
+
+  72:Core/Inc/utils/vec3.h ****                 temp.z_ += num;
+  73:Core/Inc/utils/vec3.h **** 
+  74:Core/Inc/utils/vec3.h ****                 return temp;
+  75:Core/Inc/utils/vec3.h ****         }
+  76:Core/Inc/utils/vec3.h **** 
+  77:Core/Inc/utils/vec3.h ****         template <typename T1>
+  78:Core/Inc/utils/vec3.h ****         Vec3 add_EW(Vec3<T1> v) {
+  79:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  80:Core/Inc/utils/vec3.h ****                 temp.x_ += x_;
+  81:Core/Inc/utils/vec3.h ****                 temp.y_ += y_;
+  82:Core/Inc/utils/vec3.h ****                 temp.z_ += z_;
+  83:Core/Inc/utils/vec3.h **** 
+  84:Core/Inc/utils/vec3.h ****                 return temp;
+  85:Core/Inc/utils/vec3.h ****         }
+  86:Core/Inc/utils/vec3.h **** 
+  87:Core/Inc/utils/vec3.h **** 
+  88:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(float num) {
+  89:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  90:Core/Inc/utils/vec3.h ****                 temp.x_ -= num;
+  91:Core/Inc/utils/vec3.h ****                 temp.y_ -= num;
+  92:Core/Inc/utils/vec3.h ****                 temp.z_ -= num;
+  93:Core/Inc/utils/vec3.h **** 
+  94:Core/Inc/utils/vec3.h ****                 return temp;
+  95:Core/Inc/utils/vec3.h ****         }
+  96:Core/Inc/utils/vec3.h **** 
+  97:Core/Inc/utils/vec3.h ****         template <typename T1>
+  98:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(Vec3<T1> v) {
+  99:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 100:Core/Inc/utils/vec3.h ****                 temp.x_ -= x_;
+ 101:Core/Inc/utils/vec3.h ****                 temp.y_ -= y_;
+ 102:Core/Inc/utils/vec3.h ****                 temp.z_ -= z_;
+ 103:Core/Inc/utils/vec3.h **** 
+ 104:Core/Inc/utils/vec3.h ****                 return temp;
+ 105:Core/Inc/utils/vec3.h ****         }
+ 106:Core/Inc/utils/vec3.h **** 
+ 107:Core/Inc/utils/vec3.h **** 
+ 108:Core/Inc/utils/vec3.h ****         Vec3 div_EW(float num) {
+ 109:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ 110:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)num;
+ 111:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)num;
+ 112:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)num;
+ 113:Core/Inc/utils/vec3.h **** 
+ 114:Core/Inc/utils/vec3.h ****                 return temp;
+ 115:Core/Inc/utils/vec3.h ****         }
+ 116:Core/Inc/utils/vec3.h **** 
+ 117:Core/Inc/utils/vec3.h ****         template <typename T1>
+ 118:Core/Inc/utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+ 119:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ 120:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+ 121:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+ 122:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+ 123:Core/Inc/utils/vec3.h **** 
+ 124:Core/Inc/utils/vec3.h ****                 return temp;
+ 125:Core/Inc/utils/vec3.h ****         }
+ 126:Core/Inc/utils/vec3.h **** 
+ 127:Core/Inc/utils/vec3.h ****         
+ 128:Core/Inc/utils/vec3.h ****         Vec3(const Vec3 &v) {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 54
+
+
+ 129:Core/Inc/utils/vec3.h ****                 x_ = v.x_;
+ 2292              		.loc 3 129 0
+ 2293 0030 EB69     		ldr	r3, [r5, #28]	@ float
+ 2294 0032 0093     		str	r3, [sp]	@ float
+ 130:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 2295              		.loc 3 130 0
+ 2296 0034 2B6A     		ldr	r3, [r5, #32]	@ float
+ 2297 0036 0193     		str	r3, [sp, #4]	@ float
+ 131:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 2298              		.loc 3 131 0
+ 2299 0038 6B6A     		ldr	r3, [r5, #36]	@ float
+ 2300 003a 0293     		str	r3, [sp, #8]	@ float
+ 2301              	.LVL303:
+ 2302              	.LBE1064:
+ 2303              	.LBE1063:
+ 2304              	.LBE1062:
+ 2305              	.LBB1065:
+ 2306              	.LBB1066:
+ 132:Core/Inc/utils/vec3.h ****         }
+ 133:Core/Inc/utils/vec3.h ****         
+ 134:Core/Inc/utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 135:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 136:Core/Inc/utils/vec3.h ****                 swap(*this, temp);
+ 137:Core/Inc/utils/vec3.h **** 
+ 138:Core/Inc/utils/vec3.h ****                 return *this;
+ 139:Core/Inc/utils/vec3.h ****         }
+ 140:Core/Inc/utils/vec3.h **** 
+ 141:Core/Inc/utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 142:Core/Inc/utils/vec3.h ****                 x_ += rhs.x_;
+ 143:Core/Inc/utils/vec3.h ****                 y_ += rhs.y_;
+ 144:Core/Inc/utils/vec3.h ****                 z_ += rhs.z_;
+ 145:Core/Inc/utils/vec3.h **** 
+ 146:Core/Inc/utils/vec3.h ****                 return *this;
+ 147:Core/Inc/utils/vec3.h ****         }
+ 148:Core/Inc/utils/vec3.h ****         
+ 149:Core/Inc/utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 150:Core/Inc/utils/vec3.h ****                 x_ -= rhs.x_;
+ 151:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 152:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 153:Core/Inc/utils/vec3.h **** 
+ 154:Core/Inc/utils/vec3.h ****                 return *this;
+ 155:Core/Inc/utils/vec3.h ****         }
+ 156:Core/Inc/utils/vec3.h **** 
+ 157:Core/Inc/utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 158:Core/Inc/utils/vec3.h ****                 lhs += rhs;
+ 159:Core/Inc/utils/vec3.h ****                 return lhs;
+ 160:Core/Inc/utils/vec3.h ****         }
+ 161:Core/Inc/utils/vec3.h **** 
+ 162:Core/Inc/utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 163:Core/Inc/utils/vec3.h ****                 lhs -= rhs;
+ 164:Core/Inc/utils/vec3.h ****                 return lhs;
+ 165:Core/Inc/utils/vec3.h ****         }
+ 166:Core/Inc/utils/vec3.h **** 
+ 167:Core/Inc/utils/vec3.h ****         void print() const {
+ 168:Core/Inc/utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 169:Core/Inc/utils/vec3.h ****         }
+ 170:Core/Inc/utils/vec3.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 55
+
+
+ 171:Core/Inc/utils/vec3.h **** private:
+ 172:Core/Inc/utils/vec3.h ****         T x_,y_,z_;
+ 173:Core/Inc/utils/vec3.h **** 
+ 174:Core/Inc/utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+ 175:Core/Inc/utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+ 2307              		.loc 3 175 0
+ 2308 003c 6946     		mov	r1, sp
+ 2309 003e 06A8     		add	r0, sp, #24
+ 2310              	.LVL304:
+ 2311 0040 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2312              	.LVL305:
+ 176:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 2313              		.loc 3 176 0
+ 2314 0044 01A9     		add	r1, sp, #4
+ 2315 0046 07A8     		add	r0, sp, #28
+ 2316 0048 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2317              	.LVL306:
+ 177:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 2318              		.loc 3 177 0
+ 2319 004c 02A9     		add	r1, sp, #8
+ 2320 004e 08A8     		add	r0, sp, #32
+ 2321 0050 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2322              	.LVL307:
+ 2323              	.LBE1066:
+ 2324              	.LBE1065:
+ 2325              	.LBE1061:
+ 2326              	.LBE1060:
+ 2327              	.LBB1067:
+ 2328              	.LBB1068:
+ 129:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 2329              		.loc 3 129 0
+ 2330 0054 95ED049A 		vldr.32	s18, [r5, #16]
+ 130:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 2331              		.loc 3 130 0
+ 2332 0058 D5ED058A 		vldr.32	s17, [r5, #20]
+ 131:Core/Inc/utils/vec3.h ****         }
+ 2333              		.loc 3 131 0
+ 2334 005c 95ED068A 		vldr.32	s16, [r5, #24]
+ 2335              	.LVL308:
+ 2336              	.LBE1068:
+ 2337              	.LBE1067:
+ 2338              	.LBB1069:
+ 2339              	.LBB1070:
+ 2340              	.LBB1071:
+ 150:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 2341              		.loc 3 150 0
+ 2342 0060 9F4B     		ldr	r3, .L87+16
+ 2343 0062 D3ED007A 		vldr.32	s15, [r3]
+ 2344 0066 39EE679A 		vsub.f32	s18, s18, s15
+ 151:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 2345              		.loc 3 151 0
+ 2346 006a D3ED017A 		vldr.32	s15, [r3, #4]
+ 2347 006e 78EEE78A 		vsub.f32	s17, s17, s15
+ 152:Core/Inc/utils/vec3.h **** 
+ 2348              		.loc 3 152 0
+ 2349 0072 D3ED027A 		vldr.32	s15, [r3, #8]
+ 2350 0076 38EE678A 		vsub.f32	s16, s16, s15
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 56
+
+
+ 2351              	.LVL309:
+ 2352              	.LBE1071:
+ 2353              	.LBE1070:
+ 2354              	.LBE1069:
+ 2355              	.LBB1072:
+ 2356              	.LBB1073:
+ 2357              	.LBB1074:
+ 2358              	.LBB1075:
+ 2359              	.LBB1076:
+ 129:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 2360              		.loc 3 129 0
+ 2361 007a 7368     		ldr	r3, [r6, #4]	@ float
+ 2362 007c 0093     		str	r3, [sp]	@ float
+ 130:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 2363              		.loc 3 130 0
+ 2364 007e B368     		ldr	r3, [r6, #8]	@ float
+ 2365 0080 0193     		str	r3, [sp, #4]	@ float
+ 131:Core/Inc/utils/vec3.h ****         }
+ 2366              		.loc 3 131 0
+ 2367 0082 F368     		ldr	r3, [r6, #12]	@ float
+ 2368 0084 0293     		str	r3, [sp, #8]	@ float
+ 2369              	.LVL310:
+ 2370              	.LBE1076:
+ 2371              	.LBE1075:
+ 2372              	.LBE1074:
+ 2373              	.LBB1077:
+ 2374              	.LBB1078:
+ 175:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 2375              		.loc 3 175 0
+ 2376 0086 6946     		mov	r1, sp
+ 2377 0088 03A8     		add	r0, sp, #12
+ 2378              	.LVL311:
+ 2379 008a FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2380              	.LVL312:
+ 176:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 2381              		.loc 3 176 0
+ 2382 008e 01A9     		add	r1, sp, #4
+ 2383 0090 04A8     		add	r0, sp, #16
+ 2384 0092 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2385              	.LVL313:
+ 2386              		.loc 3 177 0
+ 2387 0096 02A9     		add	r1, sp, #8
+ 2388 0098 05A8     		add	r0, sp, #20
+ 2389 009a FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 2390              	.LVL314:
+ 2391              	.LBE1078:
+ 2392              	.LBE1077:
+ 2393              	.LBE1073:
+ 2394              	.LBE1072:
+ 171:Core/Src/robot/robo_orientation.cpp ****         float ax = gXAccelAlpha35.smooth(accel.getX());
+ 2395              		.loc 6 171 0
+ 2396 009e 12A9     		add	r1, sp, #72
+ 2397 00a0 069B     		ldr	r3, [sp, #24]	@ float
+ 2398 00a2 41F8243D 		str	r3, [r1, #-36]!	@ float
+ 2399 00a6 8F48     		ldr	r0, .L87+20
+ 2400 00a8 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2401              	.LVL315:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 57
+
+
+ 2402 00ac B0EE40DA 		vmov.f32	s26, s0
+ 2403              	.LVL316:
+ 172:Core/Src/robot/robo_orientation.cpp ****         float ay = gYAccelAlpha35.smooth(accel.getY());
+ 2404              		.loc 6 172 0
+ 2405 00b0 12A9     		add	r1, sp, #72
+ 2406 00b2 079B     		ldr	r3, [sp, #28]	@ float
+ 2407 00b4 41F8203D 		str	r3, [r1, #-32]!	@ float
+ 2408 00b8 8B48     		ldr	r0, .L87+24
+ 2409 00ba FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2410              	.LVL317:
+ 2411 00be F0EE40BA 		vmov.f32	s23, s0
+ 2412              	.LVL318:
+ 173:Core/Src/robot/robo_orientation.cpp ****         float az = gZAccelAlpha35.smooth(accel.getZ());
+ 2413              		.loc 6 173 0
+ 2414 00c2 12A9     		add	r1, sp, #72
+ 2415 00c4 089B     		ldr	r3, [sp, #32]	@ float
+ 2416 00c6 41F81C3D 		str	r3, [r1, #-28]!	@ float
+ 2417 00ca 8848     		ldr	r0, .L87+28
+ 2418 00cc FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2419              	.LVL319:
+ 2420 00d0 F0EE409A 		vmov.f32	s19, s0
+ 2421              	.LVL320:
+ 175:Core/Src/robot/robo_orientation.cpp ****         float gx = gXGyroAlpha35.smooth(gyro.getX());
+ 2422              		.loc 6 175 0
+ 2423 00d4 12A9     		add	r1, sp, #72
+ 2424 00d6 19EE103A 		vmov	r3, s18
+ 2425 00da 41F8183D 		str	r3, [r1, #-24]!	@ float
+ 2426 00de 8448     		ldr	r0, .L87+32
+ 2427 00e0 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2428              	.LVL321:
+ 2429 00e4 B0EE40AA 		vmov.f32	s20, s0
+ 2430              	.LVL322:
+ 176:Core/Src/robot/robo_orientation.cpp ****         float gy = gYGyroAlpha35.smooth(gyro.getY());
+ 2431              		.loc 6 176 0
+ 2432 00e8 12A9     		add	r1, sp, #72
+ 2433 00ea 18EE903A 		vmov	r3, s17
+ 2434 00ee 41F8143D 		str	r3, [r1, #-20]!	@ float
+ 2435 00f2 8048     		ldr	r0, .L87+36
+ 2436 00f4 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2437              	.LVL323:
+ 2438 00f8 F0EE40DA 		vmov.f32	s27, s0
+ 2439              	.LVL324:
+ 177:Core/Src/robot/robo_orientation.cpp ****         float gz = gZGyroAlpha35.smooth(gyro.getZ());
+ 2440              		.loc 6 177 0
+ 2441 00fc 12A9     		add	r1, sp, #72
+ 2442 00fe 18EE103A 		vmov	r3, s16
+ 2443 0102 41F8103D 		str	r3, [r1, #-16]!	@ float
+ 2444 0106 7C48     		ldr	r0, .L87+40
+ 2445 0108 FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2446              	.LVL325:
+ 2447 010c B0EE40BA 		vmov.f32	s22, s0
+ 2448              	.LVL326:
+ 179:Core/Src/robot/robo_orientation.cpp ****         float bx = gXMagAlpha35.smooth(mag.getX());
+ 2449              		.loc 6 179 0
+ 2450 0110 12A9     		add	r1, sp, #72
+ 2451 0112 039B     		ldr	r3, [sp, #12]	@ float
+ 2452 0114 41F80C3D 		str	r3, [r1, #-12]!	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 58
+
+
+ 2453 0118 7848     		ldr	r0, .L87+44
+ 2454 011a FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2455              	.LVL327:
+ 2456 011e B0EE409A 		vmov.f32	s18, s0
+ 2457              	.LVL328:
+ 180:Core/Src/robot/robo_orientation.cpp ****         float by = gYMagAlpha35.smooth(mag.getY());
+ 2458              		.loc 6 180 0
+ 2459 0122 12A9     		add	r1, sp, #72
+ 2460 0124 049B     		ldr	r3, [sp, #16]	@ float
+ 2461 0126 41F8083D 		str	r3, [r1, #-8]!	@ float
+ 2462 012a 7548     		ldr	r0, .L87+48
+ 2463 012c FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2464              	.LVL329:
+ 2465 0130 F0EE408A 		vmov.f32	s17, s0
+ 2466              	.LVL330:
+ 181:Core/Src/robot/robo_orientation.cpp ****         float bz = gZMagAlpha35.smooth(mag.getZ());
+ 2467              		.loc 6 181 0
+ 2468 0134 12A9     		add	r1, sp, #72
+ 2469 0136 059B     		ldr	r3, [sp, #20]	@ float
+ 2470 0138 41F8043D 		str	r3, [r1, #-4]!	@ float
+ 2471 013c 7148     		ldr	r0, .L87+52
+ 2472 013e FFF7FEFF 		bl	_ZN10Exp_Smooth6smoothERKf
+ 2473              	.LVL331:
+ 2474 0142 B0EE408A 		vmov.f32	s16, s0
+ 2475              	.LVL332:
+ 183:Core/Src/robot/robo_orientation.cpp **** 	TM_AHRSIMU_UpdateAHRS(&IMU, gx, gy, gz, ax, ay, az, bx, by, bz);
+ 2476              		.loc 6 183 0
+ 2477 0146 B0EE404A 		vmov.f32	s8, s0
+ 2478 014a F0EE683A 		vmov.f32	s7, s17
+ 2479 014e B0EE493A 		vmov.f32	s6, s18
+ 2480 0152 F0EE692A 		vmov.f32	s5, s19
+ 2481 0156 B0EE6B2A 		vmov.f32	s4, s23
+ 2482 015a F0EE4D1A 		vmov.f32	s3, s26
+ 2483 015e B0EE4B1A 		vmov.f32	s2, s22
+ 2484 0162 F0EE6D0A 		vmov.f32	s1, s27
+ 2485 0166 B0EE4A0A 		vmov.f32	s0, s20
+ 2486              	.LVL333:
+ 2487 016a 6748     		ldr	r0, .L87+56
+ 2488 016c FFF7FEFF 		bl	TM_AHRSIMU_UpdateAHRS
+ 2489              	.LVL334:
+ 187:Core/Src/robot/robo_orientation.cpp ****         float roll = atan2f(ay, az) * 57.3;
+ 2490              		.loc 6 187 0
+ 2491 0170 F0EE690A 		vmov.f32	s1, s19
+ 2492 0174 B0EE6B0A 		vmov.f32	s0, s23
+ 2493 0178 FFF7FEFF 		bl	atan2f
+ 2494              	.LVL335:
+ 2495 017c 10EE100A 		vmov	r0, s0
+ 2496 0180 FFF7FEFF 		bl	__aeabi_f2d
+ 2497              	.LVL336:
+ 2498 0184 52A3     		adr	r3, .L87
+ 2499 0186 D3E90023 		ldrd	r2, [r3]
+ 2500 018a FFF7FEFF 		bl	__aeabi_dmul
+ 2501              	.LVL337:
+ 2502 018e FFF7FEFF 		bl	__aeabi_d2f
+ 2503              	.LVL338:
+ 189:Core/Src/robot/robo_orientation.cpp ****         roll = gRoll_Filter.filter(roll, gx, dt_millis);
+ 2504              		.loc 6 189 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 59
+
+
+ 2505 0192 3946     		mov	r1, r7
+ 2506 0194 F0EE4A0A 		vmov.f32	s1, s20
+ 2507 0198 00EE100A 		vmov	s0, r0
+ 2508 019c 5B48     		ldr	r0, .L87+60
+ 2509              	.LVL339:
+ 2510 019e FFF7FEFF 		bl	_ZN13Kalman_Filter6filterEffm
+ 2511              	.LVL340:
+ 2512 01a2 10EE106A 		vmov	r6, s0
+ 2513              	.LVL341:
+ 192:Core/Src/robot/robo_orientation.cpp ****         float sin_roll = sin(roll / 57.3);
+ 2514              		.loc 6 192 0
+ 2515 01a6 10EE100A 		vmov	r0, s0
+ 2516 01aa FFF7FEFF 		bl	__aeabi_f2d
+ 2517              	.LVL342:
+ 2518 01ae 48A3     		adr	r3, .L87
+ 2519 01b0 D3E90023 		ldrd	r2, [r3]
+ 2520 01b4 FFF7FEFF 		bl	__aeabi_ddiv
+ 2521              	.LVL343:
+ 2522 01b8 41EC1A0B 		vmov	d10, r0, r1
+ 2523              	.LVL344:
+ 2524 01bc 41EC100B 		vmov	d0, r0, r1
+ 2525 01c0 FFF7FEFF 		bl	sin
+ 2526              	.LVL345:
+ 2527 01c4 51EC100B 		vmov	r0, r1, d0
+ 2528 01c8 FFF7FEFF 		bl	__aeabi_d2f
+ 2529              	.LVL346:
+ 2530 01cc 0CEE900A 		vmov	s25, r0
+ 2531              	.LVL347:
+ 193:Core/Src/robot/robo_orientation.cpp ****         float cos_roll = cos(roll / 57.3);
+ 2532              		.loc 6 193 0
+ 2533 01d0 B0EE4A0A 		vmov.f32	s0, s20
+ 2534 01d4 F0EE6A0A 		vmov.f32	s1, s21
+ 2535 01d8 FFF7FEFF 		bl	cos
+ 2536              	.LVL348:
+ 2537 01dc 51EC100B 		vmov	r0, r1, d0
+ 2538 01e0 FFF7FEFF 		bl	__aeabi_d2f
+ 2539              	.LVL349:
+ 2540 01e4 0CEE100A 		vmov	s24, r0
+ 2541              	.LVL350:
+ 195:Core/Src/robot/robo_orientation.cpp ****         float pitch = atan2f((-ax), ay*sin_roll + az*cos_roll) * 57.3;
+ 2542              		.loc 6 195 0
+ 2543 01e8 6BEEAC0A 		vmul.f32	s1, s23, s25
+ 2544 01ec 69EE8C9A 		vmul.f32	s19, s19, s24
+ 2545              	.LVL351:
+ 2546 01f0 70EEA90A 		vadd.f32	s1, s1, s19
+ 2547 01f4 B1EE4D0A 		vneg.f32	s0, s26
+ 2548 01f8 FFF7FEFF 		bl	atan2f
+ 2549              	.LVL352:
+ 2550 01fc 10EE100A 		vmov	r0, s0
+ 2551 0200 FFF7FEFF 		bl	__aeabi_f2d
+ 2552              	.LVL353:
+ 2553 0204 32A3     		adr	r3, .L87
+ 2554 0206 D3E90023 		ldrd	r2, [r3]
+ 2555 020a FFF7FEFF 		bl	__aeabi_dmul
+ 2556              	.LVL354:
+ 2557 020e FFF7FEFF 		bl	__aeabi_d2f
+ 2558              	.LVL355:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 60
+
+
+ 197:Core/Src/robot/robo_orientation.cpp ****         pitch = gPitch_Filter.filter(pitch, gy, dt_millis);
+ 2559              		.loc 6 197 0
+ 2560 0212 3946     		mov	r1, r7
+ 2561 0214 F0EE6D0A 		vmov.f32	s1, s27
+ 2562 0218 00EE100A 		vmov	s0, r0
+ 2563 021c 3C48     		ldr	r0, .L87+64
+ 2564              	.LVL356:
+ 2565 021e FFF7FEFF 		bl	_ZN13Kalman_Filter6filterEffm
+ 2566              	.LVL357:
+ 2567 0222 10EE105A 		vmov	r5, s0
+ 2568              	.LVL358:
+ 200:Core/Src/robot/robo_orientation.cpp ****         float sin_pitch = sin(pitch / 57.3);
+ 2569              		.loc 6 200 0
+ 2570 0226 10EE100A 		vmov	r0, s0
+ 2571 022a FFF7FEFF 		bl	__aeabi_f2d
+ 2572              	.LVL359:
+ 2573 022e 28A3     		adr	r3, .L87
+ 2574 0230 D3E90023 		ldrd	r2, [r3]
+ 2575 0234 FFF7FEFF 		bl	__aeabi_ddiv
+ 2576              	.LVL360:
+ 2577 0238 41EC1A0B 		vmov	d10, r0, r1
+ 2578 023c 41EC100B 		vmov	d0, r0, r1
+ 2579 0240 FFF7FEFF 		bl	sin
+ 2580              	.LVL361:
+ 2581 0244 51EC100B 		vmov	r0, r1, d0
+ 2582 0248 FFF7FEFF 		bl	__aeabi_d2f
+ 2583              	.LVL362:
+ 2584 024c 09EE900A 		vmov	s19, r0
+ 2585              	.LVL363:
+ 201:Core/Src/robot/robo_orientation.cpp ****         float cos_pitch = cos(pitch / 57.3);
+ 2586              		.loc 6 201 0
+ 2587 0250 B0EE4A0A 		vmov.f32	s0, s20
+ 2588 0254 F0EE6A0A 		vmov.f32	s1, s21
+ 2589 0258 FFF7FEFF 		bl	cos
+ 2590              	.LVL364:
+ 2591 025c 51EC100B 		vmov	r0, r1, d0
+ 2592 0260 FFF7FEFF 		bl	__aeabi_d2f
+ 2593              	.LVL365:
+ 203:Core/Src/robot/robo_orientation.cpp ****         float yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*
+ 2594              		.loc 6 203 0
+ 2595 0264 28EE2C0A 		vmul.f32	s0, s16, s25
+ 2596 0268 68EE8C7A 		vmul.f32	s15, s17, s24
+ 2597 026c 07EE100A 		vmov	s14, r0
+ 2598 0270 29EE079A 		vmul.f32	s18, s18, s14
+ 2599              	.LVL366:
+ 2600 0274 68EEAC8A 		vmul.f32	s17, s17, s25
+ 2601              	.LVL367:
+ 2602 0278 68EEA98A 		vmul.f32	s17, s17, s19
+ 2603 027c 79EE288A 		vadd.f32	s17, s18, s17
+ 2604 0280 28EE0C8A 		vmul.f32	s16, s16, s24
+ 2605              	.LVL368:
+ 2606 0284 28EE298A 		vmul.f32	s16, s16, s19
+ 2607 0288 78EE880A 		vadd.f32	s1, s17, s16
+ 2608 028c 30EE670A 		vsub.f32	s0, s0, s15
+ 2609 0290 FFF7FEFF 		bl	atan2f
+ 2610              	.LVL369:
+ 2611 0294 10EE100A 		vmov	r0, s0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 61
+
+
+ 2612 0298 FFF7FEFF 		bl	__aeabi_f2d
+ 2613              	.LVL370:
+ 2614 029c 0CA3     		adr	r3, .L87
+ 2615 029e D3E90023 		ldrd	r2, [r3]
+ 2616 02a2 FFF7FEFF 		bl	__aeabi_dmul
+ 2617              	.LVL371:
+ 2618 02a6 FFF7FEFF 		bl	__aeabi_d2f
+ 2619              	.LVL372:
+ 206:Core/Src/robot/robo_orientation.cpp ****         yaw = gYaw_Filter.filter(yaw, gz, dt_millis);
+ 2620              		.loc 6 206 0
+ 2621 02aa 3946     		mov	r1, r7
+ 2622 02ac F0EE4B0A 		vmov.f32	s1, s22
+ 2623 02b0 00EE100A 		vmov	s0, r0
+ 2624 02b4 1748     		ldr	r0, .L87+68
+ 2625              	.LVL373:
+ 2626 02b6 FFF7FEFF 		bl	_ZN13Kalman_Filter6filterEffm
+ 2627              	.LVL374:
+ 2628              	.LBB1079:
+ 2629              	.LBB1080:
+ 2630              	.LBB1081:
+  37:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+ 2631              		.loc 3 37 0
+ 2632 02ba 2660     		str	r6, [r4]	@ float
+ 2633              	.LVL375:
+ 2634              	.LBE1081:
+ 2635              	.LBE1080:
+ 2636              	.LBB1082:
+ 2637              	.LBB1083:
+  38:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 2638              		.loc 3 38 0
+ 2639 02bc 6560     		str	r5, [r4, #4]	@ float
+ 2640              	.LVL376:
+ 2641              	.LBE1083:
+ 2642              	.LBE1082:
+ 2643              	.LBB1084:
+ 2644              	.LBB1085:
+  39:Core/Inc/utils/vec3.h **** 
+ 2645              		.loc 3 39 0
+ 2646 02be 84ED020A 		vstr.32	s0, [r4, #8]
+ 2647              	.LVL377:
+ 2648              	.LBE1085:
+ 2649              	.LBE1084:
+ 2650              	.LBE1079:
+ 2651              		.loc 6 214 0
+ 2652 02c2 2046     		mov	r0, r4
+ 2653 02c4 13B0     		add	sp, sp, #76
+ 2654              	.LCFI24:
+ 2655              		.cfi_def_cfa_offset 68
+ 2656              		@ sp needed
+ 2657 02c6 BDEC0C8B 		vldm	sp!, {d8-d13}
+ 2658              	.LCFI25:
+ 2659              		.cfi_restore 90
+ 2660              		.cfi_restore 91
+ 2661              		.cfi_restore 88
+ 2662              		.cfi_restore 89
+ 2663              		.cfi_restore 86
+ 2664              		.cfi_restore 87
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 62
+
+
+ 2665              		.cfi_restore 84
+ 2666              		.cfi_restore 85
+ 2667              		.cfi_restore 82
+ 2668              		.cfi_restore 83
+ 2669              		.cfi_restore 80
+ 2670              		.cfi_restore 81
+ 2671              		.cfi_def_cfa_offset 20
+ 2672              	.LVL378:
+ 2673 02ca F0BD     		pop	{r4, r5, r6, r7, pc}
+ 2674              	.LVL379:
+ 2675              	.L88:
+ 2676 02cc AFF30080 		.align	3
+ 2677              	.L87:
+ 2678 02d0 66666666 		.word	1717986918
+ 2679 02d4 66A64C40 		.word	1078765158
+ 2680 02d8 00000000 		.word	.LANCHOR0
+ 2681 02dc 00000000 		.word	.LANCHOR1
+ 2682 02e0 00000000 		.word	.LANCHOR4
+ 2683 02e4 00000000 		.word	.LANCHOR5
+ 2684 02e8 00000000 		.word	.LANCHOR6
+ 2685 02ec 00000000 		.word	.LANCHOR7
+ 2686 02f0 00000000 		.word	.LANCHOR8
+ 2687 02f4 00000000 		.word	.LANCHOR9
+ 2688 02f8 00000000 		.word	.LANCHOR10
+ 2689 02fc 00000000 		.word	.LANCHOR11
+ 2690 0300 00000000 		.word	.LANCHOR12
+ 2691 0304 00000000 		.word	.LANCHOR13
+ 2692 0308 00000000 		.word	.LANCHOR2
+ 2693 030c 00000000 		.word	.LANCHOR14
+ 2694 0310 00000000 		.word	.LANCHOR15
+ 2695 0314 00000000 		.word	.LANCHOR16
+ 2696              		.cfi_endproc
+ 2697              	.LFE540:
+ 2699              		.section	.text._GLOBAL__sub_I_Body_IMU,"ax",%progbits
+ 2700              		.align	1
+ 2701              		.syntax unified
+ 2702              		.thumb
+ 2703              		.thumb_func
+ 2704              		.fpu fpv4-sp-d16
+ 2706              	_GLOBAL__sub_I_Body_IMU:
+ 2707              	.LFB585:
+ 2708              		.loc 6 214 0
+ 2709              		.cfi_startproc
+ 2710              		@ args = 0, pretend = 0, frame = 0
+ 2711              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2712 0000 08B5     		push	{r3, lr}
+ 2713              	.LCFI26:
+ 2714              		.cfi_def_cfa_offset 8
+ 2715              		.cfi_offset 3, -8
+ 2716              		.cfi_offset 14, -4
+ 2717              		.loc 6 214 0
+ 2718 0002 4FF6FF71 		movw	r1, #65535
+ 2719 0006 0120     		movs	r0, #1
+ 2720 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 2721              	.LVL380:
+ 2722 000c 08BD     		pop	{r3, pc}
+ 2723              		.cfi_endproc
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 63
+
+
+ 2724              	.LFE585:
+ 2726              		.section	.init_array,"aw",%init_array
+ 2727              		.align	2
+ 2728 0000 00000000 		.word	_GLOBAL__sub_I_Body_IMU(target1)
+ 2729              		.global	IMU
+ 2730              		.global	Body_HMC
+ 2731              		.global	Body_IMU
+ 2732              		.section	.bss.Body_HMC,"aw",%nobits
+ 2733              		.align	2
+ 2734              		.set	.LANCHOR1,. + 0
+ 2737              	Body_HMC:
+ 2738 0000 00000000 		.space	32
+ 2738      00000000 
+ 2738      00000000 
+ 2738      00000000 
+ 2738      00000000 
+ 2739              		.section	.bss.Body_IMU,"aw",%nobits
+ 2740              		.align	2
+ 2741              		.set	.LANCHOR0,. + 0
+ 2744              	Body_IMU:
+ 2745 0000 00000000 		.space	52
+ 2745      00000000 
+ 2745      00000000 
+ 2745      00000000 
+ 2745      00000000 
+ 2746              		.section	.bss.IMU,"aw",%nobits
+ 2747              		.align	2
+ 2748              		.set	.LANCHOR2,. + 0
+ 2751              	IMU:
+ 2752 0000 00000000 		.space	40
+ 2752      00000000 
+ 2752      00000000 
+ 2752      00000000 
+ 2752      00000000 
+ 2753              		.section	.bss._ZL11gAccel_Gyro,"aw",%nobits
+ 2754              		.align	2
+ 2755              		.set	.LANCHOR3,. + 0
+ 2758              	_ZL11gAccel_Gyro:
+ 2759 0000 00000000 		.space	476
+ 2759      00000000 
+ 2759      00000000 
+ 2759      00000000 
+ 2759      00000000 
+ 2760              		.section	.bss._ZL11gOmega_Bias,"aw",%nobits
+ 2761              		.align	2
+ 2762              		.set	.LANCHOR4,. + 0
+ 2765              	_ZL11gOmega_Bias:
+ 2766 0000 00000000 		.space	12
+ 2766      00000000 
+ 2766      00000000 
+ 2767              		.section	.bss._ZL11gYaw_Filter,"aw",%nobits
+ 2768              		.align	2
+ 2769              		.set	.LANCHOR16,. + 0
+ 2772              	_ZL11gYaw_Filter:
+ 2773 0000 00000000 		.space	284
+ 2773      00000000 
+ 2773      00000000 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 64
+
+
+ 2773      00000000 
+ 2773      00000000 
+ 2774              		.section	.bss._ZL12gRoll_Filter,"aw",%nobits
+ 2775              		.align	2
+ 2776              		.set	.LANCHOR14,. + 0
+ 2779              	_ZL12gRoll_Filter:
+ 2780 0000 00000000 		.space	284
+ 2780      00000000 
+ 2780      00000000 
+ 2780      00000000 
+ 2780      00000000 
+ 2781              		.section	.bss._ZL12gXMagAlpha35,"aw",%nobits
+ 2782              		.align	2
+ 2783              		.set	.LANCHOR11,. + 0
+ 2786              	_ZL12gXMagAlpha35:
+ 2787 0000 00000000 		.space	12
+ 2787      00000000 
+ 2787      00000000 
+ 2788              		.section	.bss._ZL12gYMagAlpha35,"aw",%nobits
+ 2789              		.align	2
+ 2790              		.set	.LANCHOR12,. + 0
+ 2793              	_ZL12gYMagAlpha35:
+ 2794 0000 00000000 		.space	12
+ 2794      00000000 
+ 2794      00000000 
+ 2795              		.section	.bss._ZL12gZMagAlpha35,"aw",%nobits
+ 2796              		.align	2
+ 2797              		.set	.LANCHOR13,. + 0
+ 2800              	_ZL12gZMagAlpha35:
+ 2801 0000 00000000 		.space	12
+ 2801      00000000 
+ 2801      00000000 
+ 2802              		.section	.bss._ZL13gPitch_Filter,"aw",%nobits
+ 2803              		.align	2
+ 2804              		.set	.LANCHOR15,. + 0
+ 2807              	_ZL13gPitch_Filter:
+ 2808 0000 00000000 		.space	284
+ 2808      00000000 
+ 2808      00000000 
+ 2808      00000000 
+ 2808      00000000 
+ 2809              		.section	.bss._ZL13gXGyroAlpha35,"aw",%nobits
+ 2810              		.align	2
+ 2811              		.set	.LANCHOR8,. + 0
+ 2814              	_ZL13gXGyroAlpha35:
+ 2815 0000 00000000 		.space	12
+ 2815      00000000 
+ 2815      00000000 
+ 2816              		.section	.bss._ZL13gYGyroAlpha35,"aw",%nobits
+ 2817              		.align	2
+ 2818              		.set	.LANCHOR9,. + 0
+ 2821              	_ZL13gYGyroAlpha35:
+ 2822 0000 00000000 		.space	12
+ 2822      00000000 
+ 2822      00000000 
+ 2823              		.section	.bss._ZL13gZGyroAlpha35,"aw",%nobits
+ 2824              		.align	2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 65
+
+
+ 2825              		.set	.LANCHOR10,. + 0
+ 2828              	_ZL13gZGyroAlpha35:
+ 2829 0000 00000000 		.space	12
+ 2829      00000000 
+ 2829      00000000 
+ 2830              		.section	.bss._ZL14gXAccelAlpha35,"aw",%nobits
+ 2831              		.align	2
+ 2832              		.set	.LANCHOR5,. + 0
+ 2835              	_ZL14gXAccelAlpha35:
+ 2836 0000 00000000 		.space	12
+ 2836      00000000 
+ 2836      00000000 
+ 2837              		.section	.bss._ZL14gYAccelAlpha35,"aw",%nobits
+ 2838              		.align	2
+ 2839              		.set	.LANCHOR6,. + 0
+ 2842              	_ZL14gYAccelAlpha35:
+ 2843 0000 00000000 		.space	12
+ 2843      00000000 
+ 2843      00000000 
+ 2844              		.section	.bss._ZL14gZAccelAlpha35,"aw",%nobits
+ 2845              		.align	2
+ 2846              		.set	.LANCHOR7,. + 0
+ 2849              	_ZL14gZAccelAlpha35:
+ 2850 0000 00000000 		.space	12
+ 2850      00000000 
+ 2850      00000000 
+ 2851              		.section	.rodata._Z15init_OriFiltersm.str1.4,"aMS",%progbits,1
+ 2852              		.align	2
+ 2853              	.LC0:
+ 2854 0000 436F7265 		.ascii	"Core/Inc/utils/mat.h\000"
+ 2854      2F496E63 
+ 2854      2F757469 
+ 2854      6C732F6D 
+ 2854      61742E68 
+ 2855              		.text
+ 2856              	.Letext0:
+ 2857              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 2858              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 2859              		.file 10 "Drivers/CMSIS/Include/core_cm4.h"
+ 2860              		.file 11 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 2861              		.file 12 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 2862              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 2863              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2864              		.file 15 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2865              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2866              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 2867              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 2868              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ 2869              		.file 20 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 2870              		.file 21 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 2871              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2872              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2873              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2874              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2875              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 2876              		.file 27 "Core/Inc/periphs/i2c.h"
+ 2877              		.file 28 "Core/Inc/periphs/tim.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 66
+
+
+ 2878              		.file 29 "Core/Inc/periphs/usart.h"
+ 2879              		.file 30 "Core/Inc/devs/imu.h"
+ 2880              		.file 31 "Core/Inc/main.h"
+ 2881              		.file 32 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 67
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_orientation.cpp
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:18     .text._ZN10Exp_SmoothD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:25     .text._ZN10Exp_SmoothD2Ev:00000000 _ZN10Exp_SmoothD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:42     .text._ZN13Kalman_FilterD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:49     .text._ZN13Kalman_FilterD2Ev:00000000 _ZN13Kalman_FilterD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:49     .text._ZN13Kalman_FilterD2Ev:00000000 _ZN13Kalman_FilterD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:66     .text._ZN4Vec3IfED2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:73     .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:73     .text._ZN4Vec3IfED2Ev:00000000 _ZN4Vec3IfED1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:90     .text._ZN7MPU6050D2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:97     .text._ZN7MPU6050D2Ev:00000000 _ZN7MPU6050D2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:97     .text._ZN7MPU6050D2Ev:00000000 _ZN7MPU6050D1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:114    .text._ZN7HMC5883D2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:121    .text._ZN7HMC5883D2Ev:00000000 _ZN7HMC5883D2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:121    .text._ZN7HMC5883D2Ev:00000000 _ZN7HMC5883D1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:138    .text._ZN11Kalman_VarsD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:145    .text._ZN11Kalman_VarsD2Ev:00000000 _ZN11Kalman_VarsD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:145    .text._ZN11Kalman_VarsD2Ev:00000000 _ZN11Kalman_VarsD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:161    .text._ZL8IMU_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:167    .text._ZL8IMU_Initv:00000000 _ZL8IMU_Initv
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:216    .text._ZL8IMU_Initv:00000040 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:226    .text._Z15init_OriFiltersm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:233    .text._Z15init_OriFiltersm:00000000 _Z15init_OriFiltersm
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:798    .text._Z15init_OriFiltersm:000002ac $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:811    .text._ZN13Kalman_FilterC2EP11Kalman_VarsPFimE:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:818    .text._ZN13Kalman_FilterC2EP11Kalman_VarsPFimE:00000000 _ZN13Kalman_FilterC2EP11Kalman_VarsPFimE
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:818    .text._ZN13Kalman_FilterC2EP11Kalman_VarsPFimE:00000000 _ZN13Kalman_FilterC1EP11Kalman_VarsPFimE
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:877    .text._ZN13Kalman_Filter6filterEffm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:884    .text._ZN13Kalman_Filter6filterEffm:00000000 _ZN13Kalman_Filter6filterEffm
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1517   .text._ZN13Kalman_Filter6filterEffm:000002ec $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1527   .text._ZN11Kalman_VarsC2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1534   .text._ZN11Kalman_VarsC2Ev:00000000 _ZN11Kalman_VarsC2Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1534   .text._ZN11Kalman_VarsC2Ev:00000000 _ZN11Kalman_VarsC1Ev
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1628   .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:1634   .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2041   .text._Z41__static_initialization_and_destruction_0ii:00000198 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2070   .text._Z10Angle_Initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2077   .text._Z10Angle_Initv:00000000 _Z10Angle_Initv
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2114   .text._Z10Angle_Initv:00000028 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2120   .text._Z12swap_ElementIfEvRT_S1_:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2127   .text._Z12swap_ElementIfEvRT_S1_:00000000 _Z12swap_ElementIfEvRT_S1_
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2153   .text._Z16read_Orientationm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2160   .text._Z16read_Orientationm:00000000 _Z16read_Orientationm
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2678   .text._Z16read_Orientationm:000002d0 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2700   .text._GLOBAL__sub_I_Body_IMU:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2706   .text._GLOBAL__sub_I_Body_IMU:00000000 _GLOBAL__sub_I_Body_IMU
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2727   .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2751   .bss.IMU:00000000 IMU
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2737   .bss.Body_HMC:00000000 Body_HMC
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2744   .bss.Body_IMU:00000000 Body_IMU
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2733   .bss.Body_HMC:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2740   .bss.Body_IMU:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2747   .bss.IMU:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2754   .bss._ZL11gAccel_Gyro:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2758   .bss._ZL11gAccel_Gyro:00000000 _ZL11gAccel_Gyro
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 68
+
+
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2761   .bss._ZL11gOmega_Bias:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2765   .bss._ZL11gOmega_Bias:00000000 _ZL11gOmega_Bias
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2768   .bss._ZL11gYaw_Filter:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2772   .bss._ZL11gYaw_Filter:00000000 _ZL11gYaw_Filter
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2775   .bss._ZL12gRoll_Filter:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2779   .bss._ZL12gRoll_Filter:00000000 _ZL12gRoll_Filter
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2782   .bss._ZL12gXMagAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2786   .bss._ZL12gXMagAlpha35:00000000 _ZL12gXMagAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2789   .bss._ZL12gYMagAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2793   .bss._ZL12gYMagAlpha35:00000000 _ZL12gYMagAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2796   .bss._ZL12gZMagAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2800   .bss._ZL12gZMagAlpha35:00000000 _ZL12gZMagAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2803   .bss._ZL13gPitch_Filter:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2807   .bss._ZL13gPitch_Filter:00000000 _ZL13gPitch_Filter
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2810   .bss._ZL13gXGyroAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2814   .bss._ZL13gXGyroAlpha35:00000000 _ZL13gXGyroAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2817   .bss._ZL13gYGyroAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2821   .bss._ZL13gYGyroAlpha35:00000000 _ZL13gYGyroAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2824   .bss._ZL13gZGyroAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2828   .bss._ZL13gZGyroAlpha35:00000000 _ZL13gZGyroAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2831   .bss._ZL14gXAccelAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2835   .bss._ZL14gXAccelAlpha35:00000000 _ZL14gXAccelAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2838   .bss._ZL14gYAccelAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2842   .bss._ZL14gYAccelAlpha35:00000000 _ZL14gYAccelAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2845   .bss._ZL14gZAccelAlpha35:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2849   .bss._ZL14gZAccelAlpha35:00000000 _ZL14gZAccelAlpha35
+C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s:2852   .rodata._Z15init_OriFiltersm.str1.4:00000000 $d
+                           .group:00000000 _ZN10Exp_SmoothD5Ev
+                           .group:00000000 _ZN13Kalman_FilterD5Ev
+                           .group:00000000 _ZN4Vec3IfED5Ev
+                           .group:00000000 _ZN7MPU6050D5Ev
+                           .group:00000000 _ZN7HMC5883D5Ev
+                           .group:00000000 _ZN11Kalman_VarsD5Ev
+                           .group:00000000 _ZN13Kalman_FilterC5EP11Kalman_VarsPFimE
+                           .group:00000000 _ZN11Kalman_VarsC5Ev
+
+UNDEFINED SYMBOLS
+_Z12MPU6050_InitP7MPU6050
+_Z12HMC5883_InitP7HMC5883
+TM_AHRSIMU_Init
+hi2c1
+_ZN3MatC1Ehh
+_Error_Handler
+_ZN3MatC1ERKS_
+_Z4swapR3MatS0_
+_ZN3Mat3eyeEh
+memcpy
+_ZN3MatmLERKS_
+_ZN3MatpLERKS_
+_ZN3Mat9transposeEv
+_ZNK3Mat3invERS_
+_ZN3MatmIERKS_
+__aeabi_atexit
+_ZN10Exp_SmoothC1Ef
+__dso_handle
+_Z22MPU6050_Calc_OmegaBiasP7MPU6050m
+__aeabi_f2d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cchJV6eU.s 			page 69
+
+
+__aeabi_dmul
+__aeabi_d2f
+__aeabi_ddiv
+_Z21MPU6050_Read_NormAxesP7MPU6050
+_Z12HMC5883_ReadP7HMC5883
+_ZN10Exp_Smooth6smoothERKf
+TM_AHRSIMU_UpdateAHRS
+atan2f
+sin
+cos

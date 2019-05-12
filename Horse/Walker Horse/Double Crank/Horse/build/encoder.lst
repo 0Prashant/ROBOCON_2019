@@ -1,0 +1,530 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"encoder.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	__aeabi_i2d
+  18              		.global	__aeabi_dmul
+  19              		.global	__aeabi_ddiv
+  20              		.global	__aeabi_d2f
+  21              		.section	.text._ZN7encoder15calculate_omegaEv,"ax",%progbits
+  22              		.align	1
+  23              		.global	_ZN7encoder15calculate_omegaEv
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  27              		.fpu fpv4-sp-d16
+  29              	_ZN7encoder15calculate_omegaEv:
+  30              	.LFB358:
+  31              		.file 1 "Core/Src/devs/encoder.cpp"
+   1:Core/Src/devs/encoder.cpp **** #include"encoder.h"
+   2:Core/Src/devs/encoder.cpp **** 
+   3:Core/Src/devs/encoder.cpp **** void encoder::calculate_omega(){
+  32              		.loc 1 3 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              	.LVL0:
+  37 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 24
+  40              		.cfi_offset 3, -24
+  41              		.cfi_offset 4, -20
+  42              		.cfi_offset 5, -16
+  43              		.cfi_offset 6, -12
+  44              		.cfi_offset 7, -8
+  45              		.cfi_offset 14, -4
+  46 0002 0446     		mov	r4, r0
+   4:Core/Src/devs/encoder.cpp **** 	omega_ = (2 * PI * (int16_t)encoder_->henc->Instance->CNT * 1000)/(encoder_->ppr * SAMPLE_TIME);	/
+  47              		.loc 1 4 0
+  48 0004 0568     		ldr	r5, [r0]
+  49 0006 2B68     		ldr	r3, [r5]
+  50 0008 1B68     		ldr	r3, [r3]
+  51 000a 586A     		ldr	r0, [r3, #36]
+  52              	.LVL1:
+  53 000c 00B2     		sxth	r0, r0
+  54 000e FFF7FEFF 		bl	__aeabi_i2d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 2
+
+
+  55              	.LVL2:
+  56 0012 18A3     		adr	r3, .L3+4
+  57 0014 D3E90023 		ldrd	r2, [r3]
+  58 0018 FFF7FEFF 		bl	__aeabi_dmul
+  59              	.LVL3:
+  60 001c 0022     		movs	r2, #0
+  61 001e 144B     		ldr	r3, .L3
+  62 0020 FFF7FEFF 		bl	__aeabi_dmul
+  63              	.LVL4:
+  64 0024 0646     		mov	r6, r0
+  65 0026 0F46     		mov	r7, r1
+  66 0028 AB88     		ldrh	r3, [r5, #4]
+  67 002a 03EB8303 		add	r3, r3, r3, lsl #2
+  68 002e 5800     		lsls	r0, r3, #1
+  69 0030 FFF7FEFF 		bl	__aeabi_i2d
+  70              	.LVL5:
+  71 0034 0246     		mov	r2, r0
+  72 0036 0B46     		mov	r3, r1
+  73 0038 3046     		mov	r0, r6
+  74 003a 3946     		mov	r1, r7
+  75 003c FFF7FEFF 		bl	__aeabi_ddiv
+  76              	.LVL6:
+  77 0040 FFF7FEFF 		bl	__aeabi_d2f
+  78              	.LVL7:
+  79 0044 A060     		str	r0, [r4, #8]	@ float
+   5:Core/Src/devs/encoder.cpp **** 	count_ += (int16_t)encoder_->henc->Instance->CNT;
+  80              		.loc 1 5 0
+  81 0046 2B68     		ldr	r3, [r5]
+  82 0048 1B68     		ldr	r3, [r3]
+  83 004a 5B6A     		ldr	r3, [r3, #36]
+  84 004c 6268     		ldr	r2, [r4, #4]
+  85 004e 02FA83F3 		sxtah	r3, r2, r3
+  86 0052 6360     		str	r3, [r4, #4]
+   6:Core/Src/devs/encoder.cpp **** 	actual_count_ += (int16_t)encoder_->henc->Instance->CNT;
+  87              		.loc 1 6 0
+  88 0054 2B68     		ldr	r3, [r5]
+  89 0056 1B68     		ldr	r3, [r3]
+  90 0058 5B6A     		ldr	r3, [r3, #36]
+  91 005a 6269     		ldr	r2, [r4, #20]
+  92 005c 02FA83F3 		sxtah	r3, r2, r3
+  93 0060 6361     		str	r3, [r4, #20]
+   7:Core/Src/devs/encoder.cpp **** 	encoder_->henc->Instance->CNT = 0;
+  94              		.loc 1 7 0
+  95 0062 2B68     		ldr	r3, [r5]
+  96 0064 1B68     		ldr	r3, [r3]
+  97 0066 0022     		movs	r2, #0
+  98 0068 5A62     		str	r2, [r3, #36]
+   8:Core/Src/devs/encoder.cpp **** }
+  99              		.loc 1 8 0
+ 100 006a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 101              	.LVL8:
+ 102              	.L4:
+ 103 006c AFF30080 		.align	3
+ 104              	.L3:
+ 105 0070 00408F40 		.word	1083129856
+ 106 0074 182D4454 		.word	1413754136
+ 107 0078 FB211940 		.word	1075388923
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 3
+
+
+ 108              		.cfi_endproc
+ 109              	.LFE358:
+ 111              		.section	.text._ZN7encoder9get_omegaEv,"ax",%progbits
+ 112              		.align	1
+ 113              		.global	_ZN7encoder9get_omegaEv
+ 114              		.syntax unified
+ 115              		.thumb
+ 116              		.thumb_func
+ 117              		.fpu fpv4-sp-d16
+ 119              	_ZN7encoder9get_omegaEv:
+ 120              	.LFB359:
+   9:Core/Src/devs/encoder.cpp **** 
+  10:Core/Src/devs/encoder.cpp **** float encoder::get_omega(){
+ 121              		.loc 1 10 0
+ 122              		.cfi_startproc
+ 123              		@ args = 0, pretend = 0, frame = 0
+ 124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 125              		@ link register save eliminated.
+ 126              	.LVL9:
+  11:Core/Src/devs/encoder.cpp **** 	return omega_;
+  12:Core/Src/devs/encoder.cpp **** }
+ 127              		.loc 1 12 0
+ 128 0000 90ED020A 		vldr.32	s0, [r0, #8]
+ 129 0004 7047     		bx	lr
+ 130              		.cfi_endproc
+ 131              	.LFE359:
+ 133              		.section	.text._ZN7encoder16get_actual_angleEv,"ax",%progbits
+ 134              		.align	1
+ 135              		.global	_ZN7encoder16get_actual_angleEv
+ 136              		.syntax unified
+ 137              		.thumb
+ 138              		.thumb_func
+ 139              		.fpu fpv4-sp-d16
+ 141              	_ZN7encoder16get_actual_angleEv:
+ 142              	.LFB361:
+  13:Core/Src/devs/encoder.cpp **** 
+  14:Core/Src/devs/encoder.cpp **** float encoder::get_angle(){
+  15:Core/Src/devs/encoder.cpp **** 	
+  16:Core/Src/devs/encoder.cpp **** 	angle_ = ((2*PI)*(count_+(int16_t)encoder_->henc->Instance->CNT)/(encoder_->ppr));
+  17:Core/Src/devs/encoder.cpp **** 	if(angle_>(2*PI)){
+  18:Core/Src/devs/encoder.cpp **** 		reset_angle(angle_-(2*PI));
+  19:Core/Src/devs/encoder.cpp **** 	}
+  20:Core/Src/devs/encoder.cpp **** 	if(angle_<(-2*PI)){
+  21:Core/Src/devs/encoder.cpp **** 		reset_angle(angle_+(2*PI));
+  22:Core/Src/devs/encoder.cpp **** 	}
+  23:Core/Src/devs/encoder.cpp **** 	return angle_;
+  24:Core/Src/devs/encoder.cpp **** }
+  25:Core/Src/devs/encoder.cpp **** 
+  26:Core/Src/devs/encoder.cpp **** float encoder::get_actual_angle(void){
+ 143              		.loc 1 26 0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147              	.LVL10:
+ 148 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 149              	.LCFI1:
+ 150              		.cfi_def_cfa_offset 24
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 4
+
+
+ 151              		.cfi_offset 3, -24
+ 152              		.cfi_offset 4, -20
+ 153              		.cfi_offset 5, -16
+ 154              		.cfi_offset 6, -12
+ 155              		.cfi_offset 7, -8
+ 156              		.cfi_offset 14, -4
+ 157 0002 0446     		mov	r4, r0
+  27:Core/Src/devs/encoder.cpp **** 	actual_angle_ = ((2*PI)*(actual_count_+(int16_t)encoder_->henc->Instance->CNT)/(encoder_->ppr));
+ 158              		.loc 1 27 0
+ 159 0004 4369     		ldr	r3, [r0, #20]
+ 160 0006 0568     		ldr	r5, [r0]
+ 161 0008 2A68     		ldr	r2, [r5]
+ 162 000a 1268     		ldr	r2, [r2]
+ 163 000c 506A     		ldr	r0, [r2, #36]
+ 164              	.LVL11:
+ 165 000e 03FA80F0 		sxtah	r0, r3, r0
+ 166 0012 FFF7FEFF 		bl	__aeabi_i2d
+ 167              	.LVL12:
+ 168 0016 0CA3     		adr	r3, .L8
+ 169 0018 D3E90023 		ldrd	r2, [r3]
+ 170 001c FFF7FEFF 		bl	__aeabi_dmul
+ 171              	.LVL13:
+ 172 0020 0646     		mov	r6, r0
+ 173 0022 0F46     		mov	r7, r1
+ 174 0024 A888     		ldrh	r0, [r5, #4]
+ 175 0026 FFF7FEFF 		bl	__aeabi_i2d
+ 176              	.LVL14:
+ 177 002a 0246     		mov	r2, r0
+ 178 002c 0B46     		mov	r3, r1
+ 179 002e 3046     		mov	r0, r6
+ 180 0030 3946     		mov	r1, r7
+ 181 0032 FFF7FEFF 		bl	__aeabi_ddiv
+ 182              	.LVL15:
+ 183 0036 FFF7FEFF 		bl	__aeabi_d2f
+ 184              	.LVL16:
+ 185 003a 2061     		str	r0, [r4, #16]	@ float
+  28:Core/Src/devs/encoder.cpp **** 	return actual_angle_;
+  29:Core/Src/devs/encoder.cpp **** }
+ 186              		.loc 1 29 0
+ 187 003c 00EE100A 		vmov	s0, r0
+ 188 0040 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 189              	.LVL17:
+ 190              	.L9:
+ 191 0042 00BFAFF3 		.align	3
+ 191      0080
+ 192              	.L8:
+ 193 0048 182D4454 		.word	1413754136
+ 194 004c FB211940 		.word	1075388923
+ 195              		.cfi_endproc
+ 196              	.LFE361:
+ 198              		.global	__aeabi_f2d
+ 199              		.global	__aeabi_d2iz
+ 200              		.section	.text._ZN7encoder11reset_angleEf,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	_ZN7encoder11reset_angleEf
+ 203              		.syntax unified
+ 204              		.thumb
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 5
+
+
+ 205              		.thumb_func
+ 206              		.fpu fpv4-sp-d16
+ 208              	_ZN7encoder11reset_angleEf:
+ 209              	.LFB362:
+  30:Core/Src/devs/encoder.cpp **** 
+  31:Core/Src/devs/encoder.cpp **** void encoder::reset_angle(float angle_in_radian){
+ 210              		.loc 1 31 0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              	.LVL18:
+ 215 0000 10B5     		push	{r4, lr}
+ 216              	.LCFI2:
+ 217              		.cfi_def_cfa_offset 8
+ 218              		.cfi_offset 4, -8
+ 219              		.cfi_offset 14, -4
+ 220 0002 0446     		mov	r4, r0
+  32:Core/Src/devs/encoder.cpp **** 	angle_ = angle_in_radian;
+ 221              		.loc 1 32 0
+ 222 0004 80ED030A 		vstr.32	s0, [r0, #12]
+  33:Core/Src/devs/encoder.cpp **** 	count_ = (angle_*encoder_->ppr)/(2*PI);
+ 223              		.loc 1 33 0
+ 224 0008 0368     		ldr	r3, [r0]
+ 225 000a 9B88     		ldrh	r3, [r3, #4]
+ 226 000c 07EE903A 		vmov	s15, r3	@ int
+ 227 0010 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 228 0014 67EE807A 		vmul.f32	s15, s15, s0
+ 229 0018 17EE900A 		vmov	r0, s15
+ 230              	.LVL19:
+ 231 001c FFF7FEFF 		bl	__aeabi_f2d
+ 232              	.LVL20:
+ 233 0020 06A3     		adr	r3, .L12+4
+ 234 0022 D3E90023 		ldrd	r2, [r3]
+ 235 0026 FFF7FEFF 		bl	__aeabi_ddiv
+ 236              	.LVL21:
+ 237 002a FFF7FEFF 		bl	__aeabi_d2iz
+ 238              	.LVL22:
+ 239 002e 6060     		str	r0, [r4, #4]
+  34:Core/Src/devs/encoder.cpp **** 	printf("counter_reset");
+ 240              		.loc 1 34 0
+ 241 0030 0148     		ldr	r0, .L12
+ 242 0032 FFF7FEFF 		bl	printf
+ 243              	.LVL23:
+  35:Core/Src/devs/encoder.cpp **** }
+ 244              		.loc 1 35 0
+ 245 0036 10BD     		pop	{r4, pc}
+ 246              	.LVL24:
+ 247              	.L13:
+ 248              		.align	3
+ 249              	.L12:
+ 250 0038 00000000 		.word	.LC0
+ 251 003c 182D4454 		.word	1413754136
+ 252 0040 FB211940 		.word	1075388923
+ 253              		.cfi_endproc
+ 254              	.LFE362:
+ 256              		.global	__aeabi_dcmpgt
+ 257              		.global	__aeabi_dsub
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 6
+
+
+ 258              		.global	__aeabi_dcmplt
+ 259              		.global	__aeabi_dadd
+ 260              		.section	.text._ZN7encoder9get_angleEv,"ax",%progbits
+ 261              		.align	1
+ 262              		.global	_ZN7encoder9get_angleEv
+ 263              		.syntax unified
+ 264              		.thumb
+ 265              		.thumb_func
+ 266              		.fpu fpv4-sp-d16
+ 268              	_ZN7encoder9get_angleEv:
+ 269              	.LFB360:
+  14:Core/Src/devs/encoder.cpp **** 	
+ 270              		.loc 1 14 0
+ 271              		.cfi_startproc
+ 272              		@ args = 0, pretend = 0, frame = 0
+ 273              		@ frame_needed = 0, uses_anonymous_args = 0
+ 274              	.LVL25:
+ 275 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 276              	.LCFI3:
+ 277              		.cfi_def_cfa_offset 24
+ 278              		.cfi_offset 3, -24
+ 279              		.cfi_offset 4, -20
+ 280              		.cfi_offset 5, -16
+ 281              		.cfi_offset 6, -12
+ 282              		.cfi_offset 7, -8
+ 283              		.cfi_offset 14, -4
+ 284 0002 0446     		mov	r4, r0
+  16:Core/Src/devs/encoder.cpp **** 	if(angle_>(2*PI)){
+ 285              		.loc 1 16 0
+ 286 0004 4368     		ldr	r3, [r0, #4]
+ 287 0006 0568     		ldr	r5, [r0]
+ 288 0008 2A68     		ldr	r2, [r5]
+ 289 000a 1268     		ldr	r2, [r2]
+ 290 000c 506A     		ldr	r0, [r2, #36]
+ 291              	.LVL26:
+ 292 000e 03FA80F0 		sxtah	r0, r3, r0
+ 293 0012 FFF7FEFF 		bl	__aeabi_i2d
+ 294              	.LVL27:
+ 295 0016 24A3     		adr	r3, .L24
+ 296 0018 D3E90023 		ldrd	r2, [r3]
+ 297 001c FFF7FEFF 		bl	__aeabi_dmul
+ 298              	.LVL28:
+ 299 0020 0646     		mov	r6, r0
+ 300 0022 0F46     		mov	r7, r1
+ 301 0024 A888     		ldrh	r0, [r5, #4]
+ 302 0026 FFF7FEFF 		bl	__aeabi_i2d
+ 303              	.LVL29:
+ 304 002a 0246     		mov	r2, r0
+ 305 002c 0B46     		mov	r3, r1
+ 306 002e 3046     		mov	r0, r6
+ 307 0030 3946     		mov	r1, r7
+ 308 0032 FFF7FEFF 		bl	__aeabi_ddiv
+ 309              	.LVL30:
+ 310 0036 FFF7FEFF 		bl	__aeabi_d2f
+ 311              	.LVL31:
+ 312 003a E060     		str	r0, [r4, #12]	@ float
+  17:Core/Src/devs/encoder.cpp **** 		reset_angle(angle_-(2*PI));
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 7
+
+
+ 313              		.loc 1 17 0
+ 314 003c FFF7FEFF 		bl	__aeabi_f2d
+ 315              	.LVL32:
+ 316 0040 0646     		mov	r6, r0
+ 317 0042 0F46     		mov	r7, r1
+ 318 0044 18A3     		adr	r3, .L24
+ 319 0046 D3E90023 		ldrd	r2, [r3]
+ 320 004a FFF7FEFF 		bl	__aeabi_dcmpgt
+ 321              	.LVL33:
+ 322 004e 68B9     		cbnz	r0, .L22
+ 323              	.L15:
+  20:Core/Src/devs/encoder.cpp **** 		reset_angle(angle_+(2*PI));
+ 324              		.loc 1 20 0
+ 325 0050 E068     		ldr	r0, [r4, #12]	@ float
+ 326 0052 FFF7FEFF 		bl	__aeabi_f2d
+ 327              	.LVL34:
+ 328 0056 0646     		mov	r6, r0
+ 329 0058 0F46     		mov	r7, r1
+ 330 005a 15A3     		adr	r3, .L24+8
+ 331 005c D3E90023 		ldrd	r2, [r3]
+ 332 0060 FFF7FEFF 		bl	__aeabi_dcmplt
+ 333              	.LVL35:
+ 334 0064 88B9     		cbnz	r0, .L23
+ 335              	.L17:
+  24:Core/Src/devs/encoder.cpp **** 
+ 336              		.loc 1 24 0
+ 337 0066 94ED030A 		vldr.32	s0, [r4, #12]
+ 338 006a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 339              	.LVL36:
+ 340              	.L22:
+  18:Core/Src/devs/encoder.cpp **** 	}
+ 341              		.loc 1 18 0
+ 342 006c 0EA3     		adr	r3, .L24
+ 343 006e D3E90023 		ldrd	r2, [r3]
+ 344 0072 3046     		mov	r0, r6
+ 345 0074 3946     		mov	r1, r7
+ 346 0076 FFF7FEFF 		bl	__aeabi_dsub
+ 347              	.LVL37:
+ 348 007a FFF7FEFF 		bl	__aeabi_d2f
+ 349              	.LVL38:
+ 350 007e 00EE100A 		vmov	s0, r0
+ 351 0082 2046     		mov	r0, r4
+ 352 0084 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+ 353              	.LVL39:
+ 354 0088 E2E7     		b	.L15
+ 355              	.L23:
+  21:Core/Src/devs/encoder.cpp **** 	}
+ 356              		.loc 1 21 0
+ 357 008a 07A3     		adr	r3, .L24
+ 358 008c D3E90023 		ldrd	r2, [r3]
+ 359 0090 3046     		mov	r0, r6
+ 360 0092 3946     		mov	r1, r7
+ 361 0094 FFF7FEFF 		bl	__aeabi_dadd
+ 362              	.LVL40:
+ 363 0098 FFF7FEFF 		bl	__aeabi_d2f
+ 364              	.LVL41:
+ 365 009c 00EE100A 		vmov	s0, r0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 8
+
+
+ 366 00a0 2046     		mov	r0, r4
+ 367 00a2 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+ 368              	.LVL42:
+ 369 00a6 DEE7     		b	.L17
+ 370              	.L25:
+ 371              		.align	3
+ 372              	.L24:
+ 373 00a8 182D4454 		.word	1413754136
+ 374 00ac FB211940 		.word	1075388923
+ 375 00b0 182D4454 		.word	1413754136
+ 376 00b4 FB2119C0 		.word	-1072094725
+ 377              		.cfi_endproc
+ 378              	.LFE360:
+ 380              		.section	.text._ZN7encoder9get_countEv,"ax",%progbits
+ 381              		.align	1
+ 382              		.global	_ZN7encoder9get_countEv
+ 383              		.syntax unified
+ 384              		.thumb
+ 385              		.thumb_func
+ 386              		.fpu fpv4-sp-d16
+ 388              	_ZN7encoder9get_countEv:
+ 389              	.LFB363:
+  36:Core/Src/devs/encoder.cpp **** 
+  37:Core/Src/devs/encoder.cpp **** 
+  38:Core/Src/devs/encoder.cpp **** int32_t encoder::get_count(){
+ 390              		.loc 1 38 0
+ 391              		.cfi_startproc
+ 392              		@ args = 0, pretend = 0, frame = 0
+ 393              		@ frame_needed = 0, uses_anonymous_args = 0
+ 394              		@ link register save eliminated.
+ 395              	.LVL43:
+  39:Core/Src/devs/encoder.cpp **** 	return count_;
+  40:Core/Src/devs/encoder.cpp **** }...
+ 396              		.loc 1 40 0
+ 397 0000 4068     		ldr	r0, [r0, #4]
+ 398              	.LVL44:
+ 399 0002 7047     		bx	lr
+ 400              		.cfi_endproc
+ 401              	.LFE363:
+ 403              		.section	.rodata._ZN7encoder11reset_angleEf.str1.4,"aMS",%progbits,1
+ 404              		.align	2
+ 405              	.LC0:
+ 406 0000 636F756E 		.ascii	"counter_reset\000"
+ 406      7465725F 
+ 406      72657365 
+ 406      7400
+ 407              		.text
+ 408              	.Letext0:
+ 409              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 410              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 411              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 412              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 413              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 414              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 415              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 416              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eabi
+ 417              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 9
+
+
+ 418              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 419              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 420              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 421              		.file 14 "Core/Inc/periphs/tim.h"
+ 422              		.file 15 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 423              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 424              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 425              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 426              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 427              		.file 20 "Core/Inc/devs/encoder.h"
+ 428              		.file 21 "<built-in>"
+ 429              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 encoder.cpp
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:22     .text._ZN7encoder15calculate_omegaEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:29     .text._ZN7encoder15calculate_omegaEv:00000000 _ZN7encoder15calculate_omegaEv
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:105    .text._ZN7encoder15calculate_omegaEv:00000070 $d
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:112    .text._ZN7encoder9get_omegaEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:119    .text._ZN7encoder9get_omegaEv:00000000 _ZN7encoder9get_omegaEv
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:134    .text._ZN7encoder16get_actual_angleEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:141    .text._ZN7encoder16get_actual_angleEv:00000000 _ZN7encoder16get_actual_angleEv
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:193    .text._ZN7encoder16get_actual_angleEv:00000048 $d
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:201    .text._ZN7encoder11reset_angleEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:208    .text._ZN7encoder11reset_angleEf:00000000 _ZN7encoder11reset_angleEf
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:250    .text._ZN7encoder11reset_angleEf:00000038 $d
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:261    .text._ZN7encoder9get_angleEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:268    .text._ZN7encoder9get_angleEv:00000000 _ZN7encoder9get_angleEv
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:373    .text._ZN7encoder9get_angleEv:000000a8 $d
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:381    .text._ZN7encoder9get_countEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:388    .text._ZN7encoder9get_countEv:00000000 _ZN7encoder9get_countEv
+C:\Users\Prashant\AppData\Local\Temp\cc2Xhiil.s:404    .rodata._ZN7encoder11reset_angleEf.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_d2f
+__aeabi_f2d
+__aeabi_d2iz
+printf
+__aeabi_dcmpgt
+__aeabi_dsub
+__aeabi_dcmplt
+__aeabi_dadd

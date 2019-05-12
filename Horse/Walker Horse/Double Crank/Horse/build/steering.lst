@@ -1,0 +1,332 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"steering.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN8steering9set_omegaEf,"ax",%progbits
+  18              		.align	1
+  19              		.global	_ZN8steering9set_omegaEf
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN8steering9set_omegaEf:
+  26              	.LFB448:
+  27              		.file 1 "Core/Src/devs/steering.cpp"
+   1:Core/Src/devs/steering.cpp **** #include "steering.h"
+   2:Core/Src/devs/steering.cpp **** 
+   3:Core/Src/devs/steering.cpp **** void steering::set_omega(float omega){
+  28              		.loc 1 3 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40 0002 2DED028B 		vpush.64	{d8}
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 24
+  43              		.cfi_offset 80, -24
+  44              		.cfi_offset 81, -20
+  45 0006 0546     		mov	r5, r0
+  46 0008 B0EE408A 		vmov.f32	s16, s0
+   4:Core/Src/devs/steering.cpp **** 	motor__.set_omega(omega);
+  47              		.loc 1 4 0
+  48 000c 00F10806 		add	r6, r0, #8
+  49 0010 3046     		mov	r0, r6
+  50              	.LVL1:
+  51 0012 FFF7FEFF 		bl	_ZN5motor9set_omegaEf
+  52              	.LVL2:
+   5:Core/Src/devs/steering.cpp **** 	float computed_omega = dpid_.compute(omega-encoder__.get_omega(), 10);
+  53              		.loc 1 5 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 2
+
+
+  54 0016 05F12404 		add	r4, r5, #36
+  55 001a 05F10C00 		add	r0, r5, #12
+  56 001e FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
+  57              	.LVL3:
+  58 0022 38EE400A 		vsub.f32	s0, s16, s0
+  59              	.LVL4:
+  60              	.LBB28:
+  61              	.LBB29:
+  62              	.LBB30:
+  63              	.LBB31:
+  64              		.file 2 "Core/Inc/utils/pid_algorithms.h"
+   1:Core/Inc/utils/pid_algorithms.h **** #ifndef _PID_ALGORITHMS_H_
+   2:Core/Inc/utils/pid_algorithms.h **** #define _PID_ALGORITHMS_H_
+   3:Core/Inc/utils/pid_algorithms.h **** 
+   4:Core/Inc/utils/pid_algorithms.h **** class PID_Algorithm
+   5:Core/Inc/utils/pid_algorithms.h **** {
+   6:Core/Inc/utils/pid_algorithms.h ****       public:
+   7:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm() { set_PID(0, 0, 0); }
+   8:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(float p, float i, float d) { set_PID(p, i, d); }
+   9:Core/Inc/utils/pid_algorithms.h ****         virtual float compute(float error, uint32_t dt_millis) = 0;
+  10:Core/Inc/utils/pid_algorithms.h **** 
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_P(float p) { p_ = p; }
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+  14:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+  15:Core/Inc/utils/pid_algorithms.h ****         {
+  16:Core/Inc/utils/pid_algorithms.h ****                 set_P(p);
+  17:Core/Inc/utils/pid_algorithms.h ****                 set_I(i);
+  18:Core/Inc/utils/pid_algorithms.h ****                 set_D(d);
+  19:Core/Inc/utils/pid_algorithms.h ****         }
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_P() { return p_; }
+  65              		.loc 2 20 0
+  66 0026 94ED016A 		vldr.32	s12, [r4, #4]
+  67              	.LVL5:
+  68              	.LBE31:
+  69              	.LBE30:
+  70              	.LBB32:
+  71              	.LBB33:
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  72              		.loc 2 21 0
+  73 002a 94ED027A 		vldr.32	s14, [r4, #8]
+  74              	.LVL6:
+  75              	.LBE33:
+  76              	.LBE32:
+  77              	.LBB34:
+  78              	.LBB35:
+  22:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  79              		.loc 2 22 0
+  80 002e D4ED037A 		vldr.32	s15, [r4, #12]
+  81              	.LVL7:
+  82              	.LBE35:
+  83              	.LBE34:
+  23:Core/Inc/utils/pid_algorithms.h **** 
+  24:Core/Inc/utils/pid_algorithms.h ****         void set_Limits(float max_out, float min_out)
+  25:Core/Inc/utils/pid_algorithms.h ****         {
+  26:Core/Inc/utils/pid_algorithms.h ****                 max_ = max_out;
+  27:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 3
+
+
+  28:Core/Inc/utils/pid_algorithms.h ****         }
+  29:Core/Inc/utils/pid_algorithms.h **** 
+  30:Core/Inc/utils/pid_algorithms.h ****         float get_Upper() { return max_; }
+  31:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+  32:Core/Inc/utils/pid_algorithms.h **** 
+  33:Core/Inc/utils/pid_algorithms.h ****         virtual ~PID_Algorithm() {}
+  34:Core/Inc/utils/pid_algorithms.h **** 
+  35:Core/Inc/utils/pid_algorithms.h ****       protected:
+  36:Core/Inc/utils/pid_algorithms.h ****         float p_, i_, d_;
+  37:Core/Inc/utils/pid_algorithms.h ****         float max_, min_;
+  38:Core/Inc/utils/pid_algorithms.h **** };
+  39:Core/Inc/utils/pid_algorithms.h **** 
+  40:Core/Inc/utils/pid_algorithms.h **** class Discrete_PID : public PID_Algorithm
+  41:Core/Inc/utils/pid_algorithms.h **** {
+  42:Core/Inc/utils/pid_algorithms.h ****       public:
+  43:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(float p, float i, float d) : PID_Algorithm(p, i, d)
+  44:Core/Inc/utils/pid_algorithms.h ****         {
+  45:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  46:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  47:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  48:Core/Inc/utils/pid_algorithms.h ****         }
+  49:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID()
+  50:Core/Inc/utils/pid_algorithms.h ****         {
+  51:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  52:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  53:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  54:Core/Inc/utils/pid_algorithms.h ****         }
+  55:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(Discrete_PID &&) = default;
+  56:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(const Discrete_PID &) = default;
+  57:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(Discrete_PID &&) = default;
+  58:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(const Discrete_PID &) = default;
+  59:Core/Inc/utils/pid_algorithms.h ****         ~Discrete_PID() {}
+  60:Core/Inc/utils/pid_algorithms.h **** 
+  61:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+  62:Core/Inc/utils/pid_algorithms.h ****          * 1) Discrete PID control Algorithm
+  63:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
+  64:Core/Inc/utils/pid_algorithms.h ****          * 3) //! Filtered Derivative not used
+  65:Core/Inc/utils/pid_algorithms.h ****          * 4) Output Limited
+  66:Core/Inc/utils/pid_algorithms.h ****          * 5) Form : Parallel
+  67:Core/Inc/utils/pid_algorithms.h ****          * 6) Compensator Formula : Dz = P + I*Ts/(z-1) + D*(z-1)/(Ts*z)
+  68:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
+  69:Core/Inc/utils/pid_algorithms.h ****          *      y(t) - y(t-1) = a*x(t) + b*x(t-1) + c*x(t-2)
+  70:Core/Inc/utils/pid_algorithms.h ****          *      where,
+  71:Core/Inc/utils/pid_algorithms.h ****          *              a = P + D/Ts
+  72:Core/Inc/utils/pid_algorithms.h ****          *              b = -P + I*Ts - 2*D/Ts
+  73:Core/Inc/utils/pid_algorithms.h ****          *              c = D/Ts
+  74:Core/Inc/utils/pid_algorithms.h ****          */
+  75:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis)
+  76:Core/Inc/utils/pid_algorithms.h ****         {
+  77:Core/Inc/utils/pid_algorithms.h ****                 float Ts = (float)dt_millis / 1000.0;
+  78:Core/Inc/utils/pid_algorithms.h **** 
+  79:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+  80:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+  81:Core/Inc/utils/pid_algorithms.h ****                 float D_by_Ts = get_D() / Ts;
+  84              		.loc 2 81 0
+  85 0032 DFED205A 		vldr.32	s11, .L11
+  86 0036 C7EEA56A 		vdiv.f32	s13, s15, s11
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 4
+
+
+  87              	.LVL8:
+  82:Core/Inc/utils/pid_algorithms.h **** 
+  83:Core/Inc/utils/pid_algorithms.h ****                 float a = P + D_by_Ts;
+  88              		.loc 2 83 0
+  89 003a 76EE267A 		vadd.f32	s15, s12, s13
+  90              	.LVL9:
+  84:Core/Inc/utils/pid_algorithms.h ****                 float b = -P + I * Ts - 2 * D_by_Ts;
+  91              		.loc 2 84 0
+  92 003e 27EE257A 		vmul.f32	s14, s14, s11
+  93 0042 37EE467A 		vsub.f32	s14, s14, s12
+  94 0046 36EEA66A 		vadd.f32	s12, s13, s13
+  95 004a 37EE467A 		vsub.f32	s14, s14, s12
+  96              	.LVL10:
+  85:Core/Inc/utils/pid_algorithms.h ****                 float c = D_by_Ts;
+  86:Core/Inc/utils/pid_algorithms.h **** 
+  87:Core/Inc/utils/pid_algorithms.h ****                 l_output_ += a * error + b * l_err_ + c * ll_err_;
+  97              		.loc 2 87 0
+  98 004e 60EE277A 		vmul.f32	s15, s0, s15
+  99              	.LVL11:
+ 100 0052 94ED076A 		vldr.32	s12, [r4, #28]
+ 101 0056 27EE067A 		vmul.f32	s14, s14, s12
+ 102              	.LVL12:
+ 103 005a 77EE877A 		vadd.f32	s15, s15, s14
+ 104 005e 94ED087A 		vldr.32	s14, [r4, #32]
+ 105 0062 66EE876A 		vmul.f32	s13, s13, s14
+ 106              	.LVL13:
+ 107 0066 77EEA67A 		vadd.f32	s15, s15, s13
+ 108 006a 94ED067A 		vldr.32	s14, [r4, #24]
+ 109 006e 77EE877A 		vadd.f32	s15, s15, s14
+ 110 0072 C4ED067A 		vstr.32	s15, [r4, #24]
+ 111              	.LVL14:
+ 112              	.LBB36:
+ 113              	.LBB37:
+  30:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ 114              		.loc 2 30 0
+ 115 0076 94ED047A 		vldr.32	s14, [r4, #16]
+ 116              	.LVL15:
+ 117              	.LBE37:
+ 118              	.LBE36:
+  88:Core/Inc/utils/pid_algorithms.h **** 
+  89:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper())
+ 119              		.loc 2 89 0
+ 120 007a F4EEC77A 		vcmpe.f32	s15, s14
+ 121 007e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 122 0082 09DC     		bgt	.L10
+ 123              	.LVL16:
+ 124              	.LBB38:
+ 125              	.LBB39:
+  31:Core/Inc/utils/pid_algorithms.h **** 
+ 126              		.loc 2 31 0
+ 127 0084 94ED057A 		vldr.32	s14, [r4, #20]
+ 128              	.LVL17:
+ 129              	.LBE39:
+ 130              	.LBE38:
+  90:Core/Inc/utils/pid_algorithms.h ****                 {
+  91:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+  92:Core/Inc/utils/pid_algorithms.h ****                 }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 5
+
+
+  93:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower())
+ 131              		.loc 2 93 0
+ 132 0088 F4EEC77A 		vcmpe.f32	s15, s14
+ 133 008c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 134 0090 04D5     		bpl	.L4
+  94:Core/Inc/utils/pid_algorithms.h ****                 {
+  95:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 135              		.loc 2 95 0
+ 136 0092 84ED067A 		vstr.32	s14, [r4, #24]
+ 137 0096 01E0     		b	.L4
+ 138              	.L10:
+  91:Core/Inc/utils/pid_algorithms.h ****                 }
+ 139              		.loc 2 91 0
+ 140 0098 84ED067A 		vstr.32	s14, [r4, #24]
+ 141              	.L4:
+  96:Core/Inc/utils/pid_algorithms.h ****                 }
+  97:Core/Inc/utils/pid_algorithms.h **** 
+  98:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
+ 142              		.loc 2 98 0
+ 143 009c 84ED086A 		vstr.32	s12, [r4, #32]
+  99:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
+ 144              		.loc 2 99 0
+ 145 00a0 84ED070A 		vstr.32	s0, [r4, #28]
+ 146              	.LVL18:
+ 147              	.LBE29:
+ 148              	.LBE28:
+   6:Core/Src/devs/steering.cpp **** 	motor__.set_omega(computed_omega);
+ 149              		.loc 1 6 0
+ 150 00a4 94ED060A 		vldr.32	s0, [r4, #24]
+ 151 00a8 3046     		mov	r0, r6
+ 152 00aa FFF7FEFF 		bl	_ZN5motor9set_omegaEf
+ 153              	.LVL19:
+   7:Core/Src/devs/steering.cpp **** 	//printf("\tsettingg %d \t", (int)(omega*100));
+   8:Core/Src/devs/steering.cpp **** }
+ 154              		.loc 1 8 0
+ 155 00ae BDEC028B 		vldm	sp!, {d8}
+ 156              	.LCFI2:
+ 157              		.cfi_restore 80
+ 158              		.cfi_restore 81
+ 159              		.cfi_def_cfa_offset 16
+ 160              	.LVL20:
+ 161 00b2 70BD     		pop	{r4, r5, r6, pc}
+ 162              	.LVL21:
+ 163              	.L12:
+ 164              		.align	2
+ 165              	.L11:
+ 166 00b4 0AD7233C 		.word	1008981770
+ 167              		.cfi_endproc
+ 168              	.LFE448:
+ 170              		.text
+ 171              	.Letext0:
+ 172              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 173              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 174              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 175              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 176              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 177              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 6
+
+
+ 178              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 179              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 180              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 181              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 182              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 183              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 184              		.file 15 "Core/Inc/periphs/tim.h"
+ 185              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 186              		.file 17 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 187              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 188              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 189              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 190              		.file 21 "Core/Inc/devs/motor.h"
+ 191              		.file 22 "Core/Inc/devs/encoder.h"
+ 192              		.file 23 "Core/Inc/devs/limit_switch.h"
+ 193              		.file 24 "Core/Inc/devs/steering.h"
+ 194              		.file 25 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 steering.cpp
+C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s:18     .text._ZN8steering9set_omegaEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s:25     .text._ZN8steering9set_omegaEf:00000000 _ZN8steering9set_omegaEf
+C:\Users\Prashant\AppData\Local\Temp\cccLHWxu.s:166    .text._ZN8steering9set_omegaEf:000000b4 $d
+
+UNDEFINED SYMBOLS
+_ZN5motor9set_omegaEf
+_ZN7encoder9get_omegaEv
