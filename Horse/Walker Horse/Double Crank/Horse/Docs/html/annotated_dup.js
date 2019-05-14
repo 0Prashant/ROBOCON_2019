@@ -1,0 +1,25 @@
+var annotated_dup =
+[
+    [ "A4988", "struct_a4988.html", "struct_a4988" ],
+    [ "Angle_PID", "class_angle___p_i_d.html", "class_angle___p_i_d" ],
+    [ "Discrete_PID", "class_discrete___p_i_d.html", "class_discrete___p_i_d" ],
+    [ "encoder", "classencoder.html", "classencoder" ],
+    [ "encoder_config", "structencoder__config.html", "structencoder__config" ],
+    [ "Exp_Smooth", "class_exp___smooth.html", "class_exp___smooth" ],
+    [ "FilteredDiscrete_PID", "class_filtered_discrete___p_i_d.html", "class_filtered_discrete___p_i_d" ],
+    [ "HMC5883", "struct_h_m_c5883.html", "struct_h_m_c5883" ],
+    [ "Kalman_Filter", "class_kalman___filter.html", "class_kalman___filter" ],
+    [ "Kalman_Vars", "struct_kalman___vars.html", "struct_kalman___vars" ],
+    [ "leg", "classleg.html", "classleg" ],
+    [ "limit_switch", "structlimit__switch.html", "structlimit__switch" ],
+    [ "Mat", "class_mat.html", "class_mat" ],
+    [ "motor", "classmotor.html", "classmotor" ],
+    [ "motor_config", "structmotor__config.html", "structmotor__config" ],
+    [ "MPU6050", "struct_m_p_u6050.html", "struct_m_p_u6050" ],
+    [ "PID", "class_p_i_d.html", "class_p_i_d" ],
+    [ "PID_Algorithm", "class_p_i_d___algorithm.html", "class_p_i_d___algorithm" ],
+    [ "steering", "classsteering.html", "classsteering" ],
+    [ "Vec2", "class_vec2.html", "class_vec2" ],
+    [ "Vec3", "class_vec3.html", "class_vec3" ],
+    [ "Vec4", "class_vec4.html", "class_vec4" ]
+];

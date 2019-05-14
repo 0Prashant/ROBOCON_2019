@@ -37,11 +37,9 @@ void steering_init(){
 
 static void pid_init(){
 
-	leg[0].set_PID_constants( 2.0, 30.0, 0, -LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO,
-	 LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO);		//for crank = 70  // 25.42, 3.082, 2.385	
-	leg[1].set_PID_constants( 2.0, 30.0, 0, -LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO,
-	 LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO);
-	steering.set_PID_constants( 2.2, 4.5, 0, -1.35, 1.35);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
+	leg[0].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);		//for crank = 70  // 25.42, 3.082, 2.385	
+	leg[1].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);
+	steering.set_PID_constants( 2.2, 4.5, 0, -0.875, 0.875);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 }
 
 static void limit_switch_init(){
@@ -61,7 +59,7 @@ void motor_init(){
         motor_configurations[0].in2_port = GPIOD;
         motor_configurations[0].in2_pin = GPIO_PIN_2;
         motor_configurations[0].channel = TIM_CHANNEL_3;
-        motor_configurations[0].max_omega = LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO;
+        motor_configurations[0].max_omega = 17.5;
         motor_configurations[0].tolerance = 0.2;
 
         motor_configurations[1].htim = &htim8;
@@ -70,7 +68,7 @@ void motor_init(){
         motor_configurations[1].in2_port = GPIOA;
         motor_configurations[1].in2_pin = GPIO_PIN_15;
         motor_configurations[1].channel = TIM_CHANNEL_2;
-        motor_configurations[1].max_omega = LEG_MOTOR_MAX_OMEGA / LEG_TO_ENCODER_RATIO;
+        motor_configurations[1].max_omega = 17.5;
         motor_configurations[1].tolerance = 0.2;
         
 
@@ -80,7 +78,7 @@ void motor_init(){
 	motor_configurations[2].in2_port = GPIOA;
 	motor_configurations[2].in2_pin = GPIO_PIN_8;
 	motor_configurations[2].channel = TIM_CHANNEL_4;
-	motor_configurations[2].max_omega = STEERING_MOTOR_MAX_OMEGA / BEARING_TO_STEERING_RATIO;
+	motor_configurations[2].max_omega = 0.875;
 	motor_configurations[2].tolerance = 0.1;
 
 	HAL_TIM_Base_Start(&htim8);

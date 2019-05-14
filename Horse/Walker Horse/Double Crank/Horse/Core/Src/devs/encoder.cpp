@@ -31,9 +31,11 @@ float encoder::get_actual_angle(void){
 void encoder::reset_angle(float angle_in_radian){
 	angle_ = angle_in_radian;
 	count_ = (angle_*encoder_->ppr)/(2*PI);
-	printf("counter_reset");
 }
-
+void encoder::reset_actual_angle(float angle_in_radian){
+	actual_angle_ = angle_in_radian;
+	actual_count_ = (actual_angle_*encoder_->ppr)/(2*PI);
+}
 
 int32_t encoder::get_count(){
 	return count_;

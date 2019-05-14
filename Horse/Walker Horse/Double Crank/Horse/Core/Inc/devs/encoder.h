@@ -28,6 +28,7 @@ public:
 	void calculate_omega(void);
 	float get_angle(void);
 	float get_actual_angle(void);
+	void reset_actual_angle(float angle_in_radian);
 	void reset_angle(float);
 	int32_t get_count();
 

@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['in1_5fpin',['in1_pin',['../structmotor__config.html#ab96ecf85a5bee0e13f1be1ac799ee24b',1,'motor_config']]],
-  ['in1_5fport',['in1_port',['../structmotor__config.html#a954fcd761395de38e251e7052126fe37',1,'motor_config']]],
-  ['in2_5fpin',['in2_pin',['../structmotor__config.html#ab494f14e301a7553f90ffd25c0ccfe7f',1,'motor_config']]],
-  ['in2_5fport',['in2_port',['../structmotor__config.html#a4b46a55de08e33e2e7a7f255568dfd7b',1,'motor_config']]],
-  ['int_5fpin',['int_pin',['../structlimit__switch.html#afd7e2c4af92e7a26ee230578c98a2d67',1,'limit_switch']]],
-  ['int_5fport',['int_port',['../structlimit__switch.html#af6b264126ee9bb617adac15907978946',1,'limit_switch']]]
+  ['encoder_5f',['encoder_',['../classencoder.html#aa59894d07cce9165245828c4e00c92e9',1,'encoder']]],
+  ['encoder_5f_5f',['encoder__',['../classleg.html#af6548dbf60a17b49bb4e1da05d0fa933',1,'leg::encoder__()'],['../classsteering.html#a59f627a3b0b3cbb4ee083c3233ea6640',1,'steering::encoder__()']]],
+  ['encoder_5fconfigurations',['encoder_configurations',['../robo__init_8cpp.html#a9322bf87369b3d58dccdbe9551e3edda',1,'robo_init.cpp']]],
+  ['err_5fsum_5f',['err_sum_',['../class_angle___p_i_d.html#a5c0c630668fdf19208e51d1fc404d21d',1,'Angle_PID']]]
 ];

@@ -22,8 +22,6 @@ void leg::set_omega(float omega){
 	
 	//omega = ramp(omega);
 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
-	// computed_omega = omega;
-	// printf("omega = %d\t, computed_omega = %d\n", (int)(omega*100), (int)(computed_omega*100));
 	motor__.set_omega(computed_omega);
 }
 

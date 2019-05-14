@@ -37,6 +37,7 @@ public:
 	float ramp(float omega);
 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
 	void reset_angle(float angle_in_radians);
+	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
 	void calculate_omega();
 	Leg_condition is_raised();
 	bool is_raised_without_deadzone();
