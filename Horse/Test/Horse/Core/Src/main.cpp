@@ -44,6 +44,8 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "adc.h"
+#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -70,7 +72,7 @@
 
 /* USER CODE BEGIN PV */
 
-extern leg leg[1];
+extern leg leg[2];
 extern steering steering;
 
 /* USER CODE END PV */
@@ -123,11 +125,13 @@ int main(void)
 	MX_TIM8_Init();
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
-	MX_USART3_UART_Init();
+	MX_I2C2_Init();
+	MX_ADC1_Init();
 	/* USER CODE BEGIN 2 */
 
 	robo_init();
 	Angle_Init();
+	HAL_ADC_Start(&hadc1);
 
 	/* USER CODE END 2 */
 
@@ -140,21 +144,27 @@ int main(void)
 	play();
 	while (1)
 	{
-		
-		printf("\nEND\n");
-		/* USER CODE END WHILE */
 
-		if (HAL_GetTick() - sample_time >= 10) {
+		printf("\nEND\n");
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		/* USER CODE END WHILE */
+		if(HAL_GetTick() - sample_time)
+		{
+			
+
 			sample_time = HAL_GetTick();
 			calculate_datas();
 			leg[0].set_omega(0);
+			leg[1].set_omega(0);
 			steering.set_omega(0);
 			Vec3<float> angle = read_Orientation(10);
 			angle.print();
 			printf("\n");
 		}
-
-		/* USER CODE BEGIN 3 */
+		/*  USER CODE BEGIN 3 */
 	}
 	/* USER CODE END 3 */
 }

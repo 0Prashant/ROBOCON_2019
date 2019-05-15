@@ -4,14 +4,8 @@
 
 #include "vec3.h"
 
-// class Smoothing_Algorithm
-// {
-// public:
-//         virtual float smooth(const float &input) = 0;
-//         virtual ~Smoothing_Algorithm() { }
-// };
 
-class Exp_Smooth // : public Smoothing_Algorithm
+class Exp_Smooth 
 {
 public:
         Exp_Smooth();

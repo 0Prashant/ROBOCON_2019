@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -17,54 +17,50 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.section	.text._ZN3leg4rampEf,"ax",%progbits
+  17              		.section	.text._ZN3leg9set_omegaEf,"ax",%progbits
   18              		.align	1
-  19              		.global	_ZN3leg4rampEf
+  19              		.global	_ZN3leg9set_omegaEf
   20              		.syntax unified
   21              		.thumb
   22              		.thumb_func
   23              		.fpu fpv4-sp-d16
-  25              	_ZN3leg4rampEf:
-  26              	.LFB450:
+  25              	_ZN3leg9set_omegaEf:
+  26              	.LFB451:
   27              		.file 1 "Core/Src/devs/leg.cpp"
    1:Core/Src/devs/leg.cpp **** #include "leg.h"
    2:Core/Src/devs/leg.cpp **** static float ramped_value = 0;
    3:Core/Src/devs/leg.cpp **** 
    4:Core/Src/devs/leg.cpp **** void leg::set_omega(float omega){
-   5:Core/Src/devs/leg.cpp **** 	float gravity_compensator_factor;
-   6:Core/Src/devs/leg.cpp **** 	if(!is_raised()){
-   7:Core/Src/devs/leg.cpp **** 		gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
-   8:Core/Src/devs/leg.cpp **** 	}
-   9:Core/Src/devs/leg.cpp **** 	else{
-  10:Core/Src/devs/leg.cpp **** 		gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
-  11:Core/Src/devs/leg.cpp **** 	}
-  12:Core/Src/devs/leg.cpp **** 	omega += gravity_compensator_factor;
-  13:Core/Src/devs/leg.cpp **** 	
-  14:Core/Src/devs/leg.cpp **** 	 omega = ramp(omega);
-  15:Core/Src/devs/leg.cpp **** 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
-  16:Core/Src/devs/leg.cpp **** 	// printf("omega = %d\t, computed_omega = %d\n", (int)(omega*100), (int)(computed_omega*100));
-  17:Core/Src/devs/leg.cpp **** 	motor__[0].set_omega(computed_omega);
-  18:Core/Src/devs/leg.cpp **** 	motor__[1].set_omega(computed_omega);
-  19:Core/Src/devs/leg.cpp **** }
-  20:Core/Src/devs/leg.cpp **** 
-  21:Core/Src/devs/leg.cpp **** float leg::ramp(float omega){
-  28              		.loc 1 21 0
+  28              		.loc 1 4 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
-  32              		@ link register save eliminated.
-  33              	.LVL0:
-  34              	.LBB52:
-  35              	.LBB53:
-  36              		.file 2 "Core/Inc/devs/motor.h"
+  32              	.LVL0:
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 2DED028B 		vpush.64	{d8}
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 24
+  43              		.cfi_offset 80, -24
+  44              		.cfi_offset 81, -20
+  45 0006 0546     		mov	r5, r0
+  46              	.LVL1:
+  47              	.LBB62:
+  48              	.LBB63:
+  49              		.file 2 "Core/Inc/devs/motor.h"
    1:Core/Inc/devs/motor.h **** #ifndef _MOTOR_H_
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 2
-
-
    2:Core/Inc/devs/motor.h **** #define _MOTOR_H_
    3:Core/Inc/devs/motor.h **** 
    4:Core/Inc/devs/motor.h **** #include "stm32f4xx_hal.h"
    5:Core/Inc/devs/motor.h **** #include "tim.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 2
+
+
    6:Core/Inc/devs/motor.h **** #include <math.h>
    7:Core/Inc/devs/motor.h **** 
    8:Core/Inc/devs/motor.h **** enum Direction{
@@ -97,665 +93,59 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   35:Core/Inc/devs/motor.h **** 	~motor(){}
   36:Core/Inc/devs/motor.h ****         void set_config(motor_config *motor) { motor_ = motor;}
   37:Core/Inc/devs/motor.h **** 	float get_max_omega(){return motor_->max_omega;}
-  37              		.loc 2 37 0
-  38 0000 836B     		ldr	r3, [r0, #56]
-  39 0002 D3ED007A 		vldr.32	s15, [r3]
-  40              	.LVL1:
-  41              	.LBE53:
-  42              	.LBE52:
-  22:Core/Src/devs/leg.cpp **** 	int factor = 2;
-  23:Core/Src/devs/leg.cpp **** 
-  24:Core/Src/devs/leg.cpp **** 	if (omega>motor__[0].get_max_omega())
-  43              		.loc 1 24 0
-  44 0006 B4EEE70A 		vcmpe.f32	s0, s15
-  45 000a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  46 000e 08DC     		bgt	.L2
-  25:Core/Src/devs/leg.cpp **** 	{
-  26:Core/Src/devs/leg.cpp **** 		omega = motor__[0].get_max_omega();
-  27:Core/Src/devs/leg.cpp **** 	}
-  28:Core/Src/devs/leg.cpp **** 	else if(omega < -motor__[0].get_max_omega())
-  47              		.loc 1 28 0
-  48 0010 F1EE677A 		vneg.f32	s15, s15
-  49 0014 F4EEC07A 		vcmpe.f32	s15, s0
-  50 0018 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 3
+  50              		.loc 2 37 0
+  51 0008 836B     		ldr	r3, [r0, #56]
+  52 000a 93ED008A 		vldr.32	s16, [r3]
+  53              	.LVL2:
+  54              	.LBE63:
+  55              	.LBE62:
+   5:Core/Src/devs/leg.cpp **** 
+   6:Core/Src/devs/leg.cpp **** 	if (omega>motor__.get_max_omega())
+  56              		.loc 1 6 0
+  57 000e B4EEC80A 		vcmpe.f32	s0, s16
+  58 0012 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  59 0016 06DC     		bgt	.L2
+   7:Core/Src/devs/leg.cpp **** 	{
+   8:Core/Src/devs/leg.cpp **** 		omega = motor__.get_max_omega();
+   9:Core/Src/devs/leg.cpp **** 	}
+  10:Core/Src/devs/leg.cpp **** 	else if(omega < -motor__.get_max_omega())
+  60              		.loc 1 10 0
+  61 0018 B1EE488A 		vneg.f32	s16, s16
+  62 001c B4EEC08A 		vcmpe.f32	s16, s0
+  63 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  64 0024 40DD     		ble	.L11
+  65              	.L2:
+  66              	.LVL3:
+  11:Core/Src/devs/leg.cpp **** 	{
+  12:Core/Src/devs/leg.cpp **** 		omega = -motor__.get_max_omega();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 3
 
 
-  51 001c 01DC     		bgt	.L2
-  52 001e F0EE407A 		vmov.f32	s15, s0
-  53              	.L2:
-  54              	.LVL2:
-  29:Core/Src/devs/leg.cpp **** 	{
-  30:Core/Src/devs/leg.cpp **** 		omega = -motor__[0].get_max_omega();
-  31:Core/Src/devs/leg.cpp **** 	}
-  32:Core/Src/devs/leg.cpp **** 
-  33:Core/Src/devs/leg.cpp **** 	if(ramped_value < (omega-factor)){
-  55              		.loc 1 33 0
-  56 0022 F0EE006A 		vmov.f32	s13, #2.0e+0
-  57 0026 77EEE66A 		vsub.f32	s13, s15, s13
-  58 002a 134B     		ldr	r3, .L14
-  59 002c 93ED007A 		vldr.32	s14, [r3]
-  60 0030 F4EEC76A 		vcmpe.f32	s13, s14
-  61 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  62 0038 0CDC     		bgt	.L12
-  34:Core/Src/devs/leg.cpp **** 		ramped_value += factor;
-  35:Core/Src/devs/leg.cpp **** 	}
-  36:Core/Src/devs/leg.cpp **** 	else if(ramped_value > (omega+factor)){
-  63              		.loc 1 36 0
-  64 003a F0EE006A 		vmov.f32	s13, #2.0e+0
-  65 003e 77EEA66A 		vadd.f32	s13, s15, s13
-  66 0042 B4EEE67A 		vcmpe.f32	s14, s13
-  67 0046 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  68 004a 0DDC     		bgt	.L13
-  37:Core/Src/devs/leg.cpp **** 		ramped_value -= factor;
-  38:Core/Src/devs/leg.cpp **** 	}
-  39:Core/Src/devs/leg.cpp **** 	else{
-  40:Core/Src/devs/leg.cpp **** 		ramped_value = omega;
-  69              		.loc 1 40 0
-  70 004c 0A4B     		ldr	r3, .L14
-  71 004e C3ED007A 		vstr.32	s15, [r3]
-  72 0052 05E0     		b	.L5
-  73              	.L12:
-  34:Core/Src/devs/leg.cpp **** 		ramped_value += factor;
-  74              		.loc 1 34 0
-  75 0054 F0EE007A 		vmov.f32	s15, #2.0e+0
-  76              	.LVL3:
-  77 0058 37EE277A 		vadd.f32	s14, s14, s15
-  78 005c 83ED007A 		vstr.32	s14, [r3]
-  79              	.L5:
-  41:Core/Src/devs/leg.cpp **** 	}
-  42:Core/Src/devs/leg.cpp **** 	return ramped_value;
-  43:Core/Src/devs/leg.cpp **** }
-  80              		.loc 1 43 0
-  81 0060 054B     		ldr	r3, .L14
-  82 0062 93ED000A 		vldr.32	s0, [r3]
-  83 0066 7047     		bx	lr
-  84              	.LVL4:
-  85              	.L13:
-  37:Core/Src/devs/leg.cpp **** 		ramped_value -= factor;
-  86              		.loc 1 37 0
-  87 0068 F0EE007A 		vmov.f32	s15, #2.0e+0
-  88              	.LVL5:
-  89 006c 37EE677A 		vsub.f32	s14, s14, s15
-  90 0070 014B     		ldr	r3, .L14
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 4
-
-
-  91 0072 83ED007A 		vstr.32	s14, [r3]
-  92 0076 F3E7     		b	.L5
-  93              	.L15:
-  94              		.align	2
-  95              	.L14:
-  96 0078 00000000 		.word	.LANCHOR0
-  97              		.cfi_endproc
-  98              	.LFE450:
- 100              		.global	__aeabi_f2d
- 101              		.global	__aeabi_dcmple
- 102              		.global	__aeabi_dcmpge
- 103              		.section	.text._ZN3leg9is_raisedEv,"ax",%progbits
- 104              		.align	1
- 105              		.global	_ZN3leg9is_raisedEv
- 106              		.syntax unified
- 107              		.thumb
- 108              		.thumb_func
- 109              		.fpu fpv4-sp-d16
- 111              	_ZN3leg9is_raisedEv:
- 112              	.LFB451:
-  44:Core/Src/devs/leg.cpp **** 
-  45:Core/Src/devs/leg.cpp **** Leg_condition leg::is_raised(){
- 113              		.loc 1 45 0
- 114              		.cfi_startproc
- 115              		@ args = 0, pretend = 0, frame = 0
- 116              		@ frame_needed = 0, uses_anonymous_args = 0
- 117              	.LVL6:
- 118 0000 10B5     		push	{r4, lr}
- 119              	.LCFI0:
- 120              		.cfi_def_cfa_offset 8
- 121              		.cfi_offset 4, -8
- 122              		.cfi_offset 14, -4
- 123              	.LVL7:
- 124              	.LBB54:
- 125              	.LBB55:
- 126              		.file 3 "Core/Inc/devs/leg.h"
-   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
-   2:Core/Inc/devs/leg.h **** #define _LEG_H_
-   3:Core/Inc/devs/leg.h **** 
-   4:Core/Inc/devs/leg.h **** #include "motor.h"
-   5:Core/Inc/devs/leg.h **** #include "encoder.h"
-   6:Core/Inc/devs/leg.h **** #include "pid.h"
-   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
-   8:Core/Inc/devs/leg.h **** #include "defines.h"
-   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
-  10:Core/Inc/devs/leg.h **** 
-  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
-  12:Core/Inc/devs/leg.h **** 			FALLEN, 
-  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
-  14:Core/Inc/devs/leg.h **** 
-  15:Core/Inc/devs/leg.h **** class leg
-  16:Core/Inc/devs/leg.h **** {
-  17:Core/Inc/devs/leg.h **** public:
-  18:Core/Inc/devs/leg.h **** 	leg() {}
-  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
-  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
-  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 5
-
-
-  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
-  23:Core/Inc/devs/leg.h **** 	~leg(){}
-  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor0, motor_config *motor1, encoder_config *encoder) { 
-  25:Core/Inc/devs/leg.h **** 		motor__[0].set_config(motor0);
-  26:Core/Inc/devs/leg.h **** 		motor__[1].set_config(motor1);
-  27:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
-  28:Core/Inc/devs/leg.h **** 	}
-  29:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
-  30:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
-  31:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
-  32:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
-  33:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
-  34:Core/Inc/devs/leg.h **** 	}
-  35:Core/Inc/devs/leg.h **** 
-  36:Core/Inc/devs/leg.h **** 	
-  37:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
-  38:Core/Inc/devs/leg.h **** 	float ramp(float omega);
-  39:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
-  40:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
-  41:Core/Inc/devs/leg.h **** 	void calculate_omega();
-  42:Core/Inc/devs/leg.h **** 	Leg_condition is_raised();
-  43:Core/Inc/devs/leg.h **** 	bool is_raised_without_deadzone();
-  44:Core/Inc/devs/leg.h **** 
-  45:Core/Inc/devs/leg.h **** 	int get_steps(){return steps;}
-  46:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
-  47:Core/Inc/devs/leg.h **** 	float get_angle(void){return encoder__.get_angle();}
- 127              		.loc 3 47 0
- 128 0002 00F14004 		add	r4, r0, #64
- 129 0006 2046     		mov	r0, r4
- 130              	.LVL8:
- 131 0008 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 132              	.LVL9:
- 133              	.LBE55:
- 134              	.LBE54:
-  46:Core/Src/devs/leg.cpp **** 	float dead_angle = 15*PI/180;
-  47:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=(0+dead_angle)) && (this->get_angle()<=(PI-dead_angle)))  ||
- 135              		.loc 1 47 0
- 136 000c DFED427A 		vldr.32	s15, .L37+48
- 137 0010 B4EEE70A 		vcmpe.f32	s0, s15
- 138 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 139 0018 0DDB     		blt	.L17
- 140              	.LVL10:
- 141              	.LBB56:
- 142              	.LBB57:
- 143              		.loc 3 47 0
- 144 001a 2046     		mov	r0, r4
- 145 001c FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 146              	.LVL11:
- 147              	.LBE57:
- 148              	.LBE56:
- 149              		.loc 1 47 0
- 150 0020 10EE100A 		vmov	r0, s0
- 151 0024 FFF7FEFF 		bl	__aeabi_f2d
- 152              	.LVL12:
- 153 0028 2FA3     		adr	r3, .L37
- 154 002a D3E90023 		ldrd	r2, [r3]
- 155 002e FFF7FEFF 		bl	__aeabi_dcmple
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 6
-
-
- 156              	.LVL13:
- 157 0032 0028     		cmp	r0, #0
- 158 0034 4ED1     		bne	.L25
- 159              	.L17:
- 160              	.LVL14:
- 161              	.LBB58:
- 162              	.LBB59:
- 163              		.loc 3 47 0 discriminator 4
- 164 0036 2046     		mov	r0, r4
- 165 0038 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 166              	.LVL15:
- 167              	.LBE59:
- 168              	.LBE58:
-  48:Core/Src/devs/leg.cpp **** 	   ((this->get_angle()<=(-PI-dead_angle)) && (this->get_angle()>=(-2*PI+dead_angle)))){
- 169              		.loc 1 48 0 discriminator 4
- 170 003c 10EE100A 		vmov	r0, s0
- 171 0040 FFF7FEFF 		bl	__aeabi_f2d
- 172              	.LVL16:
-  47:Core/Src/devs/leg.cpp **** 	   ((this->get_angle()<=(-PI-dead_angle)) && (this->get_angle()>=(-2*PI+dead_angle)))){
- 173              		.loc 1 47 0 discriminator 4
- 174 0044 2AA3     		adr	r3, .L37+8
- 175 0046 D3E90023 		ldrd	r2, [r3]
- 176 004a FFF7FEFF 		bl	__aeabi_dcmple
- 177              	.LVL17:
- 178 004e 60B1     		cbz	r0, .L20
- 179              	.LVL18:
- 180              	.LBB60:
- 181              	.LBB61:
- 182              		.loc 3 47 0
- 183 0050 2046     		mov	r0, r4
- 184 0052 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 185              	.LVL19:
- 186              	.LBE61:
- 187              	.LBE60:
- 188              		.loc 1 48 0
- 189 0056 10EE100A 		vmov	r0, s0
- 190 005a FFF7FEFF 		bl	__aeabi_f2d
- 191              	.LVL20:
- 192 005e 26A3     		adr	r3, .L37+16
- 193 0060 D3E90023 		ldrd	r2, [r3]
- 194 0064 FFF7FEFF 		bl	__aeabi_dcmpge
- 195              	.LVL21:
- 196 0068 B0BB     		cbnz	r0, .L26
- 197              	.L20:
- 198              	.LVL22:
- 199              	.LBB62:
- 200              	.LBB63:
- 201              		.loc 3 47 0 discriminator 5
- 202 006a 2046     		mov	r0, r4
- 203 006c FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 204              	.LVL23:
- 205              	.LBE63:
- 206              	.LBE62:
-  49:Core/Src/devs/leg.cpp **** 		return RAISED;
-  50:Core/Src/devs/leg.cpp **** 	}
-  51:Core/Src/devs/leg.cpp **** 	else if(((this->get_angle()>=(PI+dead_angle)) && (this->get_angle()<=(2*PI-dead_angle)))  ||
- 207              		.loc 1 51 0 discriminator 5
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 7
-
-
- 208 0070 10EE100A 		vmov	r0, s0
- 209 0074 FFF7FEFF 		bl	__aeabi_f2d
- 210              	.LVL24:
- 211 0078 21A3     		adr	r3, .L37+24
- 212 007a D3E90023 		ldrd	r2, [r3]
- 213 007e FFF7FEFF 		bl	__aeabi_dcmpge
- 214              	.LVL25:
- 215 0082 60B1     		cbz	r0, .L22
- 216              	.LVL26:
- 217              	.LBB64:
- 218              	.LBB65:
- 219              		.loc 3 47 0
- 220 0084 2046     		mov	r0, r4
- 221 0086 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 222              	.LVL27:
- 223              	.LBE65:
- 224              	.LBE64:
- 225              		.loc 1 51 0
- 226 008a 10EE100A 		vmov	r0, s0
- 227 008e FFF7FEFF 		bl	__aeabi_f2d
- 228              	.LVL28:
- 229 0092 1DA3     		adr	r3, .L37+32
- 230 0094 D3E90023 		ldrd	r2, [r3]
- 231 0098 FFF7FEFF 		bl	__aeabi_dcmple
- 232              	.LVL29:
- 233 009c F0B9     		cbnz	r0, .L27
- 234              	.L22:
- 235              	.LVL30:
- 236              	.LBB66:
- 237              	.LBB67:
- 238              		.loc 3 47 0 discriminator 4
- 239 009e 2046     		mov	r0, r4
- 240 00a0 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 241              	.LVL31:
- 242              	.LBE67:
- 243              	.LBE66:
- 244              		.loc 1 51 0 discriminator 4
- 245 00a4 DFED1D7A 		vldr.32	s15, .L37+52
- 246 00a8 B4EEE70A 		vcmpe.f32	s0, s15
- 247 00ac F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 248 00b0 16D8     		bhi	.L34
- 249              	.LVL32:
- 250              	.LBB68:
- 251              	.LBB69:
- 252              		.loc 3 47 0
- 253 00b2 2046     		mov	r0, r4
- 254 00b4 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 255              	.LVL33:
- 256              	.LBE69:
- 257              	.LBE68:
-  52:Core/Src/devs/leg.cpp **** 		((this->get_angle()<=(-dead_angle)) && (this->get_angle()>=(-PI+dead_angle)))){
- 258              		.loc 1 52 0
- 259 00b8 10EE100A 		vmov	r0, s0
- 260 00bc FFF7FEFF 		bl	__aeabi_f2d
- 261              	.LVL34:
- 262 00c0 13A3     		adr	r3, .L37+40
- 263 00c2 D3E90023 		ldrd	r2, [r3]
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 8
-
-
- 264 00c6 FFF7FEFF 		bl	__aeabi_dcmpge
- 265              	.LVL35:
- 266 00ca 08B1     		cbz	r0, .L36
-  53:Core/Src/devs/leg.cpp **** 		return FALLEN;
- 267              		.loc 1 53 0
- 268 00cc 0120     		movs	r0, #1
- 269 00ce 02E0     		b	.L19
- 270              	.L36:
-  54:Core/Src/devs/leg.cpp **** 	}
-  55:Core/Src/devs/leg.cpp **** 	else{
-  56:Core/Src/devs/leg.cpp **** 		return UNDEFINED;
- 271              		.loc 1 56 0
- 272 00d0 0220     		movs	r0, #2
- 273 00d2 00E0     		b	.L19
- 274              	.L25:
-  49:Core/Src/devs/leg.cpp **** 	}
- 275              		.loc 1 49 0
- 276 00d4 0020     		movs	r0, #0
- 277              	.L19:
-  57:Core/Src/devs/leg.cpp **** 	}
-  58:Core/Src/devs/leg.cpp **** }
- 278              		.loc 1 58 0
- 279 00d6 10BD     		pop	{r4, pc}
- 280              	.LVL36:
- 281              	.L26:
-  49:Core/Src/devs/leg.cpp **** 	}
- 282              		.loc 1 49 0
- 283 00d8 0020     		movs	r0, #0
- 284 00da FCE7     		b	.L19
- 285              	.L27:
-  53:Core/Src/devs/leg.cpp **** 	}
- 286              		.loc 1 53 0
- 287 00dc 0120     		movs	r0, #1
- 288 00de FAE7     		b	.L19
- 289              	.L34:
-  56:Core/Src/devs/leg.cpp **** 	}
- 290              		.loc 1 56 0
- 291 00e0 0220     		movs	r0, #2
- 292 00e2 F8E7     		b	.L19
- 293              	.L38:
- 294 00e4 AFF30080 		.align	3
- 295              	.L37:
- 296 00e8 182D440C 		.word	205794584
- 297 00ec D1090740 		.word	1074203089
- 298 00f0 182D449C 		.word	-1673253608
- 299 00f4 253A0BC0 		.word	-1073006043
- 300 00f8 182D4430 		.word	809774360
- 301 00fc E61518C0 		.word	-1072163354
- 302 0100 182D449C 		.word	-1673253608
- 303 0104 253A0B40 		.word	1074477605
- 304 0108 182D4430 		.word	809774360
- 305 010c E6151840 		.word	1075320294
- 306 0110 182D440C 		.word	205794584
- 307 0114 D10907C0 		.word	-1073280559
- 308 0118 920A863E 		.word	1048971922
- 309 011c 920A86BE 		.word	-1098511726
- 310              		.cfi_endproc
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 9
-
-
- 311              	.LFE451:
- 313              		.section	.text._ZN3leg9set_omegaEf,"ax",%progbits
- 314              		.align	1
- 315              		.global	_ZN3leg9set_omegaEf
- 316              		.syntax unified
- 317              		.thumb
- 318              		.thumb_func
- 319              		.fpu fpv4-sp-d16
- 321              	_ZN3leg9set_omegaEf:
- 322              	.LFB449:
-   4:Core/Src/devs/leg.cpp **** 	float gravity_compensator_factor;
- 323              		.loc 1 4 0
- 324              		.cfi_startproc
- 325              		@ args = 0, pretend = 0, frame = 0
- 326              		@ frame_needed = 0, uses_anonymous_args = 0
- 327              	.LVL37:
- 328 0000 38B5     		push	{r3, r4, r5, lr}
- 329              	.LCFI1:
- 330              		.cfi_def_cfa_offset 16
- 331              		.cfi_offset 3, -16
- 332              		.cfi_offset 4, -12
- 333              		.cfi_offset 5, -8
- 334              		.cfi_offset 14, -4
- 335 0002 2DED028B 		vpush.64	{d8}
- 336              	.LCFI2:
- 337              		.cfi_def_cfa_offset 24
- 338              		.cfi_offset 80, -24
- 339              		.cfi_offset 81, -20
- 340 0006 0546     		mov	r5, r0
- 341 0008 B0EE408A 		vmov.f32	s16, s0
-   6:Core/Src/devs/leg.cpp **** 		gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
- 342              		.loc 1 6 0
- 343 000c FFF7FEFF 		bl	_ZN3leg9is_raisedEv
- 344              	.LVL38:
- 345 0010 0028     		cmp	r0, #0
- 346 0012 53D0     		beq	.L50
-  10:Core/Src/devs/leg.cpp **** 	}
- 347              		.loc 1 10 0
- 348 0014 05F14000 		add	r0, r5, #64
- 349 0018 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 350              	.LVL39:
- 351              	.LBB86:
- 352              	.LBB87:
- 353              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-   1:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // -*- C++ -*- C forwarding header.
-   2:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-   3:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Copyright (C) 1997-2017 Free Software Foundation, Inc.
-   4:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
-   5:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This file is part of the GNU ISO C++ Library.  This library is free
-   6:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // software; you can redistribute it and/or modify it under the
-   7:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // terms of the GNU General Public License as published by the
-   8:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Free Software Foundation; either version 3, or (at your option)
-   9:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // any later version.
-  10:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  11:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // This library is distributed in the hope that it will be useful,
-  12:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // but WITHOUT ANY WARRANTY; without even the implied warranty of
-  13:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 10
-
-
-  14:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // GNU General Public License for more details.
-  15:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  16:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Under Section 7 of GPL version 3, you are granted additional
-  17:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // permissions described in the GCC Runtime Library Exception, version
-  18:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // 3.1, as published by the Free Software Foundation.
-  19:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  20:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // You should have received a copy of the GNU General Public License and
-  21:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // a copy of the GCC Runtime Library Exception along with this program;
-  22:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
-  23:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // <http://www.gnu.org/licenses/>.
-  24:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  25:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** /** @file include/cmath
-  26:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is a Standard C++ Library file.  You should @c \#include this file
-  27:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  in your programs, rather than any of the @a *.h implementation files.
-  28:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *
-  29:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  This is the C++ version of the Standard C Library header @c math.h,
-  30:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  and its contents are (mostly) the same as that header, but are all
-  31:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  contained in the namespace @c std (except for names which are defined
-  32:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  *  as macros in C).
-  33:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****  */
-  34:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  35:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
-  36:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // ISO C++ 14882: 26.5  C library
-  37:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** //
-  38:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  39:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #pragma GCC system_header
-  40:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  41:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/c++config.h>
-  42:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/cpp_type_traits.h>
-  43:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <ext/type_traits.h>
-  44:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
-  45:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include_next <math.h>
-  46:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
-  47:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #include <bits/std_abs.h>
-  48:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  49:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef _GLIBCXX_CMATH
-  50:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #define _GLIBCXX_CMATH 1
-  51:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  52:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** // Get rid of those macros defined in <math.h> in lieu of real functions.
-  53:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef div
-  54:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef acos
-  55:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef asin
-  56:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan
-  57:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef atan2
-  58:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ceil
-  59:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cos
-  60:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef cosh
-  61:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef exp
-  62:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fabs
-  63:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef floor
-  64:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef fmod
-  65:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef frexp
-  66:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef ldexp
-  67:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log
-  68:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef log10
-  69:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef modf
-  70:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef pow
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 11
-
-
-  71:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sin
-  72:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sinh
-  73:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef sqrt
-  74:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tan
-  75:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #undef tanh
-  76:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  77:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** extern "C++"
-  78:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
-  79:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** namespace std _GLIBCXX_VISIBILITY(default)
-  80:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** {
-  81:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** _GLIBCXX_BEGIN_NAMESPACE_VERSION
-  82:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  83:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::acos;
-  84:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  85:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
-  86:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
-  87:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(float __x)
-  88:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosf(__x); }
-  89:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  90:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
-  91:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   acos(long double __x)
-  92:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_acosl(__x); }
-  93:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
-  94:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-  95:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
-  96:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
-  97:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
-  98:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
-  99:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     acos(_Tp __x)
- 100:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_acos(__x); }
- 101:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 102:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::asin;
- 103:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 104:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
- 105:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
- 106:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(float __x)
- 107:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinf(__x); }
- 108:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 109:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
- 110:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   asin(long double __x)
- 111:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_asinl(__x); }
- 112:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
- 113:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 114:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
- 115:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
- 116:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
- 117:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
- 118:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     asin(_Tp __x)
- 119:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_asin(__x); }
- 120:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 121:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan;
- 122:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 123:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
- 124:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
- 125:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(float __x)
- 126:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanf(__x); }
- 127:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 12
-
-
- 128:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
- 129:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan(long double __x)
- 130:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atanl(__x); }
- 131:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
- 132:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 133:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
- 134:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
- 135:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value,
- 136:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
- 137:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan(_Tp __x)
- 138:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_atan(__x); }
- 139:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 140:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::atan2;
- 141:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 142:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
- 143:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
- 144:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(float __y, float __x)
- 145:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2f(__y, __x); }
- 146:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 147:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
- 148:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   atan2(long double __y, long double __x)
- 149:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_atan2l(__y, __x); }
- 150:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
- 151:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 152:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp, typename _Up>
- 153:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
- 154:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__promote_2<_Tp, _Up>::__type
- 155:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     atan2(_Tp __y, _Up __x)
- 156:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     {
- 157:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
- 158:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****       return atan2(__type(__y), __type(__x));
- 159:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     }
- 160:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 161:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::ceil;
- 162:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 163:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
- 164:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
- 165:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(float __x)
- 166:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceilf(__x); }
- 167:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 168:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR long double
- 169:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   ceil(long double __x)
- 170:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_ceill(__x); }
- 171:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #endif
- 172:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 173:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   template<typename _Tp>
- 174:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     inline _GLIBCXX_CONSTEXPR
- 175:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     typename __gnu_cxx::__enable_if<__is_integer<_Tp>::__value, 
- 176:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****                                     double>::__type
- 177:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     ceil(_Tp __x)
- 178:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****     { return __builtin_ceil(__x); }
- 179:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 180:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   using ::cos;
- 181:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** 
- 182:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath **** #ifndef __CORRECT_ISO_CPP_MATH_H_PROTO
- 183:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   inline _GLIBCXX_CONSTEXPR float
- 184:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   cos(float __x)
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 13
-
-
- 185:c:\program files (x86)\gnu tools arm embedded\7 2017-q4-major\arm-none-eabi\include\c++\7.2.1\cmath ****   { return __builtin_cosf(__x); }
- 354              		.loc 4 185 0
- 355 001c FFF7FEFF 		bl	cosf
- 356              	.LVL40:
- 357              	.LBE87:
- 358              	.LBE86:
-  10:Core/Src/devs/leg.cpp **** 	}
- 359              		.loc 1 10 0
- 360 0020 D5ED157A 		vldr.32	s15, [r5, #84]
- 361 0024 20EE670A 		vnmul.f32	s0, s0, s15
- 362 0028 20EE080A 		vmul.f32	s0, s0, s16
- 363              	.LVL41:
- 364              	.L41:
-  14:Core/Src/devs/leg.cpp **** 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
- 365              		.loc 1 14 0
- 366 002c 30EE080A 		vadd.f32	s0, s0, s16
- 367              	.LVL42:
- 368 0030 2846     		mov	r0, r5
- 369 0032 FFF7FEFF 		bl	_ZN3leg4rampEf
- 370              	.LVL43:
- 371 0036 B0EE408A 		vmov.f32	s16, s0
- 372              	.LVL44:
-  15:Core/Src/devs/leg.cpp **** 	// printf("omega = %d\t, computed_omega = %d\n", (int)(omega*100), (int)(computed_omega*100));
- 373              		.loc 1 15 0
- 374 003a 05F11404 		add	r4, r5, #20
- 375 003e 05F14000 		add	r0, r5, #64
- 376 0042 FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
- 377              	.LVL45:
- 378 0046 38EE400A 		vsub.f32	s0, s16, s0
- 379              	.LVL46:
- 380              	.LBB88:
- 381              	.LBB89:
- 382              	.LBB90:
- 383              	.LBB91:
- 384              		.file 5 "Core/Inc/utils/pid_algorithms.h"
+  13:Core/Src/devs/leg.cpp **** 	}
+  14:Core/Src/devs/leg.cpp **** 	// float gravity_compensator_factor;
+  15:Core/Src/devs/leg.cpp **** 	// if(!is_raised()){
+  16:Core/Src/devs/leg.cpp **** 	// 	gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
+  17:Core/Src/devs/leg.cpp **** 	// }
+  18:Core/Src/devs/leg.cpp **** 	// else{
+  19:Core/Src/devs/leg.cpp **** 	// 	gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
+  20:Core/Src/devs/leg.cpp **** 	// }
+  21:Core/Src/devs/leg.cpp **** 	// omega += gravity_compensator_factor;
+  22:Core/Src/devs/leg.cpp **** 	
+  23:Core/Src/devs/leg.cpp **** 	//omega = ramp(omega);
+  24:Core/Src/devs/leg.cpp **** 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
+  67              		.loc 1 24 0
+  68 0026 05F11404 		add	r4, r5, #20
+  69 002a 05F13C00 		add	r0, r5, #60
+  70              	.LVL4:
+  71 002e FFF7FEFF 		bl	_ZN7encoder9get_omegaEv
+  72              	.LVL5:
+  73 0032 38EE400A 		vsub.f32	s0, s16, s0
+  74              	.LVL6:
+  75              	.LBB64:
+  76              	.LBB65:
+  77              	.LBB66:
+  78              	.LBB67:
+  79              		.file 3 "Core/Inc/utils/pid_algorithms.h"
    1:Core/Inc/utils/pid_algorithms.h **** #ifndef _PID_ALGORITHMS_H_
    2:Core/Inc/utils/pid_algorithms.h **** #define _PID_ALGORITHMS_H_
    3:Core/Inc/utils/pid_algorithms.h **** 
@@ -776,30 +166,30 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   18:Core/Inc/utils/pid_algorithms.h ****                 set_D(d);
   19:Core/Inc/utils/pid_algorithms.h ****         }
   20:Core/Inc/utils/pid_algorithms.h ****         float get_P() { return p_; }
- 385              		.loc 5 20 0
- 386 004a 94ED016A 		vldr.32	s12, [r4, #4]
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 14
-
-
- 387              	.LVL47:
- 388              	.LBE91:
- 389              	.LBE90:
- 390              	.LBB92:
- 391              	.LBB93:
+  80              		.loc 3 20 0
+  81 0036 94ED016A 		vldr.32	s12, [r4, #4]
+  82              	.LVL7:
+  83              	.LBE67:
+  84              	.LBE66:
+  85              	.LBB68:
+  86              	.LBB69:
   21:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
- 392              		.loc 5 21 0
- 393 004e 94ED027A 		vldr.32	s14, [r4, #8]
- 394              	.LVL48:
- 395              	.LBE93:
- 396              	.LBE92:
- 397              	.LBB94:
- 398              	.LBB95:
+  87              		.loc 3 21 0
+  88 003a 94ED027A 		vldr.32	s14, [r4, #8]
+  89              	.LVL8:
+  90              	.LBE69:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 4
+
+
+  91              	.LBE68:
+  92              	.LBB70:
+  93              	.LBB71:
   22:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
- 399              		.loc 5 22 0
- 400 0052 D4ED037A 		vldr.32	s15, [r4, #12]
- 401              	.LVL49:
- 402              	.LBE95:
- 403              	.LBE94:
+  94              		.loc 3 22 0
+  95 003e D4ED037A 		vldr.32	s15, [r4, #12]
+  96              	.LVL9:
+  97              	.LBE71:
+  98              	.LBE70:
   23:Core/Inc/utils/pid_algorithms.h **** 
   24:Core/Inc/utils/pid_algorithms.h ****         void set_Limits(float max_out, float min_out)
   25:Core/Inc/utils/pid_algorithms.h ****         {
@@ -838,9 +228,6 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   58:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(const Discrete_PID &) = default;
   59:Core/Inc/utils/pid_algorithms.h ****         ~Discrete_PID() {}
   60:Core/Inc/utils/pid_algorithms.h **** 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 15
-
-
   61:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
   62:Core/Inc/utils/pid_algorithms.h ****          * 1) Discrete PID control Algorithm
   63:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
@@ -851,6 +238,9 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   68:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
   69:Core/Inc/utils/pid_algorithms.h ****          *      y(t) - y(t-1) = a*x(t) + b*x(t-1) + c*x(t-2)
   70:Core/Inc/utils/pid_algorithms.h ****          *      where,
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 5
+
+
   71:Core/Inc/utils/pid_algorithms.h ****          *              a = P + D/Ts
   72:Core/Inc/utils/pid_algorithms.h ****          *              b = -P + I*Ts - 2*D/Ts
   73:Core/Inc/utils/pid_algorithms.h ****          *              c = D/Ts
@@ -862,415 +252,762 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 1
   79:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
   80:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
   81:Core/Inc/utils/pid_algorithms.h ****                 float D_by_Ts = get_D() / Ts;
- 404              		.loc 5 81 0
- 405 0056 DFED2B5A 		vldr.32	s11, .L52
- 406 005a C7EEA56A 		vdiv.f32	s13, s15, s11
- 407              	.LVL50:
+  99              		.loc 3 81 0
+ 100 0042 DFED225A 		vldr.32	s11, .L13
+ 101 0046 C7EEA56A 		vdiv.f32	s13, s15, s11
+ 102              	.LVL10:
   82:Core/Inc/utils/pid_algorithms.h **** 
   83:Core/Inc/utils/pid_algorithms.h ****                 float a = P + D_by_Ts;
- 408              		.loc 5 83 0
- 409 005e 76EE267A 		vadd.f32	s15, s12, s13
- 410              	.LVL51:
+ 103              		.loc 3 83 0
+ 104 004a 76EE267A 		vadd.f32	s15, s12, s13
+ 105              	.LVL11:
   84:Core/Inc/utils/pid_algorithms.h ****                 float b = -P + I * Ts - 2 * D_by_Ts;
- 411              		.loc 5 84 0
- 412 0062 27EE257A 		vmul.f32	s14, s14, s11
- 413 0066 37EE467A 		vsub.f32	s14, s14, s12
- 414 006a 36EEA66A 		vadd.f32	s12, s13, s13
- 415 006e 37EE467A 		vsub.f32	s14, s14, s12
- 416              	.LVL52:
+ 106              		.loc 3 84 0
+ 107 004e 27EE257A 		vmul.f32	s14, s14, s11
+ 108 0052 37EE467A 		vsub.f32	s14, s14, s12
+ 109 0056 36EEA66A 		vadd.f32	s12, s13, s13
+ 110 005a 37EE467A 		vsub.f32	s14, s14, s12
+ 111              	.LVL12:
   85:Core/Inc/utils/pid_algorithms.h ****                 float c = D_by_Ts;
   86:Core/Inc/utils/pid_algorithms.h **** 
   87:Core/Inc/utils/pid_algorithms.h ****                 l_output_ += a * error + b * l_err_ + c * ll_err_;
- 417              		.loc 5 87 0
- 418 0072 60EE277A 		vmul.f32	s15, s0, s15
- 419              	.LVL53:
- 420 0076 94ED076A 		vldr.32	s12, [r4, #28]
- 421 007a 27EE067A 		vmul.f32	s14, s14, s12
- 422              	.LVL54:
- 423 007e 77EE877A 		vadd.f32	s15, s15, s14
- 424 0082 94ED087A 		vldr.32	s14, [r4, #32]
- 425 0086 66EE876A 		vmul.f32	s13, s13, s14
- 426              	.LVL55:
- 427 008a 77EEA67A 		vadd.f32	s15, s15, s13
- 428 008e 94ED067A 		vldr.32	s14, [r4, #24]
- 429 0092 77EE877A 		vadd.f32	s15, s15, s14
- 430 0096 C4ED067A 		vstr.32	s15, [r4, #24]
- 431              	.LVL56:
- 432              	.LBB96:
- 433              	.LBB97:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 16
-
-
+ 112              		.loc 3 87 0
+ 113 005e 60EE277A 		vmul.f32	s15, s0, s15
+ 114              	.LVL13:
+ 115 0062 94ED076A 		vldr.32	s12, [r4, #28]
+ 116 0066 27EE067A 		vmul.f32	s14, s14, s12
+ 117              	.LVL14:
+ 118 006a 77EE877A 		vadd.f32	s15, s15, s14
+ 119 006e 94ED087A 		vldr.32	s14, [r4, #32]
+ 120 0072 66EE876A 		vmul.f32	s13, s13, s14
+ 121              	.LVL15:
+ 122 0076 77EEA67A 		vadd.f32	s15, s15, s13
+ 123 007a 94ED067A 		vldr.32	s14, [r4, #24]
+ 124 007e 77EE877A 		vadd.f32	s15, s15, s14
+ 125 0082 C4ED067A 		vstr.32	s15, [r4, #24]
+ 126              	.LVL16:
+ 127              	.LBB72:
+ 128              	.LBB73:
   30:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
- 434              		.loc 5 30 0
- 435 009a 94ED047A 		vldr.32	s14, [r4, #16]
- 436              	.LVL57:
- 437              	.LBE97:
- 438              	.LBE96:
+ 129              		.loc 3 30 0
+ 130 0086 94ED047A 		vldr.32	s14, [r4, #16]
+ 131              	.LVL17:
+ 132              	.LBE73:
+ 133              	.LBE72:
   88:Core/Inc/utils/pid_algorithms.h **** 
   89:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper())
- 439              		.loc 5 89 0
- 440 009e F4EEC77A 		vcmpe.f32	s15, s14
- 441 00a2 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 442 00a6 16DC     		bgt	.L51
- 443              	.LVL58:
- 444              	.LBB98:
- 445              	.LBB99:
+ 134              		.loc 3 89 0
+ 135 008a F4EEC77A 		vcmpe.f32	s15, s14
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 6
+
+
+ 136 008e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 137 0092 0CDC     		bgt	.L12
+ 138              	.LVL18:
+ 139              	.LBB74:
+ 140              	.LBB75:
   31:Core/Inc/utils/pid_algorithms.h **** 
- 446              		.loc 5 31 0
- 447 00a8 94ED057A 		vldr.32	s14, [r4, #20]
- 448              	.LVL59:
- 449              	.LBE99:
- 450              	.LBE98:
+ 141              		.loc 3 31 0
+ 142 0094 94ED057A 		vldr.32	s14, [r4, #20]
+ 143              	.LVL19:
+ 144              	.LBE75:
+ 145              	.LBE74:
   90:Core/Inc/utils/pid_algorithms.h ****                 {
   91:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
   92:Core/Inc/utils/pid_algorithms.h ****                 }
   93:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower())
- 451              		.loc 5 93 0
- 452 00ac F4EEC77A 		vcmpe.f32	s15, s14
- 453 00b0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 454 00b4 11D5     		bpl	.L44
+ 146              		.loc 3 93 0
+ 147 0098 F4EEC77A 		vcmpe.f32	s15, s14
+ 148 009c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 149 00a0 07D5     		bpl	.L5
   94:Core/Inc/utils/pid_algorithms.h ****                 {
   95:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
- 455              		.loc 5 95 0
- 456 00b6 84ED067A 		vstr.32	s14, [r4, #24]
- 457 00ba 0EE0     		b	.L44
- 458              	.LVL60:
- 459              	.L50:
- 460              	.LBE89:
- 461              	.LBE88:
-   7:Core/Src/devs/leg.cpp **** 	}
- 462              		.loc 1 7 0
- 463 00bc 05F14000 		add	r0, r5, #64
- 464 00c0 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 465              	.LVL61:
- 466              	.LBB101:
- 467              	.LBB102:
- 468              		.loc 4 185 0
- 469 00c4 FFF7FEFF 		bl	cosf
- 470              	.LVL62:
- 471              	.LBE102:
- 472              	.LBE101:
-   7:Core/Src/devs/leg.cpp **** 	}
- 473              		.loc 1 7 0
- 474 00c8 D5ED147A 		vldr.32	s15, [r5, #80]
- 475 00cc 27EE800A 		vmul.f32	s0, s15, s0
- 476 00d0 20EE080A 		vmul.f32	s0, s0, s16
- 477              	.LVL63:
- 478 00d4 AAE7     		b	.L41
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 17
-
-
- 479              	.LVL64:
- 480              	.L51:
- 481              	.LBB103:
- 482              	.LBB100:
+ 150              		.loc 3 95 0
+ 151 00a2 84ED067A 		vstr.32	s14, [r4, #24]
+ 152 00a6 04E0     		b	.L5
+ 153              	.LVL20:
+ 154              	.L11:
+ 155              	.LBE65:
+ 156              	.LBE64:
+  10:Core/Src/devs/leg.cpp **** 	{
+ 157              		.loc 1 10 0
+ 158 00a8 B0EE408A 		vmov.f32	s16, s0
+ 159 00ac BBE7     		b	.L2
+ 160              	.LVL21:
+ 161              	.L12:
+ 162              	.LBB77:
+ 163              	.LBB76:
   91:Core/Inc/utils/pid_algorithms.h ****                 }
- 483              		.loc 5 91 0
- 484 00d6 84ED067A 		vstr.32	s14, [r4, #24]
- 485              	.L44:
+ 164              		.loc 3 91 0
+ 165 00ae 84ED067A 		vstr.32	s14, [r4, #24]
+ 166              	.L5:
   96:Core/Inc/utils/pid_algorithms.h ****                 }
   97:Core/Inc/utils/pid_algorithms.h **** 
   98:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
- 486              		.loc 5 98 0
- 487 00da 84ED086A 		vstr.32	s12, [r4, #32]
+ 167              		.loc 3 98 0
+ 168 00b2 84ED086A 		vstr.32	s12, [r4, #32]
   99:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
- 488              		.loc 5 99 0
- 489 00de 84ED070A 		vstr.32	s0, [r4, #28]
- 100:Core/Inc/utils/pid_algorithms.h **** 		
- 101:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
- 490              		.loc 5 101 0
- 491 00e2 94ED068A 		vldr.32	s16, [r4, #24]
- 492              	.LVL65:
- 493              	.LBE100:
- 494              	.LBE103:
-  17:Core/Src/devs/leg.cpp **** 	motor__[1].set_omega(computed_omega);
- 495              		.loc 1 17 0
- 496 00e6 B0EE480A 		vmov.f32	s0, s16
- 497 00ea 05F13800 		add	r0, r5, #56
- 498 00ee FFF7FEFF 		bl	_ZN5motor9set_omegaEf
- 499              	.LVL66:
-  18:Core/Src/devs/leg.cpp **** }
- 500              		.loc 1 18 0
- 501 00f2 B0EE480A 		vmov.f32	s0, s16
- 502 00f6 05F13C00 		add	r0, r5, #60
- 503 00fa FFF7FEFF 		bl	_ZN5motor9set_omegaEf
- 504              	.LVL67:
-  19:Core/Src/devs/leg.cpp **** 
- 505              		.loc 1 19 0
- 506 00fe BDEC028B 		vldm	sp!, {d8}
- 507              	.LCFI3:
- 508              		.cfi_restore 80
- 509              		.cfi_restore 81
- 510              		.cfi_def_cfa_offset 16
- 511 0102 38BD     		pop	{r3, r4, r5, pc}
- 512              	.LVL68:
- 513              	.L53:
- 514              		.align	2
- 515              	.L52:
- 516 0104 0AD7233C 		.word	1008981770
- 517              		.cfi_endproc
- 518              	.LFE449:
- 520              		.section	.text._ZN3leg26is_raised_without_deadzoneEv,"ax",%progbits
- 521              		.align	1
- 522              		.global	_ZN3leg26is_raised_without_deadzoneEv
- 523              		.syntax unified
- 524              		.thumb
- 525              		.thumb_func
- 526              		.fpu fpv4-sp-d16
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 18
+ 169              		.loc 3 99 0
+ 170 00b6 84ED070A 		vstr.32	s0, [r4, #28]
+ 171              	.LVL22:
+ 172              	.LBE76:
+ 173              	.LBE77:
+  25:Core/Src/devs/leg.cpp **** 	motor__.set_omega(computed_omega);
+ 174              		.loc 1 25 0
+ 175 00ba 94ED060A 		vldr.32	s0, [r4, #24]
+ 176 00be 05F13800 		add	r0, r5, #56
+ 177 00c2 FFF7FEFF 		bl	_ZN5motor9set_omegaEf
+ 178              	.LVL23:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 7
 
 
- 528              	_ZN3leg26is_raised_without_deadzoneEv:
- 529              	.LFB452:
-  59:Core/Src/devs/leg.cpp **** 
-  60:Core/Src/devs/leg.cpp **** bool leg::is_raised_without_deadzone(){
- 530              		.loc 1 60 0
- 531              		.cfi_startproc
- 532              		@ args = 0, pretend = 0, frame = 0
- 533              		@ frame_needed = 0, uses_anonymous_args = 0
- 534              	.LVL69:
- 535 0000 10B5     		push	{r4, lr}
- 536              	.LCFI4:
- 537              		.cfi_def_cfa_offset 8
- 538              		.cfi_offset 4, -8
- 539              		.cfi_offset 14, -4
- 540              	.LVL70:
- 541              	.LBB104:
- 542              	.LBB105:
- 543              		.loc 3 47 0
- 544 0002 00F14004 		add	r4, r0, #64
- 545 0006 2046     		mov	r0, r4
- 546              	.LVL71:
- 547 0008 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 548              	.LVL72:
- 549              	.LBE105:
- 550              	.LBE104:
-  61:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=0) && (this->get_angle()<=(PI)))  ||  ((this->get_angle()<=(-PI)) && (this
- 551              		.loc 1 61 0
- 552 000c B5EEC00A 		vcmpe.f32	s0, #0
- 553 0010 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 554 0014 0CDB     		blt	.L55
- 555              	.LVL73:
- 556              	.LBB106:
- 557              	.LBB107:
- 558              		.loc 3 47 0
- 559 0016 2046     		mov	r0, r4
- 560 0018 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 561              	.LVL74:
- 562              	.LBE107:
- 563              	.LBE106:
- 564              		.loc 1 61 0
- 565 001c 10EE100A 		vmov	r0, s0
- 566 0020 FFF7FEFF 		bl	__aeabi_f2d
- 567              	.LVL75:
- 568 0024 14A3     		adr	r3, .L67
- 569 0026 D3E90023 		ldrd	r2, [r3]
- 570 002a FFF7FEFF 		bl	__aeabi_dcmple
- 571              	.LVL76:
- 572 002e F0B9     		cbnz	r0, .L59
- 573              	.L55:
- 574              	.LVL77:
- 575              	.LBB108:
- 576              	.LBB109:
- 577              		.loc 3 47 0 discriminator 4
- 578 0030 2046     		mov	r0, r4
- 579 0032 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 580              	.LVL78:
- 581              	.LBE109:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 19
+  26:Core/Src/devs/leg.cpp **** }
+ 179              		.loc 1 26 0
+ 180 00c6 BDEC028B 		vldm	sp!, {d8}
+ 181              	.LCFI2:
+ 182              		.cfi_restore 80
+ 183              		.cfi_restore 81
+ 184              		.cfi_def_cfa_offset 16
+ 185              	.LVL24:
+ 186 00ca 38BD     		pop	{r3, r4, r5, pc}
+ 187              	.LVL25:
+ 188              	.L14:
+ 189              		.align	2
+ 190              	.L13:
+ 191 00cc 0AD7233C 		.word	1008981770
+ 192              		.cfi_endproc
+ 193              	.LFE451:
+ 195              		.section	.text._ZN3leg4rampEf,"ax",%progbits
+ 196              		.align	1
+ 197              		.global	_ZN3leg4rampEf
+ 198              		.syntax unified
+ 199              		.thumb
+ 200              		.thumb_func
+ 201              		.fpu fpv4-sp-d16
+ 203              	_ZN3leg4rampEf:
+ 204              	.LFB452:
+  27:Core/Src/devs/leg.cpp **** 
+  28:Core/Src/devs/leg.cpp **** float leg::ramp(float omega){
+ 205              		.loc 1 28 0
+ 206              		.cfi_startproc
+ 207              		@ args = 0, pretend = 0, frame = 0
+ 208              		@ frame_needed = 0, uses_anonymous_args = 0
+ 209              		@ link register save eliminated.
+ 210              	.LVL26:
+  29:Core/Src/devs/leg.cpp **** 	int factor = 1;
+  30:Core/Src/devs/leg.cpp **** 
+  31:Core/Src/devs/leg.cpp **** 	if(ramped_value < (omega-factor)){
+ 211              		.loc 1 31 0
+ 212 0000 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 213 0004 30EE477A 		vsub.f32	s14, s0, s14
+ 214 0008 134B     		ldr	r3, .L27
+ 215 000a D3ED007A 		vldr.32	s15, [r3]
+ 216 000e B4EEE77A 		vcmpe.f32	s14, s15
+ 217 0012 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 218 0016 0CDC     		bgt	.L25
+  32:Core/Src/devs/leg.cpp **** 		ramped_value += factor;
+  33:Core/Src/devs/leg.cpp **** 	}
+  34:Core/Src/devs/leg.cpp **** 	else if(ramped_value > (omega+factor)){
+ 219              		.loc 1 34 0
+ 220 0018 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 221 001c 30EE077A 		vadd.f32	s14, s0, s14
+ 222 0020 F4EEC77A 		vcmpe.f32	s15, s14
+ 223 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 224 0028 0DDC     		bgt	.L26
+  35:Core/Src/devs/leg.cpp **** 		ramped_value -= factor;
+  36:Core/Src/devs/leg.cpp **** 	}
+  37:Core/Src/devs/leg.cpp **** 	else{
+  38:Core/Src/devs/leg.cpp **** 		ramped_value = omega;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 8
 
 
- 582              	.LBE108:
- 583              		.loc 1 61 0 discriminator 4
- 584 0036 10EE100A 		vmov	r0, s0
- 585 003a FFF7FEFF 		bl	__aeabi_f2d
- 586              	.LVL79:
- 587 003e 10A3     		adr	r3, .L67+8
- 588 0040 D3E90023 		ldrd	r2, [r3]
- 589 0044 FFF7FEFF 		bl	__aeabi_dcmple
- 590              	.LVL80:
- 591 0048 08B9     		cbnz	r0, .L66
-  62:Core/Src/devs/leg.cpp **** 		return true;
-  63:Core/Src/devs/leg.cpp **** 	}
-  64:Core/Src/devs/leg.cpp **** 	else{
-  65:Core/Src/devs/leg.cpp **** 		return false;
- 592              		.loc 1 65 0
- 593 004a 0020     		movs	r0, #0
- 594              	.L57:
-  66:Core/Src/devs/leg.cpp **** 	}
+ 225              		.loc 1 38 0
+ 226 002a 0B4B     		ldr	r3, .L27
+ 227 002c 83ED000A 		vstr.32	s0, [r3]
+ 228 0030 05E0     		b	.L18
+ 229              	.L25:
+  32:Core/Src/devs/leg.cpp **** 		ramped_value += factor;
+ 230              		.loc 1 32 0
+ 231 0032 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 232 0036 77EE877A 		vadd.f32	s15, s15, s14
+ 233 003a C3ED007A 		vstr.32	s15, [r3]
+ 234              	.L18:
+  39:Core/Src/devs/leg.cpp **** 	}
+  40:Core/Src/devs/leg.cpp **** 	return ramped_value;
+  41:Core/Src/devs/leg.cpp **** }
+ 235              		.loc 1 41 0
+ 236 003e 064B     		ldr	r3, .L27
+ 237 0040 93ED000A 		vldr.32	s0, [r3]
+ 238              	.LVL27:
+ 239 0044 7047     		bx	lr
+ 240              	.LVL28:
+ 241              	.L26:
+  35:Core/Src/devs/leg.cpp **** 		ramped_value -= factor;
+ 242              		.loc 1 35 0
+ 243 0046 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 244 004a 77EEC77A 		vsub.f32	s15, s15, s14
+ 245 004e 024B     		ldr	r3, .L27
+ 246 0050 C3ED007A 		vstr.32	s15, [r3]
+ 247 0054 F3E7     		b	.L18
+ 248              	.L28:
+ 249 0056 00BF     		.align	2
+ 250              	.L27:
+ 251 0058 00000000 		.word	.LANCHOR0
+ 252              		.cfi_endproc
+ 253              	.LFE452:
+ 255              		.global	__aeabi_f2d
+ 256              		.global	__aeabi_dcmple
+ 257              		.global	__aeabi_dcmpge
+ 258              		.section	.text._ZN3leg9is_raisedEv,"ax",%progbits
+ 259              		.align	1
+ 260              		.global	_ZN3leg9is_raisedEv
+ 261              		.syntax unified
+ 262              		.thumb
+ 263              		.thumb_func
+ 264              		.fpu fpv4-sp-d16
+ 266              	_ZN3leg9is_raisedEv:
+ 267              	.LFB453:
+  42:Core/Src/devs/leg.cpp **** 
+  43:Core/Src/devs/leg.cpp **** Leg_condition leg::is_raised(){
+ 268              		.loc 1 43 0
+ 269              		.cfi_startproc
+ 270              		@ args = 0, pretend = 0, frame = 0
+ 271              		@ frame_needed = 0, uses_anonymous_args = 0
+ 272              	.LVL29:
+ 273 0000 10B5     		push	{r4, lr}
+ 274              	.LCFI3:
+ 275              		.cfi_def_cfa_offset 8
+ 276              		.cfi_offset 4, -8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 9
+
+
+ 277              		.cfi_offset 14, -4
+ 278              	.LVL30:
+ 279              	.LBB78:
+ 280              	.LBB79:
+ 281              		.file 4 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
+  39:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  40:Core/Inc/devs/leg.h **** 	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
+  41:Core/Inc/devs/leg.h **** 	void calculate_omega();
+  42:Core/Inc/devs/leg.h **** 	Leg_condition is_raised();
+  43:Core/Inc/devs/leg.h **** 	bool is_raised_without_deadzone();
+  44:Core/Inc/devs/leg.h **** 
+  45:Core/Inc/devs/leg.h **** 	int get_steps(){return steps;}
+  46:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+  47:Core/Inc/devs/leg.h **** 	float get_angle(void){return encoder__.get_angle();}
+ 282              		.loc 4 47 0
+ 283 0002 00F13C04 		add	r4, r0, #60
+ 284 0006 2046     		mov	r0, r4
+ 285              	.LVL31:
+ 286 0008 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 10
+
+
+ 287              	.LVL32:
+ 288              	.LBE79:
+ 289              	.LBE78:
+  44:Core/Src/devs/leg.cpp **** 	float dead_angle = 15*PI/180;
+  45:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=(0+dead_angle)) && (this->get_angle()<=(PI-dead_angle)))  ||
+ 290              		.loc 1 45 0
+ 291 000c DFED427A 		vldr.32	s15, .L50+48
+ 292 0010 B4EEE70A 		vcmpe.f32	s0, s15
+ 293 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 294 0018 0DDB     		blt	.L30
+ 295              	.LVL33:
+ 296              	.LBB80:
+ 297              	.LBB81:
+ 298              		.loc 4 47 0
+ 299 001a 2046     		mov	r0, r4
+ 300 001c FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 301              	.LVL34:
+ 302              	.LBE81:
+ 303              	.LBE80:
+ 304              		.loc 1 45 0
+ 305 0020 10EE100A 		vmov	r0, s0
+ 306 0024 FFF7FEFF 		bl	__aeabi_f2d
+ 307              	.LVL35:
+ 308 0028 2FA3     		adr	r3, .L50
+ 309 002a D3E90023 		ldrd	r2, [r3]
+ 310 002e FFF7FEFF 		bl	__aeabi_dcmple
+ 311              	.LVL36:
+ 312 0032 0028     		cmp	r0, #0
+ 313 0034 4ED1     		bne	.L38
+ 314              	.L30:
+ 315              	.LVL37:
+ 316              	.LBB82:
+ 317              	.LBB83:
+ 318              		.loc 4 47 0 discriminator 4
+ 319 0036 2046     		mov	r0, r4
+ 320 0038 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 321              	.LVL38:
+ 322              	.LBE83:
+ 323              	.LBE82:
+  46:Core/Src/devs/leg.cpp **** 	   ((this->get_angle()<=(-PI-dead_angle)) && (this->get_angle()>=(-2*PI+dead_angle)))){
+ 324              		.loc 1 46 0 discriminator 4
+ 325 003c 10EE100A 		vmov	r0, s0
+ 326 0040 FFF7FEFF 		bl	__aeabi_f2d
+ 327              	.LVL39:
+  45:Core/Src/devs/leg.cpp **** 	   ((this->get_angle()<=(-PI-dead_angle)) && (this->get_angle()>=(-2*PI+dead_angle)))){
+ 328              		.loc 1 45 0 discriminator 4
+ 329 0044 2AA3     		adr	r3, .L50+8
+ 330 0046 D3E90023 		ldrd	r2, [r3]
+ 331 004a FFF7FEFF 		bl	__aeabi_dcmple
+ 332              	.LVL40:
+ 333 004e 60B1     		cbz	r0, .L33
+ 334              	.LVL41:
+ 335              	.LBB84:
+ 336              	.LBB85:
+ 337              		.loc 4 47 0
+ 338 0050 2046     		mov	r0, r4
+ 339 0052 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 11
+
+
+ 340              	.LVL42:
+ 341              	.LBE85:
+ 342              	.LBE84:
+ 343              		.loc 1 46 0
+ 344 0056 10EE100A 		vmov	r0, s0
+ 345 005a FFF7FEFF 		bl	__aeabi_f2d
+ 346              	.LVL43:
+ 347 005e 26A3     		adr	r3, .L50+16
+ 348 0060 D3E90023 		ldrd	r2, [r3]
+ 349 0064 FFF7FEFF 		bl	__aeabi_dcmpge
+ 350              	.LVL44:
+ 351 0068 B0BB     		cbnz	r0, .L39
+ 352              	.L33:
+ 353              	.LVL45:
+ 354              	.LBB86:
+ 355              	.LBB87:
+ 356              		.loc 4 47 0 discriminator 5
+ 357 006a 2046     		mov	r0, r4
+ 358 006c FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 359              	.LVL46:
+ 360              	.LBE87:
+ 361              	.LBE86:
+  47:Core/Src/devs/leg.cpp **** 		return RAISED;
+  48:Core/Src/devs/leg.cpp **** 	}
+  49:Core/Src/devs/leg.cpp **** 	else if(((this->get_angle()>=(PI+dead_angle)) && (this->get_angle()<=(2*PI-dead_angle)))  ||
+ 362              		.loc 1 49 0 discriminator 5
+ 363 0070 10EE100A 		vmov	r0, s0
+ 364 0074 FFF7FEFF 		bl	__aeabi_f2d
+ 365              	.LVL47:
+ 366 0078 21A3     		adr	r3, .L50+24
+ 367 007a D3E90023 		ldrd	r2, [r3]
+ 368 007e FFF7FEFF 		bl	__aeabi_dcmpge
+ 369              	.LVL48:
+ 370 0082 60B1     		cbz	r0, .L35
+ 371              	.LVL49:
+ 372              	.LBB88:
+ 373              	.LBB89:
+ 374              		.loc 4 47 0
+ 375 0084 2046     		mov	r0, r4
+ 376 0086 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 377              	.LVL50:
+ 378              	.LBE89:
+ 379              	.LBE88:
+ 380              		.loc 1 49 0
+ 381 008a 10EE100A 		vmov	r0, s0
+ 382 008e FFF7FEFF 		bl	__aeabi_f2d
+ 383              	.LVL51:
+ 384 0092 1DA3     		adr	r3, .L50+32
+ 385 0094 D3E90023 		ldrd	r2, [r3]
+ 386 0098 FFF7FEFF 		bl	__aeabi_dcmple
+ 387              	.LVL52:
+ 388 009c F0B9     		cbnz	r0, .L40
+ 389              	.L35:
+ 390              	.LVL53:
+ 391              	.LBB90:
+ 392              	.LBB91:
+ 393              		.loc 4 47 0 discriminator 4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 12
+
+
+ 394 009e 2046     		mov	r0, r4
+ 395 00a0 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 396              	.LVL54:
+ 397              	.LBE91:
+ 398              	.LBE90:
+ 399              		.loc 1 49 0 discriminator 4
+ 400 00a4 DFED1D7A 		vldr.32	s15, .L50+52
+ 401 00a8 B4EEE70A 		vcmpe.f32	s0, s15
+ 402 00ac F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 403 00b0 16D8     		bhi	.L47
+ 404              	.LVL55:
+ 405              	.LBB92:
+ 406              	.LBB93:
+ 407              		.loc 4 47 0
+ 408 00b2 2046     		mov	r0, r4
+ 409 00b4 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 410              	.LVL56:
+ 411              	.LBE93:
+ 412              	.LBE92:
+  50:Core/Src/devs/leg.cpp **** 		((this->get_angle()<=(-dead_angle)) && (this->get_angle()>=(-PI+dead_angle)))){
+ 413              		.loc 1 50 0
+ 414 00b8 10EE100A 		vmov	r0, s0
+ 415 00bc FFF7FEFF 		bl	__aeabi_f2d
+ 416              	.LVL57:
+ 417 00c0 13A3     		adr	r3, .L50+40
+ 418 00c2 D3E90023 		ldrd	r2, [r3]
+ 419 00c6 FFF7FEFF 		bl	__aeabi_dcmpge
+ 420              	.LVL58:
+ 421 00ca 08B1     		cbz	r0, .L49
+  51:Core/Src/devs/leg.cpp **** 		return FALLEN;
+ 422              		.loc 1 51 0
+ 423 00cc 0120     		movs	r0, #1
+ 424 00ce 02E0     		b	.L32
+ 425              	.L49:
+  52:Core/Src/devs/leg.cpp **** 	}
+  53:Core/Src/devs/leg.cpp **** 	else{
+  54:Core/Src/devs/leg.cpp **** 		return UNDEFINED;
+ 426              		.loc 1 54 0
+ 427 00d0 0220     		movs	r0, #2
+ 428 00d2 00E0     		b	.L32
+ 429              	.L38:
+  47:Core/Src/devs/leg.cpp **** 	}
+ 430              		.loc 1 47 0
+ 431 00d4 0020     		movs	r0, #0
+ 432              	.L32:
+  55:Core/Src/devs/leg.cpp **** 	}         
+  56:Core/Src/devs/leg.cpp **** }
+ 433              		.loc 1 56 0
+ 434 00d6 10BD     		pop	{r4, pc}
+ 435              	.LVL59:
+ 436              	.L39:
+  47:Core/Src/devs/leg.cpp **** 	}
+ 437              		.loc 1 47 0
+ 438 00d8 0020     		movs	r0, #0
+ 439 00da FCE7     		b	.L32
+ 440              	.L40:
+  51:Core/Src/devs/leg.cpp **** 	}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 13
+
+
+ 441              		.loc 1 51 0
+ 442 00dc 0120     		movs	r0, #1
+ 443 00de FAE7     		b	.L32
+ 444              	.L47:
+  54:Core/Src/devs/leg.cpp **** 	}         
+ 445              		.loc 1 54 0
+ 446 00e0 0220     		movs	r0, #2
+ 447 00e2 F8E7     		b	.L32
+ 448              	.L51:
+ 449 00e4 AFF30080 		.align	3
+ 450              	.L50:
+ 451 00e8 182D440C 		.word	205794584
+ 452 00ec D1090740 		.word	1074203089
+ 453 00f0 182D449C 		.word	-1673253608
+ 454 00f4 253A0BC0 		.word	-1073006043
+ 455 00f8 182D4430 		.word	809774360
+ 456 00fc E61518C0 		.word	-1072163354
+ 457 0100 182D449C 		.word	-1673253608
+ 458 0104 253A0B40 		.word	1074477605
+ 459 0108 182D4430 		.word	809774360
+ 460 010c E6151840 		.word	1075320294
+ 461 0110 182D440C 		.word	205794584
+ 462 0114 D10907C0 		.word	-1073280559
+ 463 0118 920A863E 		.word	1048971922
+ 464 011c 920A86BE 		.word	-1098511726
+ 465              		.cfi_endproc
+ 466              	.LFE453:
+ 468              		.section	.text._ZN3leg26is_raised_without_deadzoneEv,"ax",%progbits
+ 469              		.align	1
+ 470              		.global	_ZN3leg26is_raised_without_deadzoneEv
+ 471              		.syntax unified
+ 472              		.thumb
+ 473              		.thumb_func
+ 474              		.fpu fpv4-sp-d16
+ 476              	_ZN3leg26is_raised_without_deadzoneEv:
+ 477              	.LFB454:
+  57:Core/Src/devs/leg.cpp **** 
+  58:Core/Src/devs/leg.cpp **** bool leg::is_raised_without_deadzone(){
+ 478              		.loc 1 58 0
+ 479              		.cfi_startproc
+ 480              		@ args = 0, pretend = 0, frame = 0
+ 481              		@ frame_needed = 0, uses_anonymous_args = 0
+ 482              	.LVL60:
+ 483 0000 10B5     		push	{r4, lr}
+ 484              	.LCFI4:
+ 485              		.cfi_def_cfa_offset 8
+ 486              		.cfi_offset 4, -8
+ 487              		.cfi_offset 14, -4
+ 488              	.LVL61:
+ 489              	.LBB94:
+ 490              	.LBB95:
+ 491              		.loc 4 47 0
+ 492 0002 00F13C04 		add	r4, r0, #60
+ 493 0006 2046     		mov	r0, r4
+ 494              	.LVL62:
+ 495 0008 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 496              	.LVL63:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 14
+
+
+ 497              	.LBE95:
+ 498              	.LBE94:
+  59:Core/Src/devs/leg.cpp **** 	if(((this->get_angle()>=0) && (this->get_angle()<=(PI)))  ||  ((this->get_angle()<=(-PI)) && (this
+ 499              		.loc 1 59 0
+ 500 000c B5EEC00A 		vcmpe.f32	s0, #0
+ 501 0010 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 502 0014 0CDB     		blt	.L53
+ 503              	.LVL64:
+ 504              	.LBB96:
+ 505              	.LBB97:
+ 506              		.loc 4 47 0
+ 507 0016 2046     		mov	r0, r4
+ 508 0018 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 509              	.LVL65:
+ 510              	.LBE97:
+ 511              	.LBE96:
+ 512              		.loc 1 59 0
+ 513 001c 10EE100A 		vmov	r0, s0
+ 514 0020 FFF7FEFF 		bl	__aeabi_f2d
+ 515              	.LVL66:
+ 516 0024 14A3     		adr	r3, .L65
+ 517 0026 D3E90023 		ldrd	r2, [r3]
+ 518 002a FFF7FEFF 		bl	__aeabi_dcmple
+ 519              	.LVL67:
+ 520 002e F0B9     		cbnz	r0, .L57
+ 521              	.L53:
+ 522              	.LVL68:
+ 523              	.LBB98:
+ 524              	.LBB99:
+ 525              		.loc 4 47 0 discriminator 4
+ 526 0030 2046     		mov	r0, r4
+ 527 0032 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 528              	.LVL69:
+ 529              	.LBE99:
+ 530              	.LBE98:
+ 531              		.loc 1 59 0 discriminator 4
+ 532 0036 10EE100A 		vmov	r0, s0
+ 533 003a FFF7FEFF 		bl	__aeabi_f2d
+ 534              	.LVL70:
+ 535 003e 10A3     		adr	r3, .L65+8
+ 536 0040 D3E90023 		ldrd	r2, [r3]
+ 537 0044 FFF7FEFF 		bl	__aeabi_dcmple
+ 538              	.LVL71:
+ 539 0048 08B9     		cbnz	r0, .L64
+  60:Core/Src/devs/leg.cpp **** 		return true;
+  61:Core/Src/devs/leg.cpp **** 	}
+  62:Core/Src/devs/leg.cpp **** 	else{
+  63:Core/Src/devs/leg.cpp **** 		return false;
+ 540              		.loc 1 63 0
+ 541 004a 0020     		movs	r0, #0
+ 542              	.L55:
+  64:Core/Src/devs/leg.cpp **** 	}
+  65:Core/Src/devs/leg.cpp **** 
+  66:Core/Src/devs/leg.cpp **** }
+ 543              		.loc 1 66 0
+ 544 004c 10BD     		pop	{r4, pc}
+ 545              	.LVL72:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 15
+
+
+ 546              	.L64:
+ 547              	.LBB100:
+ 548              	.LBB101:
+ 549              		.loc 4 47 0
+ 550 004e 2046     		mov	r0, r4
+ 551 0050 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 552              	.LVL73:
+ 553              	.LBE101:
+ 554              	.LBE100:
+  59:Core/Src/devs/leg.cpp **** 		return true;
+ 555              		.loc 1 59 0
+ 556 0054 10EE100A 		vmov	r0, s0
+ 557 0058 FFF7FEFF 		bl	__aeabi_f2d
+ 558              	.LVL74:
+ 559 005c 0AA3     		adr	r3, .L65+16
+ 560 005e D3E90023 		ldrd	r2, [r3]
+ 561 0062 FFF7FEFF 		bl	__aeabi_dcmpge
+ 562              	.LVL75:
+ 563 0066 0028     		cmp	r0, #0
+ 564 0068 F0D0     		beq	.L55
+  60:Core/Src/devs/leg.cpp **** 		return true;
+ 565              		.loc 1 60 0
+ 566 006a 0120     		movs	r0, #1
+ 567 006c EEE7     		b	.L55
+ 568              	.L57:
+ 569 006e 0120     		movs	r0, #1
+ 570 0070 ECE7     		b	.L55
+ 571              	.L66:
+ 572 0072 00BFAFF3 		.align	3
+ 572      0080
+ 573              	.L65:
+ 574 0078 182D4454 		.word	1413754136
+ 575 007c FB210940 		.word	1074340347
+ 576 0080 182D4454 		.word	1413754136
+ 577 0084 FB2109C0 		.word	-1073143301
+ 578 0088 182D4454 		.word	1413754136
+ 579 008c FB2119C0 		.word	-1072094725
+ 580              		.cfi_endproc
+ 581              	.LFE454:
+ 583              		.section	.text._ZN3leg11reset_angleEf,"ax",%progbits
+ 584              		.align	1
+ 585              		.global	_ZN3leg11reset_angleEf
+ 586              		.syntax unified
+ 587              		.thumb
+ 588              		.thumb_func
+ 589              		.fpu fpv4-sp-d16
+ 591              	_ZN3leg11reset_angleEf:
+ 592              	.LFB455:
   67:Core/Src/devs/leg.cpp **** 
-  68:Core/Src/devs/leg.cpp **** }
- 595              		.loc 1 68 0
- 596 004c 10BD     		pop	{r4, pc}
- 597              	.LVL81:
- 598              	.L66:
- 599              	.LBB110:
- 600              	.LBB111:
- 601              		.loc 3 47 0
- 602 004e 2046     		mov	r0, r4
- 603 0050 FFF7FEFF 		bl	_ZN7encoder9get_angleEv
- 604              	.LVL82:
- 605              	.LBE111:
- 606              	.LBE110:
-  61:Core/Src/devs/leg.cpp **** 		return true;
- 607              		.loc 1 61 0
- 608 0054 10EE100A 		vmov	r0, s0
- 609 0058 FFF7FEFF 		bl	__aeabi_f2d
- 610              	.LVL83:
- 611 005c 0AA3     		adr	r3, .L67+16
- 612 005e D3E90023 		ldrd	r2, [r3]
- 613 0062 FFF7FEFF 		bl	__aeabi_dcmpge
- 614              	.LVL84:
- 615 0066 0028     		cmp	r0, #0
- 616 0068 F0D0     		beq	.L57
-  62:Core/Src/devs/leg.cpp **** 		return true;
- 617              		.loc 1 62 0
- 618 006a 0120     		movs	r0, #1
- 619 006c EEE7     		b	.L57
- 620              	.L59:
- 621 006e 0120     		movs	r0, #1
- 622 0070 ECE7     		b	.L57
- 623              	.L68:
- 624 0072 00BFAFF3 		.align	3
- 624      0080
- 625              	.L67:
- 626 0078 182D4454 		.word	1413754136
- 627 007c FB210940 		.word	1074340347
- 628 0080 182D4454 		.word	1413754136
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 20
+  68:Core/Src/devs/leg.cpp **** void leg::reset_angle(float angle_in_radians){
+ 593              		.loc 1 68 0
+ 594              		.cfi_startproc
+ 595              		@ args = 0, pretend = 0, frame = 0
+ 596              		@ frame_needed = 0, uses_anonymous_args = 0
+ 597              	.LVL76:
+ 598 0000 08B5     		push	{r3, lr}
+ 599              	.LCFI5:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 16
 
 
- 629 0084 FB2109C0 		.word	-1073143301
- 630 0088 182D4454 		.word	1413754136
- 631 008c FB2119C0 		.word	-1072094725
- 632              		.cfi_endproc
- 633              	.LFE452:
- 635              		.section	.text._ZN3leg11reset_angleEf,"ax",%progbits
- 636              		.align	1
- 637              		.global	_ZN3leg11reset_angleEf
- 638              		.syntax unified
- 639              		.thumb
- 640              		.thumb_func
- 641              		.fpu fpv4-sp-d16
- 643              	_ZN3leg11reset_angleEf:
- 644              	.LFB453:
-  69:Core/Src/devs/leg.cpp **** 
-  70:Core/Src/devs/leg.cpp **** void leg::reset_angle(float angle_in_radians){
- 645              		.loc 1 70 0
- 646              		.cfi_startproc
- 647              		@ args = 0, pretend = 0, frame = 0
- 648              		@ frame_needed = 0, uses_anonymous_args = 0
- 649              	.LVL85:
- 650 0000 08B5     		push	{r3, lr}
- 651              	.LCFI5:
- 652              		.cfi_def_cfa_offset 8
- 653              		.cfi_offset 3, -8
- 654              		.cfi_offset 14, -4
-  71:Core/Src/devs/leg.cpp **** 	encoder__.reset_angle(angle_in_radians);
- 655              		.loc 1 71 0
- 656 0002 4030     		adds	r0, r0, #64
- 657              	.LVL86:
- 658 0004 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
- 659              	.LVL87:
-  72:Core/Src/devs/leg.cpp **** }
- 660              		.loc 1 72 0
- 661 0008 08BD     		pop	{r3, pc}
- 662              		.cfi_endproc
- 663              	.LFE453:
- 665              		.section	.text._ZN3leg15calculate_omegaEv,"ax",%progbits
- 666              		.align	1
- 667              		.global	_ZN3leg15calculate_omegaEv
- 668              		.syntax unified
- 669              		.thumb
- 670              		.thumb_func
- 671              		.fpu fpv4-sp-d16
- 673              	_ZN3leg15calculate_omegaEv:
- 674              	.LFB454:
-  73:Core/Src/devs/leg.cpp **** 
-  74:Core/Src/devs/leg.cpp **** void leg::calculate_omega(){
- 675              		.loc 1 74 0
- 676              		.cfi_startproc
- 677              		@ args = 0, pretend = 0, frame = 0
- 678              		@ frame_needed = 0, uses_anonymous_args = 0
- 679              	.LVL88:
- 680 0000 08B5     		push	{r3, lr}
- 681              	.LCFI6:
- 682              		.cfi_def_cfa_offset 8
- 683              		.cfi_offset 3, -8
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 21
+ 600              		.cfi_def_cfa_offset 8
+ 601              		.cfi_offset 3, -8
+ 602              		.cfi_offset 14, -4
+  69:Core/Src/devs/leg.cpp **** 	encoder__.reset_angle(angle_in_radians);
+ 603              		.loc 1 69 0
+ 604 0002 3C30     		adds	r0, r0, #60
+ 605              	.LVL77:
+ 606 0004 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+ 607              	.LVL78:
+  70:Core/Src/devs/leg.cpp **** }
+ 608              		.loc 1 70 0
+ 609 0008 08BD     		pop	{r3, pc}
+ 610              		.cfi_endproc
+ 611              	.LFE455:
+ 613              		.section	.text._ZN3leg15calculate_omegaEv,"ax",%progbits
+ 614              		.align	1
+ 615              		.global	_ZN3leg15calculate_omegaEv
+ 616              		.syntax unified
+ 617              		.thumb
+ 618              		.thumb_func
+ 619              		.fpu fpv4-sp-d16
+ 621              	_ZN3leg15calculate_omegaEv:
+ 622              	.LFB456:
+  71:Core/Src/devs/leg.cpp **** 
+  72:Core/Src/devs/leg.cpp **** void leg::calculate_omega(){
+ 623              		.loc 1 72 0
+ 624              		.cfi_startproc
+ 625              		@ args = 0, pretend = 0, frame = 0
+ 626              		@ frame_needed = 0, uses_anonymous_args = 0
+ 627              	.LVL79:
+ 628 0000 08B5     		push	{r3, lr}
+ 629              	.LCFI6:
+ 630              		.cfi_def_cfa_offset 8
+ 631              		.cfi_offset 3, -8
+ 632              		.cfi_offset 14, -4
+  73:Core/Src/devs/leg.cpp **** 	encoder__.calculate_omega();
+ 633              		.loc 1 73 0
+ 634 0002 3C30     		adds	r0, r0, #60
+ 635              	.LVL80:
+ 636 0004 FFF7FEFF 		bl	_ZN7encoder15calculate_omegaEv
+ 637              	.LVL81:
+  74:Core/Src/devs/leg.cpp **** }
+ 638              		.loc 1 74 0
+ 639 0008 08BD     		pop	{r3, pc}
+ 640              		.cfi_endproc
+ 641              	.LFE456:
+ 643              		.section	.bss._ZL12ramped_value,"aw",%nobits
+ 644              		.align	2
+ 645              		.set	.LANCHOR0,. + 0
+ 648              	_ZL12ramped_value:
+ 649 0000 00000000 		.space	4
+ 650              		.text
+ 651              	.Letext0:
+ 652              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 653              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 654              		.file 7 "Drivers/CMSIS/Include/core_cm4.h"
+ 655              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 17
 
 
- 684              		.cfi_offset 14, -4
-  75:Core/Src/devs/leg.cpp **** 	encoder__.calculate_omega();
- 685              		.loc 1 75 0
- 686 0002 4030     		adds	r0, r0, #64
- 687              	.LVL89:
- 688 0004 FFF7FEFF 		bl	_ZN7encoder15calculate_omegaEv
- 689              	.LVL90:
-  76:Core/Src/devs/leg.cpp **** }
- 690              		.loc 1 76 0
- 691 0008 08BD     		pop	{r3, pc}
- 692              		.cfi_endproc
- 693              	.LFE454:
- 695              		.section	.bss._ZL12ramped_value,"aw",%nobits
- 696              		.align	2
- 697              		.set	.LANCHOR0,. + 0
- 700              	_ZL12ramped_value:
- 701 0000 00000000 		.space	4
- 702              		.text
- 703              	.Letext0:
- 704              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 705              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 706              		.file 8 "Drivers/CMSIS/Include/core_cm4.h"
- 707              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
- 708              		.file 10 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 709              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 710              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 711              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 712              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 713              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 714              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 715              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 716              		.file 18 "Core/Inc/periphs/tim.h"
- 717              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 718              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 719              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 720              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 721              		.file 23 "Core/Inc/devs/encoder.h"
- 722              		.file 24 "Core/Inc/devs/limit_switch.h"
- 723              		.file 25 "<built-in>"
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s 			page 22
+ 656              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 657              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 658              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 659              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 660              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 661              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 662              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 663              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 664              		.file 17 "Core/Inc/periphs/tim.h"
+ 665              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 666              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 667              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 668              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 669              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 670              		.file 23 "Core/Inc/devs/encoder.h"
+ 671              		.file 24 "Core/Inc/devs/limit_switch.h"
+ 672              		.file 25 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s 			page 18
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 leg.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:18     .text._ZN3leg4rampEf:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:25     .text._ZN3leg4rampEf:00000000 _ZN3leg4rampEf
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:96     .text._ZN3leg4rampEf:00000078 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:104    .text._ZN3leg9is_raisedEv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:111    .text._ZN3leg9is_raisedEv:00000000 _ZN3leg9is_raisedEv
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:296    .text._ZN3leg9is_raisedEv:000000e8 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:314    .text._ZN3leg9set_omegaEf:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:321    .text._ZN3leg9set_omegaEf:00000000 _ZN3leg9set_omegaEf
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:516    .text._ZN3leg9set_omegaEf:00000104 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:521    .text._ZN3leg26is_raised_without_deadzoneEv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:528    .text._ZN3leg26is_raised_without_deadzoneEv:00000000 _ZN3leg26is_raised_without_deadzoneEv
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:626    .text._ZN3leg26is_raised_without_deadzoneEv:00000078 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:636    .text._ZN3leg11reset_angleEf:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:643    .text._ZN3leg11reset_angleEf:00000000 _ZN3leg11reset_angleEf
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:666    .text._ZN3leg15calculate_omegaEv:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:673    .text._ZN3leg15calculate_omegaEv:00000000 _ZN3leg15calculate_omegaEv
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:696    .bss._ZL12ramped_value:00000000 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFTONl5.s:700    .bss._ZL12ramped_value:00000000 _ZL12ramped_value
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:18     .text._ZN3leg9set_omegaEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:25     .text._ZN3leg9set_omegaEf:00000000 _ZN3leg9set_omegaEf
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:191    .text._ZN3leg9set_omegaEf:000000cc $d
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:196    .text._ZN3leg4rampEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:203    .text._ZN3leg4rampEf:00000000 _ZN3leg4rampEf
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:251    .text._ZN3leg4rampEf:00000058 $d
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:259    .text._ZN3leg9is_raisedEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:266    .text._ZN3leg9is_raisedEv:00000000 _ZN3leg9is_raisedEv
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:451    .text._ZN3leg9is_raisedEv:000000e8 $d
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:469    .text._ZN3leg26is_raised_without_deadzoneEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:476    .text._ZN3leg26is_raised_without_deadzoneEv:00000000 _ZN3leg26is_raised_without_deadzoneEv
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:574    .text._ZN3leg26is_raised_without_deadzoneEv:00000078 $d
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:584    .text._ZN3leg11reset_angleEf:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:591    .text._ZN3leg11reset_angleEf:00000000 _ZN3leg11reset_angleEf
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:614    .text._ZN3leg15calculate_omegaEv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:621    .text._ZN3leg15calculate_omegaEv:00000000 _ZN3leg15calculate_omegaEv
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:644    .bss._ZL12ramped_value:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccMKbI2g.s:648    .bss._ZL12ramped_value:00000000 _ZL12ramped_value
 
 UNDEFINED SYMBOLS
+_ZN7encoder9get_omegaEv
+_ZN5motor9set_omegaEf
 __aeabi_f2d
 __aeabi_dcmple
 __aeabi_dcmpge
 _ZN7encoder9get_angleEv
-cosf
-_ZN7encoder9get_omegaEv
-_ZN5motor9set_omegaEf
 _ZN7encoder11reset_angleEf
 _ZN7encoder15calculate_omegaEv

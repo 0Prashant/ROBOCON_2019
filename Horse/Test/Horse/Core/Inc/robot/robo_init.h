@@ -8,7 +8,7 @@
 #include "gpio.h"
 #include "main.h"
 #include "vec3.h"
-#include "imu.h"
+#include "adc.h"
 
 void robo_init(void);
 

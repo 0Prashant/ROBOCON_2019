@@ -80,23 +80,14 @@ void _Error_Handler(const char *file, size_t line);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MOTOR3_OUT_Pin GPIO_PIN_3
-#define MOTOR3_OUT_GPIO_Port GPIOE
-#define EXT_INT_Pin GPIO_PIN_0
-#define EXT_INT_GPIO_Port GPIOC
-#define EXT_INT_EXTI_IRQn EXTI0_IRQn
-#define Test_LED_OUT_Pin GPIO_PIN_4
-#define Test_LED_OUT_GPIO_Port GPIOA
-#define MOTOR3_OUTA10_Pin GPIO_PIN_10
-#define MOTOR3_OUTA10_GPIO_Port GPIOA
+#define MOTOR3_OUT_Pin GPIO_PIN_10
+#define MOTOR3_OUT_GPIO_Port GPIOA
 #define MOTOR1_OUT_Pin GPIO_PIN_15
 #define MOTOR1_OUT_GPIO_Port GPIOA
 #define MOTOR1_OUTC11_Pin GPIO_PIN_11
 #define MOTOR1_OUTC11_GPIO_Port GPIOC
 #define MOTOR2_OUT_Pin GPIO_PIN_2
 #define MOTOR2_OUT_GPIO_Port GPIOD
-#define MOTOR2_OUTD4_Pin GPIO_PIN_4
-#define MOTOR2_OUTD4_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

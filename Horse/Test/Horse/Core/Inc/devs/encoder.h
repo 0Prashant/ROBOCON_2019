@@ -27,14 +27,18 @@ public:
 	float get_omega(void);
 	void calculate_omega(void);
 	float get_angle(void);
+	float get_actual_angle(void);
+	void reset_actual_angle(float angle_in_radian);
 	void reset_angle(float);
-	int16_t get_count();
+	int32_t get_count();
 
 private:
 	encoder_config *encoder_;
-	int16_t count_ = 0;
+	int32_t count_ = 0;
 	float omega_ = 0;
 	float angle_ = 0;
+	float actual_angle_ = 0;
+	int32_t actual_count_ = 0;
 };
 
 

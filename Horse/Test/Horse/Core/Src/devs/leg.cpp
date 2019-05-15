@@ -2,33 +2,31 @@
 static float ramped_value = 0;
 
 void leg::set_omega(float omega){
-	float gravity_compensator_factor;
-	if(!is_raised()){
-		gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
+
+	if (omega>motor__.get_max_omega())
+	{
+		omega = motor__.get_max_omega();
 	}
-	else{
-		gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
+	else if(omega < -motor__.get_max_omega())
+	{
+		omega = -motor__.get_max_omega();
 	}
-	omega += gravity_compensator_factor;
+	// float gravity_compensator_factor;
+	// if(!is_raised()){
+	// 	gravity_compensator_factor = cos(encoder__.get_angle())  * kb_ * omega ;
+	// }
+	// else{
+	// 	gravity_compensator_factor = -cos(encoder__.get_angle())  * kl_ * omega ;
+	// }
+	// omega += gravity_compensator_factor;
 	
-	 omega = ramp(omega);
+	//omega = ramp(omega);
 	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
-	// printf("omega = %d\t, computed_omega = %d\n", (int)(omega*100), (int)(computed_omega*100));
-	motor__[0].set_omega(computed_omega);
-	motor__[1].set_omega(computed_omega);
+	motor__.set_omega(computed_omega);
 }
 
 float leg::ramp(float omega){
-	int factor = 2;
-
-	if (omega>motor__[0].get_max_omega())
-	{
-		omega = motor__[0].get_max_omega();
-	}
-	else if(omega < -motor__[0].get_max_omega())
-	{
-		omega = -motor__[0].get_max_omega();
-	}
+	int factor = 1;
 
 	if(ramped_value < (omega-factor)){
 		ramped_value += factor;
@@ -54,7 +52,7 @@ Leg_condition leg::is_raised(){
 	}
 	else{
 		return UNDEFINED;
-	}
+	}         
 }
 
 bool leg::is_raised_without_deadzone(){

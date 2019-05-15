@@ -17,6 +17,8 @@ build/robo_orientation.o: Core/Src/robot/robo_orientation.cpp \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -30,12 +32,7 @@ build/robo_orientation.o: Core/Src/robot/robo_orientation.cpp \
  Core/Inc/utils/kalman.h Core/Inc/utils/mat.h Core/Inc/devs/mpu6050.h \
  Core/Inc/utils/vec3.h Core/Inc/periphs/i2c.h Core/Inc/devs/mpu6050_reg.h \
  Core/Inc/devs/hmc5883.h Core/Inc/devs/a4988.h Core/Inc/periphs/tim.h \
- Core/Inc/periphs/gpio.h Core/Inc/robot/robo_init.h Core/Inc/devs/leg.h \
- Core/Inc/devs/motor.h Core/Inc/periphs/tim.h Core/Inc/devs/encoder.h \
- Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
- Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
- Core/Inc/utils/pid_algorithms.h Core/Inc/devs/steering.h \
- Core/Inc/periphs/usart.h Core/Inc/periphs/gpio.h Core/Inc/devs/imu.h
+ Core/Inc/periphs/gpio.h
 
 Core/Inc/utils/smoothing_algorithm.h:
 
@@ -79,6 +76,10 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
 
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:
+
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h:
+
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
@@ -120,31 +121,3 @@ Core/Inc/devs/a4988.h:
 Core/Inc/periphs/tim.h:
 
 Core/Inc/periphs/gpio.h:
-
-Core/Inc/robot/robo_init.h:
-
-Core/Inc/devs/leg.h:
-
-Core/Inc/devs/motor.h:
-
-Core/Inc/periphs/tim.h:
-
-Core/Inc/devs/encoder.h:
-
-Core/Inc/utils/defines.h:
-
-Core/Inc/utils/pid.h:
-
-Core/Inc/utils/pid_algorithms.h:
-
-Core/Inc/devs/limit_switch.h:
-
-Core/Inc/utils/pid_algorithms.h:
-
-Core/Inc/devs/steering.h:
-
-Core/Inc/periphs/usart.h:
-
-Core/Inc/periphs/gpio.h:
-
-Core/Inc/devs/imu.h:

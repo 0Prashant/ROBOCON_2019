@@ -21,9 +21,8 @@ public:
 	leg &operator=(leg &&) = default;
 	leg &operator=(const leg &) = default;
 	~leg(){}
-        void set_config(motor_config *motor0, motor_config *motor1, encoder_config *encoder) { 
-		motor__[0].set_config(motor0);
-		motor__[1].set_config(motor1);
+        void set_config(motor_config *motor, encoder_config *encoder) { 
+		motor__.set_config(motor);
 		encoder__.set_config(encoder);
 	}
 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
@@ -38,6 +37,7 @@ public:
 	float ramp(float omega);
 	void set_gravity_compensator_constant(float kbody, float kleg){kb_ = kbody; kl_ = kleg;}
 	void reset_angle(float angle_in_radians);
+	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
 	void calculate_omega();
 	Leg_condition is_raised();
 	bool is_raised_without_deadzone();
@@ -45,7 +45,8 @@ public:
 	int get_steps(){return steps;}
 	float get_omega(void){return encoder__.get_omega();}
 	float get_angle(void){return encoder__.get_angle();}
-	float get_max_omega(){return motor__[0].get_max_omega();}
+	float get_actual_angle(void){return encoder__.get_actual_angle();}
+	float get_max_omega(){return motor__.get_max_omega();}
 	int16_t get_encoder_count(void){return encoder__.get_count();}
 
 	limit_switch limit_switch__[2];
@@ -53,7 +54,7 @@ public:
 
 private:
 	Discrete_PID dpid_;
-	motor motor__[2];
+	motor motor__;
 	encoder encoder__;
 	float kb_ = 0, kl_ = 0;
 };

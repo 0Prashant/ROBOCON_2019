@@ -2,29 +2,26 @@
 #include "kalman.h"
 #include "mpu6050.h"
 #include "hmc5883.h"
-#include "robo_init.h"
-#include "imu.h"
 
 int init_OriFilters(uint32_t dt_millis);
 
 
 struct MPU6050 Body_IMU;
 struct HMC5883 Body_HMC;
-TM_AHRSIMU_t IMU;
 
 static Vec3<float> gOmega_Bias;
 
-static Exp_Smooth gXAccelAlpha35(0.35);
-static Exp_Smooth gYAccelAlpha35(0.35);
-static Exp_Smooth gZAccelAlpha35(0.35);
+static Exp_Smooth gXAccelAlpha35(0.035);
+static Exp_Smooth gYAccelAlpha35(0.035);
+static Exp_Smooth gZAccelAlpha35(0.035);
 
-static Exp_Smooth gXGyroAlpha35(0.35);
-static Exp_Smooth gYGyroAlpha35(0.35);
-static Exp_Smooth gZGyroAlpha35(0.35);
+static Exp_Smooth gXGyroAlpha35(0.035);
+static Exp_Smooth gYGyroAlpha35(0.035);
+static Exp_Smooth gZGyroAlpha35(0.035);
 
-static Exp_Smooth gXMagAlpha35(0.35);
-static Exp_Smooth gYMagAlpha35(0.35);
-static Exp_Smooth gZMagAlpha35(0.35);
+static Exp_Smooth gXMagAlpha35(0.035);
+static Exp_Smooth gYMagAlpha35(0.035);
+static Exp_Smooth gZMagAlpha35(0.035);
 
 static Kalman_Vars gAccel_Gyro;
 
@@ -45,8 +42,6 @@ static void IMU_Init()
 
         MPU6050_Init(&Body_IMU);
         HMC5883_Init(&Body_HMC);
-
-	TM_AHRSIMU_Init(&IMU, 0.0, 100, 0);
 }
 
 int Angle_Init()
@@ -124,7 +119,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         Vec3<float> accel;
         Vec3<float> gyro;
         Vec3<float> mag;
-	Vec3<float> mag_offset(-249, -261, 40);
+	Vec3<float> mag_offset(-141, -167, 28);
         Vec3<float> angles;
 
 #ifdef _ENABLE_I2C_ERROR_DETECTION
@@ -132,7 +127,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         bool mpu_is_ready(true), hmc_is_ready(true);
         
         // Read MPU6050 if it is ready to be read
-        if (MPU6050_Read_RawAxes(&Body_IMU) != HAL_OK) {
+        if (MPU6050_Read_NormAxes(&Body_IMU) != HAL_OK) {
                 mpu_is_ready = false;
         }
 
@@ -159,7 +154,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         accel = Body_IMU.norm_a_axis;
         gyro = Body_IMU.norm_g_axis - gOmega_Bias;
         mag = Body_HMC.raw_axis;
-	//mag -= mag_offset;
+	mag -= mag_offset;
         // (accel.mult_EW(1000)).print();
         // printf("    ");
         // (gyro.mult_EW(4)).print();
@@ -179,8 +174,6 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         float bx = gXMagAlpha35.smooth(mag.getX());
         float by = gYMagAlpha35.smooth(mag.getY());
         float bz = gZMagAlpha35.smooth(mag.getZ());
-
-	TM_AHRSIMU_UpdateAHRS(&IMU, gx, gy, gz, ax, ay, az, bx, by, bz);
 
 	// printf("%ld %ld %ld\n", (int32_t)(bx), (int32_t)(by), (int32_t)(bz));
         
@@ -204,8 +197,6 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         // printf("%ld\n", (int32_t)(yaw*1000));
 
         yaw = gYaw_Filter.filter(yaw, gz, dt_millis);
-	// IMU.Yaw = gYaw_Filter.filter(IMU.Yaw, gz, dt_millis);
-
         // printf("%ld\n", (int32_t)(yaw*1000));
 
         angles.set_Values(roll, pitch, yaw);

@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['operator_3d',['operator=',['../classencoder.html#a2e2784d15f3f7e13aecde2ead7a43a68',1,'encoder::operator=(encoder &amp;&amp;)=default'],['../classencoder.html#a9916948157fd30beeaf0fb141c356e2d',1,'encoder::operator=(const encoder &amp;)=default'],['../classleg.html#a4fe626ec8260c58442d0bf4f6e092e57',1,'leg::operator=(leg &amp;&amp;)=default'],['../classleg.html#ad689d8f971733486c26cc2df5b740bc2',1,'leg::operator=(const leg &amp;)=default'],['../classmotor.html#a56c0ac07ae4fe630290c25415f36f828',1,'motor::operator=(motor &amp;&amp;)=default'],['../classmotor.html#aaca163743034455779d02fd44e1c090e',1,'motor::operator=(const motor &amp;)=default'],['../classpid.html#af7488e0c71d01d1811d79ccc14d88bbf',1,'pid::operator=(pid &amp;&amp;)=default'],['../classpid.html#ab3bc80b44e04ee45b20138cd54c59e36',1,'pid::operator=(const pid &amp;)=default'],['../classsteering.html#aab3b80efec6ef14734213ec15c228543',1,'steering::operator=(steering &amp;&amp;)=default'],['../classsteering.html#ab6e1570939ecfb89acb3905efe6cb334',1,'steering::operator=(const steering &amp;)=default']]]
+  ['n_5f',['N_',['../class_filtered_discrete___p_i_d.html#a491d8d01f3196ce37ccd51b1710925e6',1,'FilteredDiscrete_PID']]],
+  ['nmi_5fhandler',['NMI_Handler',['../stm32f4xx__it_8h.html#a6ad7a5e3ee69cb6db6a6b9111ba898bc',1,'NMI_Handler(void):&#160;stm32f4xx_it.c'],['../stm32f4xx__it_8c.html#a6ad7a5e3ee69cb6db6a6b9111ba898bc',1,'NMI_Handler(void):&#160;stm32f4xx_it.c']]],
+  ['norm_5fa_5faxis',['norm_a_axis',['../struct_m_p_u6050.html#a1448ddadf65cd8e48d3873e1fcb00b8b',1,'MPU6050']]],
+  ['norm_5fg_5faxis',['norm_g_axis',['../struct_m_p_u6050.html#a408969ff3349bf750d25a043019ab813',1,'MPU6050']]]
 ];

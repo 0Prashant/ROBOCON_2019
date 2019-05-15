@@ -7,11 +7,4 @@ void steering::set_omega(float omega){
 	//printf("\tsettingg %d \t", (int)(omega*100));
 }
 
-void steering::reset_angle(float angle_in_radians){
-	encoder__.reset_angle(angle_in_radians);
-}
-
-void steering::calculate_omega(){
-	encoder__.calculate_omega();
-}
 
