@@ -16,6 +16,8 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -27,7 +29,7 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  Core/Inc/periphs/i2c.h Core/Inc/periphs/tim.h Core/Inc/periphs/usart.h \
- Core/Inc/periphs/gpio.h Core/Inc/robot/robot.h \
+ Core/Inc/periphs/gpio.h Core/Inc/periphs/adc.h Core/Inc/robot/robot.h \
  Core/Inc/robot/robo_init.h Core/Inc/devs/leg.h Core/Inc/devs/motor.h \
  Core/Inc/devs/encoder.h Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
  Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
@@ -74,6 +76,10 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
 
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:
+
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h:
+
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
@@ -101,6 +107,8 @@ Core/Inc/periphs/tim.h:
 Core/Inc/periphs/usart.h:
 
 Core/Inc/periphs/gpio.h:
+
+Core/Inc/periphs/adc.h:
 
 Core/Inc/robot/robot.h:
 

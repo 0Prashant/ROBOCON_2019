@@ -39,7 +39,7 @@ static void pid_init(){
 
 	leg[0].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);		//for crank = 70  // 25.42, 3.082, 2.385	
 	leg[1].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);
-	steering.set_PID_constants( 2.2, 4.5, 0, -0.875, 0.875);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
+	steering.set_PID_constants( 2.2, 5.5, 0, -0.875, 0.875);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 }
 
 static void limit_switch_init(){
@@ -55,9 +55,9 @@ static void limit_switch_init(){
 void motor_init(){
         motor_configurations[0].htim = &htim8;
         motor_configurations[0].in1_port = GPIOD;
-        motor_configurations[0].in1_pin = GPIO_PIN_0; 
+        motor_configurations[0].in1_pin = GPIO_PIN_2; 
         motor_configurations[0].in2_port = GPIOD;
-        motor_configurations[0].in2_pin = GPIO_PIN_2;
+        motor_configurations[0].in2_pin = GPIO_PIN_0;
         motor_configurations[0].channel = TIM_CHANNEL_3;
         motor_configurations[0].max_omega = 17.5;
         motor_configurations[0].tolerance = 0.2;

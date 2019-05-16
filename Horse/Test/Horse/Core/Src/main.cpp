@@ -145,7 +145,7 @@ int main(void)
 	while (1)
 	{
 
-		printf("\nEND\n");
+		printf("\nENDD\n");
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
@@ -153,8 +153,6 @@ int main(void)
 		/* USER CODE END WHILE */
 		if(HAL_GetTick() - sample_time)
 		{
-			
-
 			sample_time = HAL_GetTick();
 			calculate_datas();
 			leg[0].set_omega(0);

@@ -40,11 +40,14 @@ BUILD_DIR = build
 C_SOURCES =  \
 Core/Src/periphs/gpio.c \
 Core/Src/periphs/tim.c \
+Core/Src/periphs/i2c.c \
+Core/Src/periphs/adc.c \
 Core/Src/periphs/usart.c \
 Core/Src/utils/printf_config.c \
 \
 Core/Src/sys/stm32f4xx_it.c \
 Core/Src/sys/stm32f4xx_hal_msp.c \
+Core/Src/sys/system_stm32f4xx.c \
 \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
@@ -61,8 +64,6 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
-Core/Src/system_stm32f4xx.c \
-Core/Src/i2c.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \

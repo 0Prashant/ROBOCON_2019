@@ -12,7 +12,7 @@ bool STEERING_FLAG = false;
 
 static const float robot_speed = 5.0;
 static float leg_speed = robot_speed;    //17 is the maximum with safe zone
-static const float steering_speed = 0.6; // 0.875 is the 100%
+static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 9 * PI / 180;
 
 // static float number_of_samples = 0;
@@ -21,9 +21,10 @@ static const float steering_angle_limit = 9 * PI / 180;
 bool sand_dune_crossed_flag = false;
 float robot_angle = 0, temp_robot_angle = 0;
 float tolerance = 1.1 * PI / 180;
+float xdistance = 40;
 
-float steps[7] = {7, 12, 16, 18, 25, 30, 70};
-float angles[7] = {0, 50, 50, 55, 0, 0, 0};
+float steps[7] = {7, 12, 17, 19, 25, 30, 50};
+float angles[7] = {0, 50, 50, 60, 0, 0, 0};
 
 void initialize_position(void)
 {
@@ -133,16 +134,16 @@ bool initialize_steering_position(void)
 	}
 }
 
-bool go(int steps, float angle)
+bool go(int step, float angle)
 {
 	angle *= PI / 180;
-	move_leg(steps, angle);
-	move_steering(steps, angle);
+	move_leg(step, angle);
+	move_steering(step, angle);
 
 	calculate_robot_angle();
 	// printf(" steps = %d\t robot_angle = %d\t steering_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(leg[0].get_angle() * 180 / PI), (int)(leg[1].get_angle() * 180 / PI));
 
-	if (((leg[0].get_steps() + leg[1].get_steps()) / 2 >= steps) && (fabs(angle - robot_angle) <= 0.1))
+	if (((leg[0].get_steps() + leg[1].get_steps()) / 2 >= step) && (fabs(angle - robot_angle) <= 0.1))
 	{
 		leg[0].set_omega(0);
 		leg[1].set_omega(0);
@@ -155,12 +156,12 @@ bool go(int steps, float angle)
 	}
 }
 
-void move_leg(int steps, float angle)
+void move_leg(int step, float angle)
 {
 	float del_speed = 0;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = (steps == 16 || steps == 30) ? robot_speed / 1.5 : robot_speed;
+	leg_speed = (step == steps[2] || step == steps[4]) ? robot_speed / 1.35 : robot_speed;
 
 	del_speed = (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	//del_speed = 0;
@@ -168,12 +169,30 @@ void move_leg(int steps, float angle)
 	leg[1].set_omega(leg_speed + del_speed);
 	// printf("\t%d \t%d \t", (int)(leg_speed + del_speed), (int)(leg_speed - del_speed));
 }
-void move_steering(int steps, float angle)
+void move_steering(int step, float angle)
 {
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
 		printf("raised");
-		if ((steering.get_angle() > -steering_angle_limit) && (steering.get_angle() < steering_angle_limit))
+		// float dd = cos(robot_angle)*robotx - xdistance;
+		set_angle(angle);
+	}
+	else if (leg[0].is_raised() == Leg_condition::FALLEN)
+	{
+		printf("fallen");
+		correct_steering_angle();
+		
+	}
+	else
+	{
+		printf("nothing");
+		steering.set_omega(0);
+	}
+}
+
+void set_angle(float angle)
+{
+	if ((steering.get_angle() > -steering_angle_limit) && (steering.get_angle() < steering_angle_limit))
 		{
 			if (angle > (robot_angle + tolerance))
 				steering.set_omega(steering_speed);
@@ -188,52 +207,46 @@ void move_steering(int steps, float angle)
 		{
 			steering.set_omega((steering.get_angle() > 0) ? -steering_speed : steering_speed); //for protection of overturning
 		}
-	}
-	else if (leg[0].is_raised() == Leg_condition::FALLEN)
+}
+
+void correct_steering_angle(void)
+{
+	if (steering.get_angle() > (tolerance))
 	{
-		printf("fallen");
-		if (steering.get_angle() > (tolerance))
-		{
-			steering.set_omega(-steering_speed);
-		}
-
-		else if (steering.get_angle() < (-tolerance))
-		{
-			steering.set_omega(steering_speed);
-		}
-
-		else
-		{
-			steering.set_omega(0);
-		}
-		// if (fabs(angle - robot_angle) <= steering_angle_limit)
-		// {
-		// 	if (steering.get_angle() > (tolerance)){
-		// 		steering.set_omega(-steering_speed);}
-
-		// 	else if (steering.get_angle() < (-tolerance)){
-		// 		steering.set_omega(steering_speed);}
-
-		// 	else{
-		// 		steering.set_omega(0);}
-		// 	printf("center_alligned\t");
-		// }
-		// else{
-
-		// 	if(fabs(steering.get_angle()) < steering_angle_limit){
-		// 		steering.set_omega((angle>0)? (-steering_speed):steering_speed);
-		// 	}
-		// 	else{
-		// 		steering.set_omega(0);
-		// 	}
-		// 	printf("peak_alligned\t");
-		// }
+		steering.set_omega(-steering_speed);
 	}
+
+	else if (steering.get_angle() < (-tolerance))
+	{
+		steering.set_omega(steering_speed);
+	}
+
 	else
 	{
-		printf("nothing");
 		steering.set_omega(0);
 	}
+	// if (fabs(angle - robot_angle) <= steering_angle_limit)
+	// {
+	// 	if (steering.get_angle() > (tolerance)){
+	// 		steering.set_omega(-steering_speed);}
+
+	// 	else if (steering.get_angle() < (-tolerance)){
+	// 		steering.set_omega(steering_speed);}
+
+	// 	else{
+	// 		steering.set_omega(0);}
+	// 	printf("center_alligned\t");
+	// }
+	// else{
+
+	// 	if(fabs(steering.get_angle()) < steering_angle_limit){
+	// 		steering.set_omega((angle>0)? (-steering_speed):steering_speed);
+	// 	}
+	// 	else{
+	// 		steering.set_omega(0);
+	// 	}
+	// 	printf("peak_alligned\t");
+	// }
 }
 
 void calculate_robot_angle()
@@ -284,7 +297,7 @@ void calculate_datas()
 	{
 		robotx = HAL_ADC_GetValue(&hadc1);
 		robotx = 62.17 * pow(((robotx * 3.3) / 4096), -1.0893);
-		printf("\n\tDistance = %d", (int)robotx);
+		// printf("\n\tDistance = %d", (int)robotx);
 	}
 }
 
@@ -293,7 +306,8 @@ bool play()
 	uint32_t dt = HAL_GetTick();
 	initial_angle = read_Orientation(10);
 
-	//initialize_position();
+
+	// initialize_position();
 
 	while (true)
 	{

@@ -1,4 +1,4 @@
-build/tim.o: Core/Src/periphs/tim.c Core/Inc/periphs/tim.h \
+build/adc.o: Core/Src/periphs/adc.c Core/Inc/periphs/adc.h \
  Core/Inc/main.h Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/sys/stm32f4xx_hal_conf.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -29,7 +29,7 @@ build/tim.o: Core/Src/periphs/tim.c Core/Inc/periphs/tim.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 
-Core/Inc/periphs/tim.h:
+Core/Inc/periphs/adc.h:
 
 Core/Inc/main.h:
 
