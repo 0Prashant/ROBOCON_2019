@@ -9,7 +9,7 @@ void move_steering(int steps, float angle);
 void calculate_datas(void);
 void calculate_robot_angle(void);
 bool rewind(void);
-void correct_steering_angle(void);
+void correct_steering_angle(float angle);
 void set_angle(float angle);
 void initialize_position(void);
 bool initialize_leg_position(void);

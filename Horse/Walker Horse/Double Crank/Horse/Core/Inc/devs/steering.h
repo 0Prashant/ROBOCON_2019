@@ -59,11 +59,32 @@ public:
 		dpid_.set_Limits(upper_limit, lower_limit);
 	}
 
+	/**
+	 * \brief Sets constants for Angle_PID algorithm
+	 * \param kp,ki,kd: constants for Anggle_PID
+	 * \param lower_limit, upper_limit: These are the maximum output a motor 
+	 * 	   can give with gear reduction(in omegas)
+	 * \return void
+	 */
+	void set_angle_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+		apid_.set_P(kp);
+		apid_.set_I(ki);
+		apid_.set_D(kd);
+		apid_.set_Limits(upper_limit, lower_limit);
+	}
+
+
 	/** 
 	 * \brief sets omega for the steering
 	 * 
 	 */
 	void set_omega(float omega);
+
+	/** 
+	 * \brief sets angle for the steering
+	 * 
+	 */
+	void set_angle(float angle);
 
 	/**
 	 * \brief resets the angle provided by the encoder
@@ -101,6 +122,7 @@ private:
 	motor motor__;
 	encoder encoder__;
 	Discrete_PID dpid_;
+	Angle_PID apid_;
 };
 
 #endif // !_STEERING_H_
