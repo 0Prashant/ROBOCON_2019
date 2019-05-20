@@ -5,6 +5,7 @@
 
 void move_leg(int steps, float angle);
 Vec3<float> read_Orientation(uint32_t dt_millis);
+bool go(int step, float angle);
 void move_steering(int steps, float angle);
 void correct_steering_angle(float angle);
 void set_angle(float angle);

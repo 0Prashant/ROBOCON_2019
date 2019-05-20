@@ -17,8 +17,6 @@ enum Robot_States{
 	UUKHAI,
 };
 
-bool go(int step, float angle);
-
 void start_Robot(enum Robot_States *state_);
 bool play(void);
 

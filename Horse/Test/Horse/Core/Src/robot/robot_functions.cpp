@@ -6,7 +6,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 5;
+static const float robot_speed = 1.5;
 static float leg_speed = robot_speed;     //17 is the maximum with safe zone
 static const float steering_speed = 0.85; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
@@ -166,6 +166,7 @@ void initialize_position(void)
 			leg[0].set_omega(0);
 			leg[1].set_omega(0);
 			steering.set_omega(0);
+			STEERING_FLAG = false;
 		}
 	}
 	start_time = HAL_GetTick();
@@ -206,7 +207,7 @@ bool initialize_leg_position(void)
 	}
 
 	if ((leg[1].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
-	    (leg[1].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180)) && (leg[0].get_steps() != 0))
+	    (leg[1].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180)) && (leg[1].get_steps() != 0))
 	{
 		leg[1].set_omega(0);
 		leg1_flag = true;
