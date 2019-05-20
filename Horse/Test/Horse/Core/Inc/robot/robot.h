@@ -2,18 +2,24 @@
 #define _ROBOT_H_
 
 #include "robo_init.h"
+#include "robot_functions.h"
 
-bool go(int steps, float angle);
-void move_leg(int steps, float angle);
-void move_steering(int steps, float angle);
-void calculate_datas(void);
-void calculate_robot_angle(void);
-bool rewind(void);
-void correct_steering_angle(float angle);
-void set_angle(float angle);
-void initialize_position(void);
-bool initialize_leg_position(void);
-bool initialize_steering_position(void);
+enum Robot_States{
+	HOME,
+	MARCH,
+	TURN_45,
+	SAND_DUNE,
+	STATE_D,
+	TURN_90,
+	TUSSOCK,
+	BASE_CAMP,
+	MOUNTAIN,
+	UUKHAI,
+};
+
+bool go(int step, float angle);
+
+void start_Robot(enum Robot_States *state_);
 bool play(void);
 
 #endif // !_ROBOT_H_

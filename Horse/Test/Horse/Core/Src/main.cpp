@@ -118,25 +118,32 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	MX_I2C1_Init();
 	MX_TIM1_Init();
 	MX_TIM2_Init();
 	MX_TIM3_Init();
 	MX_TIM8_Init();
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
-	MX_I2C2_Init();
 	MX_ADC1_Init();
+	
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+	
+	MX_I2C1_Init();
+	MX_I2C2_Init();
 	/* USER CODE BEGIN 2 */
+	Angle_Init();
 
 	robo_init();
-	Angle_Init();
+	
 	HAL_ADC_Start(&hadc1);
 
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 	printf("\n\nAll initialized\n\n");
 
 	uint32_t sample_time = HAL_GetTick();
