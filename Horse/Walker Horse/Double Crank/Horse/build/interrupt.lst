@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -17,76 +17,396 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
-  18              		.align	1
-  19              		.global	HAL_GPIO_EXTI_Callback
-  20              		.syntax unified
-  21              		.thumb
-  22              		.thumb_func
-  23              		.fpu fpv4-sp-d16
-  25              	HAL_GPIO_EXTI_Callback:
-  26              	.LFB492:
-  27              		.file 1 "Core/Src/devs/interrupt.cpp"
+  17              		.global	__aeabi_f2d
+  18              		.global	__aeabi_ddiv
+  19              		.global	__aeabi_d2iz
+  20              		.global	__aeabi_i2d
+  21              		.global	__aeabi_dmul
+  22              		.global	__aeabi_dadd
+  23              		.global	__aeabi_d2f
+  24              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+  25              		.align	1
+  26              		.global	HAL_GPIO_EXTI_Callback
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  30              		.fpu fpv4-sp-d16
+  32              	HAL_GPIO_EXTI_Callback:
+  33              	.LFB492:
+  34              		.file 1 "Core/Src/devs/interrupt.cpp"
    1:Core/Src/devs/interrupt.cpp **** 
    2:Core/Src/devs/interrupt.cpp **** #include "robo_init.h"
    3:Core/Src/devs/interrupt.cpp **** 
    4:Core/Src/devs/interrupt.cpp **** extern leg leg[2];
    5:Core/Src/devs/interrupt.cpp **** extern steering steering;
-   6:Core/Src/devs/interrupt.cpp **** extern bool sand_dune_crossed_flag;
+   6:Core/Src/devs/interrupt.cpp **** 
    7:Core/Src/devs/interrupt.cpp **** extern bool ROBOT_START_FLAG;
    8:Core/Src/devs/interrupt.cpp **** extern bool STEERING_FLAG;
-   9:Core/Src/devs/interrupt.cpp **** 
-  10:Core/Src/devs/interrupt.cpp **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-  11:Core/Src/devs/interrupt.cpp **** {
-  28              		.loc 1 11 0
-  29              		.cfi_startproc
-  30              		@ args = 0, pretend = 0, frame = 0
-  31              		@ frame_needed = 0, uses_anonymous_args = 0
-  32              	.LVL0:
-  33 0000 10B5     		push	{r4, lr}
-  34              	.LCFI0:
-  35              		.cfi_def_cfa_offset 8
-  36              		.cfi_offset 4, -8
-  37              		.cfi_offset 14, -4
-  12:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
-  38              		.loc 1 12 0
-  39 0002 B0F5007F 		cmp	r0, #512
-  40 0006 26D0     		beq	.L3
-  41 0008 11D9     		bls	.L10
-  42 000a B0F5006F 		cmp	r0, #2048
-  43 000e 30D0     		beq	.L7
-  44 0010 B0F5004F 		cmp	r0, #32768
-  45 0014 1BD1     		bne	.L11
-  13:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_0 : {
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 2
+   9:Core/Src/devs/interrupt.cpp **** extern bool FRONT_PROXIMITY_FLAG;
+  10:Core/Src/devs/interrupt.cpp **** extern bool BACK_PROXIMITY_FLAG;
+  11:Core/Src/devs/interrupt.cpp **** 
+  12:Core/Src/devs/interrupt.cpp **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+  13:Core/Src/devs/interrupt.cpp **** {
+  35              		.loc 1 13 0
+  36              		.cfi_startproc
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 0, uses_anonymous_args = 0
+  39              	.LVL0:
+  40 0000 70B5     		push	{r4, r5, r6, lr}
+  41              	.LCFI0:
+  42              		.cfi_def_cfa_offset 16
+  43              		.cfi_offset 4, -16
+  44              		.cfi_offset 5, -12
+  45              		.cfi_offset 6, -8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 2
 
 
-  14:Core/Src/devs/interrupt.cpp **** 			ROBOT_START_FLAG = true;
-  15:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
-  16:Core/Src/devs/interrupt.cpp **** 		}break;
-  17:Core/Src/devs/interrupt.cpp **** 
-  18:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_9 : {
-  19:Core/Src/devs/interrupt.cpp ****                         leg[0].steps++;
-  20:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(300*PI/180);
-  21:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt0\t %d\n", leg[0].steps);
-  22:Core/Src/devs/interrupt.cpp ****                 } break;
-  23:Core/Src/devs/interrupt.cpp **** 
-  24:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_11: {
-  25:Core/Src/devs/interrupt.cpp ****                         leg[1].steps++;
-  26:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(20*PI/180);
-  27:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
+  46              		.cfi_offset 14, -4
+  47              	.LBB16:
+  14:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
+  48              		.loc 1 14 0
+  49 0002 B0F5007F 		cmp	r0, #512
+  50 0006 28D0     		beq	.L3
+  51 0008 0AD9     		bls	.L11
+  52 000a B0F5006F 		cmp	r0, #2048
+  53 000e 5FD0     		beq	.L7
+  54 0010 B0F5004F 		cmp	r0, #32768
+  55 0014 00F09680 		beq	.L8
+  56 0018 B0F5806F 		cmp	r0, #1024
+  57 001c 15D1     		bne	.L1
+  58 001e 0CE0     		b	.L9
+  59              	.L11:
+  60 0020 0128     		cmp	r0, #1
+  61 0022 13D0     		beq	.L5
+  62 0024 B0F5807F 		cmp	r0, #256
+  63 0028 0FD1     		bne	.L1
+  64              	.LBB17:
+  15:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_0 : {
+  16:Core/Src/devs/interrupt.cpp **** 			ROBOT_START_FLAG = true;
+  17:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
+  18:Core/Src/devs/interrupt.cpp **** 		}break;
+  19:Core/Src/devs/interrupt.cpp **** 
+  20:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_9 : {
+  21:Core/Src/devs/interrupt.cpp ****                         leg[0].steps++;
+  22:Core/Src/devs/interrupt.cpp **** 			float leg0_reset_angle = 300*PI/180;
+  23:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(leg0_reset_angle);
+  24:Core/Src/devs/interrupt.cpp **** 			//leg[0].reset_actual_angle(((leg[0].get_steps()-1)*2*3.14159265)+leg0_reset_angle);
+  25:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
+  26:Core/Src/devs/interrupt.cpp **** 			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
+  27:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
   28:Core/Src/devs/interrupt.cpp ****                 } break;
   29:Core/Src/devs/interrupt.cpp **** 
-  30:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_15: {
-  31:Core/Src/devs/interrupt.cpp **** 			STEERING_FLAG = true;
-  46              		.loc 1 31 0
-  47 0016 1E4B     		ldr	r3, .L13
-  48 0018 0122     		movs	r2, #1
-  49 001a 1A70     		strb	r2, [r3]
-  50              	.LVL1:
-  51              	.LBB4:
-  52              	.LBB5:
-  53              		.file 2 "Core/Inc/devs/steering.h"
+  30:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_11: {
+  31:Core/Src/devs/interrupt.cpp ****                         leg[1].steps++;
+  32:Core/Src/devs/interrupt.cpp **** 			float leg1_reset_angle = 302*PI/180;
+  33:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(leg1_reset_angle);
+  34:Core/Src/devs/interrupt.cpp **** 			// leg[1].reset_actual_angle(((leg[1].get_steps()-1)*2*3.14159265)+leg1_reset_angle);
+  35:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
+  36:Core/Src/devs/interrupt.cpp **** 			leg[1].reset_actual_angle((int)(temp-1)*2*PI + leg1_reset_angle);
+  37:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
+  38:Core/Src/devs/interrupt.cpp ****                 } break;
+  39:Core/Src/devs/interrupt.cpp **** 
+  40:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_15: {
+  41:Core/Src/devs/interrupt.cpp **** 			STEERING_FLAG = true;
+  42:Core/Src/devs/interrupt.cpp **** 			steering.reset_angle(0.7*PI/180);
+  43:Core/Src/devs/interrupt.cpp **** 			 printf("\n\n\t\t\tsteering interrupt \t\n");
+  44:Core/Src/devs/interrupt.cpp ****                 } break;
+  45:Core/Src/devs/interrupt.cpp **** 
+  46:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_8: {
+  47:Core/Src/devs/interrupt.cpp **** 			FRONT_PROXIMITY_FLAG = true;
+  65              		.loc 1 47 0
+  66 002a 554B     		ldr	r3, .L12+32
+  67 002c 0122     		movs	r2, #1
+  68 002e 1A70     		strb	r2, [r3]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 3
+
+
+  48:Core/Src/devs/interrupt.cpp **** 			//printf("\n\n\t\t\tFRONT_PROXIMITY_FLAG interrupt \t\n");
+  49:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+  69              		.loc 1 49 0
+  70 0030 4FF48051 		mov	r1, #4096
+  71 0034 5348     		ldr	r0, .L12+36
+  72              	.LVL1:
+  73 0036 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  74              	.LVL2:
+  75              	.L9:
+  50:Core/Src/devs/interrupt.cpp **** 			//__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_8);
+  51:Core/Src/devs/interrupt.cpp **** 		}
+  52:Core/Src/devs/interrupt.cpp **** 
+  53:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_10: {
+  54:Core/Src/devs/interrupt.cpp **** 			BACK_PROXIMITY_FLAG = true;
+  76              		.loc 1 54 0
+  77 003a 534B     		ldr	r3, .L12+40
+  78 003c 0122     		movs	r2, #1
+  79 003e 1A70     		strb	r2, [r3]
+  55:Core/Src/devs/interrupt.cpp **** 			//printf("\n\n\t\t\tBACK_PROXIMITY_FLAG interrupt \t\n");
+  56:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+  80              		.loc 1 56 0
+  81 0040 4FF48041 		mov	r1, #16384
+  82 0044 4F48     		ldr	r0, .L12+36
+  83 0046 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  84              	.LVL3:
+  85              	.L1:
+  86              	.LBE17:
+  87              	.LBE16:
+  57:Core/Src/devs/interrupt.cpp **** 			//__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_10);
+  58:Core/Src/devs/interrupt.cpp **** 		}
+  59:Core/Src/devs/interrupt.cpp ****         }
+  60:Core/Src/devs/interrupt.cpp **** }...
+  88              		.loc 1 60 0
+  89 004a 70BD     		pop	{r4, r5, r6, pc}
+  90              	.LVL4:
+  91              	.L5:
+  92              	.LBB31:
+  93              	.LBB30:
+  16:Core/Src/devs/interrupt.cpp **** 			ROBOT_START_FLAG = true;
+  94              		.loc 1 16 0
+  95 004c 4F4B     		ldr	r3, .L12+44
+  96 004e 0122     		movs	r2, #1
+  97 0050 1A70     		strb	r2, [r3]
+  17:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
+  98              		.loc 1 17 0
+  99 0052 4F48     		ldr	r0, .L12+48
+ 100              	.LVL5:
+ 101 0054 FFF7FEFF 		bl	puts
+ 102              	.LVL6:
+  18:Core/Src/devs/interrupt.cpp **** 		}break;
+ 103              		.loc 1 18 0
+ 104 0058 F7E7     		b	.L1
+ 105              	.LVL7:
+ 106              	.L3:
+ 107              	.LBB18:
+  21:Core/Src/devs/interrupt.cpp ****                         leg[0].steps++;
+ 108              		.loc 1 21 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 4
+
+
+ 109 005a 4E4C     		ldr	r4, .L12+52
+ 110 005c 2369     		ldr	r3, [r4, #16]
+ 111 005e 0133     		adds	r3, r3, #1
+ 112 0060 2361     		str	r3, [r4, #16]
+ 113              	.LVL8:
+  23:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(leg0_reset_angle);
+ 114              		.loc 1 23 0
+ 115 0062 9FED4D0A 		vldr.32	s0, .L12+56
+ 116 0066 2046     		mov	r0, r4
+ 117              	.LVL9:
+ 118 0068 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+ 119              	.LVL10:
+ 120              	.LBB19:
+ 121              	.LBB20:
+ 122              		.file 2 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kgravity){kg_ = kgravity;}
+  39:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  40:Core/Inc/devs/leg.h **** 	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
+  41:Core/Inc/devs/leg.h **** 	void calculate_omega();
+  42:Core/Inc/devs/leg.h **** 	Leg_condition is_raised();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 5
+
+
+  43:Core/Inc/devs/leg.h **** 	bool is_raised_without_deadzone();
+  44:Core/Inc/devs/leg.h **** 
+  45:Core/Inc/devs/leg.h **** 	int get_steps(){return steps;}
+  46:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+  47:Core/Inc/devs/leg.h **** 	float get_angle(void){return encoder__.get_angle();}
+  48:Core/Inc/devs/leg.h **** 	float get_actual_angle(void){return encoder__.get_actual_angle();}
+ 123              		.loc 2 48 0
+ 124 006c 04F13C06 		add	r6, r4, #60
+ 125 0070 3046     		mov	r0, r6
+ 126 0072 FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 127              	.LVL11:
+ 128              	.LBE20:
+ 129              	.LBE19:
+  25:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
+ 130              		.loc 1 25 0
+ 131 0076 10EE100A 		vmov	r0, s0
+ 132 007a FFF7FEFF 		bl	__aeabi_f2d
+ 133              	.LVL12:
+ 134 007e 38A3     		adr	r3, .L12
+ 135 0080 D3E90023 		ldrd	r2, [r3]
+ 136 0084 FFF7FEFF 		bl	__aeabi_ddiv
+ 137              	.LVL13:
+ 138 0088 41EC100B 		vmov	d0, r0, r1
+ 139 008c FFF7FEFF 		bl	round
+ 140              	.LVL14:
+ 141 0090 51EC100B 		vmov	r0, r1, d0
+ 142 0094 FFF7FEFF 		bl	__aeabi_d2iz
+ 143              	.LVL15:
+ 144 0098 0546     		mov	r5, r0
+ 145              	.LVL16:
+  26:Core/Src/devs/interrupt.cpp **** 			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
+ 146              		.loc 1 26 0
+ 147 009a 0138     		subs	r0, r0, #1
+ 148              	.LVL17:
+ 149 009c 4000     		lsls	r0, r0, #1
+ 150 009e FFF7FEFF 		bl	__aeabi_i2d
+ 151              	.LVL18:
+ 152 00a2 31A3     		adr	r3, .L12+8
+ 153 00a4 D3E90023 		ldrd	r2, [r3]
+ 154 00a8 FFF7FEFF 		bl	__aeabi_dmul
+ 155              	.LVL19:
+ 156 00ac 30A3     		adr	r3, .L12+16
+ 157 00ae D3E90023 		ldrd	r2, [r3]
+ 158 00b2 FFF7FEFF 		bl	__aeabi_dadd
+ 159              	.LVL20:
+ 160 00b6 FFF7FEFF 		bl	__aeabi_d2f
+ 161              	.LVL21:
+ 162              	.LBB21:
+ 163              	.LBB22:
+  40:Core/Inc/devs/leg.h **** 	void calculate_omega();
+ 164              		.loc 2 40 0
+ 165 00ba 00EE100A 		vmov	s0, r0
+ 166 00be 3046     		mov	r0, r6
+ 167              	.LVL22:
+ 168 00c0 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 169              	.LVL23:
+ 170              	.LBE22:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 6
+
+
+ 171              	.LBE21:
+  27:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
+ 172              		.loc 1 27 0
+ 173 00c4 2A46     		mov	r2, r5
+ 174 00c6 2169     		ldr	r1, [r4, #16]
+ 175 00c8 3448     		ldr	r0, .L12+60
+ 176 00ca FFF7FEFF 		bl	printf
+ 177              	.LVL24:
+ 178              	.LBE18:
+  28:Core/Src/devs/interrupt.cpp ****                 } break;
+ 179              		.loc 1 28 0
+ 180 00ce BCE7     		b	.L1
+ 181              	.LVL25:
+ 182              	.L7:
+ 183              	.LBB23:
+  31:Core/Src/devs/interrupt.cpp ****                         leg[1].steps++;
+ 184              		.loc 1 31 0
+ 185 00d0 304C     		ldr	r4, .L12+52
+ 186 00d2 A36E     		ldr	r3, [r4, #104]
+ 187 00d4 0133     		adds	r3, r3, #1
+ 188 00d6 A366     		str	r3, [r4, #104]
+ 189              	.LVL26:
+  33:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(leg1_reset_angle);
+ 190              		.loc 1 33 0
+ 191 00d8 9FED310A 		vldr.32	s0, .L12+64
+ 192 00dc 04F15800 		add	r0, r4, #88
+ 193              	.LVL27:
+ 194 00e0 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+ 195              	.LVL28:
+ 196              	.LBB24:
+ 197              	.LBB25:
+ 198              		.loc 2 48 0
+ 199 00e4 04F19405 		add	r5, r4, #148
+ 200 00e8 2846     		mov	r0, r5
+ 201 00ea FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 202              	.LVL29:
+ 203              	.LBE25:
+ 204              	.LBE24:
+  35:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
+ 205              		.loc 1 35 0
+ 206 00ee 10EE100A 		vmov	r0, s0
+ 207 00f2 FFF7FEFF 		bl	__aeabi_f2d
+ 208              	.LVL30:
+ 209 00f6 1AA3     		adr	r3, .L12
+ 210 00f8 D3E90023 		ldrd	r2, [r3]
+ 211 00fc FFF7FEFF 		bl	__aeabi_ddiv
+ 212              	.LVL31:
+ 213 0100 41EC100B 		vmov	d0, r0, r1
+ 214 0104 FFF7FEFF 		bl	round
+ 215              	.LVL32:
+ 216 0108 51EC100B 		vmov	r0, r1, d0
+ 217 010c FFF7FEFF 		bl	__aeabi_d2iz
+ 218              	.LVL33:
+  36:Core/Src/devs/interrupt.cpp **** 			leg[1].reset_actual_angle((int)(temp-1)*2*PI + leg1_reset_angle);
+ 219              		.loc 1 36 0
+ 220 0110 0138     		subs	r0, r0, #1
+ 221              	.LVL34:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 7
+
+
+ 222 0112 4000     		lsls	r0, r0, #1
+ 223              	.LVL35:
+ 224 0114 FFF7FEFF 		bl	__aeabi_i2d
+ 225              	.LVL36:
+ 226 0118 13A3     		adr	r3, .L12+8
+ 227 011a D3E90023 		ldrd	r2, [r3]
+ 228 011e FFF7FEFF 		bl	__aeabi_dmul
+ 229              	.LVL37:
+ 230 0122 15A3     		adr	r3, .L12+24
+ 231 0124 D3E90023 		ldrd	r2, [r3]
+ 232 0128 FFF7FEFF 		bl	__aeabi_dadd
+ 233              	.LVL38:
+ 234 012c FFF7FEFF 		bl	__aeabi_d2f
+ 235              	.LVL39:
+ 236              	.LBB26:
+ 237              	.LBB27:
+  40:Core/Inc/devs/leg.h **** 	void calculate_omega();
+ 238              		.loc 2 40 0
+ 239 0130 00EE100A 		vmov	s0, r0
+ 240 0134 2846     		mov	r0, r5
+ 241              	.LVL40:
+ 242 0136 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 243              	.LVL41:
+ 244              	.LBE27:
+ 245              	.LBE26:
+  37:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
+ 246              		.loc 1 37 0
+ 247 013a A16E     		ldr	r1, [r4, #104]
+ 248 013c 1948     		ldr	r0, .L12+68
+ 249 013e FFF7FEFF 		bl	printf
+ 250              	.LVL42:
+ 251              	.LBE23:
+  38:Core/Src/devs/interrupt.cpp ****                 } break;
+ 252              		.loc 1 38 0
+ 253 0142 82E7     		b	.L1
+ 254              	.LVL43:
+ 255              	.L8:
+  41:Core/Src/devs/interrupt.cpp **** 			STEERING_FLAG = true;
+ 256              		.loc 1 41 0
+ 257 0144 184B     		ldr	r3, .L12+72
+ 258 0146 0122     		movs	r2, #1
+ 259 0148 1A70     		strb	r2, [r3]
+ 260              	.LVL44:
+ 261              	.LBB28:
+ 262              	.LBB29:
+ 263              		.file 3 "Core/Inc/devs/steering.h"
    1:Core/Inc/devs/steering.h **** /**
    2:Core/Inc/devs/steering.h ****  * steering.h
    3:Core/Inc/devs/steering.h ****  *
@@ -98,6 +418,9 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
    9:Core/Inc/devs/steering.h ****  * in the steering.
   10:Core/Inc/devs/steering.h ****  *
   11:Core/Inc/devs/steering.h ****  * \author 	$Author 	: Prashant_Bhatta
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 8
+
+
   12:Core/Inc/devs/steering.h ****  * \date 	$Date		: 2005/04/14 14:16:20 $
   13:Core/Inc/devs/steering.h ****  * \contact	$Contact	: 073bex425.prashant@pcampus.edu.np
   14:Core/Inc/devs/steering.h ****  *
@@ -118,9 +441,6 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
   29:Core/Inc/devs/steering.h **** 	steering(steering &&) = default;
   30:Core/Inc/devs/steering.h **** 	steering(const steering &) = default;
   31:Core/Inc/devs/steering.h **** 	steering &operator=(steering &&) = default;
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 3
-
-
   32:Core/Inc/devs/steering.h **** 	steering &operator=(const steering &) = default;
   33:Core/Inc/devs/steering.h **** 	~steering(){}
   34:Core/Inc/devs/steering.h **** 
@@ -158,6 +478,9 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
   66:Core/Inc/devs/steering.h **** 	 * 	   can give with gear reduction(in omegas)
   67:Core/Inc/devs/steering.h **** 	 * \return void
   68:Core/Inc/devs/steering.h **** 	 */
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 9
+
+
   69:Core/Inc/devs/steering.h **** 	void set_angle_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
   70:Core/Inc/devs/steering.h **** 		apid_.set_P(kp);
   71:Core/Inc/devs/steering.h **** 		apid_.set_I(ki);
@@ -178,234 +501,152 @@ ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 1
   86:Core/Inc/devs/steering.h **** 	 */
   87:Core/Inc/devs/steering.h **** 	void set_angle(float angle);
   88:Core/Inc/devs/steering.h **** 
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 4
-
-
   89:Core/Inc/devs/steering.h **** 	/**
   90:Core/Inc/devs/steering.h **** 	 * \brief resets the angle provided by the encoder
   91:Core/Inc/devs/steering.h **** 	 * \param angle_in_radian at which it is to be reset
   92:Core/Inc/devs/steering.h **** 	 * \return void
   93:Core/Inc/devs/steering.h **** 	 */
   94:Core/Inc/devs/steering.h **** 	void reset_angle(float angle_in_radians) {encoder__.reset_angle(angle_in_radians);}
-  54              		.loc 2 94 0
-  55 001c 9FED1D0A 		vldr.32	s0, .L13+4
-  56 0020 1D48     		ldr	r0, .L13+8
-  57              	.LVL2:
-  58 0022 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
-  59              	.LVL3:
-  60              	.LBE5:
-  61              	.LBE4:
-  32:Core/Src/devs/interrupt.cpp **** 			steering.reset_angle(0);
-  33:Core/Src/devs/interrupt.cpp **** 			 printf("\n\n\t\t\tsteering interrupt \t\n");
-  62              		.loc 1 33 0
-  63 0026 1D48     		ldr	r0, .L13+12
-  64 0028 FFF7FEFF 		bl	puts
-  65              	.LVL4:
-  34:Core/Src/devs/interrupt.cpp ****                 } break;
-  66              		.loc 1 34 0
-  67 002c 07E0     		b	.L1
-  68              	.LVL5:
-  69              	.L10:
-  12:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_0 : {
-  70              		.loc 1 12 0
-  71 002e 0128     		cmp	r0, #1
-  72 0030 06D1     		bne	.L12
-  14:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
-  73              		.loc 1 14 0
-  74 0032 1B4B     		ldr	r3, .L13+16
-  75 0034 0122     		movs	r2, #1
-  76 0036 1A70     		strb	r2, [r3]
-  15:Core/Src/devs/interrupt.cpp **** 		}break;
-  77              		.loc 1 15 0
-  78 0038 1A48     		ldr	r0, .L13+20
-  79              	.LVL6:
-  80 003a FFF7FEFF 		bl	puts
-  81              	.LVL7:
-  82              	.L1:
-  35:Core/Src/devs/interrupt.cpp **** 
-  36:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_8: {
-  37:Core/Src/devs/interrupt.cpp **** 			sand_dune_crossed_flag = true;
-  38:Core/Src/devs/interrupt.cpp **** 			// printf("\nSand_Dune_Crossed \n");
-  39:Core/Src/devs/interrupt.cpp **** 		}
-  40:Core/Src/devs/interrupt.cpp **** 
-  41:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_10: {
-  42:Core/Src/devs/interrupt.cpp **** 			sand_dune_crossed_flag = true;
-  43:Core/Src/devs/interrupt.cpp **** 			// printf("\nSand_Dune_Crossed \n");
-  44:Core/Src/devs/interrupt.cpp **** 		}
-  45:Core/Src/devs/interrupt.cpp ****         }
-  46:Core/Src/devs/interrupt.cpp **** }...
-  83              		.loc 1 46 0
-  84 003e 10BD     		pop	{r4, pc}
-  85              	.LVL8:
-  86              	.L12:
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 5
+ 264              		.loc 3 94 0
+ 265 014a 9FED180A 		vldr.32	s0, .L12+76
+ 266 014e 1848     		ldr	r0, .L12+80
+ 267              	.LVL45:
+ 268 0150 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+ 269              	.LVL46:
+ 270              	.LBE29:
+ 271              	.LBE28:
+  43:Core/Src/devs/interrupt.cpp **** 			 printf("\n\n\t\t\tsteering interrupt \t\n");
+ 272              		.loc 1 43 0
+ 273 0154 1748     		ldr	r0, .L12+84
+ 274 0156 FFF7FEFF 		bl	puts
+ 275              	.LVL47:
+  44:Core/Src/devs/interrupt.cpp ****                 } break;
+ 276              		.loc 1 44 0
+ 277 015a 76E7     		b	.L1
+ 278              	.L13:
+ 279 015c AFF30080 		.align	3
+ 280              	.L12:
+ 281 0160 182D4454 		.word	1413754136
+ 282 0164 FB211940 		.word	1075388923
+ 283 0168 182D4454 		.word	1413754136
+ 284 016c FB210940 		.word	1074340347
+ 285 0170 000000C0 		.word	-1073741824
+ 286 0174 A6F11440 		.word	1075114406
+ 287 0178 00000060 		.word	1610612736
+ 288 017c 65151540 		.word	1075123557
+ 289 0180 00000000 		.word	FRONT_PROXIMITY_FLAG
+ 290 0184 000C0240 		.word	1073875968
+ 291 0188 00000000 		.word	BACK_PROXIMITY_FLAG
+ 292 018c 00000000 		.word	ROBOT_START_FLAG
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 10
 
 
-  12:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
-  87              		.loc 1 12 0
-  88 0040 B0F5807F 		cmp	r0, #256
-  89 0044 FBD1     		bne	.L1
-  90              	.L6:
-  42:Core/Src/devs/interrupt.cpp **** 			sand_dune_crossed_flag = true;
-  91              		.loc 1 42 0
-  92 0046 184B     		ldr	r3, .L13+24
-  93 0048 0122     		movs	r2, #1
-  94 004a 1A70     		strb	r2, [r3]
-  95              		.loc 1 46 0
-  96 004c F7E7     		b	.L1
-  97              	.L11:
-  12:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
-  98              		.loc 1 12 0
-  99 004e B0F5806F 		cmp	r0, #1024
- 100 0052 F4D1     		bne	.L1
- 101 0054 F7E7     		b	.L6
- 102              	.L3:
-  19:Core/Src/devs/interrupt.cpp ****                         leg[0].steps++;
- 103              		.loc 1 19 0
- 104 0056 154C     		ldr	r4, .L13+28
- 105 0058 2369     		ldr	r3, [r4, #16]
- 106 005a 0133     		adds	r3, r3, #1
- 107 005c 2361     		str	r3, [r4, #16]
-  20:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(300*PI/180);
- 108              		.loc 1 20 0
- 109 005e 9FED140A 		vldr.32	s0, .L13+32
- 110 0062 2046     		mov	r0, r4
- 111              	.LVL9:
- 112 0064 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
- 113              	.LVL10:
-  21:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt0\t %d\n", leg[0].steps);
- 114              		.loc 1 21 0
- 115 0068 2169     		ldr	r1, [r4, #16]
- 116 006a 1248     		ldr	r0, .L13+36
- 117 006c FFF7FEFF 		bl	printf
- 118              	.LVL11:
-  22:Core/Src/devs/interrupt.cpp ****                 } break;
- 119              		.loc 1 22 0
- 120 0070 E5E7     		b	.L1
- 121              	.LVL12:
- 122              	.L7:
-  25:Core/Src/devs/interrupt.cpp ****                         leg[1].steps++;
- 123              		.loc 1 25 0
- 124 0072 0E4C     		ldr	r4, .L13+28
- 125 0074 E36E     		ldr	r3, [r4, #108]
- 126 0076 0133     		adds	r3, r3, #1
- 127 0078 E366     		str	r3, [r4, #108]
-  26:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(20*PI/180);
- 128              		.loc 1 26 0
- 129 007a 9FED0F0A 		vldr.32	s0, .L13+40
- 130 007e 04F15C00 		add	r0, r4, #92
- 131              	.LVL13:
- 132 0082 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
- 133              	.LVL14:
-  27:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 6
+ 293 0190 00000000 		.word	.LC0
+ 294 0194 00000000 		.word	leg
+ 295 0198 368DA740 		.word	1084722486
+ 296 019c 1C000000 		.word	.LC1
+ 297 01a0 2BABA840 		.word	1084795691
+ 298 01a4 3C000000 		.word	.LC2
+ 299 01a8 00000000 		.word	STEERING_FLAG
+ 300 01ac 172B483C 		.word	1011362583
+ 301 01b0 0C000000 		.word	steering+12
+ 302 01b4 58000000 		.word	.LC3
+ 303              	.LBE30:
+ 304              	.LBE31:
+ 305              		.cfi_endproc
+ 306              	.LFE492:
+ 308              		.section	.rodata.HAL_GPIO_EXTI_Callback.str1.4,"aMS",%progbits,1
+ 309              		.align	2
+ 310              	.LC0:
+ 311 0000 0A0A0909 		.ascii	"\012\012\011\011\011 !!start_pressed!!\012\000"
+ 311      09202121 
+ 311      73746172 
+ 311      745F7072 
+ 311      65737365 
+ 312 0019 000000   		.space	3
+ 313              	.LC1:
+ 314 001c 0A0A0909 		.ascii	"\012\012\011\011\011Robot interrupt0\011 %d \011 %d"
+ 314      09526F62 
+ 314      6F742069 
+ 314      6E746572 
+ 314      72757074 
+ 315 003a 0A00     		.ascii	"\012\000"
+ 316              	.LC2:
+ 317 003c 0A0A0909 		.ascii	"\012\012\011\011\011Robot interrupt1\011 %d\012\000"
+ 317      09526F62 
+ 317      6F742069 
+ 317      6E746572 
+ 317      72757074 
+ 318 0057 00       		.space	1
+ 319              	.LC3:
+ 320 0058 0A0A0909 		.ascii	"\012\012\011\011\011steering interrupt \011\000"
+ 320      09737465 
+ 320      6572696E 
+ 320      6720696E 
+ 320      74657272 
+ 321              		.text
+ 322              	.Letext0:
+ 323              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 324              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 325              		.file 6 "Drivers/CMSIS/Include/core_cm4.h"
+ 326              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 327              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 328              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 329              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 330              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 331              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 332              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 333              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 334              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 11
 
 
- 134              		.loc 1 27 0
- 135 0086 E16E     		ldr	r1, [r4, #108]
- 136 0088 0C48     		ldr	r0, .L13+44
- 137 008a FFF7FEFF 		bl	printf
- 138              	.LVL15:
-  28:Core/Src/devs/interrupt.cpp ****                 } break;
- 139              		.loc 1 28 0
- 140 008e D6E7     		b	.L1
- 141              	.L14:
- 142              		.align	2
- 143              	.L13:
- 144 0090 00000000 		.word	STEERING_FLAG
- 145 0094 00000000 		.word	0
- 146 0098 0C000000 		.word	steering+12
- 147 009c 54000000 		.word	.LC3
- 148 00a0 00000000 		.word	ROBOT_START_FLAG
- 149 00a4 00000000 		.word	.LC0
- 150 00a8 00000000 		.word	sand_dune_crossed_flag
- 151 00ac 00000000 		.word	leg
- 152 00b0 368DA740 		.word	1084722486
- 153 00b4 1C000000 		.word	.LC1
- 154 00b8 C2B8B23E 		.word	1051900098
- 155 00bc 38000000 		.word	.LC2
- 156              		.cfi_endproc
- 157              	.LFE492:
- 159              		.section	.rodata.HAL_GPIO_EXTI_Callback.str1.4,"aMS",%progbits,1
- 160              		.align	2
- 161              	.LC0:
- 162 0000 0A0A0909 		.ascii	"\012\012\011\011\011 !!start_pressed!!\012\000"
- 162      09202121 
- 162      73746172 
- 162      745F7072 
- 162      65737365 
- 163 0019 000000   		.space	3
- 164              	.LC1:
- 165 001c 0A0A0909 		.ascii	"\012\012\011\011\011Robot interrupt0\011 %d\012\000"
- 165      09526F62 
- 165      6F742069 
- 165      6E746572 
- 165      72757074 
- 166 0037 00       		.space	1
- 167              	.LC2:
- 168 0038 0A0A0909 		.ascii	"\012\012\011\011\011Robot interrupt1\011 %d\012\000"
- 168      09526F62 
- 168      6F742069 
- 168      6E746572 
- 168      72757074 
- 169 0053 00       		.space	1
- 170              	.LC3:
- 171 0054 0A0A0909 		.ascii	"\012\012\011\011\011steering interrupt \011\000"
- 171      09737465 
- 171      6572696E 
- 171      6720696E 
- 171      74657272 
- 172              		.text
- 173              	.Letext0:
- 174              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 7
-
-
- 175              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 176              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
- 177              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
- 178              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 179              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 180              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
- 181              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
- 182              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 183              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 184              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 185              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
- 186              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 187              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
- 188              		.file 17 "Core/Inc/periphs/tim.h"
- 189              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 190              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 191              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 192              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 193              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
- 194              		.file 23 "Core/Inc/devs/motor.h"
- 195              		.file 24 "Core/Inc/devs/encoder.h"
- 196              		.file 25 "Core/Inc/utils/pid_algorithms.h"
- 197              		.file 26 "Core/Inc/devs/limit_switch.h"
- 198              		.file 27 "Core/Inc/devs/leg.h"
- 199              		.file 28 "Core/Inc/periphs/usart.h"
- 200              		.file 29 "Core/Inc/periphs/adc.h"
- 201              		.file 30 "<built-in>"
- 202              		.file 31 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
-ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s 			page 8
+ 335              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 336              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 337              		.file 18 "Core/Inc/periphs/tim.h"
+ 338              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 339              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 340              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 341              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 342              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 343              		.file 24 "Core/Inc/devs/motor.h"
+ 344              		.file 25 "Core/Inc/devs/encoder.h"
+ 345              		.file 26 "Core/Inc/utils/pid_algorithms.h"
+ 346              		.file 27 "Core/Inc/devs/limit_switch.h"
+ 347              		.file 28 "Core/Inc/periphs/usart.h"
+ 348              		.file 29 "Core/Inc/periphs/adc.h"
+ 349              		.file 30 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 350              		.file 31 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 351              		.file 32 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 interrupt.cpp
-C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s:18     .text.HAL_GPIO_EXTI_Callback:00000000 $t
-C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s:25     .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
-C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s:144    .text.HAL_GPIO_EXTI_Callback:00000090 $d
-C:\Users\Prashant\AppData\Local\Temp\ccFZnKIO.s:160    .rodata.HAL_GPIO_EXTI_Callback.str1.4:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s:25     .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s:32     .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s:281    .text.HAL_GPIO_EXTI_Callback:00000160 $d
+C:\Users\Prashant\AppData\Local\Temp\ccaUim41.s:309    .rodata.HAL_GPIO_EXTI_Callback.str1.4:00000000 $d
 
 UNDEFINED SYMBOLS
-_ZN7encoder11reset_angleEf
+__aeabi_f2d
+__aeabi_ddiv
+__aeabi_d2iz
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_dadd
+__aeabi_d2f
+HAL_GPIO_TogglePin
 puts
 _ZN3leg11reset_angleEf
+_ZN7encoder16get_actual_angleEv
+round
+_ZN7encoder18reset_actual_angleEf
 printf
+_ZN7encoder11reset_angleEf
+FRONT_PROXIMITY_FLAG
+BACK_PROXIMITY_FLAG
+ROBOT_START_FLAG
+leg
 STEERING_FLAG
 steering
-ROBOT_START_FLAG
-sand_dune_crossed_flag
-leg

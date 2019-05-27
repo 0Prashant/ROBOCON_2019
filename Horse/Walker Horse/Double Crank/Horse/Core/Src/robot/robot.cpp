@@ -2,371 +2,290 @@
 extern leg leg[2];
 extern steering steering;
 
-Vec3<float> read_Orientation(uint32_t dt_millis);
-Vec3<float> initial_angle;
-Vec3<float> curr_angle;
-float robotx = 0;
+extern Vec3<float> initial_angle;
+
+Robot_States robo_state;
 
 bool ROBOT_START_FLAG = false;
-bool STEERING_FLAG = false;
 bool USE_IMU_FLAG = true;
-static const float robot_speed = 5;
-static float leg_speed = robot_speed;     //17 is the maximum with safe zone
-static const float steering_speed = 0.85; // 0.875 is the 100%
-static const float steering_angle_limit = 8.5 * PI / 180;
+bool FRONT_PROXIMITY_FLAG = false;
+bool BACK_PROXIMITY_FLAG = false;
 
-// static float number_of_samples = 0;
-// static bool orientation_flag = false;
+int steps[7] = {9, 14, 18, 20, 30, 32, 45};
+float angles[7] = {0, 45, 45, 80, 0, 0, 0};
 
-bool sand_dune_crossed_flag = false;
-float robot_angle = 0, temp_robot_angle = 0;
-float tolerance = 3 * PI / 180;
-float xdistance = 40;
+float steering_angle = 0;
+float steering_omega = 0;
 
-float steps[7] = {8, 13, 17, 20, 28, 35, 50};																																																																																																																					
-float angles[7] = {0, 50, 50, 55, 0, 0, 0};
-
-void initialize_position(void)
+void start_Robot(enum Robot_States *state_)
 {
-	uint32_t dt = HAL_GetTick();
-	while (true)
+	switch (*state_)
 	{
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			// printf("\n\tInitializing_Leg_Orientation\t");
-			calculate_datas();
-			if (initialize_leg_position() == true)
-				break;
-		}
-	}
-	for (int32_t i = 0; i < 3000000; i++)
+	case HOME:
 	{
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			printf("\n\tWaiting_The_Leg \t");
-			calculate_datas();
-			leg[0].set_omega(0);
-			leg[1].set_omega(0);
-			steering.set_omega(0);
-		}
-	}
-	while (true)
-	{
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			printf("\n\tInitializing_Steering_Orientation\t");
-			leg[0].set_omega(0);
-			leg[1].set_omega(0);
-			calculate_datas();
-			if (initialize_steering_position() == true)
-				break;
-		}
-	}
-}
-
-bool initialize_leg_position(void)
-{
-	float initial_tolerance = 4;
-	float leg_initial_position = 90;
-	static bool leg0_flag = false;
-	static bool leg1_flag = false;
-
-	 printf("\n\tsteps0 = %d, angle0 = %d\tsteps0 = %d, angle0 = %d", leg[0].get_steps(),(int)(leg[0].get_angle()*180/PI)
-	 , leg[1].get_steps(),(int)(leg[1].get_angle()*180/PI) );
-	if ((leg[0].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
-	    (leg[0].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180) && (leg[0].get_steps() != 0)))
-	{
+		/**
+		 * vitra ko khutta tala teknaparcha
+		 * baira ko khutta mathi teknaparcha
+		 * steering IR navetinjel ghumaunaparcha
+		 * tespachi stop vaera bascha
+		 * user button thichesi this state ends 
+		 *  state_A flag set garnaparcha 
+			*/
+		printf("\n\tWaiting_to_start\t");
+		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
 		leg[0].set_omega(0);
-		leg0_flag = true;
-	}
-	else
-	{
-		leg[0].set_omega(5);
-		leg0_flag = false;
-	}
-
-	if ((leg[1].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
-	    (leg[1].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180)) && (leg[0].get_steps() != 0))
-	{
 		leg[1].set_omega(0);
-		leg1_flag = true;
-	}
-	else
-	{
-		leg[1].set_omega(5);
-		leg1_flag = false;
-	}
-
-	if (leg0_flag && leg1_flag)
-	{
-		leg[0].steps = 0;
-		leg[1].steps = 0;
-		leg[0].reset_angle(90 * PI / 180);
-		leg[1].reset_angle(90 * PI / 180);
+		steering.set_angle(0);
 		leg[0].reset_actual_angle(90 * PI / 180);
 		leg[1].reset_actual_angle(90 * PI / 180);
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool initialize_steering_position(void)
-{
-	// printf("\nangle = %d\t",(int)(steering.get_angle()*180/PI) );
-	// printf("\tsteps0 = %d, angle0 = %d\tsteps0 = %d, angle0 = %d", leg[0].get_steps(),(int)(leg[0].get_angle()*180/PI)
-	// , leg[1].get_steps(),(int)(leg[1].get_angle()*180/PI) );
-	if (STEERING_FLAG)
-	{
-		steering.set_omega(0);
-		steering.reset_angle(0);
-		return true;
-	}
-	else
-	{
-		steering.set_omega(0.5);
-		return false;
-	}
-}
-
-bool go(int step, float angle)
-{
-	angle *= PI / 180;
-	move_leg(step, angle);
-	move_steering(step, angle);
-
-	calculate_robot_angle();
-	printf(" steps = %d\t robot_angle = %d\t steering_angle = %d\t\n", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(steering.get_angle() * 180 / PI));
-	// printf(" steps = %d\t robot_angle = %d\t steering_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(leg[0].get_angle() * 180 / PI), (int)(leg[1].get_angle() * 180 / PI));
-
-	if (((leg[0].get_steps() + leg[1].get_steps()) / 2 >= step) && (fabs(angle - robot_angle) <= 0.1))
-	{
-		leg[0].set_omega(0);
-		leg[1].set_omega(0);
-		steering.set_omega(0);
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void move_leg(int step, float angle)
-{
-	float del_speed = 0;
-
-	//Setting the slow speed in sand dune and tussok
-	leg_speed = (step == steps[2] || step == steps[4]) ? robot_speed / 1.35 : robot_speed;
-
-	del_speed = (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
-	//del_speed = 0;
-	leg[0].set_omega(leg_speed - del_speed);
-	leg[1].set_omega(leg_speed + del_speed);
-	// printf("\t%d \t%d \t", (int)(leg_speed + del_speed), (int)(leg_speed - del_speed));
-}
-void move_steering(int step, float angle)
-{
-	if (leg[0].is_raised() == Leg_condition::RAISED)
-	{
-		printf("  raised  ");
-		// float dd = cos(robot_angle)*robotx - xdistance;
-		set_angle(angle);
-	}
-	else if (leg[0].is_raised() == Leg_condition::FALLEN)
-	{
-		printf("  fallen  ");
-		correct_steering_angle(angle);
-	}
-	else
-	{
-		printf("  nothing  ");
-		steering.set_omega(0);
-	}
-}
-
-void set_angle(float angle)
-{
-	if ((steering.get_angle() > -steering_angle_limit) && (steering.get_angle() < steering_angle_limit))
-	{
-		if (angle > (robot_angle + tolerance))
-			steering.set_omega(steering_speed);
-
-		else if (angle < (robot_angle - tolerance))
-			steering.set_omega(-steering_speed);
-
-		else
-			steering.set_omega(0);
-	}
-	else
-	{
-		steering.set_omega((steering.get_angle() > 0) ? -steering_speed : steering_speed); //for protection of overturning
-	}
-}
-
-void correct_steering_angle(float angle)
-{
-	//*/
-	if (steering.get_angle() > (tolerance))
-	{
-		steering.set_omega(-steering_speed);
-	}
-
-	else if (steering.get_angle() < (-tolerance))
-	{
-		steering.set_omega(steering_speed);
-	}
-
-	else
-	{
-		steering.set_omega(0);
-	}
-	/*/
-	if (fabs(angle - robot_angle) <= steering_angle_limit)
-	{
-		if (steering.get_angle() > (tolerance)){
-			steering.set_omega(-steering_speed);}
-
-		else if (steering.get_angle() < (-tolerance)){
-			steering.set_omega(steering_speed);}
-
-		else{
-			steering.set_omega(0);}
-		printf("center_alligned\t");
-	}
-	else{
-
-		if(fabs(steering.get_angle()) < steering_angle_limit){
-			steering.set_omega(((angle-robot_angle)>0)? (-steering_speed):steering_speed);
-		}
-		else{
-			steering.set_omega(0);
-		}
-		printf("peak_alligned\t");
-	}
-	//*/
-}
-
-void calculate_robot_angle()
-{
-	//*/
-	if (USE_IMU_FLAG)
-	{
-		robot_angle = (initial_angle.getZ() - curr_angle.getZ()) * PI / 180;
-		temp_robot_angle = robot_angle;
-	}
-	else
-	{
-		if (leg[0].is_raised_without_deadzone())
+		initial_angle = read_Orientation(10);
+		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t", (int)(leg[0].get_actual_angle()*180/PI)
+		, (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*1800/PI));
+		if (ROBOT_START_FLAG)
 		{
-			robot_angle = steering.get_angle() + temp_robot_angle;
-		}
-		else
-		{
-			temp_robot_angle = robot_angle - steering.get_angle();
+			*state_ = MARCH;
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 		}
 	}
-	/*/
+	break;
 
-	//!Alternate code to calculate robot_angle using IMU
-	// robot_angle = -(initial_angle.getZ() - angle.getZ())*PI/180;
-
-	robot_angle = (initial_angle.getZ() - angle.getZ()) * PI / 180;
-	// if(leg[0].is_raised() == Leg_condition::FALLEN){
-	// 	temp_robot_angle += -(initial_angle.getZ() - angle.getZ())*PI/180;
-	// 	number_of_samples++;
-	// 	orientation_flag = true;
-	// 	// printf("\tcalculating");
-	// }
-	// else{
-	// 	if(orientation_flag){
-	// 		robot_angle = temp_robot_angle / number_of_samples;
-	// 		temp_robot_angle = 0;
-	// 		number_of_samples = 0;
-	// 		orientation_flag = false;
-	// 		// printf("displayed");
-	// 	}
-	// 	// printf("still");
-	// }
-
-	//*/
-}
-
-void calculate_datas()
-{
-	leg[0].calculate_omega();
-	leg[1].calculate_omega();
-	steering.calculate_omega();
-	curr_angle = read_Orientation(10);
-	printf("\tangleZ = %d\t", (int)curr_angle.getZ());
-	HAL_ADC_Start(&hadc1);
-	if (HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK)
+	case MARCH:
 	{
-		robotx = HAL_ADC_GetValue(&hadc1);
-		robotx = 62.17 * pow(((robotx * 3.3) / 4096), -1.0893);
-		// printf("\n\tDistance = %d", (int)robotx);
+		/*
+			  user button thichesi state_A starts when state A flag is set
+			  10 steps agadi gayesi state_A flag clear garnaparcha
+			  state_B flag set garnaparcha
+			*/
+		printf("March");
+		if (go(steps[0], angles[0]) == true)
+		{
+			*state_ =TURN_45;
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+	}
+	break;
+
+	case TURN_45:
+	{
+		/*state _B flag set vayesi angle 45 degree change garnaparcha
+			  2 steps jati gayesi sand dune aucha
+			  sand dune kateko thapauna proximity sensor use garnaparcha ki
+			  ta IMU bata roll value hernaparcha 
+			  sand dune kateko thapaesi state_B flag clear garnaparcha
+			  state_C flag set garnaparcha			   
+			*/
+		printf("Turn 45");
+		
+		/*/
+		if (go(steps[1], angles[1]) == true)
+		{
+			*state_ = SAND_DUNE;
+		}
+		/*/
+		go(99, angles[1]);
+		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){
+			*state_ = SAND_DUNE;
+			leg[0].steps = steps[1];
+			leg[1].steps = steps[1];
+			BACK_PROXIMITY_FLAG = false;
+			FRONT_PROXIMITY_FLAG = false;
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+		//*/
+	}
+	break;
+	case SAND_DUNE:
+	{
+		/*state _C flag set vayesi 55 degree jati ghumna parcha 1 to 2 steps
+			after this seate_C flag needs to be cleared and state_D flag needs to be set
+			sand dune pachi ko ek dui steps wala region
+			*/
+		printf("Sand dune");
+		/*/
+		if (go(steps[2], angles[2]) == true)
+		{
+			*state_ = STATE_D;
+		}
+		/*/
+		go(100, angles[2]);
+		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){			
+			*state_ = STATE_D;
+			leg[0].steps = steps[2];
+			leg[1].steps = steps[2];
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+		//*/
+	}
+	break;
+	case STATE_D:
+	{
+		/*
+			state_D start vayesi ek dui stpes sidha janaparcha around 90 degrees from the original position 
+			teti steps pugesi 0 angle ma agadi janaparcha 
+			tespachi state d flag clear huncha ani state E flag set huncha*/
+			printf("State D");
+		if (go(steps[3], angles[3]) == true)
+		{
+			*state_ = TURN_90;
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+	}
+	break;
+
+	case TURN_90:
+	{
+		/*tussock cross garnaparcha
+			no of steps = 
+			no of steps le state_E end vako thahuncha 
+			*/
+		printf("Turn 90");
+		if (go(steps[4], angles[4]) == true)
+		{
+			*state_ = TUSSOCK;
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+	}
+	break;
+
+	case TUSSOCK:
+	{
+		/*state_F flag set vayesi
+			robot stops 
+			user button thichesi state_F end huncha
+			*/
+		printf("tussock");
+		if (go(steps[5], angles[5]) == true)
+		{
+			*state_ = BASE_CAMP;
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+	}
+	break;
+
+	case BASE_CAMP:
+	{
+		/*state_G flag user button thichesi start huncha
+			uukhai zone ma n no of steps gayesi state_G end huncha
+			*/
+		printf("Base camp");
+		if(initialize_leg_position() == true){
+			*state_ = MOUNTAIN;
+			ROBOT_START_FLAG = false;
+			
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		}
+	}
+	case MOUNTAIN:
+	{
+		/*state_G flag user button thichesi start huncha
+			uukhai zone ma n no of steps gayesi state_G end huncha
+			*/
+		printf("MOUNTAIN");
+		if (ROBOT_START_FLAG)
+		{
+			if (go(steps[6], angles[6]) == true)
+			{
+				*state_ = UUKHAI;
+				
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+			}
+		}
+		else{
+			leg[0].set_omega(0);
+			leg[1].set_omega(0);
+			steering.set_angle(0);
+		}
+	}
+
+	break;
+	case UUKHAI:
+	{
+		/*state_G flag user button thichesi start huncha
+			uukhai zone ma n no of steps gayesi state_G end huncha
+			*/
+		initialize_leg_position();
+		printf("\nUUKHAI\n");
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+	}
+	break;
 	}
 }
 
 bool play()
 {
 	uint32_t dt = HAL_GetTick();
+	initial_angle = read_Orientation(10);
 	initialize_position();
 
 	ROBOT_START_FLAG = false;
-	while (true)
-	{
+	
+	for(int i=0; i<7; i++){
+		angles[i] *= -1;
+	}
+	//float start_after = 2
+	// while(!ROBOT_START_FLAG){
+	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+	// 	{
+	// 		dt = HAL_GetTick();
+	// 		calculate_datas();
+	// 		leg[0].set_omega(0);
+	// 		leg[0].set_omega(0);
+	// 		steering.set_angle(0);
+	// 	}
+
+	// }
+	// robo_state = STATE_D;
+	// initial_angle.set_Values(0,0,angle[start_after]);
+	// leg[0].steps = steps[start_after];
+	// leg[1].steps = steps[start_after];
+	
+	robo_state = HOME;
+	
+	while(true){
 		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
 		{
 			dt = HAL_GetTick();
-			printf("\n\tWaiting_to_start\t");
 			calculate_datas();
-			leg[0].set_omega(0);
-			leg[1].set_omega(0);
-			steering.set_omega(0);
-			if (ROBOT_START_FLAG)
-				break;
+			// steering.set_angle(5);
+			// steering_angle = steering.get_angle()*180/PI;
+			// steering_omega = steering.get_omega()*5;
+			start_Robot(&robo_state);
 		}
-	}
-	dt = HAL_GetTick();
-	for (int32_t i = 0; i < 1000000; i++)
-	{
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			initial_angle = read_Orientation(10);
-		}
-	}
-	for (int i = 0; i < 6; i++)
-	{
-		// if (!sand_dune_crossed_flag && (i==3)){
-		// 	i--;
-		// 	go(steps[1]+1, 0);
-		// 	leg[0].steps = steps[3];
-		// 	break;
-		// }
-		while (true)
-		{
-			if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-			{
-				dt = HAL_GetTick();
-				// printf("\tstep=%d\t", i);
-				calculate_datas();
-				if (go(steps[i], -angles[i]) == true)
-					break;
-			}
-		}
-		printf("\tstep=%d\t", i);
-		if ((i==1) || (i==1))
-			USE_IMU_FLAG = true;
-		else
-			USE_IMU_FLAG = false;
-		
 	}
 	return true;
 }

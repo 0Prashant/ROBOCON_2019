@@ -1,4 +1,6 @@
-build/main.o: Core/Src/main.cpp Core/Inc/main.h \
+build/robot_functions.o: Core/Src/robot/robot_functions.cpp \
+ Core/Inc/robot/robot_functions.h Core/Inc/robot/robo_init.h \
+ Core/Inc/devs/leg.h Core/Inc/devs/motor.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/sys/stm32f4xx_hal_conf.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -28,15 +30,20 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- Core/Inc/periphs/i2c.h Core/Inc/periphs/tim.h Core/Inc/periphs/usart.h \
- Core/Inc/periphs/gpio.h Core/Inc/periphs/adc.h Core/Inc/robot/robot.h \
- Core/Inc/robot/robo_init.h Core/Inc/devs/leg.h Core/Inc/devs/motor.h \
- Core/Inc/devs/encoder.h Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
+ Core/Inc/periphs/tim.h Core/Inc/main.h Core/Inc/devs/encoder.h \
+ Core/Inc/utils/defines.h Core/Inc/utils/pid.h \
  Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
  Core/Inc/utils/pid_algorithms.h Core/Inc/devs/steering.h \
- Core/Inc/utils/vec3.h Core/Inc/robot/robot_functions.h
+ Core/Inc/periphs/usart.h Core/Inc/periphs/gpio.h Core/Inc/utils/vec3.h \
+ Core/Inc/periphs/adc.h
 
-Core/Inc/main.h:
+Core/Inc/robot/robot_functions.h:
+
+Core/Inc/robot/robo_init.h:
+
+Core/Inc/devs/leg.h:
+
+Core/Inc/devs/motor.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
@@ -100,23 +107,9 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 
-Core/Inc/periphs/i2c.h:
-
 Core/Inc/periphs/tim.h:
 
-Core/Inc/periphs/usart.h:
-
-Core/Inc/periphs/gpio.h:
-
-Core/Inc/periphs/adc.h:
-
-Core/Inc/robot/robot.h:
-
-Core/Inc/robot/robo_init.h:
-
-Core/Inc/devs/leg.h:
-
-Core/Inc/devs/motor.h:
+Core/Inc/main.h:
 
 Core/Inc/devs/encoder.h:
 
@@ -132,6 +125,10 @@ Core/Inc/utils/pid_algorithms.h:
 
 Core/Inc/devs/steering.h:
 
+Core/Inc/periphs/usart.h:
+
+Core/Inc/periphs/gpio.h:
+
 Core/Inc/utils/vec3.h:
 
-Core/Inc/robot/robot_functions.h:
+Core/Inc/periphs/adc.h:

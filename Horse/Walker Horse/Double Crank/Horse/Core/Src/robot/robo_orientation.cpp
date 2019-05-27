@@ -10,6 +10,8 @@ struct MPU6050 Body_IMU;
 struct HMC5883 Body_HMC;
 
 static Vec3<float> gOmega_Bias;
+static bool FIRST_ANGLE_FLAG = true;
+static float first_yaw = 0;
 
 static Exp_Smooth gXAccelAlpha35(0.035);
 static Exp_Smooth gYAccelAlpha35(0.035);
@@ -119,7 +121,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         Vec3<float> accel;
         Vec3<float> gyro;
         Vec3<float> mag;
-	Vec3<float> mag_offset(-65,-160,-21);	//-141, -167, 28)
+	Vec3<float> mag_offset(-325,25,-250);	//-250,0,-21
         Vec3<float> angles;
 
 #ifdef _ENABLE_I2C_ERROR_DETECTION
@@ -138,13 +140,13 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
 
         if (!mpu_is_ready || !hmc_is_ready) {
                 //! Error Condition
-                HAL_GPIO_WritePin(B_BlueLED_GPIO_Port, B_BlueLED_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
                 error(Error::PERIPHERAL_ERROR);
                 IMU_Init();
                 return angles;
         }
         else {
-                HAL_GPIO_WritePin(B_BlueLED_GPIO_Port, B_BlueLED_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
         }
 #else
         MPU6050_Read_NormAxes(&Body_IMU);
@@ -159,8 +161,8 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         // printf("    ");
         // (gyro.mult_EW(4)).print();
         // printf("    ");
-        // mag.print();
-        // printf("\n");
+        //  mag.print();
+        //  printf("\n");
 
         // We will consider the rotation in order: psi-theta-phi
         float ax = gXAccelAlpha35.smooth(accel.getX());
@@ -193,7 +195,22 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         float sin_pitch = sin(pitch / 57.3);
         float cos_pitch = cos(pitch / 57.3);
         // Tilt Compensated Yaw
+	
+	if(FIRST_ANGLE_FLAG){
+		first_yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*cos_roll*sin_pitch)) * 57.3;
+		FIRST_ANGLE_FLAG = false;
+	}
         float yaw = atan2f((bz*sin_roll - by*cos_roll), (bx*cos_pitch + by*sin_roll*sin_pitch + bz*cos_roll*sin_pitch)) * 57.3;
+	if(((first_yaw>=90) &&(first_yaw<=180))  ||  ((first_yaw>= -180) &&(first_yaw<= -90))){
+		if(yaw<0){
+			yaw += 360;
+		}
+	}
+	else{
+
+	}
+	//yaw = yaw - first_yaw;
+	
         // printf("%ld\n", (int32_t)(yaw*1000));
 
         yaw = gYaw_Filter.filter(yaw, gz, dt_millis);

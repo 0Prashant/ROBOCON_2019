@@ -80,6 +80,7 @@ Core/Src/main.cpp \
 Core/Src/robot/robot.cpp \
 Core/Src/robot/robo_init.cpp \
 Core/Src/robot/robo_orientation.cpp \
+Core/Src/robot/robot_functions.cpp \
 Core/Src/devs/motor.cpp \
 Core/Src/devs/encoder.cpp \
 Core/Src/devs/leg.cpp \
