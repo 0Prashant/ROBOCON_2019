@@ -18,17 +18,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		}break;
 
                 case GPIO_PIN_9 : {
-                        leg[0].steps++;
-			float leg0_reset_angle = 300*PI/180;
+                        // leg[0].steps++;
+			float leg0_reset_angle = 120*PI/180;
                         leg[0].reset_angle(leg0_reset_angle);
 			//leg[0].reset_actual_angle(((leg[0].get_steps()-1)*2*3.14159265)+leg0_reset_angle);
 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
-			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
+			leg[0].reset_actual_angle((int)(temp)*2*PI + leg0_reset_angle);
 			printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
                 } break;
 
                 case GPIO_PIN_11: {
-                        leg[1].steps++;
+                        // leg[1].steps++;
 			float leg1_reset_angle = 302*PI/180;
                         leg[1].reset_angle(leg1_reset_angle);
 			// leg[1].reset_actual_angle(((leg[1].get_steps()-1)*2*3.14159265)+leg1_reset_angle);

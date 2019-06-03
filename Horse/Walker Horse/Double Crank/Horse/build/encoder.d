@@ -29,7 +29,10 @@ build/encoder.o: Core/Src/devs/encoder.cpp Core/Inc/devs/encoder.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- Core/Inc/periphs/tim.h Core/Inc/main.h
+ Core/Inc/periphs/tim.h Core/Inc/main.h Core/Inc/devs/leg.h \
+ Core/Inc/devs/motor.h Core/Inc/devs/encoder.h Core/Inc/utils/pid.h \
+ Core/Inc/utils/pid_algorithms.h Core/Inc/devs/limit_switch.h \
+ Core/Inc/utils/pid_algorithms.h
 
 Core/Inc/devs/encoder.h:
 
@@ -100,3 +103,17 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 Core/Inc/periphs/tim.h:
 
 Core/Inc/main.h:
+
+Core/Inc/devs/leg.h:
+
+Core/Inc/devs/motor.h:
+
+Core/Inc/devs/encoder.h:
+
+Core/Inc/utils/pid.h:
+
+Core/Inc/utils/pid_algorithms.h:
+
+Core/Inc/devs/limit_switch.h:
+
+Core/Inc/utils/pid_algorithms.h:

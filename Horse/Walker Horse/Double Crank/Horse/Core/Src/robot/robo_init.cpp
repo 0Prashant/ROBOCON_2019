@@ -36,7 +36,7 @@ void steering_init(){
 
 static void pid_init(){
 
-	leg[0].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);		//for crank = 70  // 25.42, 3.082, 2.385	
+	leg[0].set_PID_constants( 1.8, 34.0, 0.014, -17.5, 17.5);		//2.0, 30.0, 0, //for crank = 70  // 25.42, 3.082, 2.385	
 	leg[1].set_PID_constants( 2.0, 30.0, 0, -17.5, 17.5);
 	steering.set_PID_constants( 1.0, 100, 0, -2.42, 2.42);			//for crank = 100 // 17.8, 0.3103, 255.2	loaded = 4.5906, 0.06479, 0
 	steering.set_angle_PID_constants( 0.125, 0.0005, 0, -0.5, 0.5);
@@ -88,14 +88,17 @@ void motor_init(){
 }
 
 void encoder_init(){
+	encoder_configurations[0].id = 0;
 	encoder_configurations[0].ppr = 250*LEG_TO_ENCODER_RATIO*4;
 	encoder_configurations[0].henc = &htim2;
 	HAL_TIM_Encoder_Start(encoder_configurations[0].henc, TIM_CHANNEL_ALL);
 
+	encoder_configurations[1].id = 1;
 	encoder_configurations[1].ppr = 250*LEG_TO_ENCODER_RATIO*4;
 	encoder_configurations[1].henc = &htim1;
 	HAL_TIM_Encoder_Start(encoder_configurations[1].henc, TIM_CHANNEL_ALL);
 	
+	encoder_configurations[2].id = 2;
 	encoder_configurations[2].ppr = 850 *BEARING_TO_STEERING_RATIO*4;
 	encoder_configurations[2].henc = &htim3;
 	HAL_TIM_Encoder_Start(encoder_configurations[2].henc, TIM_CHANNEL_ALL);

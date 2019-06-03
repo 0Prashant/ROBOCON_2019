@@ -17,7 +17,24 @@ enum Robot_States{
 	UUKHAI,
 };
 
+class Robot
+{
+public:
+	Robot(){};
+	Robot(Robot &&) = default;
+	Robot(const Robot &) = default;
+	Robot &operator=(Robot &&) = default;
+	Robot &operator=(const Robot &) = default;
+	~Robot(){};
+
+private:
+	leg leg_0_, leg_1_;
+	steering steering_;
+};
+
+
 void start_Robot(enum Robot_States *state_);
 bool play(void);
+void zone_select(void);
 
 #endif // !_ROBOT_H_

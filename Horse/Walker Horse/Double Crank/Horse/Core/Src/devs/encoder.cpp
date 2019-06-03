@@ -1,5 +1,7 @@
 #include"encoder.h"
+#include "leg.h"
 
+extern leg leg[1];
 void encoder::calculate_omega(){
 	omega_ = (2 * PI * (int16_t)encoder_->henc->Instance->CNT * 1000)/(encoder_->ppr * SAMPLE_TIME);	// omega = 2*pi*f; f = count_per_unittime/ppr;
 	count_ += (int16_t)encoder_->henc->Instance->CNT;
@@ -15,9 +17,11 @@ float encoder::get_angle(){
 	
 	angle_ = ((2*PI)*(count_+(int16_t)encoder_->henc->Instance->CNT)/(encoder_->ppr));
 	if(angle_>(2*PI)){
+		leg[encoder_->id].steps++;
 		reset_angle(angle_-(2*PI));
 	}
 	if(angle_<(-2*PI)){
+		leg[encoder_->id].steps++;
 		reset_angle(angle_+(2*PI));
 	}
 	return angle_;

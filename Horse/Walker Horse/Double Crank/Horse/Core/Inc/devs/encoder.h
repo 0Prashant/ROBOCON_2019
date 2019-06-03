@@ -8,6 +8,7 @@
 
 
 struct encoder_config{
+	uint8_t id;
 	TIM_HandleTypeDef *henc;
 	uint16_t ppr;
 };

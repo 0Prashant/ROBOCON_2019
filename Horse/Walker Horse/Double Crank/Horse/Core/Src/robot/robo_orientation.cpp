@@ -161,8 +161,8 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         // printf("    ");
         // (gyro.mult_EW(4)).print();
         // printf("    ");
-        //  mag.print();
-        //  printf("\n");
+         mag.print();
+         printf("\n");
 
         // We will consider the rotation in order: psi-theta-phi
         float ax = gXAccelAlpha35.smooth(accel.getX());

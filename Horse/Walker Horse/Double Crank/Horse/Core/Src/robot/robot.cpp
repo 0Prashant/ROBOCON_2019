@@ -3,7 +3,7 @@ extern leg leg[2];
 extern steering steering;
 
 extern Vec3<float> initial_angle;
-
+extern float robot_angle ;
 Robot_States robo_state;
 
 bool ROBOT_START_FLAG = false;
@@ -11,11 +11,13 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-int steps[7] = {9, 14, 18, 20, 30, 32, 45};
+float steps[7] = {6, 10, 14, 16, 20, 23, 35};
 float angles[7] = {0, 45, 45, 80, 0, 0, 0};
 
 float steering_angle = 0;
 float steering_omega = 0;
+float leg0_omega = 0;
+float leg0_angle = 0;
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -54,7 +56,7 @@ void start_Robot(enum Robot_States *state_)
 
 	case MARCH:
 	{
-		/*
+			/*
 			  user button thichesi state_A starts when state A flag is set
 			  10 steps agadi gayesi state_A flag clear garnaparcha
 			  state_B flag set garnaparcha
@@ -250,12 +252,39 @@ bool play()
 {
 	uint32_t dt = HAL_GetTick();
 	initial_angle = read_Orientation(10);
+
+	// int i=0;
+	// while(true){
+	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+	// 	{
+	// 		dt = HAL_GetTick();
+	// 		calculate_datas();
+	// 		leg[0].set_omega(17.5);
+	// 		i++;
+	// 		if(i>300)
+	// 			break;
+	// 	}
+	// 	leg0_angle = leg[0].get_angle();
+	// 	leg0_omega = leg[0].get_omega();
+		
+	// }
+	while(true){
+		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+		{
+			dt = HAL_GetTick();
+			calculate_datas();
+
+			leg[0].set_omega(6);
+			leg[1].set_omega(6);
+		}
+	}
 	initialize_position();
 
 	ROBOT_START_FLAG = false;
 	
 	for(int i=0; i<7; i++){
 		angles[i] *= -1;
+		// steps[i] *= (140/155); 
 	}
 	//float start_after = 2
 	// while(!ROBOT_START_FLAG){
@@ -281,11 +310,50 @@ bool play()
 		{
 			dt = HAL_GetTick();
 			calculate_datas();
-			// steering.set_angle(5);
-			// steering_angle = steering.get_angle()*180/PI;
-			// steering_omega = steering.get_omega()*5;
+			leg0_angle = leg[0].get_angle();
+			leg0_omega = leg[0].get_omega();
 			start_Robot(&robo_state);
 		}
 	}
 	return true;
+}
+
+void zone_select(void){
+
+	if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+		robo_state = HOME;
+	}
+	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+		robo_state = SAND_DUNE;
+		leg[0].steps = steps[1];
+		leg[1].steps = steps[1];
+		robot_angle = angles[1];
+		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[1]);
+	}
+	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+		robo_state = STATE_D;
+		leg[0].steps = steps[2];
+		leg[1].steps = steps[2];
+		robot_angle = angles[2];
+		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[2]);
+	}
+	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+		robo_state = BASE_CAMP;
+		leg[0].steps = steps[5];
+		leg[1].steps = steps[5];
+		robot_angle = angles[5];
+	}
+	else {
+		robo_state = HOME;
+		initialize_position();
+	}
+
+	if (HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+		for(int i=0; i<7; i++){
+			angles[i] *= -1;
+		}
+	}
+	else if (HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+
+	}
 }
