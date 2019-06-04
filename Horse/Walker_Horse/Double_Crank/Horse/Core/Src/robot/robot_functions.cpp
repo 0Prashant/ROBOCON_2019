@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 5;    //17 is the maximum with safe zone
+static const float robot_speed = 6;    //17 is the maximum with safe zone
 static const float steering_speed = 0.85; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -79,11 +79,12 @@ bool go(int step, float angle)
 void move_leg(int step, float angle)
 {
 	float del_speed = 0;
-	float damping_constant = 0.65;
+	float damping_constant = 0.4;
+	float damping_factor = 0;
 	float leg_speed = robot_speed; 
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = (step == 100 || step == steps[4]) ? robot_speed / 1.2 : robot_speed;
+	leg_speed = (step == 100 || step == steps[4]) ? robot_speed / 1.25 : robot_speed;
 	if(step == steps[6]){
 		leg_speed = 5;
 	}
@@ -116,7 +117,11 @@ void move_leg(int step, float angle)
 		del_speed /= fabs(del_speed);
 		del_speed *= leg_speed;
 	}
-	float damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant;
+	if((leg[0].get_angle()>PI/2)  ||  (leg[0].get_angle()<3*PI/2)){
+		damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant;}
+	else{
+		damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant*1.8;}
+	
 	leg_speed -= damping_factor;
 	// if((leg[0].get_angle() > (150 * PI/180) && leg[0].get_angle() < (180 * PI/180)) ||
 	// (leg[0].get_angle() > (330 * PI/180) && leg[0].get_angle() < (360 * PI/180))){
@@ -249,7 +254,7 @@ void initialize_position(void)
 		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
 		{
 			dt = HAL_GetTick();
-			printf("\tInitializing_Leg_Orientation\t");
+			printf("\nInitializing_Leg_Orientation\t");
 			calculate_datas();
 			if (initialize_leg_position() == true)
 				break;
@@ -302,8 +307,8 @@ bool initialize_leg_position(void)
 	static bool leg0_flag = false;
 	static bool leg1_flag = false;
 
-	printf("\n\tsteps0 = %d, angle0 = %d\tsteps0 = %d, angle0 = %d, \trobot_angle = %d"
-	, leg[0].get_steps(), (int)(leg[0].get_angle() * 180 / PI), leg[1].get_steps(), (int)(leg[1].get_angle() * 180 / PI), (int)(robot_angle * 180 /PI));
+	// printf("\n\tsteps0 = %d, angle0 = %d\tsteps0 = %d, angle0 = %d, \trobot_angle = %d"
+	// , leg[0].get_steps(), (int)(leg[0].get_angle() * 180 / PI), leg[1].get_steps(), (int)(leg[1].get_angle() * 180 / PI), (int)(robot_angle * 180 /PI));
 	if ((leg[0].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
 	    (leg[0].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180) && (leg[0].get_steps() != 0)))
 	{
@@ -385,7 +390,7 @@ void calculate_datas()
 	if(leg[0].is_raised()){
 		calculate_robot_angle();
 	}
-	printf("\tangleZ = %d\t", (int)curr_angle.getZ());
+	// printf("\tangleZ = %d\t", (int)curr_angle.getZ());
 	HAL_ADC_Start(&hadc1);
 	if (HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK)
 	{

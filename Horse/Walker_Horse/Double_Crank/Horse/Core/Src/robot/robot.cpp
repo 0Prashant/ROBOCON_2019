@@ -11,8 +11,8 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-float steps[7] = {6, 10, 14, 16, 20, 23, 35};
-float angles[7] = {0, 45, 45, 80, 0, 0, 0};
+float steps[7] = {8, 13, 18, 21, 25, 28, 41};
+float angles[7] = {0, 45, 45, 60, -15, -15, 0};
 
 float steering_angle = 0;
 float steering_omega = 0;
@@ -119,6 +119,7 @@ void start_Robot(enum Robot_States *state_)
 			*state_ = STATE_D;
 		}
 		/*/
+		
 		go(100, angles[2]);
 		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){			
 			*state_ = STATE_D;
@@ -268,16 +269,16 @@ bool play()
 	// 	leg0_omega = leg[0].get_omega();
 		
 	// }
-	while(true){
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			calculate_datas();
+	// while(true){
+	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+	// 	{
+	// 		dt = HAL_GetTick();
+	// 		calculate_datas();
 
-			leg[0].set_omega(6);
-			leg[1].set_omega(6);
-		}
-	}
+	// 		leg[0].set_omega(6);
+	// 		leg[1].set_omega(6);
+	// 	}
+	// }
 	initialize_position();
 
 	ROBOT_START_FLAG = false;
