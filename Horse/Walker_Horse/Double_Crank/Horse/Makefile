@@ -48,6 +48,8 @@ Core/Src/utils/printf_config.c \
 Core/Src/sys/stm32f4xx_it.c \
 Core/Src/sys/stm32f4xx_hal_msp.c \
 Core/Src/sys/system_stm32f4xx.c \
+Core/Src/sys/freertos.c \
+Core/Src/sys/stm32f4xx_hal_timebase_tim.c \
 \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
@@ -67,7 +69,15 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c \
+Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
+Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
+Middlewares/Third_Party/FreeRTOS/Source/list.c \
+Middlewares/Third_Party/FreeRTOS/Source/queue.c \
+Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
+Middlewares/Third_Party/FreeRTOS/Source/timers.c \
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -81,6 +91,7 @@ Core/Src/robot/robot.cpp \
 Core/Src/robot/robo_init.cpp \
 Core/Src/robot/robo_orientation.cpp \
 Core/Src/robot/robot_functions.cpp \
+Core/Src/robot/robot_tasks.cpp \
 Core/Src/devs/motor.cpp \
 Core/Src/devs/encoder.cpp \
 Core/Src/devs/leg.cpp \
@@ -89,7 +100,8 @@ Core/Src/devs/mpu6050.cpp \
 Core/Src/devs/interrupt.cpp \
 Core/Src/devs/steering.cpp \
 Core/Src/utils/exp_smooth.cpp \
-Core/Src/utils/mat.cpp
+Core/Src/utils/mat.cpp \
+Core/Src/utils/logger.cpp
 ##
 
 #######################################
@@ -157,7 +169,10 @@ C_INCLUDES =  \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
--IDrivers/CMSIS/Include
+-IDrivers/CMSIS/Include \
+-IMiddlewares/Third_Party/FreeRTOS/Source/include \
+-IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
+-IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 
 
 # compile gcc flags

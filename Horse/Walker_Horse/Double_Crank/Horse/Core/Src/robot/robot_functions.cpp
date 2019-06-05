@@ -52,7 +52,8 @@ bool go(int step, float angle)
 	printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
 	 (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
 
-	if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
+	// if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
+	if (leg[0].get_steps()   >= step )
 	{
 		leg[0].set_omega(0);
 		leg[1].set_omega(0);
@@ -79,8 +80,9 @@ bool go(int step, float angle)
 void move_leg(int step, float angle)
 {
 	float del_speed = 0;
-	float damping_constant = 0.4;
+	float damping_constant = 0.6;
 	float damping_factor = 0;
+	float damping_angle = 45 * PI /180;
 	float leg_speed = robot_speed; 
 
 	//Setting the slow speed in sand dune and tussok
@@ -117,11 +119,28 @@ void move_leg(int step, float angle)
 		del_speed /= fabs(del_speed);
 		del_speed *= leg_speed;
 	}
-	if((leg[0].get_angle()>PI/2)  ||  (leg[0].get_angle()<3*PI/2)){
-		damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant;}
+	// if((leg[0].get_angle()>PI/2)  &&  (leg[0].get_angle()<3*PI/2)){
+	// 	damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant;}
+	// else{
+	// 	damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant*1.2;}
+
+	if( ((leg[0].get_angle()>(0)) && (leg[0].get_angle()<(PI-damping_angle))) ||
+	((leg[0].get_angle()>(PI)) && (leg[0].get_angle()<(2*PI-damping_angle))) )
+	{
+		damping_factor = 0;
+	}
 	else{
-		damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant*1.8;}
-	
+		// if((leg[0].get_angle()>0)  &&  (leg[0].get_angle()<PI/2)){
+		// 	damping_factor = (cos(2*((leg[0].get_angle()) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
+		if((leg[0].get_angle()>PI/2)  &&  (leg[0].get_angle()<PI)){
+			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
+		// else if((leg[0].get_angle()>PI)  &&  (leg[0].get_angle()<3*PI/2)){
+		// 	damping_factor = (cos(2*((leg[0].get_angle()) * (PI/(2*damping_angle))))) * leg_speed * damping_constant*1.2;}
+		else if((leg[0].get_angle()>3*PI/2)  &&  (leg[0].get_angle()<2*PI)){
+			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle-PI) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
+		else{
+			damping_factor = 0;}
+	}
 	leg_speed -= damping_factor;
 	// if((leg[0].get_angle() > (150 * PI/180) && leg[0].get_angle() < (180 * PI/180)) ||
 	// (leg[0].get_angle() > (330 * PI/180) && leg[0].get_angle() < (360 * PI/180))){

@@ -12,6 +12,10 @@
 #define BODY_WEIGHT (8)
 #define LEG_WEIGHT (1)
 
+#define START_BYTE (0xA5)
+
+#define START_BYTE	(0xA5)
+
 #endif // !_DEFINES_H_
 
 

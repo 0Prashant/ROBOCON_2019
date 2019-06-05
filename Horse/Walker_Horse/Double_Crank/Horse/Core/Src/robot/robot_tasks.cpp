@@ -1,0 +1,88 @@
+#include "FreeRTOS.h"
+#include "task.h"
+#include "main.h"
+#include "cmsis_os.h"
+#include "robot.h"
+#include "robot_functions.h"
+
+extern "C" void StartDefaultTask(void const *argument);
+extern "C" void StartRobotTask(void const *argument);
+extern "C" void StartLoggerTask(void const *argument);
+extern "C" void StartCalculationTask(void const *argument);
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used 
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void const *argument)
+{
+
+	/* USER CODE BEGIN StartDefaultTask */
+	/* Infinite loop */
+	for (;;)
+	{
+		osDelay(1);
+	}
+	/* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartRobotTask */
+/**
+* @brief Function implementing the RobotTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartRobotTask */
+void StartRobotTask(void const *argument)
+{
+	/* USER CODE BEGIN StartRobotTask */
+	uint8_t sample_time = 10;
+	uint32_t dt = HAL_GetTick();
+	/* Infinite loop */
+	for (;;)
+	{
+		dt = HAL_GetTick();
+		play();
+		dt = HAL_GetTick() - dt;
+		osDelay(sample_time - dt);
+	}
+	/* USER CODE END StartRobotTask */
+}
+
+/* USER CODE BEGIN Header_StartLoggerTask */
+/**
+* @brief Function implementing the LoggerTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartLoggerTask */
+void StartLoggerTask(void const *argument)
+{
+	/* USER CODE BEGIN StartLoggerTask */
+	/* Infinite loop */
+	for (;;)
+	{
+		osDelay(1);
+	}
+	/* USER CODE END StartLoggerTask */
+}
+
+/* USER CODE BEGIN Header_StartCalculationTask */
+/**
+* @brief Function implementing the CalculationTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartCalculationTask */
+void StartCalculationTask(void const *argument)
+{
+	/* USER CODE BEGIN StartCalculationTask */
+	/* Infinite loop */
+	for (;;)
+	{
+		osDelay(1);
+	}
+	/* USER CODE END StartCalculationTask */
+}

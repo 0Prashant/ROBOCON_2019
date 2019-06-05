@@ -11,8 +11,8 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-float steps[7] = {8, 13, 18, 21, 25, 28, 41};
-float angles[7] = {0, 45, 45, 60, -15, -15, 0};
+float steps[7] = {8, 13, 18, 21, 25, 29, 41};
+float angles[7] = {0, 45, 45, 55, 0, 0, 0};
 
 float steering_angle = 0;
 float steering_omega = 0;
