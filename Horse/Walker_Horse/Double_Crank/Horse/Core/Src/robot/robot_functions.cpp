@@ -112,7 +112,7 @@ void move_leg(int step, float angle)
 		else{
 			damping_factor = 0;}
 	}
-	leg_speed -= damping_factor;
+	leg_speed += damping_factor;
 	leg[0].set_omega(leg_speed - del_speed);
 	leg[1].set_omega(leg_speed + del_speed);
 
@@ -240,7 +240,6 @@ void initialize_position(void)
 		{
 			dt = HAL_GetTick();
 			printf("\nInitializing_Leg_Orientation\t");
-			calculate_datas();
 			if (initialize_leg_position() == true)
 				break;
 		}
@@ -251,7 +250,6 @@ void initialize_position(void)
 		{
 			dt = HAL_GetTick();
 			printf("\n\tWaiting_The_Leg \t");
-			calculate_datas();
 			leg[0].steps = 0;
 			leg[1].steps = 0;
 			leg[0].reset_angle(90 * PI / 180);
@@ -273,7 +271,6 @@ void initialize_position(void)
 			printf("\tInitializing_Steering_Orientation\t %d \t %d", (int)HAL_GetTick(), (int)start_time);
 			leg[0].set_omega(0);
 			leg[1].set_omega(0);
-			calculate_datas();
 			if (initialize_steering_position() == true)
 				break;
 		}

@@ -3,6 +3,7 @@ extern leg leg[2];
 extern steering steering;
 
 extern Vec3<float> initial_angle;
+extern Vec3<float> curr_angle;
 extern float robot_angle ;
 Robot_States robo_state;
 
@@ -36,9 +37,9 @@ void start_Robot(enum Robot_States *state_)
 		steering.set_angle(0);
 		leg[0].reset_actual_angle(90 * PI / 180);
 		leg[1].reset_actual_angle(90 * PI / 180);
-		initial_angle = read_Orientation(10);
-		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t", (int)(leg[0].get_actual_angle()*180/PI)
-		, (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*1800/PI));
+		initial_angle = curr_angle;
+		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0].get_actual_angle()*180/PI),
+		  (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*180/PI), (int)(robot_angle*180/PI));
 		if (ROBOT_START_FLAG)
 		{
 			*state_ = MARCH;
@@ -247,10 +248,6 @@ void start_Robot(enum Robot_States *state_)
 
 bool play()
 {	
-	for(int i=0; i<7; i++){
-		angles[i] *= -1;
-	}
-	robo_state = HOME;
 	start_Robot(&robo_state);
 	return true;
 }

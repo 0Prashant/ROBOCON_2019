@@ -6,11 +6,13 @@
 #include "robot_functions.h"
 
 extern bool ROBOT_START_FLAG;
-
+extern Robot_States robo_state;
+extern float angles[7];
 extern "C" void StartDefaultTask(void const *argument);
 extern "C" void StartRobotTask(void const *argument);
 extern "C" void StartLoggerTask(void const *argument);
 extern "C" void StartCalculationTask(void const *argument);
+
 
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
@@ -45,6 +47,10 @@ void StartRobotTask(void const *argument)
 	uint32_t dt = HAL_GetTick();
 	initialize_position();
 	ROBOT_START_FLAG = false;
+	robo_state = HOME;
+	for(int i=0; i<7; i++){
+		angles[i] *= -1;
+	}
 	/* Infinite loop */
 	for (;;)
 	{
