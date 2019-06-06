@@ -9,12 +9,11 @@ Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
 static const float robot_speed = 6;    //17 is the maximum with safe zone
-static const float steering_speed = 0.85; // 0.875 is the 100%
+static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
 extern int steps[7];
 extern float angles[7];
-float robotx = 0;
 float summation_angle = 0;
 uint32_t start_time;
 
@@ -47,7 +46,6 @@ bool go(int step, float angle)
 	else{
 		steering.set_angle(0);
 	}
-	calculate_robot_angle();
 	//printf(" \nsteps = %d\t robot_angle = %d\t steering_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(steering.get_angle() * 180 / PI));
 	printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
 	 (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
@@ -90,30 +88,7 @@ void move_leg(int step, float angle)
 	if(step == steps[6]){
 		leg_speed = 5;
 	}
-	/*/
-	float leg_speed[2] = {0, 0};
-	float offset_angle = 0;
-	for(int i = 0; i < 2; i++)
-	{
-		if(i == 0){
-			offset_angle = 0;}
-		else{
-			offset_angle = PI;}
-		
-		if(leg[0].is_raised() == Leg_condition::RAISED)
-		if(leg[i].get_angle() >= (15 * PI/180 + offset_angle) && leg[i].get_angle() <= (165 * PI/180 + offset_angle))
-		{
-			leg_speed[i] = leg_speed * 2;
-		}
-		else if(leg[i].get_angle() >= (195 * PI/180 - offset_angle) && leg[i].get_angle() <= (345 * PI/180 - offset_angle))
-		{
-			leg_speed[i] = leg_speed;
-		}
 
-
-		leg[i].set_omega(leg_speed[i]);
-	}
-	/*/
 	del_speed = 2*(leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	if(fabs(del_speed) >= leg_speed){
 		del_speed /= fabs(del_speed);
@@ -130,26 +105,17 @@ void move_leg(int step, float angle)
 		damping_factor = 0;
 	}
 	else{
-		// if((leg[0].get_angle()>0)  &&  (leg[0].get_angle()<PI/2)){
-		// 	damping_factor = (cos(2*((leg[0].get_angle()) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
 		if((leg[0].get_angle()>PI/2)  &&  (leg[0].get_angle()<PI)){
 			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
-		// else if((leg[0].get_angle()>PI)  &&  (leg[0].get_angle()<3*PI/2)){
-		// 	damping_factor = (cos(2*((leg[0].get_angle()) * (PI/(2*damping_angle))))) * leg_speed * damping_constant*1.2;}
 		else if((leg[0].get_angle()>3*PI/2)  &&  (leg[0].get_angle()<2*PI)){
 			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle-PI) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
 		else{
 			damping_factor = 0;}
 	}
 	leg_speed -= damping_factor;
-	// if((leg[0].get_angle() > (150 * PI/180) && leg[0].get_angle() < (180 * PI/180)) ||
-	// (leg[0].get_angle() > (330 * PI/180) && leg[0].get_angle() < (360 * PI/180))){
-	// 	leg_speed = robot_speed/4;
-	// }
 	leg[0].set_omega(leg_speed - del_speed);
 	leg[1].set_omega(leg_speed + del_speed);
-	//*/
-	// printf("\t%d \t%d \t", (int)(leg_speed + del_speed), (int)(leg_speed - del_speed));
+
 }
 
 /*
@@ -406,14 +372,7 @@ void calculate_datas()
 	leg[1].calculate_omega();
 	steering.calculate_omega();
 	curr_angle = read_Orientation(10);
-	if(leg[0].is_raised()){
-		calculate_robot_angle();
-	}
+	calculate_robot_angle();
 	// printf("\tangleZ = %d\t", (int)curr_angle.getZ());
 	HAL_ADC_Start(&hadc1);
-	if (HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK)
-	{
-		robotx = HAL_ADC_GetValue(&hadc1);
-		robotx = 62.17 * pow(((robotx * 3.3) / 4096), -1.0893);
-	}
 }

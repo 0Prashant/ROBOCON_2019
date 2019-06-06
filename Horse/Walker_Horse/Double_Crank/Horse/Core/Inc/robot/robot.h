@@ -27,6 +27,12 @@ public:
 	Robot &operator=(const Robot &) = default;
 	~Robot(){};
 
+	// initialize_position();
+	// move(float step, float angle);
+	// calculate_datas();
+
+	// bool START_FLAG;
+
 private:
 	leg leg_0_, leg_1_;
 	steering steering_;

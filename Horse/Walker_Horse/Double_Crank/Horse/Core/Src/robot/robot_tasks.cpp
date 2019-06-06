@@ -5,10 +5,13 @@
 #include "robot.h"
 #include "robot_functions.h"
 
+extern bool ROBOT_START_FLAG;
+
 extern "C" void StartDefaultTask(void const *argument);
 extern "C" void StartRobotTask(void const *argument);
 extern "C" void StartLoggerTask(void const *argument);
 extern "C" void StartCalculationTask(void const *argument);
+
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
   * @brief  Function implementing the defaultTask thread.
@@ -40,6 +43,8 @@ void StartRobotTask(void const *argument)
 	/* USER CODE BEGIN StartRobotTask */
 	uint8_t sample_time = 10;
 	uint32_t dt = HAL_GetTick();
+	initialize_position();
+	ROBOT_START_FLAG = false;
 	/* Infinite loop */
 	for (;;)
 	{
@@ -62,9 +67,14 @@ void StartLoggerTask(void const *argument)
 {
 	/* USER CODE BEGIN StartLoggerTask */
 	/* Infinite loop */
+	uint8_t sample_time = 10;
+	uint32_t dt = HAL_GetTick();
 	for (;;)
 	{
-		osDelay(1);
+		dt = HAL_GetTick();
+
+		dt = HAL_GetTick() - dt;
+		osDelay(sample_time - dt);
 	}
 	/* USER CODE END StartLoggerTask */
 }
@@ -80,9 +90,14 @@ void StartCalculationTask(void const *argument)
 {
 	/* USER CODE BEGIN StartCalculationTask */
 	/* Infinite loop */
+	uint8_t sample_time = 10;
+	uint32_t dt = HAL_GetTick();
 	for (;;)
 	{
-		osDelay(1);
+		dt = HAL_GetTick();
+		calculate_datas();
+		dt = HAL_GetTick() - dt;
+		osDelay(sample_time - dt);
 	}
 	/* USER CODE END StartCalculationTask */
 }

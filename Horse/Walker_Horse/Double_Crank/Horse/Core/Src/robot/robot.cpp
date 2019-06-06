@@ -14,10 +14,6 @@ bool BACK_PROXIMITY_FLAG = false;
 float steps[7] = {8, 13, 18, 21, 25, 29, 41};
 float angles[7] = {0, 45, 45, 55, 0, 0, 0};
 
-float steering_angle = 0;
-float steering_omega = 0;
-float leg0_omega = 0;
-float leg0_angle = 0;
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -250,72 +246,12 @@ void start_Robot(enum Robot_States *state_)
 }
 
 bool play()
-{
-	uint32_t dt = HAL_GetTick();
-	initial_angle = read_Orientation(10);
-
-	// int i=0;
-	// while(true){
-	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-	// 	{
-	// 		dt = HAL_GetTick();
-	// 		calculate_datas();
-	// 		leg[0].set_omega(17.5);
-	// 		i++;
-	// 		if(i>300)
-	// 			break;
-	// 	}
-	// 	leg0_angle = leg[0].get_angle();
-	// 	leg0_omega = leg[0].get_omega();
-		
-	// }
-	// while(true){
-	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-	// 	{
-	// 		dt = HAL_GetTick();
-	// 		calculate_datas();
-
-	// 		leg[0].set_omega(6);
-	// 		leg[1].set_omega(6);
-	// 	}
-	// }
-	initialize_position();
-
-	ROBOT_START_FLAG = false;
-	
+{	
 	for(int i=0; i<7; i++){
 		angles[i] *= -1;
-		// steps[i] *= (140/155); 
 	}
-	//float start_after = 2
-	// while(!ROBOT_START_FLAG){
-	// 	if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-	// 	{
-	// 		dt = HAL_GetTick();
-	// 		calculate_datas();
-	// 		leg[0].set_omega(0);
-	// 		leg[0].set_omega(0);
-	// 		steering.set_angle(0);
-	// 	}
-
-	// }
-	// robo_state = STATE_D;
-	// initial_angle.set_Values(0,0,angle[start_after]);
-	// leg[0].steps = steps[start_after];
-	// leg[1].steps = steps[start_after];
-	
 	robo_state = HOME;
-	
-	while(true){
-		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
-		{
-			dt = HAL_GetTick();
-			calculate_datas();
-			leg0_angle = leg[0].get_angle();
-			leg0_omega = leg[0].get_omega();
-			start_Robot(&robo_state);
-		}
-	}
+	start_Robot(&robo_state);
 	return true;
 }
 
