@@ -24,7 +24,7 @@ void correct_steering_angle(float angle);
 
 void calculate_datas(void);
 void calculate_robot_angle(void);
-
+float motion_profile(float angle_in_degrees, float min_speed, float max_speed);
 
 #endif //!_ROBOT_FUNCTIONS_H_
 

@@ -48,6 +48,7 @@ void StartRobotTask(void const *argument)
 	initialize_position();
 	ROBOT_START_FLAG = false;
 	robo_state = HOME;
+	
 	for(int i=0; i<7; i++){
 		angles[i] *= -1;
 	}
@@ -73,7 +74,7 @@ void StartLoggerTask(void const *argument)
 {
 	/* USER CODE BEGIN StartLoggerTask */
 	/* Infinite loop */
-	uint8_t sample_time = 10;
+	uint8_t sample_time = 50;
 	uint32_t dt = HAL_GetTick();
 	for (;;)
 	{

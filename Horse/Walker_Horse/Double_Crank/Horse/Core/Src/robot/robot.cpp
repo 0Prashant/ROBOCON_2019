@@ -13,7 +13,7 @@ bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
 float steps[7] = {8, 13, 18, 21, 25, 29, 41};
-float angles[7] = {0, 45, 45, 55, 0, 0, 0};
+float angles[7] = {0, 45, 45, 60, 0, 0, 0};
 
 
 void start_Robot(enum Robot_States *state_)

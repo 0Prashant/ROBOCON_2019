@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 6;    //17 is the maximum with safe zone
+static const float robot_speed = 7;    //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -78,9 +78,6 @@ bool go(int step, float angle)
 void move_leg(int step, float angle)
 {
 	float del_speed = 0;
-	float damping_constant = 0.6;
-	float damping_factor = 0;
-	float damping_angle = 45 * PI /180;
 	float leg_speed = robot_speed; 
 
 	//Setting the slow speed in sand dune and tussok
@@ -89,30 +86,12 @@ void move_leg(int step, float angle)
 		leg_speed = 5;
 	}
 
+	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 2,leg_speed);
 	del_speed = 2*(leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	if(fabs(del_speed) >= leg_speed){
 		del_speed /= fabs(del_speed);
 		del_speed *= leg_speed;
 	}
-	// if((leg[0].get_angle()>PI/2)  &&  (leg[0].get_angle()<3*PI/2)){
-	// 	damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant;}
-	// else{
-	// 	damping_factor = (cos(2*leg[0].get_angle())) * leg_speed * damping_constant*1.2;}
-
-	if( ((leg[0].get_angle()>(0)) && (leg[0].get_angle()<(PI-damping_angle))) ||
-	((leg[0].get_angle()>(PI)) && (leg[0].get_angle()<(2*PI-damping_angle))) )
-	{
-		damping_factor = 0;
-	}
-	else{
-		if((leg[0].get_angle()>PI/2)  &&  (leg[0].get_angle()<PI)){
-			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
-		else if((leg[0].get_angle()>3*PI/2)  &&  (leg[0].get_angle()<2*PI)){
-			damping_factor = (cos(2*((leg[0].get_angle()-damping_angle-PI) * (PI/(2*damping_angle))))) * leg_speed * damping_constant;}
-		else{
-			damping_factor = 0;}
-	}
-	leg_speed += damping_factor;
 	leg[0].set_omega(leg_speed - del_speed);
 	leg[1].set_omega(leg_speed + del_speed);
 
@@ -372,4 +351,31 @@ void calculate_datas()
 	calculate_robot_angle();
 	// printf("\tangleZ = %d\t", (int)curr_angle.getZ());
 	HAL_ADC_Start(&hadc1);
+}
+
+float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
+{
+	float damping_angle = 25;
+	float speed = 0;
+	if(angle_in_degrees > 180)
+	{
+		angle_in_degrees -= 180;
+	}
+	if((angle_in_degrees >= 0 ) && (angle_in_degrees <= damping_angle)){
+		speed = ((max_speed - min_speed) / (damping_angle - 0)) * (angle_in_degrees - 0) + min_speed;
+		printf("condition1");
+	} 
+
+	else if((angle_in_degrees >= (180 - damping_angle)) && (angle_in_degrees <= 180)){
+		speed = ((min_speed - max_speed) / (180 - (180 - damping_angle))) * (angle_in_degrees - (180 - damping_angle)) + max_speed;
+		printf("conditionelseif");
+	} 
+
+	else{
+		speed = max_speed;
+		printf("else");
+	} 
+	printf("\tSpeed = %d", (int)(speed*100));
+
+	return speed;
 }
