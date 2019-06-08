@@ -137,7 +137,10 @@ int main(void)
 	MX_I2C2_Init();
 	/* USER CODE BEGIN 2 */
 	Angle_Init();
-
+	
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+	
 	robo_init();
 	
 	HAL_ADC_Start(&hadc1);
@@ -146,8 +149,6 @@ int main(void)
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 	printf("\n\nAll initialized\n\n");
 
 	uint32_t sample_time = HAL_GetTick();

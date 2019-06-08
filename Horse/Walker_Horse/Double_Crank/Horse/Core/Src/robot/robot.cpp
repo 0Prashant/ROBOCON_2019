@@ -12,8 +12,8 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-float steps[7] = {8, 13, 18, 21, 25, 29, 41};
-float angles[7] = {0, 45, 45, 60, 0, 0, 0};
+float steps[7] = {7, 13, 18, 21, 25, 28, 39};
+float angles[7] = {0, 45, 45, 60, 0, -10, -10};
 
 
 void start_Robot(enum Robot_States *state_)
@@ -88,7 +88,7 @@ void start_Robot(enum Robot_States *state_)
 		}
 		/*/
 		go(99, angles[1]);
-		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){
+		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){
 			*state_ = SAND_DUNE;
 			leg[0].steps = steps[1];
 			leg[1].steps = steps[1];
@@ -118,7 +118,7 @@ void start_Robot(enum Robot_States *state_)
 		/*/
 		
 		go(100, angles[2]);
-		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){			
+		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){			
 			*state_ = STATE_D;
 			leg[0].steps = steps[2];
 			leg[1].steps = steps[2];

@@ -43,18 +43,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			 printf("\n\n\t\t\tsteering interrupt \t\n");
                 } break;
 
-		case GPIO_PIN_8: {
+		case GPIO_PIN_10: {
 			FRONT_PROXIMITY_FLAG = true;
 			printf("\n\n\t\t\tFRONT_PROXIMITY_FLAG interrupt \t\n");
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-			//__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_8);
 		}
 
-		case GPIO_PIN_10: {
+		case GPIO_PIN_8: {
 			BACK_PROXIMITY_FLAG = true;
 			printf("\n\n\t\t\tBACK_PROXIMITY_FLAG interrupt \t\n");
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-			//__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_10);
 		}
         }
 }

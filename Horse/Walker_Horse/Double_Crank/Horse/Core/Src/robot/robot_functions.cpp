@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 7;    //17 is the maximum with safe zone
+static const float robot_speed = 8;    //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -86,7 +86,7 @@ void move_leg(int step, float angle)
 		leg_speed = 5;
 	}
 
-	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 2,leg_speed);
+	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
 	del_speed = 2*(leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	if(fabs(del_speed) >= leg_speed){
 		del_speed /= fabs(del_speed);
@@ -263,7 +263,7 @@ void initialize_position(void)
  */ 
 bool initialize_leg_position(void)
 {
-	float initial_tolerance = 4;
+	float initial_tolerance = 3;
 	float leg_initial_position = 90;
 	static bool leg0_flag = false;
 	static bool leg1_flag = false;
@@ -278,7 +278,7 @@ bool initialize_leg_position(void)
 	}
 	else
 	{
-		leg[0].set_omega(5);
+		leg[0].set_omega(3);
 		leg0_flag = false;
 	}
 
@@ -290,7 +290,7 @@ bool initialize_leg_position(void)
 	}
 	else
 	{
-		leg[1].set_omega(5);
+		leg[1].set_omega(3);
 		leg1_flag = false;
 	}
 
@@ -304,7 +304,7 @@ bool initialize_leg_position(void)
 		return false;
 	}
 }
-
+ 
 /**
  * \brief Called by initialize_position();
  * \brief This function initializes the steering in center position at the start of the game.
@@ -355,8 +355,9 @@ void calculate_datas()
 
 float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
-	float damping_angle = 25;
+	float damping_angle = 30;
 	float speed = 0;
+	min_speed = 2;
 	if(angle_in_degrees > 180)
 	{
 		angle_in_degrees -= 180;
