@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 8;    //17 is the maximum with safe zone
+static const float robot_speed = 9;    //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -46,9 +46,9 @@ bool go(int step, float angle)
 	else{
 		steering.set_angle(0);
 	}
-	//printf(" \nsteps = %d\t robot_angle = %d\t steering_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(steering.get_angle() * 180 / PI));
-	printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
-	 (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
+	printf(" \nsteps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
+	// printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
+	//  (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
 
 	// if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
 	if (leg[0].get_steps()   >= step )
@@ -355,7 +355,7 @@ void calculate_datas()
 
 float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
-	float damping_angle = 30;
+	float damping_angle = 27;
 	float speed = 0;
 	min_speed = 2;
 	if(angle_in_degrees > 180)
@@ -364,19 +364,19 @@ float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 	}
 	if((angle_in_degrees >= 0 ) && (angle_in_degrees <= damping_angle)){
 		speed = ((max_speed - min_speed) / (damping_angle - 0)) * (angle_in_degrees - 0) + min_speed;
-		printf("condition1");
+		// printf("condition1");
 	} 
 
 	else if((angle_in_degrees >= (180 - damping_angle)) && (angle_in_degrees <= 180)){
 		speed = ((min_speed - max_speed) / (180 - (180 - damping_angle))) * (angle_in_degrees - (180 - damping_angle)) + max_speed;
-		printf("conditionelseif");
+		// printf("conditionelseif");
 	} 
 
 	else{
 		speed = max_speed;
-		printf("else");
+		// printf("else");
 	} 
-	printf("\tSpeed = %d", (int)(speed*100));
+	// printf("\tSpeed = %d", (int)(speed*100));
 
 	return speed;
 }
