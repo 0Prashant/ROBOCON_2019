@@ -355,7 +355,7 @@ void calculate_datas()
 
 float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
-	float damping_angle = 27;
+	float damping_angle = 20;
 	float speed = 0;
 	min_speed = 2;
 	if(angle_in_degrees > 180)

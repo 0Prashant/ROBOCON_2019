@@ -12,7 +12,7 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-float steps[7] = {7, 13, 18, 21, 25, 28, 39};
+float steps[7] = {7, 13, 17, 20, 24, 29, 41};
 float angles[7] = {0, 45, 45, 60, 0, -10, -10};
 
 
