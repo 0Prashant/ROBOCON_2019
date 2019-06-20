@@ -15,6 +15,7 @@ enum Robot_States{
 	BASE_CAMP,
 	MOUNTAIN,
 	UUKHAI,
+	TUNE
 };
 
 class Robot

@@ -8,6 +8,7 @@
 extern bool ROBOT_START_FLAG;
 extern Robot_States robo_state;
 extern float angles[7];
+extern leg leg[2];
 extern "C" void StartDefaultTask(void const *argument);
 extern "C" void StartRobotTask(void const *argument);
 extern "C" void StartLoggerTask(void const *argument);
@@ -56,7 +57,7 @@ void StartRobotTask(void const *argument)
 	for (;;)
 	{
 		dt = HAL_GetTick();
-		play();
+		play();		
 		dt = HAL_GetTick() - dt;
 		osDelay(sample_time - dt);
 	}

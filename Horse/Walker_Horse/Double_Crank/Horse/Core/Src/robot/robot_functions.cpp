@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 9;    //17 is the maximum with safe zone
+static const float robot_speed = 7;    //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -40,11 +40,12 @@ bool go(int step, float angle)
 {
 	angle *= PI / 180;
 	move_leg(step, angle);
+	move_steering(step, angle);
 	if((step != 100) && (step != steps[6])){
-		move_steering(step, angle);
+		USE_IMU_FLAG = false;
 	}
 	else{
-		steering.set_angle(0);
+		USE_IMU_FLAG = true;
 	}
 	printf(" \nsteps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
 	// printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
@@ -81,9 +82,9 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed; 
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = (step == 100 || step == steps[4]) ? robot_speed / 1.25 : robot_speed;
+	leg_speed = (step == 100) ? robot_speed / 1.3 : robot_speed;
 	if(step == steps[6]){
-		leg_speed = 5;
+		leg_speed = 4;
 	}
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
@@ -350,17 +351,19 @@ void calculate_datas()
 	curr_angle = read_Orientation(10);
 	calculate_robot_angle();
 	// printf("\tangleZ = %d\t", (int)curr_angle.getZ());
+	// printf("\trobot_angle = %d\t", (int)(robot_angle*180/PI));
 	HAL_ADC_Start(&hadc1);
 }
 
 float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
-	float damping_angle = 20;
+	float damping_angle = 25;
 	float speed = 0;
-	min_speed = 2;
+	min_speed = 2.5;
 	if(angle_in_degrees > 180)
 	{
 		angle_in_degrees -= 180;
+		// max_speed = 10;
 	}
 	if((angle_in_degrees >= 0 ) && (angle_in_degrees <= damping_angle)){
 		speed = ((max_speed - min_speed) / (damping_angle - 0)) * (angle_in_degrees - 0) + min_speed;

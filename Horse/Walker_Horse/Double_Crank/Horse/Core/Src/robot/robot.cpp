@@ -8,6 +8,7 @@ extern float robot_angle ;
 Robot_States robo_state;
 
 bool ROBOT_START_FLAG = false;
+bool GEREGE_FLAG = false;
 bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
@@ -37,10 +38,10 @@ void start_Robot(enum Robot_States *state_)
 		steering.set_angle(0);
 		leg[0].reset_actual_angle(90 * PI / 180);
 		leg[1].reset_actual_angle(90 * PI / 180);
-		initial_angle = curr_angle;
+		if(!ROBOT_START_FLAG){initial_angle = curr_angle;}
 		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0].get_actual_angle()*180/PI),
 		  (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*180/PI), (int)(robot_angle*180/PI));
-		if (ROBOT_START_FLAG)
+		if (GEREGE_FLAG)
 		{
 			*state_ = MARCH;
 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
@@ -88,7 +89,8 @@ void start_Robot(enum Robot_States *state_)
 		}
 		/*/
 		go(99, angles[1]);
-		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){
+		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[1]){
+		// if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){
 			*state_ = SAND_DUNE;
 			leg[0].steps = steps[1];
 			leg[1].steps = steps[1];
@@ -113,12 +115,13 @@ void start_Robot(enum Robot_States *state_)
 		/*/
 		if (go(steps[2], angles[2]) == true)
 		{
-			*state_ = STATE_D;
+			*state_ = STATE_D; 
 		}
 		/*/
 		
 		go(100, angles[2]);
-		if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){			
+		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[2]){
+		// if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){			
 			*state_ = STATE_D;
 			leg[0].steps = steps[2];
 			leg[1].steps = steps[2];
@@ -184,6 +187,7 @@ void start_Robot(enum Robot_States *state_)
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+			initialize_position();
 		}
 	}
 	break;
@@ -194,7 +198,10 @@ void start_Robot(enum Robot_States *state_)
 			uukhai zone ma n no of steps gayesi state_G end huncha
 			*/
 		printf("Base camp");
-		if(initialize_leg_position() == true){
+		leg[0].set_omega(0);
+		leg[1].set_omega(0);
+		steering.set_angle(0);
+		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET)){
 			*state_ = MOUNTAIN;
 			ROBOT_START_FLAG = false;
 			
@@ -204,6 +211,7 @@ void start_Robot(enum Robot_States *state_)
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 		}
 	}
+	break;
 	case MOUNTAIN:
 	{
 		/*state_G flag user button thichesi start huncha
@@ -243,6 +251,12 @@ void start_Robot(enum Robot_States *state_)
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 	}
 	break;
+	case TUNE:
+	{
+		leg[0].set_omega(10);
+		leg[1].set_omega(10);
+		steering.set_omega(0);
+	}
 	}
 }
 
