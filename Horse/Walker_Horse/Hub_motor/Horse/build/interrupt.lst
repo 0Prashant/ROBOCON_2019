@@ -1,0 +1,671 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"interrupt.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	__aeabi_f2d
+  18              		.global	__aeabi_ddiv
+  19              		.global	__aeabi_d2iz
+  20              		.global	__aeabi_i2d
+  21              		.global	__aeabi_dmul
+  22              		.global	__aeabi_dadd
+  23              		.global	__aeabi_d2f
+  24              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+  25              		.align	1
+  26              		.global	HAL_GPIO_EXTI_Callback
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  30              		.fpu fpv4-sp-d16
+  32              	HAL_GPIO_EXTI_Callback:
+  33              	.LFB492:
+  34              		.file 1 "Core/Src/devs/interrupt.cpp"
+   1:Core/Src/devs/interrupt.cpp **** 
+   2:Core/Src/devs/interrupt.cpp **** #include "robo_init.h"
+   3:Core/Src/devs/interrupt.cpp **** 
+   4:Core/Src/devs/interrupt.cpp **** extern leg leg[2];
+   5:Core/Src/devs/interrupt.cpp **** extern steering steering;
+   6:Core/Src/devs/interrupt.cpp **** 
+   7:Core/Src/devs/interrupt.cpp **** extern bool ROBOT_START_FLAG;
+   8:Core/Src/devs/interrupt.cpp **** extern bool STEERING_FLAG;
+   9:Core/Src/devs/interrupt.cpp **** extern bool FRONT_PROXIMITY_FLAG;
+  10:Core/Src/devs/interrupt.cpp **** extern bool BACK_PROXIMITY_FLAG;
+  11:Core/Src/devs/interrupt.cpp **** extern bool GEREGE_FLAG;
+  12:Core/Src/devs/interrupt.cpp **** void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+  13:Core/Src/devs/interrupt.cpp **** {
+  35              		.loc 1 13 0
+  36              		.cfi_startproc
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 0, uses_anonymous_args = 0
+  39              	.LVL0:
+  40 0000 10B5     		push	{r4, lr}
+  41              	.LCFI0:
+  42              		.cfi_def_cfa_offset 8
+  43              		.cfi_offset 4, -8
+  44              		.cfi_offset 14, -4
+  45              	.LBB16:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 2
+
+
+  14:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
+  46              		.loc 1 14 0
+  47 0002 B0F5806F 		cmp	r0, #1024
+  48 0006 00F08A80 		beq	.L3
+  49 000a 14D9     		bls	.L14
+  50 000c B0F5805F 		cmp	r0, #4096
+  51 0010 00F09780 		beq	.L8
+  52 0014 1ED9     		bls	.L15
+  53 0016 B0F5804F 		cmp	r0, #16384
+  54 001a 00F09F80 		beq	.L11
+  55 001e B0F5004F 		cmp	r0, #32768
+  56 0022 16D1     		bne	.L1
+  57              	.LBB17:
+  15:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_0 : {
+  16:Core/Src/devs/interrupt.cpp **** 			ROBOT_START_FLAG = true;
+  17:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
+  18:Core/Src/devs/interrupt.cpp **** 		}break;
+  19:Core/Src/devs/interrupt.cpp **** 
+  20:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_9 : {
+  21:Core/Src/devs/interrupt.cpp ****                         // leg[0].steps++;
+  22:Core/Src/devs/interrupt.cpp **** 			float leg0_reset_angle = 300*PI/180;
+  23:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(leg0_reset_angle);
+  24:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
+  25:Core/Src/devs/interrupt.cpp **** 			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
+  26:Core/Src/devs/interrupt.cpp **** 			// printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
+  27:Core/Src/devs/interrupt.cpp ****                 } break;
+  28:Core/Src/devs/interrupt.cpp **** 
+  29:Core/Src/devs/interrupt.cpp ****                 case GPIO_PIN_11: {
+  30:Core/Src/devs/interrupt.cpp ****                         // leg[1].steps++;
+  31:Core/Src/devs/interrupt.cpp **** 			float leg1_reset_angle = 302*PI/180;
+  32:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(leg1_reset_angle);
+  33:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
+  34:Core/Src/devs/interrupt.cpp **** 			leg[1].reset_actual_angle((int)(temp-1)*2*PI + leg1_reset_angle);
+  35:Core/Src/devs/interrupt.cpp **** 			// printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
+  36:Core/Src/devs/interrupt.cpp ****                 } break;
+  37:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_15: {
+  38:Core/Src/devs/interrupt.cpp **** 			STEERING_FLAG = true;
+  58              		.loc 1 38 0
+  59 0024 5C4B     		ldr	r3, .L16+32
+  60 0026 0122     		movs	r2, #1
+  61 0028 1A70     		strb	r2, [r3]
+  62              	.LVL1:
+  63              	.LBB18:
+  64              	.LBB19:
+  65              		.file 2 "Core/Inc/devs/steering.h"
+   1:Core/Inc/devs/steering.h **** /**
+   2:Core/Inc/devs/steering.h ****  * steering.h
+   3:Core/Inc/devs/steering.h ****  *
+   4:Core/Inc/devs/steering.h ****  * \brief Provide control over steering of the horse
+   5:Core/Inc/devs/steering.h ****  *
+   6:Core/Inc/devs/steering.h ****  * This file is meant as an wrapper to the elements in the encoder. 
+   7:Core/Inc/devs/steering.h ****  * It uses the functions of other headers (ie motor.h, encoder.h, 
+   8:Core/Inc/devs/steering.h ****  * limit_switch.h and pid.h tocontrol all the functions available 
+   9:Core/Inc/devs/steering.h ****  * in the steering.
+  10:Core/Inc/devs/steering.h ****  *
+  11:Core/Inc/devs/steering.h ****  * \author 	$Author 	: Prashant_Bhatta
+  12:Core/Inc/devs/steering.h ****  * \date 	$Date		: 2005/04/14 14:16:20 $
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 3
+
+
+  13:Core/Inc/devs/steering.h ****  * \contact	$Contact	: 073bex425.prashant@pcampus.edu.np
+  14:Core/Inc/devs/steering.h ****  *
+  15:Core/Inc/devs/steering.h ****  */
+  16:Core/Inc/devs/steering.h **** #ifndef _STEERING_H_
+  17:Core/Inc/devs/steering.h **** #define _STEERING_H_
+  18:Core/Inc/devs/steering.h **** 
+  19:Core/Inc/devs/steering.h **** #include "motor.h"
+  20:Core/Inc/devs/steering.h **** #include "encoder.h"
+  21:Core/Inc/devs/steering.h **** #include "pid.h"
+  22:Core/Inc/devs/steering.h **** #include "limit_switch.h"
+  23:Core/Inc/devs/steering.h **** 
+  24:Core/Inc/devs/steering.h **** class steering
+  25:Core/Inc/devs/steering.h **** {
+  26:Core/Inc/devs/steering.h **** public:
+  27:Core/Inc/devs/steering.h **** 	/// These lines of codes are just for protection of random defination of the objects.
+  28:Core/Inc/devs/steering.h **** 	steering(){}
+  29:Core/Inc/devs/steering.h **** 	steering(steering &&) = default;
+  30:Core/Inc/devs/steering.h **** 	steering(const steering &) = default;
+  31:Core/Inc/devs/steering.h **** 	steering &operator=(steering &&) = default;
+  32:Core/Inc/devs/steering.h **** 	steering &operator=(const steering &) = default;
+  33:Core/Inc/devs/steering.h **** 	~steering(){}
+  34:Core/Inc/devs/steering.h **** 
+  35:Core/Inc/devs/steering.h **** 	/**
+  36:Core/Inc/devs/steering.h **** 	 * \brief This function setups the configurations for the steering
+  37:Core/Inc/devs/steering.h **** 	 * \param motor: pointer to motor_config which contains all the 
+  38:Core/Inc/devs/steering.h **** 	 * 		configurations for a motor
+  39:Core/Inc/devs/steering.h **** 	 * \param encoder: pointer to encoder_config which contains all the 
+  40:Core/Inc/devs/steering.h **** 	 * 		configurations for a motor  
+  41:Core/Inc/devs/steering.h **** 	 * \return void
+  42:Core/Inc/devs/steering.h **** 	 */
+  43:Core/Inc/devs/steering.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  44:Core/Inc/devs/steering.h **** 		motor__.set_config(motor);
+  45:Core/Inc/devs/steering.h **** 		encoder__.set_config(encoder);
+  46:Core/Inc/devs/steering.h **** 	}
+  47:Core/Inc/devs/steering.h **** 
+  48:Core/Inc/devs/steering.h **** 	/**
+  49:Core/Inc/devs/steering.h **** 	 * \brief Sets constants for PID algorithm
+  50:Core/Inc/devs/steering.h **** 	 * \param kp,ki,kd: constants for PID
+  51:Core/Inc/devs/steering.h **** 	 * \param lower_limit, upper_limit: These are the maximum output a motor 
+  52:Core/Inc/devs/steering.h **** 	 * 	   can give with gear reduction(in omegas)
+  53:Core/Inc/devs/steering.h **** 	 * \return void
+  54:Core/Inc/devs/steering.h **** 	 */
+  55:Core/Inc/devs/steering.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  56:Core/Inc/devs/steering.h **** 		dpid_.set_P(kp);
+  57:Core/Inc/devs/steering.h **** 		dpid_.set_I(ki);
+  58:Core/Inc/devs/steering.h **** 		dpid_.set_D(kd);
+  59:Core/Inc/devs/steering.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  60:Core/Inc/devs/steering.h **** 	}
+  61:Core/Inc/devs/steering.h **** 
+  62:Core/Inc/devs/steering.h **** 	/**
+  63:Core/Inc/devs/steering.h **** 	 * \brief Sets constants for Angle_PID algorithm
+  64:Core/Inc/devs/steering.h **** 	 * \param kp,ki,kd: constants for Anggle_PID
+  65:Core/Inc/devs/steering.h **** 	 * \param lower_limit, upper_limit: These are the maximum output a motor 
+  66:Core/Inc/devs/steering.h **** 	 * 	   can give with gear reduction(in omegas)
+  67:Core/Inc/devs/steering.h **** 	 * \return void
+  68:Core/Inc/devs/steering.h **** 	 */
+  69:Core/Inc/devs/steering.h **** 	void set_angle_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 4
+
+
+  70:Core/Inc/devs/steering.h **** 		apid_.set_P(kp);
+  71:Core/Inc/devs/steering.h **** 		apid_.set_I(ki);
+  72:Core/Inc/devs/steering.h **** 		apid_.set_D(kd);
+  73:Core/Inc/devs/steering.h **** 		apid_.set_Limits(upper_limit, lower_limit);
+  74:Core/Inc/devs/steering.h **** 	}
+  75:Core/Inc/devs/steering.h **** 
+  76:Core/Inc/devs/steering.h **** 
+  77:Core/Inc/devs/steering.h **** 	/** 
+  78:Core/Inc/devs/steering.h **** 	 * \brief sets omega for the steering
+  79:Core/Inc/devs/steering.h **** 	 * 
+  80:Core/Inc/devs/steering.h **** 	 */
+  81:Core/Inc/devs/steering.h **** 	void set_omega(float omega);
+  82:Core/Inc/devs/steering.h **** 
+  83:Core/Inc/devs/steering.h **** 	/** 
+  84:Core/Inc/devs/steering.h **** 	 * \brief sets angle for the steering
+  85:Core/Inc/devs/steering.h **** 	 * 
+  86:Core/Inc/devs/steering.h **** 	 */
+  87:Core/Inc/devs/steering.h **** 	void set_angle(float angle);
+  88:Core/Inc/devs/steering.h **** 
+  89:Core/Inc/devs/steering.h **** 	/**
+  90:Core/Inc/devs/steering.h **** 	 * \brief resets the angle provided by the encoder
+  91:Core/Inc/devs/steering.h **** 	 * \param angle_in_radian at which it is to be reset
+  92:Core/Inc/devs/steering.h **** 	 * \return void
+  93:Core/Inc/devs/steering.h **** 	 */
+  94:Core/Inc/devs/steering.h **** 	void reset_angle(float angle_in_radians) {encoder__.reset_angle(angle_in_radians);}
+  66              		.loc 2 94 0
+  67 002a 9FED5C0A 		vldr.32	s0, .L16+36
+  68 002e 5C48     		ldr	r0, .L16+40
+  69              	.LVL2:
+  70 0030 FFF7FEFF 		bl	_ZN7encoder11reset_angleEf
+  71              	.LVL3:
+  72 0034 0DE0     		b	.L1
+  73              	.LVL4:
+  74              	.L14:
+  75              	.LBE19:
+  76              	.LBE18:
+  77              	.LBE17:
+  14:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_0 : {
+  78              		.loc 1 14 0
+  79 0036 B0F5807F 		cmp	r0, #256
+  80 003a 79D0     		beq	.L5
+  81 003c B0F5007F 		cmp	r0, #512
+  82 0040 3CD0     		beq	.L6
+  83 0042 0128     		cmp	r0, #1
+  84 0044 05D1     		bne	.L1
+  85              	.LBB30:
+  16:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
+  86              		.loc 1 16 0
+  87 0046 574B     		ldr	r3, .L16+44
+  88 0048 0122     		movs	r2, #1
+  89 004a 1A70     		strb	r2, [r3]
+  17:Core/Src/devs/interrupt.cpp **** 		}break;
+  90              		.loc 1 17 0
+  91 004c 5648     		ldr	r0, .L16+48
+  92              	.LVL5:
+  93 004e FFF7FEFF 		bl	puts
+  94              	.LVL6:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 5
+
+
+  95              	.L1:
+  96              	.LBE30:
+  97              	.LBE16:
+  39:Core/Src/devs/interrupt.cpp **** 			steering.reset_angle(0.7*PI/180);
+  40:Core/Src/devs/interrupt.cpp **** 			//  printf("\n\n\t\t\tsteering interrupt \t\n");
+  41:Core/Src/devs/interrupt.cpp ****                 } break;
+  42:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_10: {
+  43:Core/Src/devs/interrupt.cpp **** 			FRONT_PROXIMITY_FLAG = true;
+  44:Core/Src/devs/interrupt.cpp **** 			// printf("\n\n\t\t\tFRONT_PROXIMITY_FLAG interrupt \t\n");
+  45:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+  46:Core/Src/devs/interrupt.cpp **** 		}
+  47:Core/Src/devs/interrupt.cpp **** 		break;
+  48:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_8: {
+  49:Core/Src/devs/interrupt.cpp **** 			BACK_PROXIMITY_FLAG = true;
+  50:Core/Src/devs/interrupt.cpp **** 			// printf("\n\n\t\t\tBACK_PROXIMITY_FLAG interrupt \t\n");
+  51:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+  52:Core/Src/devs/interrupt.cpp **** 		}
+  53:Core/Src/devs/interrupt.cpp **** 		break;
+  54:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_12: {
+  55:Core/Src/devs/interrupt.cpp **** 			GEREGE_FLAG = true;	
+  56:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+  57:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+  58:Core/Src/devs/interrupt.cpp **** 		}
+  59:Core/Src/devs/interrupt.cpp **** 		break;
+  60:Core/Src/devs/interrupt.cpp **** 		case GPIO_PIN_14: {
+  61:Core/Src/devs/interrupt.cpp **** 			GEREGE_FLAG = true;	
+  62:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+  63:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+  64:Core/Src/devs/interrupt.cpp **** 		}
+  65:Core/Src/devs/interrupt.cpp **** 		break;
+  66:Core/Src/devs/interrupt.cpp ****         }
+  67:Core/Src/devs/interrupt.cpp **** }...
+  98              		.loc 1 67 0
+  99 0052 10BD     		pop	{r4, pc}
+ 100              	.LVL7:
+ 101              	.L15:
+ 102              	.LBB32:
+  14:Core/Src/devs/interrupt.cpp ****         switch (GPIO_Pin) {
+ 103              		.loc 1 14 0
+ 104 0054 B0F5006F 		cmp	r0, #2048
+ 105 0058 FBD1     		bne	.L1
+ 106              	.LVL8:
+ 107              	.LBB31:
+ 108              	.LBB20:
+  32:Core/Src/devs/interrupt.cpp ****                         leg[1].reset_angle(leg1_reset_angle);
+ 109              		.loc 1 32 0
+ 110 005a 544C     		ldr	r4, .L16+52
+ 111 005c 9FED540A 		vldr.32	s0, .L16+56
+ 112 0060 2046     		mov	r0, r4
+ 113              	.LVL9:
+ 114 0062 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+ 115              	.LVL10:
+ 116              	.LBB21:
+ 117              	.LBB22:
+ 118              		.file 3 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 6
+
+
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kgravity){kg_ = kgravity;}
+  39:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  40:Core/Inc/devs/leg.h **** 	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
+  41:Core/Inc/devs/leg.h **** 	void calculate_omega();
+  42:Core/Inc/devs/leg.h **** 	Leg_condition is_raised();
+  43:Core/Inc/devs/leg.h **** 	bool is_raised_without_deadzone();
+  44:Core/Inc/devs/leg.h **** 
+  45:Core/Inc/devs/leg.h **** 	int get_steps(){return steps;}
+  46:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+  47:Core/Inc/devs/leg.h **** 	float get_angle(void){return encoder__.get_angle();}
+  48:Core/Inc/devs/leg.h **** 	float get_actual_angle(void){return encoder__.get_actual_angle();}
+ 119              		.loc 3 48 0
+ 120 0066 3C34     		adds	r4, r4, #60
+ 121              	.LVL11:
+ 122 0068 2046     		mov	r0, r4
+ 123 006a FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 124              	.LVL12:
+ 125              	.LBE22:
+ 126              	.LBE21:
+  33:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
+ 127              		.loc 1 33 0
+ 128 006e 10EE100A 		vmov	r0, s0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 7
+
+
+ 129 0072 FFF7FEFF 		bl	__aeabi_f2d
+ 130              	.LVL13:
+ 131 0076 40A3     		adr	r3, .L16
+ 132 0078 D3E90023 		ldrd	r2, [r3]
+ 133 007c FFF7FEFF 		bl	__aeabi_ddiv
+ 134              	.LVL14:
+ 135 0080 41EC100B 		vmov	d0, r0, r1
+ 136 0084 FFF7FEFF 		bl	round
+ 137              	.LVL15:
+ 138 0088 51EC100B 		vmov	r0, r1, d0
+ 139 008c FFF7FEFF 		bl	__aeabi_d2iz
+ 140              	.LVL16:
+  34:Core/Src/devs/interrupt.cpp **** 			leg[1].reset_actual_angle((int)(temp-1)*2*PI + leg1_reset_angle);
+ 141              		.loc 1 34 0
+ 142 0090 0138     		subs	r0, r0, #1
+ 143              	.LVL17:
+ 144 0092 4000     		lsls	r0, r0, #1
+ 145              	.LVL18:
+ 146 0094 FFF7FEFF 		bl	__aeabi_i2d
+ 147              	.LVL19:
+ 148 0098 39A3     		adr	r3, .L16+8
+ 149 009a D3E90023 		ldrd	r2, [r3]
+ 150 009e FFF7FEFF 		bl	__aeabi_dmul
+ 151              	.LVL20:
+ 152 00a2 39A3     		adr	r3, .L16+16
+ 153 00a4 D3E90023 		ldrd	r2, [r3]
+ 154 00a8 FFF7FEFF 		bl	__aeabi_dadd
+ 155              	.LVL21:
+ 156 00ac FFF7FEFF 		bl	__aeabi_d2f
+ 157              	.LVL22:
+ 158              	.LBB23:
+ 159              	.LBB24:
+  40:Core/Inc/devs/leg.h **** 	void calculate_omega();
+ 160              		.loc 3 40 0
+ 161 00b0 00EE100A 		vmov	s0, r0
+ 162 00b4 2046     		mov	r0, r4
+ 163              	.LVL23:
+ 164 00b6 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 165              	.LVL24:
+ 166 00ba CAE7     		b	.L1
+ 167              	.LVL25:
+ 168              	.L6:
+ 169              	.LBE24:
+ 170              	.LBE23:
+ 171              	.LBE20:
+ 172              	.LBB25:
+  23:Core/Src/devs/interrupt.cpp ****                         leg[0].reset_angle(leg0_reset_angle);
+ 173              		.loc 1 23 0
+ 174 00bc 3D4C     		ldr	r4, .L16+60
+ 175 00be 9FED3E0A 		vldr.32	s0, .L16+64
+ 176 00c2 2046     		mov	r0, r4
+ 177              	.LVL26:
+ 178 00c4 FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+ 179              	.LVL27:
+ 180              	.LBB26:
+ 181              	.LBB27:
+ 182              		.loc 3 48 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 8
+
+
+ 183 00c8 3C34     		adds	r4, r4, #60
+ 184 00ca 2046     		mov	r0, r4
+ 185 00cc FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 186              	.LVL28:
+ 187              	.LBE27:
+ 188              	.LBE26:
+  24:Core/Src/devs/interrupt.cpp **** 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
+ 189              		.loc 1 24 0
+ 190 00d0 10EE100A 		vmov	r0, s0
+ 191 00d4 FFF7FEFF 		bl	__aeabi_f2d
+ 192              	.LVL29:
+ 193 00d8 27A3     		adr	r3, .L16
+ 194 00da D3E90023 		ldrd	r2, [r3]
+ 195 00de FFF7FEFF 		bl	__aeabi_ddiv
+ 196              	.LVL30:
+ 197 00e2 41EC100B 		vmov	d0, r0, r1
+ 198 00e6 FFF7FEFF 		bl	round
+ 199              	.LVL31:
+ 200 00ea 51EC100B 		vmov	r0, r1, d0
+ 201 00ee FFF7FEFF 		bl	__aeabi_d2iz
+ 202              	.LVL32:
+  25:Core/Src/devs/interrupt.cpp **** 			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
+ 203              		.loc 1 25 0
+ 204 00f2 0138     		subs	r0, r0, #1
+ 205              	.LVL33:
+ 206 00f4 4000     		lsls	r0, r0, #1
+ 207              	.LVL34:
+ 208 00f6 FFF7FEFF 		bl	__aeabi_i2d
+ 209              	.LVL35:
+ 210 00fa 21A3     		adr	r3, .L16+8
+ 211 00fc D3E90023 		ldrd	r2, [r3]
+ 212 0100 FFF7FEFF 		bl	__aeabi_dmul
+ 213              	.LVL36:
+ 214 0104 22A3     		adr	r3, .L16+24
+ 215 0106 D3E90023 		ldrd	r2, [r3]
+ 216 010a FFF7FEFF 		bl	__aeabi_dadd
+ 217              	.LVL37:
+ 218 010e FFF7FEFF 		bl	__aeabi_d2f
+ 219              	.LVL38:
+ 220              	.LBB28:
+ 221              	.LBB29:
+  40:Core/Inc/devs/leg.h **** 	void calculate_omega();
+ 222              		.loc 3 40 0
+ 223 0112 00EE100A 		vmov	s0, r0
+ 224 0116 2046     		mov	r0, r4
+ 225              	.LVL39:
+ 226 0118 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 227              	.LVL40:
+ 228 011c 99E7     		b	.L1
+ 229              	.LVL41:
+ 230              	.L3:
+ 231              	.LBE29:
+ 232              	.LBE28:
+ 233              	.LBE25:
+  43:Core/Src/devs/interrupt.cpp **** 			FRONT_PROXIMITY_FLAG = true;
+ 234              		.loc 1 43 0
+ 235 011e 274B     		ldr	r3, .L16+68
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 9
+
+
+ 236 0120 0122     		movs	r2, #1
+ 237 0122 1A70     		strb	r2, [r3]
+  45:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 238              		.loc 1 45 0
+ 239 0124 4FF48051 		mov	r1, #4096
+ 240 0128 2548     		ldr	r0, .L16+72
+ 241              	.LVL42:
+ 242 012a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 243              	.LVL43:
+  47:Core/Src/devs/interrupt.cpp **** 		break;
+ 244              		.loc 1 47 0
+ 245 012e 90E7     		b	.L1
+ 246              	.LVL44:
+ 247              	.L5:
+  49:Core/Src/devs/interrupt.cpp **** 			BACK_PROXIMITY_FLAG = true;
+ 248              		.loc 1 49 0
+ 249 0130 244B     		ldr	r3, .L16+76
+ 250 0132 0122     		movs	r2, #1
+ 251 0134 1A70     		strb	r2, [r3]
+  51:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 252              		.loc 1 51 0
+ 253 0136 4FF48041 		mov	r1, #16384
+ 254 013a 2148     		ldr	r0, .L16+72
+ 255              	.LVL45:
+ 256 013c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 257              	.LVL46:
+  53:Core/Src/devs/interrupt.cpp **** 		break;
+ 258              		.loc 1 53 0
+ 259 0140 87E7     		b	.L1
+ 260              	.LVL47:
+ 261              	.L8:
+  55:Core/Src/devs/interrupt.cpp **** 			GEREGE_FLAG = true;	
+ 262              		.loc 1 55 0
+ 263 0142 0124     		movs	r4, #1
+ 264 0144 204B     		ldr	r3, .L16+80
+ 265 0146 1C70     		strb	r4, [r3]
+  56:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+ 266              		.loc 1 56 0
+ 267 0148 2048     		ldr	r0, .L16+84
+ 268              	.LVL48:
+ 269 014a FFF7FEFF 		bl	puts
+ 270              	.LVL49:
+  57:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+ 271              		.loc 1 57 0
+ 272 014e 2246     		mov	r2, r4
+ 273 0150 4FF48061 		mov	r1, #1024
+ 274 0154 1E48     		ldr	r0, .L16+88
+ 275 0156 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 276              	.LVL50:
+  59:Core/Src/devs/interrupt.cpp **** 		break;
+ 277              		.loc 1 59 0
+ 278 015a 7AE7     		b	.L1
+ 279              	.LVL51:
+ 280              	.L11:
+  61:Core/Src/devs/interrupt.cpp **** 			GEREGE_FLAG = true;	
+ 281              		.loc 1 61 0
+ 282 015c 0124     		movs	r4, #1
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 10
+
+
+ 283 015e 1A4B     		ldr	r3, .L16+80
+ 284 0160 1C70     		strb	r4, [r3]
+  62:Core/Src/devs/interrupt.cpp **** 			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+ 285              		.loc 1 62 0
+ 286 0162 1A48     		ldr	r0, .L16+84
+ 287              	.LVL52:
+ 288 0164 FFF7FEFF 		bl	puts
+ 289              	.LVL53:
+  63:Core/Src/devs/interrupt.cpp **** 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+ 290              		.loc 1 63 0
+ 291 0168 2246     		mov	r2, r4
+ 292 016a 4FF48061 		mov	r1, #1024
+ 293 016e 1848     		ldr	r0, .L16+88
+ 294 0170 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 295              	.LVL54:
+ 296              	.LBE31:
+ 297              	.LBE32:
+ 298              		.loc 1 67 0
+ 299 0174 6DE7     		b	.L1
+ 300              	.L17:
+ 301 0176 00BF     		.align	3
+ 302              	.L16:
+ 303 0178 182D4454 		.word	1413754136
+ 304 017c FB211940 		.word	1075388923
+ 305 0180 182D4454 		.word	1413754136
+ 306 0184 FB210940 		.word	1074340347
+ 307 0188 00000060 		.word	1610612736
+ 308 018c 65151540 		.word	1075123557
+ 309 0190 000000C0 		.word	-1073741824
+ 310 0194 A6F11440 		.word	1075114406
+ 311 0198 00000000 		.word	STEERING_FLAG
+ 312 019c 172B483C 		.word	1011362583
+ 313 01a0 0C000000 		.word	steering+12
+ 314 01a4 00000000 		.word	ROBOT_START_FLAG
+ 315 01a8 00000000 		.word	.LC0
+ 316 01ac 58000000 		.word	leg+88
+ 317 01b0 2BABA840 		.word	1084795691
+ 318 01b4 00000000 		.word	leg
+ 319 01b8 368DA740 		.word	1084722486
+ 320 01bc 00000000 		.word	FRONT_PROXIMITY_FLAG
+ 321 01c0 000C0240 		.word	1073875968
+ 322 01c4 00000000 		.word	BACK_PROXIMITY_FLAG
+ 323 01c8 00000000 		.word	GEREGE_FLAG
+ 324 01cc 1C000000 		.word	.LC1
+ 325 01d0 00080240 		.word	1073874944
+ 326              		.cfi_endproc
+ 327              	.LFE492:
+ 329              		.section	.rodata.HAL_GPIO_EXTI_Callback.str1.4,"aMS",%progbits,1
+ 330              		.align	2
+ 331              	.LC0:
+ 332 0000 0A0A0909 		.ascii	"\012\012\011\011\011 !!start_pressed!!\012\000"
+ 332      09202121 
+ 332      73746172 
+ 332      745F7072 
+ 332      65737365 
+ 333 0019 000000   		.space	3
+ 334              	.LC1:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 11
+
+
+ 335 001c 0A0A0909 		.ascii	"\012\012\011\011\011 !!Gerege Passed!!\012\000"
+ 335      09202121 
+ 335      47657265 
+ 335      67652050 
+ 335      61737365 
+ 336              		.text
+ 337              	.Letext0:
+ 338              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 339              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 340              		.file 6 "Drivers/CMSIS/Include/core_cm4.h"
+ 341              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 342              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 343              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 344              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 345              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 346              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 347              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 348              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 349              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 350              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 351              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 352              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 353              		.file 19 "Core/Inc/periphs/tim.h"
+ 354              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 355              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 356              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 357              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 358              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 359              		.file 25 "Core/Inc/devs/motor.h"
+ 360              		.file 26 "Core/Inc/devs/encoder.h"
+ 361              		.file 27 "Core/Inc/utils/pid_algorithms.h"
+ 362              		.file 28 "Core/Inc/devs/limit_switch.h"
+ 363              		.file 29 "Core/Inc/periphs/usart.h"
+ 364              		.file 30 "Core/Inc/periphs/adc.h"
+ 365              		.file 31 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 interrupt.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s:25     .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s:32     .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s:303    .text.HAL_GPIO_EXTI_Callback:00000178 $d
+C:\Users\Prashant\AppData\Local\Temp\ccb4cHw0.s:330    .rodata.HAL_GPIO_EXTI_Callback.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_f2d
+__aeabi_ddiv
+__aeabi_d2iz
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_dadd
+__aeabi_d2f
+_ZN7encoder11reset_angleEf
+puts
+_ZN3leg11reset_angleEf
+_ZN7encoder16get_actual_angleEv
+round
+_ZN7encoder18reset_actual_angleEf
+HAL_GPIO_TogglePin
+HAL_GPIO_WritePin
+STEERING_FLAG
+steering
+ROBOT_START_FLAG
+leg
+FRONT_PROXIMITY_FLAG
+BACK_PROXIMITY_FLAG
+GEREGE_FLAG

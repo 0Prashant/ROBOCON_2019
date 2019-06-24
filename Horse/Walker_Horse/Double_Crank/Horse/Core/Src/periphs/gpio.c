@@ -110,7 +110,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PE12 PE14 */
   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_14;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 

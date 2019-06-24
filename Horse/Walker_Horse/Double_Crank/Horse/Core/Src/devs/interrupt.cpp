@@ -9,17 +9,11 @@ extern bool STEERING_FLAG;
 extern bool FRONT_PROXIMITY_FLAG;
 extern bool BACK_PROXIMITY_FLAG;
 extern bool GEREGE_FLAG;
-uint32_t first_start_time = 0;
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
         switch (GPIO_Pin) {
 		case GPIO_PIN_0 : {
-			if((HAL_GetTick()-first_start_time)>500){
-				GEREGE_FLAG = true;	
-				printf("\n\n\t\t\t !!Gerege!!\n\n");
-			}
 			ROBOT_START_FLAG = true;
-			first_start_time = HAL_GetTick();
 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
 		}break;
 
@@ -35,7 +29,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
                 case GPIO_PIN_11: {
                         // leg[1].steps++;
-			float leg1_reset_angle = 302*PI/180;
+			float leg1_reset_angle = 210*PI/180;
                         leg[1].reset_angle(leg1_reset_angle);
 			// leg[1].reset_actual_angle(((leg[1].get_steps()-1)*2*3.14159265)+leg1_reset_angle);
 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
@@ -59,6 +53,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			BACK_PROXIMITY_FLAG = true;
 			// printf("\n\n\t\t\tBACK_PROXIMITY_FLAG interrupt \t\n");
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+		}	
+		case GPIO_PIN_12: {
+			GEREGE_FLAG = true;	
+			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
 		}
+		break;
+		case GPIO_PIN_14: {
+			GEREGE_FLAG = true;	
+			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+		}
+		break;
         }
 }

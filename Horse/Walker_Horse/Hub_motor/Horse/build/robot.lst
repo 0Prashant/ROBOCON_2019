@@ -1,0 +1,2219 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robot.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._Z11zone_selectv,"ax",%progbits
+  18              		.align	1
+  19              		.global	_Z11zone_selectv
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_Z11zone_selectv:
+  26              	.LFB500:
+  27              		.file 1 "Core/Src/robot/robot.cpp"
+   1:Core/Src/robot/robot.cpp **** #include "robot.h"
+   2:Core/Src/robot/robot.cpp **** extern leg leg[2];
+   3:Core/Src/robot/robot.cpp **** extern steering steering;
+   4:Core/Src/robot/robot.cpp **** 
+   5:Core/Src/robot/robot.cpp **** extern Vec3<float> initial_angle;
+   6:Core/Src/robot/robot.cpp **** extern Vec3<float> curr_angle;
+   7:Core/Src/robot/robot.cpp **** extern float robot_angle ;
+   8:Core/Src/robot/robot.cpp **** Robot_States robo_state;
+   9:Core/Src/robot/robot.cpp **** 
+  10:Core/Src/robot/robot.cpp **** bool ROBOT_START_FLAG = false;
+  11:Core/Src/robot/robot.cpp **** bool GEREGE_FLAG = false;
+  12:Core/Src/robot/robot.cpp **** bool USE_IMU_FLAG = true;
+  13:Core/Src/robot/robot.cpp **** bool FRONT_PROXIMITY_FLAG = false;
+  14:Core/Src/robot/robot.cpp **** bool BACK_PROXIMITY_FLAG = false;
+  15:Core/Src/robot/robot.cpp **** 
+  16:Core/Src/robot/robot.cpp **** float steps[7] = {7, 13, 17, 20, 24, 29, 41};
+  17:Core/Src/robot/robot.cpp **** float angles[7] = {0, 45, 45, 60, 0, -10, -10};
+  18:Core/Src/robot/robot.cpp **** 
+  19:Core/Src/robot/robot.cpp **** 
+  20:Core/Src/robot/robot.cpp **** void start_Robot(enum Robot_States *state_)
+  21:Core/Src/robot/robot.cpp **** {
+  22:Core/Src/robot/robot.cpp **** 	switch (*state_)
+  23:Core/Src/robot/robot.cpp **** 	{
+  24:Core/Src/robot/robot.cpp **** 	case HOME:
+  25:Core/Src/robot/robot.cpp **** 	{
+  26:Core/Src/robot/robot.cpp **** 		/**
+  27:Core/Src/robot/robot.cpp **** 		 * vitra ko khutta tala teknaparcha
+  28:Core/Src/robot/robot.cpp **** 		 * baira ko khutta mathi teknaparcha
+  29:Core/Src/robot/robot.cpp **** 		 * steering IR navetinjel ghumaunaparcha
+  30:Core/Src/robot/robot.cpp **** 		 * tespachi stop vaera bascha
+  31:Core/Src/robot/robot.cpp **** 		 * user button thichesi this state ends 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 2
+
+
+  32:Core/Src/robot/robot.cpp **** 		 *  state_A flag set garnaparcha 
+  33:Core/Src/robot/robot.cpp **** 			*/
+  34:Core/Src/robot/robot.cpp **** 		printf("\n\tWaiting_to_start\t");
+  35:Core/Src/robot/robot.cpp **** 		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
+  36:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(0);
+  37:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(0);
+  38:Core/Src/robot/robot.cpp **** 		steering.set_angle(0);
+  39:Core/Src/robot/robot.cpp **** 		leg[0].reset_actual_angle(90 * PI / 180);
+  40:Core/Src/robot/robot.cpp **** 		leg[1].reset_actual_angle(90 * PI / 180);
+  41:Core/Src/robot/robot.cpp **** 		if(!ROBOT_START_FLAG){initial_angle = curr_angle;}
+  42:Core/Src/robot/robot.cpp **** 		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0
+  43:Core/Src/robot/robot.cpp **** 		  (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*180/PI), (int)(robot_angle*
+  44:Core/Src/robot/robot.cpp **** 		if (ROBOT_START_FLAG && GEREGE_FLAG)
+  45:Core/Src/robot/robot.cpp **** 		{
+  46:Core/Src/robot/robot.cpp **** 			*state_ = MARCH;
+  47:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+  48:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+  49:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+  50:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+  51:Core/Src/robot/robot.cpp **** 		}
+  52:Core/Src/robot/robot.cpp **** 	}
+  53:Core/Src/robot/robot.cpp **** 	break;
+  54:Core/Src/robot/robot.cpp **** 
+  55:Core/Src/robot/robot.cpp **** 	case MARCH:
+  56:Core/Src/robot/robot.cpp **** 	{
+  57:Core/Src/robot/robot.cpp **** 			/*
+  58:Core/Src/robot/robot.cpp **** 			  user button thichesi state_A starts when state A flag is set
+  59:Core/Src/robot/robot.cpp **** 			  10 steps agadi gayesi state_A flag clear garnaparcha
+  60:Core/Src/robot/robot.cpp **** 			  state_B flag set garnaparcha
+  61:Core/Src/robot/robot.cpp **** 			*/
+  62:Core/Src/robot/robot.cpp **** 		printf("March");
+  63:Core/Src/robot/robot.cpp **** 		if (go(steps[0], angles[0]) == true)
+  64:Core/Src/robot/robot.cpp **** 		{
+  65:Core/Src/robot/robot.cpp **** 			*state_ =TURN_45;
+  66:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+  67:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+  68:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+  69:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+  70:Core/Src/robot/robot.cpp **** 		}
+  71:Core/Src/robot/robot.cpp **** 	}
+  72:Core/Src/robot/robot.cpp **** 	break;
+  73:Core/Src/robot/robot.cpp **** 
+  74:Core/Src/robot/robot.cpp **** 	case TURN_45:
+  75:Core/Src/robot/robot.cpp **** 	{
+  76:Core/Src/robot/robot.cpp **** 		/*state _B flag set vayesi angle 45 degree change garnaparcha
+  77:Core/Src/robot/robot.cpp **** 			  2 steps jati gayesi sand dune aucha
+  78:Core/Src/robot/robot.cpp **** 			  sand dune kateko thapauna proximity sensor use garnaparcha ki
+  79:Core/Src/robot/robot.cpp **** 			  ta IMU bata roll value hernaparcha 
+  80:Core/Src/robot/robot.cpp **** 			  sand dune kateko thapaesi state_B flag clear garnaparcha
+  81:Core/Src/robot/robot.cpp **** 			  state_C flag set garnaparcha			   
+  82:Core/Src/robot/robot.cpp **** 			*/
+  83:Core/Src/robot/robot.cpp **** 		printf("Turn 45");
+  84:Core/Src/robot/robot.cpp **** 		
+  85:Core/Src/robot/robot.cpp **** 		/*/
+  86:Core/Src/robot/robot.cpp **** 		if (go(steps[1], angles[1]) == true)
+  87:Core/Src/robot/robot.cpp **** 		{
+  88:Core/Src/robot/robot.cpp **** 			*state_ = SAND_DUNE;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 3
+
+
+  89:Core/Src/robot/robot.cpp **** 		}
+  90:Core/Src/robot/robot.cpp **** 		/*/
+  91:Core/Src/robot/robot.cpp **** 		go(99, angles[1]);
+  92:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[1]){
+  93:Core/Src/robot/robot.cpp **** 		// if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10) == GPIO_PIN_RESET){
+  94:Core/Src/robot/robot.cpp **** 			*state_ = SAND_DUNE;
+  95:Core/Src/robot/robot.cpp **** 			leg[0].steps = steps[1];
+  96:Core/Src/robot/robot.cpp **** 			leg[1].steps = steps[1];
+  97:Core/Src/robot/robot.cpp **** 			BACK_PROXIMITY_FLAG = false;
+  98:Core/Src/robot/robot.cpp **** 			FRONT_PROXIMITY_FLAG = false;
+  99:Core/Src/robot/robot.cpp **** 			
+ 100:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 101:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 102:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 103:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 104:Core/Src/robot/robot.cpp **** 		}
+ 105:Core/Src/robot/robot.cpp **** 		//*/
+ 106:Core/Src/robot/robot.cpp **** 	}
+ 107:Core/Src/robot/robot.cpp **** 	break;
+ 108:Core/Src/robot/robot.cpp **** 	case SAND_DUNE:
+ 109:Core/Src/robot/robot.cpp **** 	{
+ 110:Core/Src/robot/robot.cpp **** 		/*state _C flag set vayesi 55 degree jati ghumna parcha 1 to 2 steps
+ 111:Core/Src/robot/robot.cpp **** 			after this seate_C flag needs to be cleared and state_D flag needs to be set
+ 112:Core/Src/robot/robot.cpp **** 			sand dune pachi ko ek dui steps wala region
+ 113:Core/Src/robot/robot.cpp **** 			*/
+ 114:Core/Src/robot/robot.cpp **** 		printf("Sand dune");
+ 115:Core/Src/robot/robot.cpp **** 		/*/
+ 116:Core/Src/robot/robot.cpp **** 		if (go(steps[2], angles[2]) == true)
+ 117:Core/Src/robot/robot.cpp **** 		{
+ 118:Core/Src/robot/robot.cpp **** 			*state_ = STATE_D; 
+ 119:Core/Src/robot/robot.cpp **** 		}
+ 120:Core/Src/robot/robot.cpp **** 		/*/
+ 121:Core/Src/robot/robot.cpp **** 		
+ 122:Core/Src/robot/robot.cpp **** 		go(100, angles[2]);
+ 123:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[2]){
+ 124:Core/Src/robot/robot.cpp **** 		// if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){			
+ 125:Core/Src/robot/robot.cpp **** 			*state_ = STATE_D;
+ 126:Core/Src/robot/robot.cpp **** 			leg[0].steps = steps[2];
+ 127:Core/Src/robot/robot.cpp **** 			leg[1].steps = steps[2];
+ 128:Core/Src/robot/robot.cpp **** 			
+ 129:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 130:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 131:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 132:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 133:Core/Src/robot/robot.cpp **** 		}
+ 134:Core/Src/robot/robot.cpp **** 		//*/
+ 135:Core/Src/robot/robot.cpp **** 	}
+ 136:Core/Src/robot/robot.cpp **** 	break;
+ 137:Core/Src/robot/robot.cpp **** 	case STATE_D:
+ 138:Core/Src/robot/robot.cpp **** 	{
+ 139:Core/Src/robot/robot.cpp **** 		/*
+ 140:Core/Src/robot/robot.cpp **** 			state_D start vayesi ek dui stpes sidha janaparcha around 90 degrees from the original position 
+ 141:Core/Src/robot/robot.cpp **** 			teti steps pugesi 0 angle ma agadi janaparcha 
+ 142:Core/Src/robot/robot.cpp **** 			tespachi state d flag clear huncha ani state E flag set huncha*/
+ 143:Core/Src/robot/robot.cpp **** 			printf("State D");
+ 144:Core/Src/robot/robot.cpp **** 		if (go(steps[3], angles[3]) == true)
+ 145:Core/Src/robot/robot.cpp **** 		{
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 4
+
+
+ 146:Core/Src/robot/robot.cpp **** 			*state_ = TURN_90;
+ 147:Core/Src/robot/robot.cpp **** 			
+ 148:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 149:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 150:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 151:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 152:Core/Src/robot/robot.cpp **** 		}
+ 153:Core/Src/robot/robot.cpp **** 	}
+ 154:Core/Src/robot/robot.cpp **** 	break;
+ 155:Core/Src/robot/robot.cpp **** 
+ 156:Core/Src/robot/robot.cpp **** 	case TURN_90:
+ 157:Core/Src/robot/robot.cpp **** 	{
+ 158:Core/Src/robot/robot.cpp **** 		/*tussock cross garnaparcha
+ 159:Core/Src/robot/robot.cpp **** 			no of steps = 
+ 160:Core/Src/robot/robot.cpp **** 			no of steps le state_E end vako thahuncha 
+ 161:Core/Src/robot/robot.cpp **** 			*/
+ 162:Core/Src/robot/robot.cpp **** 		printf("Turn 90");
+ 163:Core/Src/robot/robot.cpp **** 		if (go(steps[4], angles[4]) == true)
+ 164:Core/Src/robot/robot.cpp **** 		{
+ 165:Core/Src/robot/robot.cpp **** 			*state_ = TUSSOCK;
+ 166:Core/Src/robot/robot.cpp **** 			
+ 167:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 168:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 169:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 170:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 171:Core/Src/robot/robot.cpp **** 		}
+ 172:Core/Src/robot/robot.cpp **** 	}
+ 173:Core/Src/robot/robot.cpp **** 	break;
+ 174:Core/Src/robot/robot.cpp **** 
+ 175:Core/Src/robot/robot.cpp **** 	case TUSSOCK:
+ 176:Core/Src/robot/robot.cpp **** 	{
+ 177:Core/Src/robot/robot.cpp **** 		/*state_F flag set vayesi
+ 178:Core/Src/robot/robot.cpp **** 			robot stops 
+ 179:Core/Src/robot/robot.cpp **** 			user button thichesi state_F end huncha
+ 180:Core/Src/robot/robot.cpp **** 			*/
+ 181:Core/Src/robot/robot.cpp **** 		printf("tussock");
+ 182:Core/Src/robot/robot.cpp **** 		if (go(steps[5], angles[5]) == true)
+ 183:Core/Src/robot/robot.cpp **** 		{
+ 184:Core/Src/robot/robot.cpp **** 			*state_ = BASE_CAMP;
+ 185:Core/Src/robot/robot.cpp **** 			
+ 186:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 187:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 188:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 189:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 190:Core/Src/robot/robot.cpp **** 			initialize_position();
+ 191:Core/Src/robot/robot.cpp **** 		}
+ 192:Core/Src/robot/robot.cpp **** 	}
+ 193:Core/Src/robot/robot.cpp **** 	break;
+ 194:Core/Src/robot/robot.cpp **** 
+ 195:Core/Src/robot/robot.cpp **** 	case BASE_CAMP:
+ 196:Core/Src/robot/robot.cpp **** 	{
+ 197:Core/Src/robot/robot.cpp **** 		/*state_G flag user button thichesi start huncha
+ 198:Core/Src/robot/robot.cpp **** 			uukhai zone ma n no of steps gayesi state_G end huncha
+ 199:Core/Src/robot/robot.cpp **** 			*/
+ 200:Core/Src/robot/robot.cpp **** 		printf("Base camp");
+ 201:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(0);
+ 202:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(0);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 5
+
+
+ 203:Core/Src/robot/robot.cpp **** 		steering.set_angle(0);
+ 204:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET)){
+ 205:Core/Src/robot/robot.cpp **** 			*state_ = MOUNTAIN;
+ 206:Core/Src/robot/robot.cpp **** 			ROBOT_START_FLAG = false;
+ 207:Core/Src/robot/robot.cpp **** 			
+ 208:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 209:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 210:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 211:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 212:Core/Src/robot/robot.cpp **** 		}
+ 213:Core/Src/robot/robot.cpp **** 	}
+ 214:Core/Src/robot/robot.cpp **** 	break;
+ 215:Core/Src/robot/robot.cpp **** 	case MOUNTAIN:
+ 216:Core/Src/robot/robot.cpp **** 	{
+ 217:Core/Src/robot/robot.cpp **** 		/*state_G flag user button thichesi start huncha
+ 218:Core/Src/robot/robot.cpp **** 			uukhai zone ma n no of steps gayesi state_G end huncha
+ 219:Core/Src/robot/robot.cpp **** 			*/
+ 220:Core/Src/robot/robot.cpp **** 		printf("MOUNTAIN");
+ 221:Core/Src/robot/robot.cpp **** 		if (ROBOT_START_FLAG)
+ 222:Core/Src/robot/robot.cpp **** 		{
+ 223:Core/Src/robot/robot.cpp **** 			if (go(steps[6], angles[6]) == true)
+ 224:Core/Src/robot/robot.cpp **** 			{
+ 225:Core/Src/robot/robot.cpp **** 				*state_ = UUKHAI;
+ 226:Core/Src/robot/robot.cpp **** 				
+ 227:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 228:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 229:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 230:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 231:Core/Src/robot/robot.cpp **** 			}
+ 232:Core/Src/robot/robot.cpp **** 		}
+ 233:Core/Src/robot/robot.cpp **** 		else{
+ 234:Core/Src/robot/robot.cpp **** 			leg[0].set_omega(0);
+ 235:Core/Src/robot/robot.cpp **** 			leg[1].set_omega(0);
+ 236:Core/Src/robot/robot.cpp **** 			steering.set_angle(0);
+ 237:Core/Src/robot/robot.cpp **** 		}
+ 238:Core/Src/robot/robot.cpp **** 	}
+ 239:Core/Src/robot/robot.cpp **** 
+ 240:Core/Src/robot/robot.cpp **** 	break;
+ 241:Core/Src/robot/robot.cpp **** 	case UUKHAI:
+ 242:Core/Src/robot/robot.cpp **** 	{
+ 243:Core/Src/robot/robot.cpp **** 		/*state_G flag user button thichesi start huncha
+ 244:Core/Src/robot/robot.cpp **** 			uukhai zone ma n no of steps gayesi state_G end huncha
+ 245:Core/Src/robot/robot.cpp **** 			*/
+ 246:Core/Src/robot/robot.cpp **** 		initialize_leg_position();
+ 247:Core/Src/robot/robot.cpp **** 		printf("\nUUKHAI\n");
+ 248:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 249:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 250:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 251:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 252:Core/Src/robot/robot.cpp **** 	}
+ 253:Core/Src/robot/robot.cpp **** 	break;
+ 254:Core/Src/robot/robot.cpp **** 	case TUNE:
+ 255:Core/Src/robot/robot.cpp **** 	{
+ 256:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(10);
+ 257:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(10);
+ 258:Core/Src/robot/robot.cpp **** 		steering.set_omega(0);
+ 259:Core/Src/robot/robot.cpp **** 	}
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 6
+
+
+ 260:Core/Src/robot/robot.cpp **** 	}
+ 261:Core/Src/robot/robot.cpp **** }
+ 262:Core/Src/robot/robot.cpp **** 
+ 263:Core/Src/robot/robot.cpp **** bool play()
+ 264:Core/Src/robot/robot.cpp **** {	
+ 265:Core/Src/robot/robot.cpp **** 	start_Robot(&robo_state);
+ 266:Core/Src/robot/robot.cpp **** 	return true;
+ 267:Core/Src/robot/robot.cpp **** }
+ 268:Core/Src/robot/robot.cpp **** 
+ 269:Core/Src/robot/robot.cpp **** void zone_select(void){
+  28              		.loc 1 269 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+ 270:Core/Src/robot/robot.cpp **** 
+ 271:Core/Src/robot/robot.cpp **** 	if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+  37              		.loc 1 271 0
+  38 0002 4FF48071 		mov	r1, #256
+  39 0006 4148     		ldr	r0, .L11
+  40 0008 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  41              	.LVL0:
+  42 000c B8B9     		cbnz	r0, .L2
+ 272:Core/Src/robot/robot.cpp **** 		robo_state = HOME;
+  43              		.loc 1 272 0
+  44 000e 404B     		ldr	r3, .L11+4
+  45 0010 0022     		movs	r2, #0
+  46 0012 1A70     		strb	r2, [r3]
+  47              	.L3:
+  48              	.LBB64:
+ 273:Core/Src/robot/robot.cpp **** 	}
+ 274:Core/Src/robot/robot.cpp **** 	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+ 275:Core/Src/robot/robot.cpp **** 		robo_state = SAND_DUNE;
+ 276:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[1];
+ 277:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[1];
+ 278:Core/Src/robot/robot.cpp **** 		robot_angle = angles[1];
+ 279:Core/Src/robot/robot.cpp **** 		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[
+ 280:Core/Src/robot/robot.cpp **** 	}
+ 281:Core/Src/robot/robot.cpp **** 	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+ 282:Core/Src/robot/robot.cpp **** 		robo_state = STATE_D;
+ 283:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[2];
+ 284:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[2];
+ 285:Core/Src/robot/robot.cpp **** 		robot_angle = angles[2];
+ 286:Core/Src/robot/robot.cpp **** 		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[
+ 287:Core/Src/robot/robot.cpp **** 	}
+ 288:Core/Src/robot/robot.cpp **** 	else if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+ 289:Core/Src/robot/robot.cpp **** 		robo_state = BASE_CAMP;
+ 290:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[5];
+ 291:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[5];
+ 292:Core/Src/robot/robot.cpp **** 		robot_angle = angles[5];
+ 293:Core/Src/robot/robot.cpp **** 	}
+ 294:Core/Src/robot/robot.cpp **** 	else {
+ 295:Core/Src/robot/robot.cpp **** 		robo_state = HOME;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 7
+
+
+ 296:Core/Src/robot/robot.cpp **** 		initialize_position();
+ 297:Core/Src/robot/robot.cpp **** 	}
+ 298:Core/Src/robot/robot.cpp **** 
+ 299:Core/Src/robot/robot.cpp **** 	if (HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+  49              		.loc 1 299 0
+  50 0014 4FF48071 		mov	r1, #256
+  51 0018 3C48     		ldr	r0, .L11
+  52 001a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  53              	.LVL1:
+  54 001e 0028     		cmp	r0, #0
+  55 0020 6DD1     		bne	.L7
+  56              	.LBB65:
+ 300:Core/Src/robot/robot.cpp **** 		for(int i=0; i<7; i++){
+  57              		.loc 1 300 0
+  58 0022 0022     		movs	r2, #0
+  59              	.L9:
+  60              	.LVL2:
+  61              		.loc 1 300 0 is_stmt 0 discriminator 3
+  62 0024 062A     		cmp	r2, #6
+  63 0026 6FDC     		bgt	.L1
+ 301:Core/Src/robot/robot.cpp **** 			angles[i] *= -1;
+  64              		.loc 1 301 0 is_stmt 1 discriminator 2
+  65 0028 3A4B     		ldr	r3, .L11+8
+  66 002a 03EB8203 		add	r3, r3, r2, lsl #2
+  67 002e D3ED007A 		vldr.32	s15, [r3]
+  68 0032 F1EE677A 		vneg.f32	s15, s15
+  69 0036 C3ED007A 		vstr.32	s15, [r3]
+ 300:Core/Src/robot/robot.cpp **** 		for(int i=0; i<7; i++){
+  70              		.loc 1 300 0 discriminator 2
+  71 003a 0132     		adds	r2, r2, #1
+  72              	.LVL3:
+  73 003c F2E7     		b	.L9
+  74              	.LVL4:
+  75              	.L2:
+  76              	.LBE65:
+  77              	.LBE64:
+ 274:Core/Src/robot/robot.cpp **** 		robo_state = SAND_DUNE;
+  78              		.loc 1 274 0
+  79 003e 4FF48071 		mov	r1, #256
+  80 0042 3248     		ldr	r0, .L11
+  81 0044 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  82              	.LVL5:
+  83 0048 D0B9     		cbnz	r0, .L4
+ 275:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[1];
+  84              		.loc 1 275 0
+  85 004a 314B     		ldr	r3, .L11+4
+  86 004c 0322     		movs	r2, #3
+  87 004e 1A70     		strb	r2, [r3]
+ 276:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[1];
+  88              		.loc 1 276 0
+  89 0050 314B     		ldr	r3, .L11+12
+  90 0052 D3ED017A 		vldr.32	s15, [r3, #4]
+  91 0056 FDEEE77A 		vcvt.s32.f32	s15, s15
+  92 005a 304A     		ldr	r2, .L11+16
+  93 005c C2ED047A 		vstr.32	s15, [r2, #16]	@ int
+ 277:Core/Src/robot/robot.cpp **** 		robot_angle = angles[1];
+  94              		.loc 1 277 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 8
+
+
+  95 0060 C2ED1A7A 		vstr.32	s15, [r2, #104]	@ int
+ 278:Core/Src/robot/robot.cpp **** 		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[
+  96              		.loc 1 278 0
+  97 0064 2B4B     		ldr	r3, .L11+8
+  98 0066 D3ED017A 		vldr.32	s15, [r3, #4]
+  99 006a 2D4B     		ldr	r3, .L11+20
+ 100 006c C3ED007A 		vstr.32	s15, [r3]
+ 101              	.LVL6:
+ 102              	.LBB66:
+ 103              	.LBB67:
+ 104              		.file 2 "Core/Inc/utils/vec3.h"
+   1:Core/Inc/utils/vec3.h **** /*
+   2:Core/Inc/utils/vec3.h ****  * vec3.h
+   3:Core/Inc/utils/vec3.h ****  * 
+   4:Core/Inc/utils/vec3.h ****  * Created : 11/9/2018
+   5:Core/Inc/utils/vec3.h ****  *  Author : n-is
+   6:Core/Inc/utils/vec3.h ****  *   email : 073bex422.nischal@pcampus.edu.np
+   7:Core/Inc/utils/vec3.h ****  */
+   8:Core/Inc/utils/vec3.h **** 
+   9:Core/Inc/utils/vec3.h **** #ifndef _VEC3_H_
+  10:Core/Inc/utils/vec3.h **** #define _VEC3_H_
+  11:Core/Inc/utils/vec3.h **** 
+  12:Core/Inc/utils/vec3.h **** #include "stm32f4xx_hal.h"
+  13:Core/Inc/utils/vec3.h **** #include "main.h"
+  14:Core/Inc/utils/vec3.h **** 
+  15:Core/Inc/utils/vec3.h **** template <typename T>
+  16:Core/Inc/utils/vec3.h **** void swap_Element(T &first, T &second)
+  17:Core/Inc/utils/vec3.h **** {
+  18:Core/Inc/utils/vec3.h ****         T temp = first;
+  19:Core/Inc/utils/vec3.h ****         first = second;
+  20:Core/Inc/utils/vec3.h ****         second = temp;
+  21:Core/Inc/utils/vec3.h **** }
+  22:Core/Inc/utils/vec3.h **** 
+  23:Core/Inc/utils/vec3.h **** template <class T>
+  24:Core/Inc/utils/vec3.h **** class Vec3
+  25:Core/Inc/utils/vec3.h **** {
+  26:Core/Inc/utils/vec3.h **** public:
+  27:Core/Inc/utils/vec3.h ****         Vec3() { set_Values(0,0,0); }
+  28:Core/Inc/utils/vec3.h ****         Vec3(T x, T y, T z) { set_Values(x,y,z); }
+  29:Core/Inc/utils/vec3.h **** 
+  30:Core/Inc/utils/vec3.h ****         Vec3(Vec3 &&) = default;
+  31:Core/Inc/utils/vec3.h ****         Vec3 &operator=(Vec3 &&) = default;
+  32:Core/Inc/utils/vec3.h ****         ~Vec3() { }
+  33:Core/Inc/utils/vec3.h **** 
+  34:Core/Inc/utils/vec3.h ****         T getX() const { return x_; }
+  35:Core/Inc/utils/vec3.h ****         T getY() const { return y_; }
+  36:Core/Inc/utils/vec3.h ****         T getZ() const { return z_; }
+ 105              		.loc 2 36 0
+ 106 0070 2C4B     		ldr	r3, .L11+24
+ 107 0072 93ED027A 		vldr.32	s14, [r3, #8]
+ 108              	.LVL7:
+ 109              	.LBE67:
+ 110              	.LBE66:
+ 279:Core/Src/robot/robot.cpp **** 	}
+ 111              		.loc 1 279 0
+ 112 0076 77EE877A 		vadd.f32	s15, s15, s14
+ 113              	.LVL8:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 9
+
+
+ 114              	.LBB68:
+ 115              	.LBB69:
+ 116              	.LBB70:
+  37:Core/Inc/utils/vec3.h ****         void setX(T x) { x_ = x; }
+  38:Core/Inc/utils/vec3.h ****         void setY(T y) { y_ = y; }
+  39:Core/Inc/utils/vec3.h ****         void setZ(T z) { z_ = z; }
+ 117              		.loc 2 39 0
+ 118 007a C3ED027A 		vstr.32	s15, [r3, #8]
+ 119              	.LVL9:
+ 120 007e C9E7     		b	.L3
+ 121              	.LVL10:
+ 122              	.L4:
+ 123              	.LBE70:
+ 124              	.LBE69:
+ 125              	.LBE68:
+ 281:Core/Src/robot/robot.cpp **** 		robo_state = STATE_D;
+ 126              		.loc 1 281 0
+ 127 0080 4FF48071 		mov	r1, #256
+ 128 0084 2148     		ldr	r0, .L11
+ 129 0086 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 130              	.LVL11:
+ 131 008a D0B9     		cbnz	r0, .L5
+ 282:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[2];
+ 132              		.loc 1 282 0
+ 133 008c 204B     		ldr	r3, .L11+4
+ 134 008e 0422     		movs	r2, #4
+ 135 0090 1A70     		strb	r2, [r3]
+ 283:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[2];
+ 136              		.loc 1 283 0
+ 137 0092 214B     		ldr	r3, .L11+12
+ 138 0094 D3ED027A 		vldr.32	s15, [r3, #8]
+ 139 0098 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 140 009c 1F4A     		ldr	r2, .L11+16
+ 141 009e C2ED047A 		vstr.32	s15, [r2, #16]	@ int
+ 284:Core/Src/robot/robot.cpp **** 		robot_angle = angles[2];
+ 142              		.loc 1 284 0
+ 143 00a2 C2ED1A7A 		vstr.32	s15, [r2, #104]	@ int
+ 285:Core/Src/robot/robot.cpp **** 		initial_angle.set_Values(initial_angle.getX(),initial_angle.getY(),initial_angle.getZ() + angles[
+ 144              		.loc 1 285 0
+ 145 00a6 1B4B     		ldr	r3, .L11+8
+ 146 00a8 D3ED027A 		vldr.32	s15, [r3, #8]
+ 147 00ac 1C4B     		ldr	r3, .L11+20
+ 148 00ae C3ED007A 		vstr.32	s15, [r3]
+ 149              	.LVL12:
+ 150              	.LBB71:
+ 151              	.LBB72:
+  36:Core/Inc/utils/vec3.h ****         void setX(T x) { x_ = x; }
+ 152              		.loc 2 36 0
+ 153 00b2 1C4B     		ldr	r3, .L11+24
+ 154 00b4 93ED027A 		vldr.32	s14, [r3, #8]
+ 155              	.LVL13:
+ 156              	.LBE72:
+ 157              	.LBE71:
+ 286:Core/Src/robot/robot.cpp **** 	}
+ 158              		.loc 1 286 0
+ 159 00b8 77EE877A 		vadd.f32	s15, s15, s14
+ 160              	.LVL14:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 10
+
+
+ 161              	.LBB73:
+ 162              	.LBB74:
+ 163              	.LBB75:
+ 164              		.loc 2 39 0
+ 165 00bc C3ED027A 		vstr.32	s15, [r3, #8]
+ 166              	.LVL15:
+ 167 00c0 A8E7     		b	.L3
+ 168              	.LVL16:
+ 169              	.L5:
+ 170              	.LBE75:
+ 171              	.LBE74:
+ 172              	.LBE73:
+ 288:Core/Src/robot/robot.cpp **** 		robo_state = BASE_CAMP;
+ 173              		.loc 1 288 0
+ 174 00c2 4FF48071 		mov	r1, #256
+ 175 00c6 1148     		ldr	r0, .L11
+ 176 00c8 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 177              	.LVL17:
+ 178 00cc 88B9     		cbnz	r0, .L6
+ 289:Core/Src/robot/robot.cpp **** 		leg[0].steps = steps[5];
+ 179              		.loc 1 289 0
+ 180 00ce 104B     		ldr	r3, .L11+4
+ 181 00d0 0722     		movs	r2, #7
+ 182 00d2 1A70     		strb	r2, [r3]
+ 290:Core/Src/robot/robot.cpp **** 		leg[1].steps = steps[5];
+ 183              		.loc 1 290 0
+ 184 00d4 104B     		ldr	r3, .L11+12
+ 185 00d6 D3ED057A 		vldr.32	s15, [r3, #20]
+ 186 00da FDEEE77A 		vcvt.s32.f32	s15, s15
+ 187 00de 0F4A     		ldr	r2, .L11+16
+ 188 00e0 C2ED047A 		vstr.32	s15, [r2, #16]	@ int
+ 291:Core/Src/robot/robot.cpp **** 		robot_angle = angles[5];
+ 189              		.loc 1 291 0
+ 190 00e4 C2ED1A7A 		vstr.32	s15, [r2, #104]	@ int
+ 292:Core/Src/robot/robot.cpp **** 	}
+ 191              		.loc 1 292 0
+ 192 00e8 0A4B     		ldr	r3, .L11+8
+ 193 00ea 5A69     		ldr	r2, [r3, #20]	@ float
+ 194 00ec 0C4B     		ldr	r3, .L11+20
+ 195 00ee 1A60     		str	r2, [r3]	@ float
+ 196 00f0 90E7     		b	.L3
+ 197              	.L6:
+ 295:Core/Src/robot/robot.cpp **** 		initialize_position();
+ 198              		.loc 1 295 0
+ 199 00f2 074B     		ldr	r3, .L11+4
+ 200 00f4 0022     		movs	r2, #0
+ 201 00f6 1A70     		strb	r2, [r3]
+ 296:Core/Src/robot/robot.cpp **** 	}
+ 202              		.loc 1 296 0
+ 203 00f8 FFF7FEFF 		bl	_Z19initialize_positionv
+ 204              	.LVL18:
+ 205 00fc 8AE7     		b	.L3
+ 206              	.L7:
+ 207              	.LBB76:
+ 302:Core/Src/robot/robot.cpp **** 		}
+ 303:Core/Src/robot/robot.cpp **** 	}
+ 304:Core/Src/robot/robot.cpp **** 	else if (HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_8) == GPIO_PIN_RESET){
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 11
+
+
+ 208              		.loc 1 304 0
+ 209 00fe 4FF48071 		mov	r1, #256
+ 210 0102 0248     		ldr	r0, .L11
+ 211 0104 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 212              	.LVL19:
+ 213              	.L1:
+ 214              	.LBE76:
+ 305:Core/Src/robot/robot.cpp **** 
+ 306:Core/Src/robot/robot.cpp **** 	}
+ 307:Core/Src/robot/robot.cpp **** }...
+ 215              		.loc 1 307 0
+ 216 0108 08BD     		pop	{r3, pc}
+ 217              	.L12:
+ 218 010a 00BF     		.align	2
+ 219              	.L11:
+ 220 010c 000C0240 		.word	1073875968
+ 221 0110 00000000 		.word	.LANCHOR0
+ 222 0114 00000000 		.word	.LANCHOR2
+ 223 0118 00000000 		.word	.LANCHOR1
+ 224 011c 00000000 		.word	leg
+ 225 0120 00000000 		.word	robot_angle
+ 226 0124 00000000 		.word	initial_angle
+ 227              		.cfi_endproc
+ 228              	.LFE500:
+ 230              		.section	.text._Z12swap_ElementIfEvRT_S1_,"axG",%progbits,_Z12swap_ElementIfEvRT_S1_,comdat
+ 231              		.align	1
+ 232              		.weak	_Z12swap_ElementIfEvRT_S1_
+ 233              		.syntax unified
+ 234              		.thumb
+ 235              		.thumb_func
+ 236              		.fpu fpv4-sp-d16
+ 238              	_Z12swap_ElementIfEvRT_S1_:
+ 239              	.LFB516:
+  16:Core/Inc/utils/vec3.h **** {
+ 240              		.loc 2 16 0
+ 241              		.cfi_startproc
+ 242              		@ args = 0, pretend = 0, frame = 0
+ 243              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244              		@ link register save eliminated.
+ 245              	.LVL20:
+  18:Core/Inc/utils/vec3.h ****         first = second;
+ 246              		.loc 2 18 0
+ 247 0000 0368     		ldr	r3, [r0]	@ float
+ 248              	.LVL21:
+  19:Core/Inc/utils/vec3.h ****         second = temp;
+ 249              		.loc 2 19 0
+ 250 0002 0A68     		ldr	r2, [r1]	@ float
+ 251 0004 0260     		str	r2, [r0]	@ float
+  20:Core/Inc/utils/vec3.h **** }
+ 252              		.loc 2 20 0
+ 253 0006 0B60     		str	r3, [r1]	@ float
+  21:Core/Inc/utils/vec3.h **** 
+ 254              		.loc 2 21 0
+ 255 0008 7047     		bx	lr
+ 256              		.cfi_endproc
+ 257              	.LFE516:
+ 259              		.global	__aeabi_f2d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 12
+
+
+ 260              		.global	__aeabi_ddiv
+ 261              		.global	__aeabi_d2iz
+ 262              		.section	.text._Z11start_RobotP12Robot_States,"ax",%progbits
+ 263              		.align	1
+ 264              		.global	_Z11start_RobotP12Robot_States
+ 265              		.syntax unified
+ 266              		.thumb
+ 267              		.thumb_func
+ 268              		.fpu fpv4-sp-d16
+ 270              	_Z11start_RobotP12Robot_States:
+ 271              	.LFB498:
+  21:Core/Src/robot/robot.cpp **** {
+ 272              		.loc 1 21 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 24
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              	.LVL22:
+ 277 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 278              	.LCFI1:
+ 279              		.cfi_def_cfa_offset 32
+ 280              		.cfi_offset 4, -32
+ 281              		.cfi_offset 5, -28
+ 282              		.cfi_offset 6, -24
+ 283              		.cfi_offset 7, -20
+ 284              		.cfi_offset 8, -16
+ 285              		.cfi_offset 9, -12
+ 286              		.cfi_offset 10, -8
+ 287              		.cfi_offset 14, -4
+ 288 0004 2DED028B 		vpush.64	{d8}
+ 289              	.LCFI2:
+ 290              		.cfi_def_cfa_offset 40
+ 291              		.cfi_offset 80, -40
+ 292              		.cfi_offset 81, -36
+ 293 0008 88B0     		sub	sp, sp, #32
+ 294              	.LCFI3:
+ 295              		.cfi_def_cfa_offset 72
+ 296 000a 8246     		mov	r10, r0
+  22:Core/Src/robot/robot.cpp **** 	switch (*state_)
+ 297              		.loc 1 22 0
+ 298 000c 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 299 000e 0A2B     		cmp	r3, #10
+ 300 0010 00F2CC82 		bhi	.L14
+ 301 0014 DFE813F0 		tbh	[pc, r3, lsl #1]
+ 302              	.L17:
+ 303 0018 0B00     		.2byte	(.L16-.L17)/2
+ 304 001a CF00     		.2byte	(.L18-.L17)/2
+ 305 001c FA00     		.2byte	(.L19-.L17)/2
+ 306 001e 3F01     		.2byte	(.L20-.L17)/2
+ 307 0020 7F01     		.2byte	(.L21-.L17)/2
+ 308 0022 DE01     		.2byte	(.L22-.L17)/2
+ 309 0024 0902     		.2byte	(.L23-.L17)/2
+ 310 0026 3602     		.2byte	(.L24-.L17)/2
+ 311 0028 6F02     		.2byte	(.L25-.L17)/2
+ 312 002a B002     		.2byte	(.L26-.L17)/2
+ 313 002c CF02     		.2byte	(.L27-.L17)/2
+ 314              		.p2align 1
+ 315              	.L16:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 13
+
+
+  34:Core/Src/robot/robot.cpp **** 		printf("\n\tWaiting_to_start\t");
+ 316              		.loc 1 34 0
+ 317 002e D248     		ldr	r0, .L36+8
+ 318              	.LVL23:
+ 319 0030 FFF7FEFF 		bl	printf
+ 320              	.LVL24:
+  36:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(0);
+ 321              		.loc 1 36 0
+ 322 0034 9FEDD18A 		vldr.32	s16, .L36+12
+ 323 0038 D14C     		ldr	r4, .L36+16
+ 324 003a B0EE480A 		vmov.f32	s0, s16
+ 325 003e 2046     		mov	r0, r4
+ 326 0040 FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 327              	.LVL25:
+  37:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(0);
+ 328              		.loc 1 37 0
+ 329 0044 B0EE480A 		vmov.f32	s0, s16
+ 330 0048 04F15800 		add	r0, r4, #88
+ 331 004c FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 332              	.LVL26:
+  38:Core/Src/robot/robot.cpp **** 		steering.set_angle(0);
+ 333              		.loc 1 38 0
+ 334 0050 B0EE480A 		vmov.f32	s0, s16
+ 335 0054 CB48     		ldr	r0, .L36+20
+ 336 0056 FFF7FEFF 		bl	_ZN8steering9set_angleEf
+ 337              	.LVL27:
+ 338              	.LBB99:
+ 339              	.LBB100:
+ 340              		.file 3 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 14
+
+
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kgravity){kg_ = kgravity;}
+  39:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  40:Core/Inc/devs/leg.h **** 	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
+ 341              		.loc 3 40 0
+ 342 005a 9FEDCB8A 		vldr.32	s16, .L36+24
+ 343 005e B0EE480A 		vmov.f32	s0, s16
+ 344 0062 04F13C00 		add	r0, r4, #60
+ 345 0066 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 346              	.LVL28:
+ 347              	.LBE100:
+ 348              	.LBE99:
+ 349              	.LBB101:
+ 350              	.LBB102:
+ 351 006a B0EE480A 		vmov.f32	s0, s16
+ 352 006e 04F19400 		add	r0, r4, #148
+ 353 0072 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 354              	.LVL29:
+ 355              	.LBE102:
+ 356              	.LBE101:
+  41:Core/Src/robot/robot.cpp **** 		if(!ROBOT_START_FLAG){initial_angle = curr_angle;}
+ 357              		.loc 1 41 0
+ 358 0076 C54B     		ldr	r3, .L36+28
+ 359 0078 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 360 007a 002B     		cmp	r3, #0
+ 361 007c 00F08580 		beq	.L35
+ 362              	.L28:
+ 363              	.LVL30:
+ 364              	.LBB103:
+ 365              	.LBB104:
+  41:Core/Inc/devs/leg.h **** 	void calculate_omega();
+  42:Core/Inc/devs/leg.h **** 	Leg_condition is_raised();
+  43:Core/Inc/devs/leg.h **** 	bool is_raised_without_deadzone();
+  44:Core/Inc/devs/leg.h **** 
+  45:Core/Inc/devs/leg.h **** 	int get_steps(){return steps;}
+  46:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+  47:Core/Inc/devs/leg.h **** 	float get_angle(void){return encoder__.get_angle();}
+  48:Core/Inc/devs/leg.h **** 	float get_actual_angle(void){return encoder__.get_actual_angle();}
+ 366              		.loc 3 48 0
+ 367 0080 C34E     		ldr	r6, .L36+32
+ 368 0082 3046     		mov	r0, r6
+ 369 0084 FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 370              	.LVL31:
+ 371              	.LBE104:
+ 372              	.LBE103:
+  42:Core/Src/robot/robot.cpp **** 		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0
+ 373              		.loc 1 42 0
+ 374 0088 9FEDC28A 		vldr.32	s16, .L36+36
+ 375 008c 60EE087A 		vmul.f32	s15, s0, s16
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 15
+
+
+ 376 0090 17EE900A 		vmov	r0, s15
+ 377 0094 FFF7FEFF 		bl	__aeabi_f2d
+ 378              	.LVL32:
+ 379 0098 B5A3     		adr	r3, .L36
+ 380 009a D3E90023 		ldrd	r2, [r3]
+ 381 009e FFF7FEFF 		bl	__aeabi_ddiv
+ 382              	.LVL33:
+ 383 00a2 0446     		mov	r4, r0
+ 384 00a4 0D46     		mov	r5, r1
+ 385              	.LVL34:
+ 386              	.LBB105:
+ 387              	.LBB106:
+ 388              		.loc 3 48 0
+ 389 00a6 06F15800 		add	r0, r6, #88
+ 390 00aa FFF7FEFF 		bl	_ZN7encoder16get_actual_angleEv
+ 391              	.LVL35:
+ 392              	.LBE106:
+ 393              	.LBE105:
+  43:Core/Src/robot/robot.cpp **** 		  (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*180/PI), (int)(robot_angle*
+ 394              		.loc 1 43 0
+ 395 00ae 60EE087A 		vmul.f32	s15, s0, s16
+ 396 00b2 17EE900A 		vmov	r0, s15
+ 397 00b6 FFF7FEFF 		bl	__aeabi_f2d
+ 398              	.LVL36:
+ 399 00ba ADA3     		adr	r3, .L36
+ 400 00bc D3E90023 		ldrd	r2, [r3]
+ 401 00c0 FFF7FEFF 		bl	__aeabi_ddiv
+ 402              	.LVL37:
+ 403 00c4 0646     		mov	r6, r0
+ 404 00c6 0F46     		mov	r7, r1
+ 405              	.LVL38:
+ 406              	.LBB107:
+ 407              	.LBB108:
+ 408              		.file 4 "Core/Inc/devs/steering.h"
+   1:Core/Inc/devs/steering.h **** /**
+   2:Core/Inc/devs/steering.h ****  * steering.h
+   3:Core/Inc/devs/steering.h ****  *
+   4:Core/Inc/devs/steering.h ****  * \brief Provide control over steering of the horse
+   5:Core/Inc/devs/steering.h ****  *
+   6:Core/Inc/devs/steering.h ****  * This file is meant as an wrapper to the elements in the encoder. 
+   7:Core/Inc/devs/steering.h ****  * It uses the functions of other headers (ie motor.h, encoder.h, 
+   8:Core/Inc/devs/steering.h ****  * limit_switch.h and pid.h tocontrol all the functions available 
+   9:Core/Inc/devs/steering.h ****  * in the steering.
+  10:Core/Inc/devs/steering.h ****  *
+  11:Core/Inc/devs/steering.h ****  * \author 	$Author 	: Prashant_Bhatta
+  12:Core/Inc/devs/steering.h ****  * \date 	$Date		: 2005/04/14 14:16:20 $
+  13:Core/Inc/devs/steering.h ****  * \contact	$Contact	: 073bex425.prashant@pcampus.edu.np
+  14:Core/Inc/devs/steering.h ****  *
+  15:Core/Inc/devs/steering.h ****  */
+  16:Core/Inc/devs/steering.h **** #ifndef _STEERING_H_
+  17:Core/Inc/devs/steering.h **** #define _STEERING_H_
+  18:Core/Inc/devs/steering.h **** 
+  19:Core/Inc/devs/steering.h **** #include "motor.h"
+  20:Core/Inc/devs/steering.h **** #include "encoder.h"
+  21:Core/Inc/devs/steering.h **** #include "pid.h"
+  22:Core/Inc/devs/steering.h **** #include "limit_switch.h"
+  23:Core/Inc/devs/steering.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 16
+
+
+  24:Core/Inc/devs/steering.h **** class steering
+  25:Core/Inc/devs/steering.h **** {
+  26:Core/Inc/devs/steering.h **** public:
+  27:Core/Inc/devs/steering.h **** 	/// These lines of codes are just for protection of random defination of the objects.
+  28:Core/Inc/devs/steering.h **** 	steering(){}
+  29:Core/Inc/devs/steering.h **** 	steering(steering &&) = default;
+  30:Core/Inc/devs/steering.h **** 	steering(const steering &) = default;
+  31:Core/Inc/devs/steering.h **** 	steering &operator=(steering &&) = default;
+  32:Core/Inc/devs/steering.h **** 	steering &operator=(const steering &) = default;
+  33:Core/Inc/devs/steering.h **** 	~steering(){}
+  34:Core/Inc/devs/steering.h **** 
+  35:Core/Inc/devs/steering.h **** 	/**
+  36:Core/Inc/devs/steering.h **** 	 * \brief This function setups the configurations for the steering
+  37:Core/Inc/devs/steering.h **** 	 * \param motor: pointer to motor_config which contains all the 
+  38:Core/Inc/devs/steering.h **** 	 * 		configurations for a motor
+  39:Core/Inc/devs/steering.h **** 	 * \param encoder: pointer to encoder_config which contains all the 
+  40:Core/Inc/devs/steering.h **** 	 * 		configurations for a motor  
+  41:Core/Inc/devs/steering.h **** 	 * \return void
+  42:Core/Inc/devs/steering.h **** 	 */
+  43:Core/Inc/devs/steering.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  44:Core/Inc/devs/steering.h **** 		motor__.set_config(motor);
+  45:Core/Inc/devs/steering.h **** 		encoder__.set_config(encoder);
+  46:Core/Inc/devs/steering.h **** 	}
+  47:Core/Inc/devs/steering.h **** 
+  48:Core/Inc/devs/steering.h **** 	/**
+  49:Core/Inc/devs/steering.h **** 	 * \brief Sets constants for PID algorithm
+  50:Core/Inc/devs/steering.h **** 	 * \param kp,ki,kd: constants for PID
+  51:Core/Inc/devs/steering.h **** 	 * \param lower_limit, upper_limit: These are the maximum output a motor 
+  52:Core/Inc/devs/steering.h **** 	 * 	   can give with gear reduction(in omegas)
+  53:Core/Inc/devs/steering.h **** 	 * \return void
+  54:Core/Inc/devs/steering.h **** 	 */
+  55:Core/Inc/devs/steering.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  56:Core/Inc/devs/steering.h **** 		dpid_.set_P(kp);
+  57:Core/Inc/devs/steering.h **** 		dpid_.set_I(ki);
+  58:Core/Inc/devs/steering.h **** 		dpid_.set_D(kd);
+  59:Core/Inc/devs/steering.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  60:Core/Inc/devs/steering.h **** 	}
+  61:Core/Inc/devs/steering.h **** 
+  62:Core/Inc/devs/steering.h **** 	/**
+  63:Core/Inc/devs/steering.h **** 	 * \brief Sets constants for Angle_PID algorithm
+  64:Core/Inc/devs/steering.h **** 	 * \param kp,ki,kd: constants for Anggle_PID
+  65:Core/Inc/devs/steering.h **** 	 * \param lower_limit, upper_limit: These are the maximum output a motor 
+  66:Core/Inc/devs/steering.h **** 	 * 	   can give with gear reduction(in omegas)
+  67:Core/Inc/devs/steering.h **** 	 * \return void
+  68:Core/Inc/devs/steering.h **** 	 */
+  69:Core/Inc/devs/steering.h **** 	void set_angle_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  70:Core/Inc/devs/steering.h **** 		apid_.set_P(kp);
+  71:Core/Inc/devs/steering.h **** 		apid_.set_I(ki);
+  72:Core/Inc/devs/steering.h **** 		apid_.set_D(kd);
+  73:Core/Inc/devs/steering.h **** 		apid_.set_Limits(upper_limit, lower_limit);
+  74:Core/Inc/devs/steering.h **** 	}
+  75:Core/Inc/devs/steering.h **** 
+  76:Core/Inc/devs/steering.h **** 
+  77:Core/Inc/devs/steering.h **** 	/** 
+  78:Core/Inc/devs/steering.h **** 	 * \brief sets omega for the steering
+  79:Core/Inc/devs/steering.h **** 	 * 
+  80:Core/Inc/devs/steering.h **** 	 */
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 17
+
+
+  81:Core/Inc/devs/steering.h **** 	void set_omega(float omega);
+  82:Core/Inc/devs/steering.h **** 
+  83:Core/Inc/devs/steering.h **** 	/** 
+  84:Core/Inc/devs/steering.h **** 	 * \brief sets angle for the steering
+  85:Core/Inc/devs/steering.h **** 	 * 
+  86:Core/Inc/devs/steering.h **** 	 */
+  87:Core/Inc/devs/steering.h **** 	void set_angle(float angle);
+  88:Core/Inc/devs/steering.h **** 
+  89:Core/Inc/devs/steering.h **** 	/**
+  90:Core/Inc/devs/steering.h **** 	 * \brief resets the angle provided by the encoder
+  91:Core/Inc/devs/steering.h **** 	 * \param angle_in_radian at which it is to be reset
+  92:Core/Inc/devs/steering.h **** 	 * \return void
+  93:Core/Inc/devs/steering.h **** 	 */
+  94:Core/Inc/devs/steering.h **** 	void reset_angle(float angle_in_radians) {encoder__.reset_angle(angle_in_radians);}
+  95:Core/Inc/devs/steering.h **** 
+  96:Core/Inc/devs/steering.h **** 	/**
+  97:Core/Inc/devs/steering.h **** 	 * \brief calculates omega of the steering motor
+  98:Core/Inc/devs/steering.h **** 	 * \remark Dont forget to call this function every 10 ms
+  99:Core/Inc/devs/steering.h **** 	 * \param void
+ 100:Core/Inc/devs/steering.h **** 	 * \return void
+ 101:Core/Inc/devs/steering.h **** 	 */
+ 102:Core/Inc/devs/steering.h **** 	void calculate_omega(){	encoder__.calculate_omega();}
+ 103:Core/Inc/devs/steering.h **** 
+ 104:Core/Inc/devs/steering.h **** 	/**
+ 105:Core/Inc/devs/steering.h **** 	 * \brief returns the current omega calculated by the encoder
+ 106:Core/Inc/devs/steering.h **** 	 */
+ 107:Core/Inc/devs/steering.h **** 	float get_omega(void){return encoder__.get_omega();}
+ 108:Core/Inc/devs/steering.h **** 
+ 109:Core/Inc/devs/steering.h **** 	/**
+ 110:Core/Inc/devs/steering.h **** 	 * \brief returns the current angle calculated by the encoder
+ 111:Core/Inc/devs/steering.h **** 	 */
+ 112:Core/Inc/devs/steering.h **** 	float get_angle(void){return encoder__.get_angle();}
+ 409              		.loc 4 112 0
+ 410 00c8 B348     		ldr	r0, .L36+40
+ 411 00ca FFF7FEFF 		bl	_ZN7encoder9get_angleEv
+ 412              	.LVL39:
+ 413              	.LBE108:
+ 414              	.LBE107:
+  43:Core/Src/robot/robot.cpp **** 		  (int)(leg[1].get_actual_angle()*180/PI), (int)(steering.get_angle()*180/PI), (int)(robot_angle*
+ 415              		.loc 1 43 0
+ 416 00ce 60EE087A 		vmul.f32	s15, s0, s16
+ 417 00d2 17EE900A 		vmov	r0, s15
+ 418 00d6 FFF7FEFF 		bl	__aeabi_f2d
+ 419              	.LVL40:
+ 420 00da A5A3     		adr	r3, .L36
+ 421 00dc D3E90023 		ldrd	r2, [r3]
+ 422 00e0 FFF7FEFF 		bl	__aeabi_ddiv
+ 423              	.LVL41:
+ 424 00e4 8046     		mov	r8, r0
+ 425 00e6 8946     		mov	r9, r1
+ 426 00e8 AC4B     		ldr	r3, .L36+44
+ 427 00ea D3ED007A 		vldr.32	s15, [r3]
+ 428 00ee 67EE887A 		vmul.f32	s15, s15, s16
+ 429 00f2 17EE900A 		vmov	r0, s15
+ 430 00f6 FFF7FEFF 		bl	__aeabi_f2d
+ 431              	.LVL42:
+ 432 00fa 9DA3     		adr	r3, .L36
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 18
+
+
+ 433 00fc D3E90023 		ldrd	r2, [r3]
+ 434 0100 FFF7FEFF 		bl	__aeabi_ddiv
+ 435              	.LVL43:
+ 436 0104 CDE90201 		strd	r0, [sp, #8]
+  42:Core/Src/robot/robot.cpp **** 		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0
+ 437              		.loc 1 42 0
+ 438 0108 4046     		mov	r0, r8
+ 439 010a 4946     		mov	r1, r9
+ 440 010c FFF7FEFF 		bl	__aeabi_d2iz
+ 441              	.LVL44:
+ 442 0110 8046     		mov	r8, r0
+ 443 0112 3046     		mov	r0, r6
+ 444 0114 3946     		mov	r1, r7
+ 445 0116 FFF7FEFF 		bl	__aeabi_d2iz
+ 446              	.LVL45:
+ 447 011a 0646     		mov	r6, r0
+ 448 011c 2046     		mov	r0, r4
+ 449 011e 2946     		mov	r1, r5
+ 450 0120 FFF7FEFF 		bl	__aeabi_d2iz
+ 451              	.LVL46:
+ 452 0124 0446     		mov	r4, r0
+ 453 0126 DDE90201 		ldrd	r0, [sp, #8]
+ 454 012a FFF7FEFF 		bl	__aeabi_d2iz
+ 455              	.LVL47:
+ 456 012e 0090     		str	r0, [sp]
+ 457 0130 4346     		mov	r3, r8
+ 458 0132 3246     		mov	r2, r6
+ 459 0134 2146     		mov	r1, r4
+ 460 0136 9A48     		ldr	r0, .L36+48
+ 461 0138 FFF7FEFF 		bl	printf
+ 462              	.LVL48:
+  44:Core/Src/robot/robot.cpp **** 		if (ROBOT_START_FLAG && GEREGE_FLAG)
+ 463              		.loc 1 44 0
+ 464 013c 934B     		ldr	r3, .L36+28
+ 465 013e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 466 0140 002B     		cmp	r3, #0
+ 467 0142 00F03382 		beq	.L14
+  44:Core/Src/robot/robot.cpp **** 		if (ROBOT_START_FLAG && GEREGE_FLAG)
+ 468              		.loc 1 44 0 is_stmt 0 discriminator 1
+ 469 0146 974B     		ldr	r3, .L36+52
+ 470 0148 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 471 014a 002B     		cmp	r3, #0
+ 472 014c 00F02E82 		beq	.L14
+  46:Core/Src/robot/robot.cpp **** 			*state_ = MARCH;
+ 473              		.loc 1 46 0 is_stmt 1
+ 474 0150 0123     		movs	r3, #1
+ 475 0152 8AF80030 		strb	r3, [r10]
+  47:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+ 476              		.loc 1 47 0
+ 477 0156 944C     		ldr	r4, .L36+56
+ 478 0158 0022     		movs	r2, #0
+ 479 015a 4FF48051 		mov	r1, #4096
+ 480 015e 2046     		mov	r0, r4
+ 481 0160 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 482              	.LVL49:
+  48:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+ 483              		.loc 1 48 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 19
+
+
+ 484 0164 0022     		movs	r2, #0
+ 485 0166 4FF40051 		mov	r1, #8192
+ 486 016a 2046     		mov	r0, r4
+ 487 016c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 488              	.LVL50:
+  49:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+ 489              		.loc 1 49 0
+ 490 0170 0022     		movs	r2, #0
+ 491 0172 4FF48041 		mov	r1, #16384
+ 492 0176 2046     		mov	r0, r4
+ 493 0178 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 494              	.LVL51:
+  50:Core/Src/robot/robot.cpp **** 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+ 495              		.loc 1 50 0
+ 496 017c 0022     		movs	r2, #0
+ 497 017e 4FF40041 		mov	r1, #32768
+ 498 0182 2046     		mov	r0, r4
+ 499 0184 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 500              	.LVL52:
+ 501 0188 10E2     		b	.L14
+ 502              	.L35:
+ 503              	.LVL53:
+ 504              	.LBB109:
+ 505              	.LBB110:
+ 506              	.LBB111:
+ 507              	.LBB112:
+ 508              	.LBB113:
+  40:Core/Inc/utils/vec3.h **** 
+  41:Core/Inc/utils/vec3.h ****         void set_Values(T x, T y, T z) {
+  42:Core/Inc/utils/vec3.h ****                 setX(x);
+  43:Core/Inc/utils/vec3.h ****                 setY(y);
+  44:Core/Inc/utils/vec3.h ****                 setZ(z);
+  45:Core/Inc/utils/vec3.h ****         }
+  46:Core/Inc/utils/vec3.h **** 
+  47:Core/Inc/utils/vec3.h **** 
+  48:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(float num) {
+  49:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  50:Core/Inc/utils/vec3.h ****                 temp.x_ *= num;
+  51:Core/Inc/utils/vec3.h ****                 temp.y_ *= num;
+  52:Core/Inc/utils/vec3.h ****                 temp.z_ *= num;
+  53:Core/Inc/utils/vec3.h **** 
+  54:Core/Inc/utils/vec3.h ****                 return temp;
+  55:Core/Inc/utils/vec3.h ****         }
+  56:Core/Inc/utils/vec3.h **** 
+  57:Core/Inc/utils/vec3.h ****         template <typename T1>
+  58:Core/Inc/utils/vec3.h ****         Vec3 mult_EW(Vec3<T1> v) {
+  59:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  60:Core/Inc/utils/vec3.h ****                 temp.x_ *= x_;
+  61:Core/Inc/utils/vec3.h ****                 temp.y_ *= y_;
+  62:Core/Inc/utils/vec3.h ****                 temp.z_ *= z_;
+  63:Core/Inc/utils/vec3.h **** 
+  64:Core/Inc/utils/vec3.h ****                 return temp;
+  65:Core/Inc/utils/vec3.h ****         }
+  66:Core/Inc/utils/vec3.h **** 
+  67:Core/Inc/utils/vec3.h **** 
+  68:Core/Inc/utils/vec3.h ****         Vec3 add_EW(float num) {
+  69:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 20
+
+
+  70:Core/Inc/utils/vec3.h ****                 temp.x_ += num;
+  71:Core/Inc/utils/vec3.h ****                 temp.y_ += num;
+  72:Core/Inc/utils/vec3.h ****                 temp.z_ += num;
+  73:Core/Inc/utils/vec3.h **** 
+  74:Core/Inc/utils/vec3.h ****                 return temp;
+  75:Core/Inc/utils/vec3.h ****         }
+  76:Core/Inc/utils/vec3.h **** 
+  77:Core/Inc/utils/vec3.h ****         template <typename T1>
+  78:Core/Inc/utils/vec3.h ****         Vec3 add_EW(Vec3<T1> v) {
+  79:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+  80:Core/Inc/utils/vec3.h ****                 temp.x_ += x_;
+  81:Core/Inc/utils/vec3.h ****                 temp.y_ += y_;
+  82:Core/Inc/utils/vec3.h ****                 temp.z_ += z_;
+  83:Core/Inc/utils/vec3.h **** 
+  84:Core/Inc/utils/vec3.h ****                 return temp;
+  85:Core/Inc/utils/vec3.h ****         }
+  86:Core/Inc/utils/vec3.h **** 
+  87:Core/Inc/utils/vec3.h **** 
+  88:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(float num) {
+  89:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+  90:Core/Inc/utils/vec3.h ****                 temp.x_ -= num;
+  91:Core/Inc/utils/vec3.h ****                 temp.y_ -= num;
+  92:Core/Inc/utils/vec3.h ****                 temp.z_ -= num;
+  93:Core/Inc/utils/vec3.h **** 
+  94:Core/Inc/utils/vec3.h ****                 return temp;
+  95:Core/Inc/utils/vec3.h ****         }
+  96:Core/Inc/utils/vec3.h **** 
+  97:Core/Inc/utils/vec3.h ****         template <typename T1>
+  98:Core/Inc/utils/vec3.h ****         Vec3 sub_EW(Vec3<T1> v) {
+  99:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 100:Core/Inc/utils/vec3.h ****                 temp.x_ -= x_;
+ 101:Core/Inc/utils/vec3.h ****                 temp.y_ -= y_;
+ 102:Core/Inc/utils/vec3.h ****                 temp.z_ -= z_;
+ 103:Core/Inc/utils/vec3.h **** 
+ 104:Core/Inc/utils/vec3.h ****                 return temp;
+ 105:Core/Inc/utils/vec3.h ****         }
+ 106:Core/Inc/utils/vec3.h **** 
+ 107:Core/Inc/utils/vec3.h **** 
+ 108:Core/Inc/utils/vec3.h ****         Vec3 div_EW(float num) {
+ 109:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ 110:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)num;
+ 111:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)num;
+ 112:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)num;
+ 113:Core/Inc/utils/vec3.h **** 
+ 114:Core/Inc/utils/vec3.h ****                 return temp;
+ 115:Core/Inc/utils/vec3.h ****         }
+ 116:Core/Inc/utils/vec3.h **** 
+ 117:Core/Inc/utils/vec3.h ****         template <typename T1>
+ 118:Core/Inc/utils/vec3.h ****         Vec3 div_EW(Vec3<T1> v) {
+ 119:Core/Inc/utils/vec3.h ****                 Vec3 temp(*this);
+ 120:Core/Inc/utils/vec3.h ****                 temp.x_ /= (float)v.x_;
+ 121:Core/Inc/utils/vec3.h ****                 temp.y_ /= (float)v.y_;
+ 122:Core/Inc/utils/vec3.h ****                 temp.z_ /= (float)v.z_;
+ 123:Core/Inc/utils/vec3.h **** 
+ 124:Core/Inc/utils/vec3.h ****                 return temp;
+ 125:Core/Inc/utils/vec3.h ****         }
+ 126:Core/Inc/utils/vec3.h **** 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 21
+
+
+ 127:Core/Inc/utils/vec3.h ****         
+ 128:Core/Inc/utils/vec3.h ****         Vec3(const Vec3 &v) {
+ 129:Core/Inc/utils/vec3.h ****                 x_ = v.x_;
+ 509              		.loc 2 129 0
+ 510 018a 884B     		ldr	r3, .L36+60
+ 511 018c 1A68     		ldr	r2, [r3]	@ float
+ 512 018e 0592     		str	r2, [sp, #20]	@ float
+ 130:Core/Inc/utils/vec3.h ****                 y_ = v.y_;
+ 513              		.loc 2 130 0
+ 514 0190 5A68     		ldr	r2, [r3, #4]	@ float
+ 515 0192 0692     		str	r2, [sp, #24]	@ float
+ 131:Core/Inc/utils/vec3.h ****                 z_ = v.z_;
+ 516              		.loc 2 131 0
+ 517 0194 9B68     		ldr	r3, [r3, #8]	@ float
+ 518 0196 0793     		str	r3, [sp, #28]	@ float
+ 519              	.LVL54:
+ 520              	.LBE113:
+ 521              	.LBE112:
+ 522              	.LBE111:
+ 523              	.LBB114:
+ 524              	.LBB115:
+ 132:Core/Inc/utils/vec3.h ****         }
+ 133:Core/Inc/utils/vec3.h ****         
+ 134:Core/Inc/utils/vec3.h ****         Vec3 &operator=(const Vec3 &v) {
+ 135:Core/Inc/utils/vec3.h ****                 Vec3 temp(v);
+ 136:Core/Inc/utils/vec3.h ****                 swap(*this, temp);
+ 137:Core/Inc/utils/vec3.h **** 
+ 138:Core/Inc/utils/vec3.h ****                 return *this;
+ 139:Core/Inc/utils/vec3.h ****         }
+ 140:Core/Inc/utils/vec3.h **** 
+ 141:Core/Inc/utils/vec3.h ****         Vec3 &operator+=(const Vec3 &rhs) {
+ 142:Core/Inc/utils/vec3.h ****                 x_ += rhs.x_;
+ 143:Core/Inc/utils/vec3.h ****                 y_ += rhs.y_;
+ 144:Core/Inc/utils/vec3.h ****                 z_ += rhs.z_;
+ 145:Core/Inc/utils/vec3.h **** 
+ 146:Core/Inc/utils/vec3.h ****                 return *this;
+ 147:Core/Inc/utils/vec3.h ****         }
+ 148:Core/Inc/utils/vec3.h ****         
+ 149:Core/Inc/utils/vec3.h ****         Vec3 &operator-=(const Vec3 &rhs) {
+ 150:Core/Inc/utils/vec3.h ****                 x_ -= rhs.x_;
+ 151:Core/Inc/utils/vec3.h ****                 y_ -= rhs.y_;
+ 152:Core/Inc/utils/vec3.h ****                 z_ -= rhs.z_;
+ 153:Core/Inc/utils/vec3.h **** 
+ 154:Core/Inc/utils/vec3.h ****                 return *this;
+ 155:Core/Inc/utils/vec3.h ****         }
+ 156:Core/Inc/utils/vec3.h **** 
+ 157:Core/Inc/utils/vec3.h ****         friend Vec3 operator+(Vec3 lhs, const Vec3 &rhs) {
+ 158:Core/Inc/utils/vec3.h ****                 lhs += rhs;
+ 159:Core/Inc/utils/vec3.h ****                 return lhs;
+ 160:Core/Inc/utils/vec3.h ****         }
+ 161:Core/Inc/utils/vec3.h **** 
+ 162:Core/Inc/utils/vec3.h ****         friend Vec3 operator-(Vec3 lhs, const Vec3 &rhs) {
+ 163:Core/Inc/utils/vec3.h ****                 lhs -= rhs;
+ 164:Core/Inc/utils/vec3.h ****                 return lhs;
+ 165:Core/Inc/utils/vec3.h ****         }
+ 166:Core/Inc/utils/vec3.h **** 
+ 167:Core/Inc/utils/vec3.h ****         void print() const {
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 22
+
+
+ 168:Core/Inc/utils/vec3.h ****                 printf("%ld, %ld, %ld", (int32_t)x_, (int32_t)y_, (int32_t)z_);
+ 169:Core/Inc/utils/vec3.h ****         }
+ 170:Core/Inc/utils/vec3.h **** 
+ 171:Core/Inc/utils/vec3.h **** private:
+ 172:Core/Inc/utils/vec3.h ****         T x_,y_,z_;
+ 173:Core/Inc/utils/vec3.h **** 
+ 174:Core/Inc/utils/vec3.h ****         friend void swap(Vec3 &first, Vec3 &second) {
+ 175:Core/Inc/utils/vec3.h ****                 swap_Element(first.x_, second.x_);
+ 525              		.loc 2 175 0
+ 526 0198 854C     		ldr	r4, .L36+64
+ 527 019a 05A9     		add	r1, sp, #20
+ 528              	.LVL55:
+ 529 019c 2046     		mov	r0, r4
+ 530 019e FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 531              	.LVL56:
+ 176:Core/Inc/utils/vec3.h ****                 swap_Element(first.y_, second.y_);
+ 532              		.loc 2 176 0
+ 533 01a2 06A9     		add	r1, sp, #24
+ 534 01a4 201D     		adds	r0, r4, #4
+ 535 01a6 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 536              	.LVL57:
+ 177:Core/Inc/utils/vec3.h ****                 swap_Element(first.z_, second.z_);
+ 537              		.loc 2 177 0
+ 538 01aa 07A9     		add	r1, sp, #28
+ 539 01ac 04F10800 		add	r0, r4, #8
+ 540 01b0 FFF7FEFF 		bl	_Z12swap_ElementIfEvRT_S1_
+ 541              	.LVL58:
+ 542 01b4 64E7     		b	.L28
+ 543              	.LVL59:
+ 544              	.L18:
+ 545              	.LBE115:
+ 546              	.LBE114:
+ 547              	.LBE110:
+ 548              	.LBE109:
+  62:Core/Src/robot/robot.cpp **** 		printf("March");
+ 549              		.loc 1 62 0
+ 550 01b6 7F48     		ldr	r0, .L36+68
+ 551              	.LVL60:
+ 552 01b8 FFF7FEFF 		bl	printf
+ 553              	.LVL61:
+  63:Core/Src/robot/robot.cpp **** 		if (go(steps[0], angles[0]) == true)
+ 554              		.loc 1 63 0
+ 555 01bc 7E4B     		ldr	r3, .L36+72
+ 556 01be D3ED007A 		vldr.32	s15, [r3]
+ 557 01c2 7E4B     		ldr	r3, .L36+76
+ 558 01c4 93ED000A 		vldr.32	s0, [r3]
+ 559 01c8 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 560 01cc 17EE900A 		vmov	r0, s15	@ int
+ 561 01d0 FFF7FEFF 		bl	_Z2goif
+ 562              	.LVL62:
+ 563 01d4 0028     		cmp	r0, #0
+ 564 01d6 00F0E981 		beq	.L14
+  65:Core/Src/robot/robot.cpp **** 			*state_ =TURN_45;
+ 565              		.loc 1 65 0
+ 566 01da 0223     		movs	r3, #2
+ 567 01dc 8AF80030 		strb	r3, [r10]
+  66:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 23
+
+
+ 568              		.loc 1 66 0
+ 569 01e0 714C     		ldr	r4, .L36+56
+ 570 01e2 4FF48051 		mov	r1, #4096
+ 571 01e6 2046     		mov	r0, r4
+ 572 01e8 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 573              	.LVL63:
+  67:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 574              		.loc 1 67 0
+ 575 01ec 4FF40051 		mov	r1, #8192
+ 576 01f0 2046     		mov	r0, r4
+ 577 01f2 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 578              	.LVL64:
+  68:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 579              		.loc 1 68 0
+ 580 01f6 4FF48041 		mov	r1, #16384
+ 581 01fa 2046     		mov	r0, r4
+ 582 01fc FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 583              	.LVL65:
+  69:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 584              		.loc 1 69 0
+ 585 0200 4FF40041 		mov	r1, #32768
+ 586 0204 2046     		mov	r0, r4
+ 587 0206 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 588              	.LVL66:
+ 589 020a CFE1     		b	.L14
+ 590              	.LVL67:
+ 591              	.L19:
+  83:Core/Src/robot/robot.cpp **** 		printf("Turn 45");
+ 592              		.loc 1 83 0
+ 593 020c 6C48     		ldr	r0, .L36+80
+ 594              	.LVL68:
+ 595 020e FFF7FEFF 		bl	printf
+ 596              	.LVL69:
+  91:Core/Src/robot/robot.cpp **** 		go(99, angles[1]);
+ 597              		.loc 1 91 0
+ 598 0212 6A4B     		ldr	r3, .L36+76
+ 599 0214 93ED010A 		vldr.32	s0, [r3, #4]
+ 600 0218 6320     		movs	r0, #99
+ 601 021a FFF7FEFF 		bl	_Z2goif
+ 602              	.LVL70:
+  92:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[1]){
+ 603              		.loc 1 92 0
+ 604 021e 4FF48061 		mov	r1, #1024
+ 605 0222 6148     		ldr	r0, .L36+56
+ 606 0224 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 607              	.LVL71:
+ 608 0228 68B1     		cbz	r0, .L29
+ 609              	.LVL72:
+ 610              	.LBB116:
+ 611              	.LBB117:
+  45:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+ 612              		.loc 3 45 0
+ 613 022a 554B     		ldr	r3, .L36+16
+ 614 022c D3ED047A 		vldr.32	s15, [r3, #16]	@ int
+ 615              	.LVL73:
+ 616              	.LBE117:
+ 617              	.LBE116:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 24
+
+
+  92:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[1]){
+ 618              		.loc 1 92 0
+ 619 0230 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 620 0234 604B     		ldr	r3, .L36+72
+ 621 0236 93ED017A 		vldr.32	s14, [r3, #4]
+ 622 023a F4EEC77A 		vcmpe.f32	s15, s14
+ 623 023e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 624 0242 40F3B381 		ble	.L14
+ 625              	.L29:
+  94:Core/Src/robot/robot.cpp **** 			*state_ = SAND_DUNE;
+ 626              		.loc 1 94 0 discriminator 3
+ 627 0246 0323     		movs	r3, #3
+ 628 0248 8AF80030 		strb	r3, [r10]
+  95:Core/Src/robot/robot.cpp **** 			leg[0].steps = steps[1];
+ 629              		.loc 1 95 0 discriminator 3
+ 630 024c 5A4B     		ldr	r3, .L36+72
+ 631 024e D3ED017A 		vldr.32	s15, [r3, #4]
+ 632 0252 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 633 0256 4A4A     		ldr	r2, .L36+16
+ 634 0258 C2ED047A 		vstr.32	s15, [r2, #16]	@ int
+  96:Core/Src/robot/robot.cpp **** 			leg[1].steps = steps[1];
+ 635              		.loc 1 96 0 discriminator 3
+ 636 025c C2ED1A7A 		vstr.32	s15, [r2, #104]	@ int
+  97:Core/Src/robot/robot.cpp **** 			BACK_PROXIMITY_FLAG = false;
+ 637              		.loc 1 97 0 discriminator 3
+ 638 0260 0023     		movs	r3, #0
+ 639 0262 584A     		ldr	r2, .L36+84
+ 640 0264 1370     		strb	r3, [r2]
+  98:Core/Src/robot/robot.cpp **** 			FRONT_PROXIMITY_FLAG = false;
+ 641              		.loc 1 98 0 discriminator 3
+ 642 0266 584A     		ldr	r2, .L36+88
+ 643 0268 1370     		strb	r3, [r2]
+ 100:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 644              		.loc 1 100 0 discriminator 3
+ 645 026a 4F4C     		ldr	r4, .L36+56
+ 646 026c 4FF48051 		mov	r1, #4096
+ 647 0270 2046     		mov	r0, r4
+ 648 0272 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 649              	.LVL74:
+ 101:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 650              		.loc 1 101 0 discriminator 3
+ 651 0276 4FF40051 		mov	r1, #8192
+ 652 027a 2046     		mov	r0, r4
+ 653 027c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 654              	.LVL75:
+ 102:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 655              		.loc 1 102 0 discriminator 3
+ 656 0280 4FF48041 		mov	r1, #16384
+ 657 0284 2046     		mov	r0, r4
+ 658 0286 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 659              	.LVL76:
+ 103:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 660              		.loc 1 103 0 discriminator 3
+ 661 028a 4FF40041 		mov	r1, #32768
+ 662 028e 2046     		mov	r0, r4
+ 663 0290 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 664              	.LVL77:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 25
+
+
+ 665 0294 8AE1     		b	.L14
+ 666              	.LVL78:
+ 667              	.L20:
+ 114:Core/Src/robot/robot.cpp **** 		printf("Sand dune");
+ 668              		.loc 1 114 0
+ 669 0296 4D48     		ldr	r0, .L36+92
+ 670              	.LVL79:
+ 671 0298 FFF7FEFF 		bl	printf
+ 672              	.LVL80:
+ 122:Core/Src/robot/robot.cpp **** 		go(100, angles[2]);
+ 673              		.loc 1 122 0
+ 674 029c 474B     		ldr	r3, .L36+76
+ 675 029e 93ED020A 		vldr.32	s0, [r3, #8]
+ 676 02a2 6420     		movs	r0, #100
+ 677 02a4 FFF7FEFF 		bl	_Z2goif
+ 678              	.LVL81:
+ 123:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[2]){
+ 679              		.loc 1 123 0
+ 680 02a8 4FF48071 		mov	r1, #256
+ 681 02ac 3E48     		ldr	r0, .L36+56
+ 682 02ae FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 683              	.LVL82:
+ 684 02b2 68B1     		cbz	r0, .L31
+ 685              	.LVL83:
+ 686              	.LBB118:
+ 687              	.LBB119:
+  45:Core/Inc/devs/leg.h **** 	float get_omega(void){return encoder__.get_omega();}
+ 688              		.loc 3 45 0
+ 689 02b4 324B     		ldr	r3, .L36+16
+ 690 02b6 D3ED047A 		vldr.32	s15, [r3, #16]	@ int
+ 691              	.LVL84:
+ 692              	.LBE119:
+ 693              	.LBE118:
+ 123:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET) || leg[0].get_steps() > steps[2]){
+ 694              		.loc 1 123 0
+ 695 02ba F8EEE77A 		vcvt.f32.s32	s15, s15
+ 696 02be 3E4B     		ldr	r3, .L36+72
+ 697 02c0 93ED027A 		vldr.32	s14, [r3, #8]
+ 698 02c4 F4EEC77A 		vcmpe.f32	s15, s14
+ 699 02c8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 700 02cc 40F36E81 		ble	.L14
+ 701              	.L31:
+ 125:Core/Src/robot/robot.cpp **** 			*state_ = STATE_D;
+ 702              		.loc 1 125 0 discriminator 3
+ 703 02d0 0423     		movs	r3, #4
+ 704 02d2 8AF80030 		strb	r3, [r10]
+ 126:Core/Src/robot/robot.cpp **** 			leg[0].steps = steps[2];
+ 705              		.loc 1 126 0 discriminator 3
+ 706 02d6 384B     		ldr	r3, .L36+72
+ 707 02d8 D3ED027A 		vldr.32	s15, [r3, #8]
+ 708 02dc FDEEE77A 		vcvt.s32.f32	s15, s15
+ 709 02e0 274A     		ldr	r2, .L36+16
+ 710 02e2 C2ED047A 		vstr.32	s15, [r2, #16]	@ int
+ 127:Core/Src/robot/robot.cpp **** 			leg[1].steps = steps[2];
+ 711              		.loc 1 127 0 discriminator 3
+ 712 02e6 C2ED1A7A 		vstr.32	s15, [r2, #104]	@ int
+ 129:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 26
+
+
+ 713              		.loc 1 129 0 discriminator 3
+ 714 02ea 2F4C     		ldr	r4, .L36+56
+ 715 02ec 4FF48051 		mov	r1, #4096
+ 716 02f0 2046     		mov	r0, r4
+ 717 02f2 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 718              	.LVL85:
+ 130:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 719              		.loc 1 130 0 discriminator 3
+ 720 02f6 4FF40051 		mov	r1, #8192
+ 721 02fa 2046     		mov	r0, r4
+ 722 02fc FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 723              	.LVL86:
+ 131:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 724              		.loc 1 131 0 discriminator 3
+ 725 0300 4FF48041 		mov	r1, #16384
+ 726 0304 2046     		mov	r0, r4
+ 727 0306 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 728              	.LVL87:
+ 132:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 729              		.loc 1 132 0 discriminator 3
+ 730 030a 4FF40041 		mov	r1, #32768
+ 731 030e 2046     		mov	r0, r4
+ 732 0310 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 733              	.LVL88:
+ 734 0314 4AE1     		b	.L14
+ 735              	.LVL89:
+ 736              	.L21:
+ 143:Core/Src/robot/robot.cpp **** 			printf("State D");
+ 737              		.loc 1 143 0
+ 738 0316 2E48     		ldr	r0, .L36+96
+ 739              	.LVL90:
+ 740 0318 FFF7FEFF 		bl	printf
+ 741              	.LVL91:
+ 144:Core/Src/robot/robot.cpp **** 		if (go(steps[3], angles[3]) == true)
+ 742              		.loc 1 144 0
+ 743 031c 264B     		ldr	r3, .L36+72
+ 744 031e D3ED037A 		vldr.32	s15, [r3, #12]
+ 745 0322 264B     		ldr	r3, .L36+76
+ 746 0324 93ED030A 		vldr.32	s0, [r3, #12]
+ 747 0328 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 748 032c 17EE900A 		vmov	r0, s15	@ int
+ 749 0330 FFF7FEFF 		bl	_Z2goif
+ 750              	.LVL92:
+ 751 0334 0028     		cmp	r0, #0
+ 752 0336 00F03981 		beq	.L14
+ 146:Core/Src/robot/robot.cpp **** 			*state_ = TURN_90;
+ 753              		.loc 1 146 0
+ 754 033a 0523     		movs	r3, #5
+ 755 033c 8AF80030 		strb	r3, [r10]
+ 148:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 756              		.loc 1 148 0
+ 757 0340 194C     		ldr	r4, .L36+56
+ 758 0342 4FF48051 		mov	r1, #4096
+ 759 0346 2046     		mov	r0, r4
+ 760 0348 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 761              	.LVL93:
+ 149:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 27
+
+
+ 762              		.loc 1 149 0
+ 763 034c 4FF40051 		mov	r1, #8192
+ 764 0350 2046     		mov	r0, r4
+ 765 0352 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 766              	.LVL94:
+ 150:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 767              		.loc 1 150 0
+ 768 0356 4FF48041 		mov	r1, #16384
+ 769 035a 2046     		mov	r0, r4
+ 770 035c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 771              	.LVL95:
+ 151:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 772              		.loc 1 151 0
+ 773 0360 4FF40041 		mov	r1, #32768
+ 774 0364 2046     		mov	r0, r4
+ 775 0366 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 776              	.LVL96:
+ 777 036a 1FE1     		b	.L14
+ 778              	.L37:
+ 779 036c AFF30080 		.align	3
+ 780              	.L36:
+ 781 0370 182D4454 		.word	1413754136
+ 782 0374 FB210940 		.word	1074340347
+ 783 0378 00000000 		.word	.LC0
+ 784 037c 00000000 		.word	0
+ 785 0380 00000000 		.word	leg
+ 786 0384 00000000 		.word	steering
+ 787 0388 DB0FC93F 		.word	1070141403
+ 788 038c 00000000 		.word	.LANCHOR3
+ 789 0390 3C000000 		.word	leg+60
+ 790 0394 00003443 		.word	1127481344
+ 791 0398 0C000000 		.word	steering+12
+ 792 039c 00000000 		.word	robot_angle
+ 793 03a0 14000000 		.word	.LC1
+ 794 03a4 00000000 		.word	.LANCHOR4
+ 795 03a8 000C0240 		.word	1073875968
+ 796 03ac 00000000 		.word	curr_angle
+ 797 03b0 00000000 		.word	initial_angle
+ 798 03b4 5C000000 		.word	.LC2
+ 799 03b8 00000000 		.word	.LANCHOR1
+ 800 03bc 00000000 		.word	.LANCHOR2
+ 801 03c0 64000000 		.word	.LC3
+ 802 03c4 00000000 		.word	.LANCHOR5
+ 803 03c8 00000000 		.word	.LANCHOR6
+ 804 03cc 6C000000 		.word	.LC4
+ 805 03d0 78000000 		.word	.LC5
+ 806              	.LVL97:
+ 807              	.L22:
+ 162:Core/Src/robot/robot.cpp **** 		printf("Turn 90");
+ 808              		.loc 1 162 0
+ 809 03d4 8148     		ldr	r0, .L38
+ 810              	.LVL98:
+ 811 03d6 FFF7FEFF 		bl	printf
+ 812              	.LVL99:
+ 163:Core/Src/robot/robot.cpp **** 		if (go(steps[4], angles[4]) == true)
+ 813              		.loc 1 163 0
+ 814 03da 814B     		ldr	r3, .L38+4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 28
+
+
+ 815 03dc D3ED047A 		vldr.32	s15, [r3, #16]
+ 816 03e0 804B     		ldr	r3, .L38+8
+ 817 03e2 93ED040A 		vldr.32	s0, [r3, #16]
+ 818 03e6 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 819 03ea 17EE900A 		vmov	r0, s15	@ int
+ 820 03ee FFF7FEFF 		bl	_Z2goif
+ 821              	.LVL100:
+ 822 03f2 0028     		cmp	r0, #0
+ 823 03f4 00F0DA80 		beq	.L14
+ 165:Core/Src/robot/robot.cpp **** 			*state_ = TUSSOCK;
+ 824              		.loc 1 165 0
+ 825 03f8 0623     		movs	r3, #6
+ 826 03fa 8AF80030 		strb	r3, [r10]
+ 167:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 827              		.loc 1 167 0
+ 828 03fe 7A4C     		ldr	r4, .L38+12
+ 829 0400 4FF48051 		mov	r1, #4096
+ 830 0404 2046     		mov	r0, r4
+ 831 0406 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 832              	.LVL101:
+ 168:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 833              		.loc 1 168 0
+ 834 040a 4FF40051 		mov	r1, #8192
+ 835 040e 2046     		mov	r0, r4
+ 836 0410 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 837              	.LVL102:
+ 169:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 838              		.loc 1 169 0
+ 839 0414 4FF48041 		mov	r1, #16384
+ 840 0418 2046     		mov	r0, r4
+ 841 041a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 842              	.LVL103:
+ 170:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 843              		.loc 1 170 0
+ 844 041e 4FF40041 		mov	r1, #32768
+ 845 0422 2046     		mov	r0, r4
+ 846 0424 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 847              	.LVL104:
+ 848 0428 C0E0     		b	.L14
+ 849              	.LVL105:
+ 850              	.L23:
+ 181:Core/Src/robot/robot.cpp **** 		printf("tussock");
+ 851              		.loc 1 181 0
+ 852 042a 7048     		ldr	r0, .L38+16
+ 853              	.LVL106:
+ 854 042c FFF7FEFF 		bl	printf
+ 855              	.LVL107:
+ 182:Core/Src/robot/robot.cpp **** 		if (go(steps[5], angles[5]) == true)
+ 856              		.loc 1 182 0
+ 857 0430 6B4B     		ldr	r3, .L38+4
+ 858 0432 D3ED057A 		vldr.32	s15, [r3, #20]
+ 859 0436 6B4B     		ldr	r3, .L38+8
+ 860 0438 93ED050A 		vldr.32	s0, [r3, #20]
+ 861 043c FDEEE77A 		vcvt.s32.f32	s15, s15
+ 862 0440 17EE900A 		vmov	r0, s15	@ int
+ 863 0444 FFF7FEFF 		bl	_Z2goif
+ 864              	.LVL108:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 29
+
+
+ 865 0448 0028     		cmp	r0, #0
+ 866 044a 00F0AF80 		beq	.L14
+ 184:Core/Src/robot/robot.cpp **** 			*state_ = BASE_CAMP;
+ 867              		.loc 1 184 0
+ 868 044e 0723     		movs	r3, #7
+ 869 0450 8AF80030 		strb	r3, [r10]
+ 186:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 870              		.loc 1 186 0
+ 871 0454 644C     		ldr	r4, .L38+12
+ 872 0456 4FF48051 		mov	r1, #4096
+ 873 045a 2046     		mov	r0, r4
+ 874 045c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 875              	.LVL109:
+ 187:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 876              		.loc 1 187 0
+ 877 0460 4FF40051 		mov	r1, #8192
+ 878 0464 2046     		mov	r0, r4
+ 879 0466 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 880              	.LVL110:
+ 188:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 881              		.loc 1 188 0
+ 882 046a 4FF48041 		mov	r1, #16384
+ 883 046e 2046     		mov	r0, r4
+ 884 0470 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 885              	.LVL111:
+ 189:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 886              		.loc 1 189 0
+ 887 0474 4FF40041 		mov	r1, #32768
+ 888 0478 2046     		mov	r0, r4
+ 889 047a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 890              	.LVL112:
+ 190:Core/Src/robot/robot.cpp **** 			initialize_position();
+ 891              		.loc 1 190 0
+ 892 047e FFF7FEFF 		bl	_Z19initialize_positionv
+ 893              	.LVL113:
+ 894 0482 93E0     		b	.L14
+ 895              	.LVL114:
+ 896              	.L24:
+ 200:Core/Src/robot/robot.cpp **** 		printf("Base camp");
+ 897              		.loc 1 200 0
+ 898 0484 5A48     		ldr	r0, .L38+20
+ 899              	.LVL115:
+ 900 0486 FFF7FEFF 		bl	printf
+ 901              	.LVL116:
+ 201:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(0);
+ 902              		.loc 1 201 0
+ 903 048a 9FED5A8A 		vldr.32	s16, .L38+24
+ 904 048e 5A4C     		ldr	r4, .L38+28
+ 905 0490 B0EE480A 		vmov.f32	s0, s16
+ 906 0494 2046     		mov	r0, r4
+ 907 0496 FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 908              	.LVL117:
+ 202:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(0);
+ 909              		.loc 1 202 0
+ 910 049a B0EE480A 		vmov.f32	s0, s16
+ 911 049e 04F15800 		add	r0, r4, #88
+ 912 04a2 FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 30
+
+
+ 913              	.LVL118:
+ 203:Core/Src/robot/robot.cpp **** 		steering.set_angle(0);
+ 914              		.loc 1 203 0
+ 915 04a6 B0EE480A 		vmov.f32	s0, s16
+ 916 04aa 5448     		ldr	r0, .L38+32
+ 917 04ac FFF7FEFF 		bl	_ZN8steering9set_angleEf
+ 918              	.LVL119:
+ 204:Core/Src/robot/robot.cpp **** 		if((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8)==GPIO_PIN_RESET)){
+ 919              		.loc 1 204 0
+ 920 04b0 4FF48071 		mov	r1, #256
+ 921 04b4 4C48     		ldr	r0, .L38+12
+ 922 04b6 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 923              	.LVL120:
+ 924 04ba 0028     		cmp	r0, #0
+ 925 04bc 76D1     		bne	.L14
+ 205:Core/Src/robot/robot.cpp **** 			*state_ = MOUNTAIN;
+ 926              		.loc 1 205 0
+ 927 04be 0823     		movs	r3, #8
+ 928 04c0 8AF80030 		strb	r3, [r10]
+ 206:Core/Src/robot/robot.cpp **** 			ROBOT_START_FLAG = false;
+ 929              		.loc 1 206 0
+ 930 04c4 4E4B     		ldr	r3, .L38+36
+ 931 04c6 0022     		movs	r2, #0
+ 932 04c8 1A70     		strb	r2, [r3]
+ 208:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 933              		.loc 1 208 0
+ 934 04ca 474C     		ldr	r4, .L38+12
+ 935 04cc 4FF48051 		mov	r1, #4096
+ 936 04d0 2046     		mov	r0, r4
+ 937 04d2 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 938              	.LVL121:
+ 209:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 939              		.loc 1 209 0
+ 940 04d6 4FF40051 		mov	r1, #8192
+ 941 04da 2046     		mov	r0, r4
+ 942 04dc FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 943              	.LVL122:
+ 210:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 944              		.loc 1 210 0
+ 945 04e0 4FF48041 		mov	r1, #16384
+ 946 04e4 2046     		mov	r0, r4
+ 947 04e6 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 948              	.LVL123:
+ 211:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 949              		.loc 1 211 0
+ 950 04ea 4FF40041 		mov	r1, #32768
+ 951 04ee 2046     		mov	r0, r4
+ 952 04f0 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 953              	.LVL124:
+ 954 04f4 5AE0     		b	.L14
+ 955              	.LVL125:
+ 956              	.L25:
+ 220:Core/Src/robot/robot.cpp **** 		printf("MOUNTAIN");
+ 957              		.loc 1 220 0
+ 958 04f6 4348     		ldr	r0, .L38+40
+ 959              	.LVL126:
+ 960 04f8 FFF7FEFF 		bl	printf
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 31
+
+
+ 961              	.LVL127:
+ 221:Core/Src/robot/robot.cpp **** 		if (ROBOT_START_FLAG)
+ 962              		.loc 1 221 0
+ 963 04fc 404B     		ldr	r3, .L38+36
+ 964 04fe 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 965 0500 33B3     		cbz	r3, .L33
+ 223:Core/Src/robot/robot.cpp **** 			if (go(steps[6], angles[6]) == true)
+ 966              		.loc 1 223 0
+ 967 0502 374B     		ldr	r3, .L38+4
+ 968 0504 D3ED067A 		vldr.32	s15, [r3, #24]
+ 969 0508 364B     		ldr	r3, .L38+8
+ 970 050a 93ED060A 		vldr.32	s0, [r3, #24]
+ 971 050e FDEEE77A 		vcvt.s32.f32	s15, s15
+ 972 0512 17EE900A 		vmov	r0, s15	@ int
+ 973 0516 FFF7FEFF 		bl	_Z2goif
+ 974              	.LVL128:
+ 975 051a 0028     		cmp	r0, #0
+ 976 051c 46D0     		beq	.L14
+ 225:Core/Src/robot/robot.cpp **** 				*state_ = UUKHAI;
+ 977              		.loc 1 225 0
+ 978 051e 0923     		movs	r3, #9
+ 979 0520 8AF80030 		strb	r3, [r10]
+ 227:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 980              		.loc 1 227 0
+ 981 0524 304C     		ldr	r4, .L38+12
+ 982 0526 4FF48051 		mov	r1, #4096
+ 983 052a 2046     		mov	r0, r4
+ 984 052c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 985              	.LVL129:
+ 228:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 986              		.loc 1 228 0
+ 987 0530 4FF40051 		mov	r1, #8192
+ 988 0534 2046     		mov	r0, r4
+ 989 0536 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 990              	.LVL130:
+ 229:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 991              		.loc 1 229 0
+ 992 053a 4FF48041 		mov	r1, #16384
+ 993 053e 2046     		mov	r0, r4
+ 994 0540 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 995              	.LVL131:
+ 230:Core/Src/robot/robot.cpp **** 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 996              		.loc 1 230 0
+ 997 0544 4FF40041 		mov	r1, #32768
+ 998 0548 2046     		mov	r0, r4
+ 999 054a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 1000              	.LVL132:
+ 1001 054e 2DE0     		b	.L14
+ 1002              	.L33:
+ 234:Core/Src/robot/robot.cpp **** 			leg[0].set_omega(0);
+ 1003              		.loc 1 234 0
+ 1004 0550 9FED288A 		vldr.32	s16, .L38+24
+ 1005 0554 284C     		ldr	r4, .L38+28
+ 1006 0556 B0EE480A 		vmov.f32	s0, s16
+ 1007 055a 2046     		mov	r0, r4
+ 1008 055c FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 1009              	.LVL133:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 32
+
+
+ 235:Core/Src/robot/robot.cpp **** 			leg[1].set_omega(0);
+ 1010              		.loc 1 235 0
+ 1011 0560 B0EE480A 		vmov.f32	s0, s16
+ 1012 0564 04F15800 		add	r0, r4, #88
+ 1013 0568 FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 1014              	.LVL134:
+ 236:Core/Src/robot/robot.cpp **** 			steering.set_angle(0);
+ 1015              		.loc 1 236 0
+ 1016 056c B0EE480A 		vmov.f32	s0, s16
+ 1017 0570 2248     		ldr	r0, .L38+32
+ 1018 0572 FFF7FEFF 		bl	_ZN8steering9set_angleEf
+ 1019              	.LVL135:
+ 1020 0576 19E0     		b	.L14
+ 1021              	.LVL136:
+ 1022              	.L26:
+ 246:Core/Src/robot/robot.cpp **** 		initialize_leg_position();
+ 1023              		.loc 1 246 0
+ 1024 0578 FFF7FEFF 		bl	_Z23initialize_leg_positionv
+ 1025              	.LVL137:
+ 247:Core/Src/robot/robot.cpp **** 		printf("\nUUKHAI\n");
+ 1026              		.loc 1 247 0
+ 1027 057c 2248     		ldr	r0, .L38+44
+ 1028 057e FFF7FEFF 		bl	puts
+ 1029              	.LVL138:
+ 248:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+ 1030              		.loc 1 248 0
+ 1031 0582 194C     		ldr	r4, .L38+12
+ 1032 0584 4FF48051 		mov	r1, #4096
+ 1033 0588 2046     		mov	r0, r4
+ 1034 058a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 1035              	.LVL139:
+ 249:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+ 1036              		.loc 1 249 0
+ 1037 058e 4FF40051 		mov	r1, #8192
+ 1038 0592 2046     		mov	r0, r4
+ 1039 0594 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 1040              	.LVL140:
+ 250:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+ 1041              		.loc 1 250 0
+ 1042 0598 4FF48041 		mov	r1, #16384
+ 1043 059c 2046     		mov	r0, r4
+ 1044 059e FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 1045              	.LVL141:
+ 251:Core/Src/robot/robot.cpp **** 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+ 1046              		.loc 1 251 0
+ 1047 05a2 4FF40041 		mov	r1, #32768
+ 1048 05a6 2046     		mov	r0, r4
+ 1049 05a8 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 1050              	.LVL142:
+ 1051              	.L14:
+ 261:Core/Src/robot/robot.cpp **** }
+ 1052              		.loc 1 261 0
+ 1053 05ac 08B0     		add	sp, sp, #32
+ 1054              	.LCFI4:
+ 1055              		.cfi_remember_state
+ 1056              		.cfi_def_cfa_offset 40
+ 1057              		@ sp needed
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 33
+
+
+ 1058 05ae BDEC028B 		vldm	sp!, {d8}
+ 1059              	.LCFI5:
+ 1060              		.cfi_restore 80
+ 1061              		.cfi_restore 81
+ 1062              		.cfi_def_cfa_offset 32
+ 1063 05b2 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 1064              	.LVL143:
+ 1065              	.L27:
+ 1066              	.LCFI6:
+ 1067              		.cfi_restore_state
+ 256:Core/Src/robot/robot.cpp **** 		leg[0].set_omega(10);
+ 1068              		.loc 1 256 0
+ 1069 05b6 104C     		ldr	r4, .L38+28
+ 1070 05b8 B2EE040A 		vmov.f32	s0, #1.0e+1
+ 1071 05bc 2046     		mov	r0, r4
+ 1072              	.LVL144:
+ 1073 05be FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 1074              	.LVL145:
+ 257:Core/Src/robot/robot.cpp **** 		leg[1].set_omega(10);
+ 1075              		.loc 1 257 0
+ 1076 05c2 B2EE040A 		vmov.f32	s0, #1.0e+1
+ 1077 05c6 04F15800 		add	r0, r4, #88
+ 1078 05ca FFF7FEFF 		bl	_ZN3leg9set_omegaEf
+ 1079              	.LVL146:
+ 258:Core/Src/robot/robot.cpp **** 		steering.set_omega(0);
+ 1080              		.loc 1 258 0
+ 1081 05ce 9FED090A 		vldr.32	s0, .L38+24
+ 1082 05d2 0A48     		ldr	r0, .L38+32
+ 1083 05d4 FFF7FEFF 		bl	_ZN8steering9set_omegaEf
+ 1084              	.LVL147:
+ 261:Core/Src/robot/robot.cpp **** }
+ 1085              		.loc 1 261 0
+ 1086 05d8 E8E7     		b	.L14
+ 1087              	.L39:
+ 1088 05da 00BF     		.align	2
+ 1089              	.L38:
+ 1090 05dc 80000000 		.word	.LC6
+ 1091 05e0 00000000 		.word	.LANCHOR1
+ 1092 05e4 00000000 		.word	.LANCHOR2
+ 1093 05e8 000C0240 		.word	1073875968
+ 1094 05ec 88000000 		.word	.LC7
+ 1095 05f0 90000000 		.word	.LC8
+ 1096 05f4 00000000 		.word	0
+ 1097 05f8 00000000 		.word	leg
+ 1098 05fc 00000000 		.word	steering
+ 1099 0600 00000000 		.word	.LANCHOR3
+ 1100 0604 9C000000 		.word	.LC9
+ 1101 0608 A8000000 		.word	.LC10
+ 1102              		.cfi_endproc
+ 1103              	.LFE498:
+ 1105              		.section	.text._Z4playv,"ax",%progbits
+ 1106              		.align	1
+ 1107              		.global	_Z4playv
+ 1108              		.syntax unified
+ 1109              		.thumb
+ 1110              		.thumb_func
+ 1111              		.fpu fpv4-sp-d16
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 34
+
+
+ 1113              	_Z4playv:
+ 1114              	.LFB499:
+ 264:Core/Src/robot/robot.cpp **** {	
+ 1115              		.loc 1 264 0
+ 1116              		.cfi_startproc
+ 1117              		@ args = 0, pretend = 0, frame = 0
+ 1118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1119 0000 08B5     		push	{r3, lr}
+ 1120              	.LCFI7:
+ 1121              		.cfi_def_cfa_offset 8
+ 1122              		.cfi_offset 3, -8
+ 1123              		.cfi_offset 14, -4
+ 265:Core/Src/robot/robot.cpp **** 	start_Robot(&robo_state);
+ 1124              		.loc 1 265 0
+ 1125 0002 0248     		ldr	r0, .L42
+ 1126 0004 FFF7FEFF 		bl	_Z11start_RobotP12Robot_States
+ 1127              	.LVL148:
+ 267:Core/Src/robot/robot.cpp **** }
+ 1128              		.loc 1 267 0
+ 1129 0008 0120     		movs	r0, #1
+ 1130 000a 08BD     		pop	{r3, pc}
+ 1131              	.L43:
+ 1132              		.align	2
+ 1133              	.L42:
+ 1134 000c 00000000 		.word	.LANCHOR0
+ 1135              		.cfi_endproc
+ 1136              	.LFE499:
+ 1138              		.global	angles
+ 1139              		.global	steps
+ 1140              		.global	BACK_PROXIMITY_FLAG
+ 1141              		.global	FRONT_PROXIMITY_FLAG
+ 1142              		.global	USE_IMU_FLAG
+ 1143              		.global	GEREGE_FLAG
+ 1144              		.global	ROBOT_START_FLAG
+ 1145              		.global	robo_state
+ 1146              		.section	.bss.BACK_PROXIMITY_FLAG,"aw",%nobits
+ 1147              		.set	.LANCHOR5,. + 0
+ 1150              	BACK_PROXIMITY_FLAG:
+ 1151 0000 00       		.space	1
+ 1152              		.section	.bss.FRONT_PROXIMITY_FLAG,"aw",%nobits
+ 1153              		.set	.LANCHOR6,. + 0
+ 1156              	FRONT_PROXIMITY_FLAG:
+ 1157 0000 00       		.space	1
+ 1158              		.section	.bss.GEREGE_FLAG,"aw",%nobits
+ 1159              		.set	.LANCHOR4,. + 0
+ 1162              	GEREGE_FLAG:
+ 1163 0000 00       		.space	1
+ 1164              		.section	.bss.ROBOT_START_FLAG,"aw",%nobits
+ 1165              		.set	.LANCHOR3,. + 0
+ 1168              	ROBOT_START_FLAG:
+ 1169 0000 00       		.space	1
+ 1170              		.section	.bss.robo_state,"aw",%nobits
+ 1171              		.set	.LANCHOR0,. + 0
+ 1174              	robo_state:
+ 1175 0000 00       		.space	1
+ 1176              		.section	.data.USE_IMU_FLAG,"aw",%progbits
+ 1179              	USE_IMU_FLAG:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 35
+
+
+ 1180 0000 01       		.byte	1
+ 1181              		.section	.data.angles,"aw",%progbits
+ 1182              		.align	2
+ 1183              		.set	.LANCHOR2,. + 0
+ 1186              	angles:
+ 1187 0000 00000000 		.word	0
+ 1188 0004 00003442 		.word	1110704128
+ 1189 0008 00003442 		.word	1110704128
+ 1190 000c 00007042 		.word	1114636288
+ 1191 0010 00000000 		.word	0
+ 1192 0014 000020C1 		.word	-1054867456
+ 1193 0018 000020C1 		.word	-1054867456
+ 1194              		.section	.data.steps,"aw",%progbits
+ 1195              		.align	2
+ 1196              		.set	.LANCHOR1,. + 0
+ 1199              	steps:
+ 1200 0000 0000E040 		.word	1088421888
+ 1201 0004 00005041 		.word	1095761920
+ 1202 0008 00008841 		.word	1099431936
+ 1203 000c 0000A041 		.word	1101004800
+ 1204 0010 0000C041 		.word	1103101952
+ 1205 0014 0000E841 		.word	1105723392
+ 1206 0018 00002442 		.word	1109655552
+ 1207              		.section	.rodata._Z11start_RobotP12Robot_States.str1.4,"aMS",%progbits,1
+ 1208              		.align	2
+ 1209              	.LC0:
+ 1210 0000 0A095761 		.ascii	"\012\011Waiting_to_start\011\000"
+ 1210      6974696E 
+ 1210      675F746F 
+ 1210      5F737461 
+ 1210      72740900 
+ 1211              	.LC1:
+ 1212 0014 6C656732 		.ascii	"leg2_angle = %d\011leg1_angle = %d\011steering_angl"
+ 1212      5F616E67 
+ 1212      6C65203D 
+ 1212      20256409 
+ 1212      6C656731 
+ 1213 0041 65203D20 		.ascii	"e = %d\011\011robot_angle = %d\011\000"
+ 1213      25640909 
+ 1213      726F626F 
+ 1213      745F616E 
+ 1213      676C6520 
+ 1214 005b 00       		.space	1
+ 1215              	.LC2:
+ 1216 005c 4D617263 		.ascii	"March\000"
+ 1216      6800
+ 1217 0062 0000     		.space	2
+ 1218              	.LC3:
+ 1219 0064 5475726E 		.ascii	"Turn 45\000"
+ 1219      20343500 
+ 1220              	.LC4:
+ 1221 006c 53616E64 		.ascii	"Sand dune\000"
+ 1221      2064756E 
+ 1221      6500
+ 1222 0076 0000     		.space	2
+ 1223              	.LC5:
+ 1224 0078 53746174 		.ascii	"State D\000"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 36
+
+
+ 1224      65204400 
+ 1225              	.LC6:
+ 1226 0080 5475726E 		.ascii	"Turn 90\000"
+ 1226      20393000 
+ 1227              	.LC7:
+ 1228 0088 74757373 		.ascii	"tussock\000"
+ 1228      6F636B00 
+ 1229              	.LC8:
+ 1230 0090 42617365 		.ascii	"Base camp\000"
+ 1230      2063616D 
+ 1230      7000
+ 1231 009a 0000     		.space	2
+ 1232              	.LC9:
+ 1233 009c 4D4F554E 		.ascii	"MOUNTAIN\000"
+ 1233      5441494E 
+ 1233      00
+ 1234 00a5 000000   		.space	3
+ 1235              	.LC10:
+ 1236 00a8 0A55554B 		.ascii	"\012UUKHAI\000"
+ 1236      48414900 
+ 1237              		.text
+ 1238              	.Letext0:
+ 1239              		.file 5 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1240              		.file 6 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1241              		.file 7 "Drivers/CMSIS/Include/core_cm4.h"
+ 1242              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1243              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1244              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1245              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1246              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1247              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1248              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1249              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 1250              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1251              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 1252              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1253              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 1254              		.file 20 "Core/Inc/periphs/tim.h"
+ 1255              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1256              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1257              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1258              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1259              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1260              		.file 26 "Core/Inc/devs/motor.h"
+ 1261              		.file 27 "Core/Inc/devs/encoder.h"
+ 1262              		.file 28 "Core/Inc/utils/pid_algorithms.h"
+ 1263              		.file 29 "Core/Inc/devs/limit_switch.h"
+ 1264              		.file 30 "Core/Inc/periphs/usart.h"
+ 1265              		.file 31 "Core/Inc/periphs/adc.h"
+ 1266              		.file 32 "Core/Inc/robot/robot.h"
+ 1267              		.file 33 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1268              		.file 34 "Core/Inc/robot/robot_functions.h"
+ 1269              		.file 35 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 37
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robot.cpp
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:18     .text._Z11zone_selectv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:25     .text._Z11zone_selectv:00000000 _Z11zone_selectv
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:220    .text._Z11zone_selectv:0000010c $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:231    .text._Z12swap_ElementIfEvRT_S1_:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:238    .text._Z12swap_ElementIfEvRT_S1_:00000000 _Z12swap_ElementIfEvRT_S1_
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:263    .text._Z11start_RobotP12Robot_States:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:270    .text._Z11start_RobotP12Robot_States:00000000 _Z11start_RobotP12Robot_States
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:303    .text._Z11start_RobotP12Robot_States:00000018 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:314    .text._Z11start_RobotP12Robot_States:0000002e $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:781    .text._Z11start_RobotP12Robot_States:00000370 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:809    .text._Z11start_RobotP12Robot_States:000003d4 $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1090   .text._Z11start_RobotP12Robot_States:000005dc $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1106   .text._Z4playv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1113   .text._Z4playv:00000000 _Z4playv
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1134   .text._Z4playv:0000000c $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1186   .data.angles:00000000 angles
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1199   .data.steps:00000000 steps
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1150   .bss.BACK_PROXIMITY_FLAG:00000000 BACK_PROXIMITY_FLAG
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1156   .bss.FRONT_PROXIMITY_FLAG:00000000 FRONT_PROXIMITY_FLAG
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1179   .data.USE_IMU_FLAG:00000000 USE_IMU_FLAG
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1162   .bss.GEREGE_FLAG:00000000 GEREGE_FLAG
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1168   .bss.ROBOT_START_FLAG:00000000 ROBOT_START_FLAG
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1174   .bss.robo_state:00000000 robo_state
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1151   .bss.BACK_PROXIMITY_FLAG:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1157   .bss.FRONT_PROXIMITY_FLAG:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1163   .bss.GEREGE_FLAG:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1169   .bss.ROBOT_START_FLAG:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1175   .bss.robo_state:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1182   .data.angles:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1195   .data.steps:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\ccA063le.s:1208   .rodata._Z11start_RobotP12Robot_States.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_ReadPin
+_Z19initialize_positionv
+leg
+robot_angle
+initial_angle
+__aeabi_f2d
+__aeabi_ddiv
+__aeabi_d2iz
+printf
+_ZN3leg9set_omegaEf
+_ZN8steering9set_angleEf
+_ZN7encoder18reset_actual_angleEf
+_ZN7encoder16get_actual_angleEv
+_ZN7encoder9get_angleEv
+HAL_GPIO_WritePin
+_Z2goif
+HAL_GPIO_TogglePin
+steering
+curr_angle
+_Z23initialize_leg_positionv
+puts
+_ZN8steering9set_omegaEf
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\ccA063le.s 			page 38
+
+

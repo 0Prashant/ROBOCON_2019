@@ -8,7 +8,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 7;    //17 is the maximum with safe zone
+static const float robot_speed = 5;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -40,19 +40,22 @@ bool go(int step, float angle)
 {
 	angle *= PI / 180;
 	move_leg(step, angle);
-	move_steering(step, angle);
-	if((step != 100) && (step != steps[6])){
+	if ((step == 100) || (step == 37))
+	{
 		USE_IMU_FLAG = false;
+		steering.set_angle(0);
 	}
-	else{
+	else
+	{
 		USE_IMU_FLAG = true;
+		move_steering(step, angle);
 	}
 	printf(" \nsteps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
 	// printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
 	//  (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
 
 	// if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
-	if (leg[0].get_steps()   >= step )
+	if (leg[0].get_steps() >= step)
 	{
 		leg[0].set_omega(0);
 		leg[1].set_omega(0);
@@ -79,23 +82,24 @@ bool go(int step, float angle)
 void move_leg(int step, float angle)
 {
 	float del_speed = 0;
-	float leg_speed = robot_speed; 
+	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
 	leg_speed = (step == 100) ? robot_speed / 1.3 : robot_speed;
-	if(step == steps[6]){
+	if (step == steps[6])
+	{
 		leg_speed = 4;
 	}
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
-	del_speed = 2*(leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
-	if(fabs(del_speed) >= leg_speed){
+	del_speed = 2 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
+	if (fabs(del_speed) >= leg_speed)
+	{
 		del_speed /= fabs(del_speed);
 		del_speed *= leg_speed;
 	}
 	leg[0].set_omega(leg_speed - del_speed);
 	leg[1].set_omega(leg_speed + del_speed);
-
 }
 
 /*
@@ -110,8 +114,9 @@ void move_leg(int step, float angle)
 */
 void move_steering(int step, float angle)
 {
-	if(step == steps[0]){
-		summation_angle +=robot_angle;
+	if (step == steps[0])
+	{
+		summation_angle += robot_angle;
 		angle = -summation_angle;
 		angle /= 500;
 	}
@@ -206,10 +211,10 @@ void calculate_robot_angle()
 
 /**
  * \brief This function initializes the robot in erected position at the start of the game.
- * \bug remember to towards anticlockwise direction from the 0 position at the start of the game.
+ * \bug remember to face towards anticlockwise direction from the 0 position at the start of the game.
  * \params void
  * \returns void
- */ 
+ */
 
 void initialize_position(void)
 {
@@ -261,10 +266,10 @@ void initialize_position(void)
  * \brief This function initializes the leg in erected position at the start of the game.
  * \params void
  * \returns true if leg is erected.
- */ 
+ */
 bool initialize_leg_position(void)
 {
-	float initial_tolerance = 3;
+	float initial_tolerance = 4;
 	float leg_initial_position = 90;
 	static bool leg0_flag = false;
 	static bool leg1_flag = false;
@@ -297,7 +302,7 @@ bool initialize_leg_position(void)
 
 	if (leg0_flag && leg1_flag)
 	{
-		
+
 		return true;
 	}
 	else
@@ -305,35 +310,35 @@ bool initialize_leg_position(void)
 		return false;
 	}
 }
- 
+
 /**
  * \brief Called by initialize_position();
  * \brief This function initializes the steering in center position at the start of the game.
  * \bug remember to towards anticlockwise direction from the 0 position at the start of the game.
  * \params void
  * \returns true if reached to 0 angle.
- */ 
+ */
 bool initialize_steering_position(void)
 {
-	printf("\nangle = %d\t",(int)(steering.get_angle()*180/PI) );
+	printf("\nangle = %d\t", (int)(steering.get_angle() * 180 / PI));
 	// printf("\tsteps0 = %d, angle0 = %d\tsteps0 = %d, angle0 = %d", leg[0].get_steps(),(int)(leg[0].get_angle()*180/PI)
 	// , leg[1].get_steps(),(int)(leg[1].get_angle()*180/PI) );
-	if(((HAL_GetTick()-start_time) >= 500)){
+	if (((HAL_GetTick() - start_time) >= 500))
+	{
 		steering.set_omega(0);
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-		return true;	
+		return true;
 	}
 	if (STEERING_FLAG)
 	{
 		steering.set_omega(0);
-		steering.reset_angle(0);
 		return true;
 	}
 	else
 	{
 		steering.set_omega(0.5);
 		return false;
-	}	
+	}
 }
 
 /**
@@ -360,25 +365,28 @@ float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 	float damping_angle = 25;
 	float speed = 0;
 	min_speed = 2.5;
-	if(angle_in_degrees > 180)
+	if (angle_in_degrees > 180)
 	{
 		angle_in_degrees -= 180;
 		// max_speed = 10;
 	}
-	if((angle_in_degrees >= 0 ) && (angle_in_degrees <= damping_angle)){
+	if ((angle_in_degrees >= 0) && (angle_in_degrees <= damping_angle))
+	{
 		speed = ((max_speed - min_speed) / (damping_angle - 0)) * (angle_in_degrees - 0) + min_speed;
 		// printf("condition1");
-	} 
+	}
 
-	else if((angle_in_degrees >= (180 - damping_angle)) && (angle_in_degrees <= 180)){
+	else if ((angle_in_degrees >= (180 - damping_angle)) && (angle_in_degrees <= 180))
+	{
 		speed = ((min_speed - max_speed) / (180 - (180 - damping_angle))) * (angle_in_degrees - (180 - damping_angle)) + max_speed;
 		// printf("conditionelseif");
-	} 
+	}
 
-	else{
+	else
+	{
 		speed = max_speed;
 		// printf("else");
-	} 
+	}
 	// printf("\tSpeed = %d", (int)(speed*100));
 
 	return speed;
