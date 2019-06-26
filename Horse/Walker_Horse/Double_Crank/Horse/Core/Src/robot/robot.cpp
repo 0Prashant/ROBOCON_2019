@@ -13,8 +13,8 @@ bool USE_IMU_FLAG = true;
 bool FRONT_PROXIMITY_FLAG = false;
 bool BACK_PROXIMITY_FLAG = false;
 
-float steps[7] = {6, 13, 17, 20, 24, 27, 37};
-float angles[7] = {0, 45, 45, 60, 0, -10, -10};
+float steps[7] = {7, 13, 17, 19, 24, 28, 37};
+float angles[7] = {0, 45, 45, 45, 0, -10, -90};
 
 void start_Robot(enum Robot_States *state_)
 {

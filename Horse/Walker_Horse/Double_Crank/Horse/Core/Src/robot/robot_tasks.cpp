@@ -49,6 +49,7 @@ void StartRobotTask(void const *argument)
 	initialize_position();
 	ROBOT_START_FLAG = false;
 	robo_state = HOME;
+	// zone_select();
 	
 	for(int i=0; i<7; i++){
 		angles[i] *= -1;

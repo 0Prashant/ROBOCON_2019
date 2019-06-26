@@ -121,7 +121,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
         Vec3<float> accel;
         Vec3<float> gyro;
         Vec3<float> mag;
-	Vec3<float> mag_offset(-450,-850,-175);	//-325,25,-250
+	Vec3<float> mag_offset(-121,-510.6,-10.1);	//-325,25,-250
         Vec3<float> angles;
 
 #ifdef _ENABLE_I2C_ERROR_DETECTION
