@@ -47,6 +47,7 @@ void StartRobotTask(void const *argument)
 	uint8_t sample_time = 10;
 	uint32_t dt = HAL_GetTick();
 	initialize_position();
+	// getup_n_run();
 	ROBOT_START_FLAG = false;
 	robo_state = HOME;
 	// zone_select();

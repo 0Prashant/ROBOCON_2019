@@ -44,7 +44,7 @@ static void set_motorOmega(motor_config *m, float omega)
 {
         uint16_t new_omega = (65535.0 / m->max_omega) * (omega);
         set_DutyCycle(m, new_omega);
-	//printf("omega = %d", (int)(omega*100));
+	// printf("omega = %d", (int)(omega*100));
 	// printf("\tOCR = %d", (int)new_omega);
 }
 

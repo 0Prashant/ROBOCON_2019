@@ -1,5 +1,3 @@
-
-
 #include "robot_functions.h"
 
 extern leg leg[2];
@@ -8,7 +6,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 5;      //17 is the maximum with safe zone
+static const float robot_speed = 8;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -40,7 +38,7 @@ bool go(int step, float angle)
 {
 	angle *= PI / 180;
 	move_leg(step, angle);
-	if ((step == 100) || (step == 37))
+	if ((step == 100) )
 	{
 		USE_IMU_FLAG = false;
 		steering.set_angle(0);
@@ -85,7 +83,7 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = (step == 100) ? robot_speed / 1.3 : robot_speed;
+	leg_speed = ((step == 100)||(step == 36)) ? robot_speed / 1.3 : robot_speed;
 	if (step == steps[6])
 	{
 		leg_speed = 4;
@@ -341,6 +339,49 @@ bool initialize_steering_position(void)
 	}
 }
 
+void getup_n_run()
+{
+	uint32_t dt = HAL_GetTick();
+	float initial_tolerance = 4;
+	float leg_initial_position = 90;
+        leg[0].reset_angle(90*PI/180);
+        leg[1].reset_angle(270*PI/180);
+
+	while (true)
+	{
+		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+		{
+			dt = HAL_GetTick();
+			printf("\nInitializing_Leg_Orientation\t");
+			leg[0].set_omega(0);
+			if ((leg[1].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
+	  		  (leg[1].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180)) )
+			{
+				leg[1].set_omega(0);
+				break;
+			}
+			else
+			{
+				leg[1].set_omega(3);
+			}
+		}
+	}
+
+	start_time = HAL_GetTick();
+	while (true)
+	{
+		if ((HAL_GetTick() - dt) >= (int)(SAMPLE_TIME))
+		{
+			dt = HAL_GetTick();
+			printf("\tInitializing_Steering_Orientation\t %d \t %d", (int)HAL_GetTick(), (int)start_time);
+			leg[0].set_omega(0);
+			leg[1].set_omega(0);
+			if (initialize_steering_position() == true)
+				break;
+		}
+	}
+}
+
 /**
  * \brief Called by initialize_position();
  * \brief This function calculates all the datas including the motor omegas, orientation and angles.
@@ -362,9 +403,9 @@ void calculate_datas()
 
 float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
-	float damping_angle = 25;
+	float damping_angle = 30;
 	float speed = 0;
-	min_speed = 2.5;
+	min_speed = 1.8;
 	if (angle_in_degrees > 180)
 	{
 		angle_in_degrees -= 180;

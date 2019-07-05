@@ -14,6 +14,11 @@ extern "C" void StartRobotTask(void const *argument);
 extern "C" void StartLoggerTask(void const *argument);
 extern "C" void StartCalculationTask(void const *argument);
 
+float leg0_omega = 0;
+float leg1_omega = 0;
+float leg0_angle = 0;
+float leg1_angle = 0;
+
 
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
@@ -58,8 +63,16 @@ void StartRobotTask(void const *argument)
 	{
 		dt = HAL_GetTick();
 		// play();
-		leg[0].set_omega(5);
-		//leg[1].set_omega(5);
+		
+		leg0_omega = leg[0].get_omega();
+		leg1_omega = leg[1].get_omega();
+		leg0_angle = leg[0].get_angle();
+		leg1_angle = leg[1].get_angle();
+		// printf(" steps = %d\t leg_1_angle = %d\t leg_2_angle = %d \t leg_1_omega = %d\t leg_2_omega = %d\n", (int)(leg[0].get_steps()),
+		// (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI), (int)(leg[0].get_omega()*100), (int)(leg[1].get_omega()*100));
+		go(100,0);
+		// leg[0].set_omega(0);
+		// leg[1].set_omega(10);
 		//steering.set_omega(0);
 		dt = HAL_GetTick() - dt;
 		osDelay(sample_time - dt);

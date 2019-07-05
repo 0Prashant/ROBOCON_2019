@@ -17,6 +17,7 @@ float steps[7] = {7, 13, 17, 20, 24, 29, 41};
 float angles[7] = {0, 45, 45, 60, 0, -10, -10};
 
 
+
 void start_Robot(enum Robot_States *state_)
 {
 	switch (*state_)

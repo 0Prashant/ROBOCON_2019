@@ -1,5 +1,6 @@
 #include "leg.h"
 static float ramped_value = 0;
+float computed;
 
 void leg::set_omega(float omega){
 
@@ -12,8 +13,9 @@ void leg::set_omega(float omega){
 		omega = -motor__.get_max_omega();
 	}
 
-	//float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
-	float computed_omega = omega;
+	float computed_omega = dpid_.compute(omega - encoder__.get_omega(), SAMPLE_TIME);
+	computed = computed_omega;
+	// float computed_omega = omega;
 	motor__.set_omega(computed_omega);
 }
 

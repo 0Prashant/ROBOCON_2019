@@ -17,22 +17,22 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			printf("\n\n\t\t\t !!start_pressed!!\n\n");
 		}break;
 
-                case GPIO_PIN_9 : {
+                case GPIO_PIN_13 : {
                         // leg[0].steps++;
-			float leg0_reset_angle = 300*PI/180;
+			float leg0_reset_angle = 270*PI/180;
                         leg[0].reset_angle(leg0_reset_angle);
 			int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
 			leg[0].reset_actual_angle((int)(temp-1)*2*PI + leg0_reset_angle);
-			// printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
+			printf("\n\n\t\t\tRobot interrupt0\t %d \t %d\n", leg[0].steps, temp);
                 } break;
 
-                case GPIO_PIN_11: {
+                case GPIO_PIN_14: {
                         // leg[1].steps++;
-			float leg1_reset_angle = 302*PI/180;
+			float leg1_reset_angle =270*PI/180;
                         leg[1].reset_angle(leg1_reset_angle);
 			int temp = round(leg[1].get_actual_angle() / (360*PI/180));
 			leg[1].reset_actual_angle((int)(temp-1)*2*PI + leg1_reset_angle);
-			// printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
+			printf("\n\n\t\t\tRobot interrupt1\t %d\n", leg[1].steps);
                 } break;
 		case GPIO_PIN_15: {
 			STEERING_FLAG = true;
@@ -57,7 +57,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
 		}
 		break;
-		case GPIO_PIN_14: {
+		case GPIO_PIN_11: {
 			GEREGE_FLAG = true;	
 			printf("\n\n\t\t\t !!Gerege Passed!!\n\n");
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
