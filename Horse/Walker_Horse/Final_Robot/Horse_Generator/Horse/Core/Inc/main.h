@@ -81,11 +81,17 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define ZONE_BLUE_Pin GPIO_PIN_4
 #define ZONE_BLUE_GPIO_Port GPIOE
+#define IMU_Detect_Pin GPIO_PIN_6
+#define IMU_Detect_GPIO_Port GPIOE
 #define ZONE_INIT_Pin GPIO_PIN_14
 #define ZONE_INIT_GPIO_Port GPIOC
+#define Grip_Pneumatic_Pin GPIO_PIN_2
+#define Grip_Pneumatic_GPIO_Port GPIOC
 #define USER_BUTTON_Pin GPIO_PIN_0
 #define USER_BUTTON_GPIO_Port GPIOA
 #define USER_BUTTON_EXTI_IRQn EXTI0_IRQn
+#define Hand_Pneumatic_Pin GPIO_PIN_2
+#define Hand_Pneumatic_GPIO_Port GPIOA
 #define ZONE_45_Pin GPIO_PIN_4
 #define ZONE_45_GPIO_Port GPIOA
 #define LEG1_IR_Pin GPIO_PIN_14

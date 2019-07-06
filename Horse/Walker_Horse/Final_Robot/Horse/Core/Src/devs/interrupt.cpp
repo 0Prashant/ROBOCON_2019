@@ -36,7 +36,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		case GPIO_PIN_13: {
 			STEERING_FLAG = true;
 			steering.reset_angle(0*PI/180);
-			 printf("\n\n\t\t\tsteering interrupt \t\n");
+			//  printf("\n\n\t\t\tsteering interrupt \t\n");
                 } break;
 	
         }

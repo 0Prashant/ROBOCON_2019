@@ -6,7 +6,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 8;      //17 is the maximum with safe zone
+static const float robot_speed = 4;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 6 * PI / 180;
 
@@ -339,15 +339,14 @@ bool initialize_steering_position(void)
 	}
 }
 
-void getup_n_run()
+bool getup_n_run()
 {
-	uint32_t dt = HAL_GetTick();
 	float initial_tolerance = 4;
 	float leg_initial_position = 90;
 	leg[0].reset_angle(90 * PI / 180);
 	leg[1].reset_angle(270 * PI / 180);
 
-	printf("\nInitializing_Leg_Orientation_GETUP\t");
+	printf("\tInitializing_Leg_Orientation_GETUP\t");
 	leg[0].set_omega(0);
 	if ((leg[1].get_angle() > ((leg_initial_position - initial_tolerance) * PI / 180)) &&
 	    (leg[1].get_angle() < ((leg_initial_position + initial_tolerance) * PI / 180)))
@@ -357,10 +356,12 @@ void getup_n_run()
 		leg[1].reset_actual_angle(90 * PI / 180);
 		leg[0].reset_angle(90 * PI / 180);
 		leg[1].reset_angle(90 * PI / 180);
+		return true;
 	}
 	else
 	{
 		leg[1].set_omega(3);
+		return false;
 	}
 
 }

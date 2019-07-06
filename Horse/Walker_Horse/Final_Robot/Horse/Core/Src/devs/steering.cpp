@@ -11,7 +11,7 @@ void steering::set_omega(float omega){
 
 void steering::set_angle(float angle){ 
 	float computed_omega = apid_.compute(angle-(encoder__.get_angle()*180/PI), 10);
-	comp_omega = computed_omega*5;
+	comp_omega = computed_omega;
 	computed_omega = dpid_.compute(computed_omega-encoder__.get_omega(), 10);
 	motor__.set_omega(computed_omega);
 	// printf("\n computed = %d \t angle = %d \t ",(int)(computed_omega*100),(int)(encoder__.get_angle()*180/PI));

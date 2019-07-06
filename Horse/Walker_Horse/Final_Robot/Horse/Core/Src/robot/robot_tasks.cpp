@@ -49,35 +49,19 @@ void StartRobotTask(void const *argument)
 	uint8_t sample_time = 10;
 	uint32_t dt = HAL_GetTick();
 	robo_state = HOME;
-	// zone_select();
 	for(int i=0; i<7; i++){
 		angles[i] *= -1;
 	}
-	while(!ROBOT_START_FLAG){
-		initial_angle = curr_angle;
-	}
-	if(robo_state == HOME){
-		while(HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin)!=GPIO_PIN_RESET){
-			leg[0].set_omega(0);
-			leg[1].set_omega(0);
-			steering.set_omega(0);
-			// HAL_GPIO_WritePin();
-			osDelay(8);
-		}
-	}
-	// HAL_GPIO_WritePin();
-	// HAL_GPIO_WritePin();
-	getup_n_run();	
 	/* Infinite loop */
 	for (;;)
 	{
 		dt = HAL_GetTick();
-		// play();
-		go(100,0);
-		leg0_omega = leg[0].get_omega();
-		leg1_omega = leg[1].get_omega();
-		leg0_angle = leg[0].get_angle();
-		leg1_angle = leg[1].get_angle();
+		play();
+		// go(100,0);
+		// leg0_omega = leg[0].get_omega();
+		// leg1_omega = leg[1].get_omega();
+		// leg0_angle = leg[0].get_angle();
+		// leg1_angle = leg[1].get_angle();
 		dt = HAL_GetTick() - dt;
 		osDelay(sample_time - dt);
 	}

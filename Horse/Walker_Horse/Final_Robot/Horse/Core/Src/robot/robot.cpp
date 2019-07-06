@@ -36,36 +36,41 @@ void start_Robot(enum Robot_States *state_)
 		 * user button thichesi this state ends 
 		 *  state_A flag set garnaparcha 
 			*/
+		static bool WAIT_FLAG = true;
 		printf("\n\tWaiting_to_start\t");
 		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
-		leg[0].set_omega(0);
-		leg[1].set_omega(0);
-		steering.set_angle(0);
-		leg[0].reset_actual_angle(90 * PI / 180);
-		leg[1].reset_actual_angle(90 * PI / 180);
+		if(WAIT_FLAG){
+			leg[0].set_omega(0);
+			leg[1].set_omega(0);
+			steering.set_angle(0);
+		}
 		if (!ROBOT_START_FLAG)
 		{
 			initial_angle = curr_angle;
 		}
 		else
 		{
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_SET);
 		}
-		printf("leg2_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0].get_actual_angle() * 180 / PI),
+		printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\t\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
 		       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
-		if (GEREGE_FLAG && ROBOT_START_FLAG)
+		if ((HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin)==GPIO_PIN_RESET) && ROBOT_START_FLAG)
 		{
 
 			HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(OrangeLED_GPIO_Port, OrangeLED_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(BlueLED_GPIO_Port, BlueLED_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_RESET);
 			
-			// HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
 			static uint32_t init_time = HAL_GetTick();
 			if ((HAL_GetTick() - init_time) >= (uint32_t)(1000))
 			{
+				WAIT_FLAG = false;
+				if(getup_n_run() == true){
+					printf("\n\n\n\t\tMARCHMARCHMARCH\n\n\n");
 				*state_ = MARCH;
+				}
 			}
 		}
 	}
@@ -77,7 +82,7 @@ void start_Robot(enum Robot_States *state_)
 			  Gerege switch thichesi state_A starts when state A flag is set
 			  10 steps agadi gayesi state_A flag clear garnaparcha
 			  state_B flag set garnaparcha
-			*/
+		*/
 		printf("March");
 		if (go(steps[0], angles[0]) == true)
 		{
@@ -98,7 +103,7 @@ void start_Robot(enum Robot_States *state_)
 			  ta IMU bata roll value hernaparcha 
 			  sand dune kateko thapaesi state_B flag clear garnaparcha
 			  state_C flag set garnaparcha			   
-			*/
+		*/
 		printf("Turn 45");
 
 		go(99, angles[1]);
@@ -252,7 +257,7 @@ void start_Robot(enum Robot_States *state_)
 			uukhai zone ma n no of steps gayesi state_G end huncha
 			*/
 		printf("\nUUKHAI\n");
-		leg[0].set_omega(0);
+		leg[0].set_omega(0);  
 		leg[1].set_omega(0);
 		steering.set_omega(0);
 		
@@ -260,7 +265,7 @@ void start_Robot(enum Robot_States *state_)
 		HAL_GPIO_TogglePin(OrangeLED_GPIO_Port, OrangeLED_Pin);
 		HAL_GPIO_TogglePin(RedLED_GPIO_Port, RedLED_Pin);
 		HAL_GPIO_TogglePin(BlueLED_GPIO_Port, BlueLED_Pin);
-		// HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(Hand_Pneumatic_GPIO_Port, Hand_Pneumatic_Pin, GPIO_PIN_SET);
 	}
 	break;
 	case TUNE:

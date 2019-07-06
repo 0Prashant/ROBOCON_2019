@@ -14,7 +14,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis);
 void initialize_position(void);
 bool initialize_leg_position(void);
 bool initialize_steering_position(void);
-void getup_n_run(void);
+bool getup_n_run(void);
 
 bool go(int step, float angle);
 void move_leg(int steps, float angle);

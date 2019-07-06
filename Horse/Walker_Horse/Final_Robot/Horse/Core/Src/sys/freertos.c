@@ -167,6 +167,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 }
 
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
      
