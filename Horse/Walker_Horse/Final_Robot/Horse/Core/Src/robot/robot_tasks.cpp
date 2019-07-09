@@ -9,6 +9,7 @@ extern bool ROBOT_START_FLAG;
 extern Robot_States robo_state;
 extern float angles[7];
 extern leg leg[2];
+extern steering steering;
 extern "C" void StartDefaultTask(void const *argument);
 extern "C" void StartRobotTask(void const *argument);
 extern "C" void StartLoggerTask(void const *argument);
@@ -49,15 +50,16 @@ void StartRobotTask(void const *argument)
 	uint8_t sample_time = 10;
 	uint32_t dt = HAL_GetTick();
 	robo_state = HOME;
-	for(int i=0; i<7; i++){
-		angles[i] *= -1;
-	}
+	leg[0].reset_angle(90 * PI / 180);
+	leg[1].reset_angle(270 * PI / 180);
 	/* Infinite loop */
 	for (;;)
 	{
 		dt = HAL_GetTick();
 		play();
-		// go(100,0);
+		// leg[0].set_omega(12);
+		// leg[1].set_omega(12);
+		// steering.set_omega(0);
 		// leg0_omega = leg[0].get_omega();
 		// leg1_omega = leg[1].get_omega();
 		// leg0_angle = leg[0].get_angle();
