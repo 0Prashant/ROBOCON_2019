@@ -57,9 +57,12 @@ void StartRobotTask(void const *argument)
 	{
 		dt = HAL_GetTick();
 		play();
-		// leg[0].set_omega(12);
-		// leg[1].set_omega(12);
-		// steering.set_omega(0);
+		// leg[0].set_omega(0);
+		// leg[1].set_omega(0);
+		// steering.set_angle(8);
+		// printf("\nleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
+		//        (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI));
+		
 		// leg0_omega = leg[0].get_omega();
 		// leg1_omega = leg[1].get_omega();
 		// leg0_angle = leg[0].get_angle();

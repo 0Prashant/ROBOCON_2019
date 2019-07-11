@@ -38,8 +38,8 @@ static void pid_init(){
 
 	leg[0].set_PID_constants( 1.8, 30, 0, -17.5, 17.5);
 	leg[1].set_PID_constants( 1.8, 30, 0, -17.5, 17.5);
-	steering.set_PID_constants( 1.0, 100, 0, -2.42, 2.42);
-	steering.set_angle_PID_constants( 0.08, 0.00002, 0, -0.7, 0.7);
+	steering.set_PID_constants( 2.3, 50, 0, -8.75, 8.75);		//	1.0, 100
+	steering.set_angle_PID_constants( 0.3, 0.0002, 0, -1.5, 1.5);
 }
 
 static void limit_switch_init(){
@@ -71,11 +71,11 @@ void motor_init(){
 
 	motor_configurations[2].htim = &htim8;
 	motor_configurations[2].in1_port = GPIOD;
-	motor_configurations[2].in1_pin = GPIO_PIN_2;
+	motor_configurations[2].in1_pin = GPIO_PIN_0;
 	motor_configurations[2].in2_port = GPIOD;
-	motor_configurations[2].in2_pin = GPIO_PIN_0;
+	motor_configurations[2].in2_pin = GPIO_PIN_2;
 	motor_configurations[2].channel = TIM_CHANNEL_3;
-	motor_configurations[2].max_omega = 2.42;
+	motor_configurations[2].max_omega = 8.86;
 	motor_configurations[2].tolerance = 0.1;
 
 	HAL_TIM_Base_Start(&htim8);
@@ -96,7 +96,7 @@ void encoder_init(){
 	HAL_TIM_Encoder_Start(encoder_configurations[1].henc, TIM_CHANNEL_ALL);
 	
 	encoder_configurations[2].id = 2;
-	encoder_configurations[2].ppr = 850 *BEARING_TO_STEERING_RATIO*4;
+	encoder_configurations[2].ppr = 250 *BEARING_TO_STEERING_RATIO*4;
 	encoder_configurations[2].henc = &htim3;
 	HAL_TIM_Encoder_Start(encoder_configurations[2].henc, TIM_CHANNEL_ALL);
 }

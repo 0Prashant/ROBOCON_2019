@@ -8,7 +8,7 @@ Vec3<float> curr_angle;
 
 static const float robot_speed = 6;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
-static const float steering_angle_limit = 6 * PI / 180;
+static const float steering_angle_limit = 11 * PI / 180;
 
 extern int steps[7];
 extern float angles[7];
@@ -51,9 +51,9 @@ bool go(int step, float angle)
 		}
 		move_steering(step, angle);
 	}
-	// printf(" \nsteps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
-	// printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d\n", (int)(leg[0].get_steps()),
-	//        (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
+	// printf(" steps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
+	printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d", (int)(leg[0].get_steps()),
+	       (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
 
 	// if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
 	if (leg[0].get_steps() >= step)
@@ -86,7 +86,7 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step == 100) || (step == 29)) ? robot_speed / 1.35 : robot_speed;
+	leg_speed = ((step == 100) || (step == 29)) ? robot_speed / 1.3	 : robot_speed;
 	if (step == steps[6])
 	{
 		leg_speed = 4;

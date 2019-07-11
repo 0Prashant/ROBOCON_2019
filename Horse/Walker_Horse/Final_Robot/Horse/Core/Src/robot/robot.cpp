@@ -16,8 +16,8 @@ float omega0 = 0;
 float omega1 = 0;
 
 // float steps[7] = {7, 13, 17, 19, 24, 27, 36}`;        //for 7 rad/sec
-float steps[7] = {5, 9, 13, 15, 19, 22, 29};		//for 9 rad/sec
-float angles[7] = {0, 45, 45, 50, -20, 0, -90};
+float steps[7] = {5, 9, 13, 15, 20, 22, 29};		//for 9 rad/sec
+float angles[7] = {0, 45, 45, 55, -20, 0, -90};
 
 
 void start_Robot(enum Robot_States *state_)
@@ -36,7 +36,7 @@ void start_Robot(enum Robot_States *state_)
 			*/
 
 		static bool INITIAL_ANGLE_FLAG = true;
-		// printf("\n\tWaiting_to_start\t");
+		// printf("\nHOME");
 		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
 		
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
@@ -51,7 +51,21 @@ void start_Robot(enum Robot_States *state_)
 		}
 		// printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
 		//        (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
-		if ((HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin)==GPIO_PIN_RESET))
+		if((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
+		(HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
+		(HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||
+		(HAL_GPIO_ReadPin(ZONE_MOUNTAIN_GPIO_Port, ZONE_MOUNTAIN_Pin) == GPIO_PIN_RESET))
+		{
+			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_RESET);
+			ROBOT_START_FLAG = true;
+			INITIAL_ANGLE_FLAG = false;
+			initial_angle = curr_angle;
+			if(getup_n_run() == true){
+				zone_select();
+			}
+			printf("\n\nEntered here!!\n\n");
+		}
+		else if ((HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin)==GPIO_PIN_RESET))
 		{
 
 			HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_RESET);
@@ -69,22 +83,13 @@ void start_Robot(enum Robot_States *state_)
 				}
 			}
 		}
+		
 		else{
 			leg[0].set_omega(0);
 			leg[1].set_omega(0);
 			steering.set_angle(0);
 		}
-		// if((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
-		// (HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
-		// (HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||
-		// (HAL_GPIO_ReadPin(ZONE_MOUNTAIN_GPIO_Port, ZONE_MOUNTAIN_Pin) == GPIO_PIN_RESET))
-		// {
-		// 	ROBOT_START_FLAG = true;
-		// 	INITIAL_ANGLE_FLAG = false;
-		// 	if(getup_n_run() == true){
-		// 		zone_select();
-		// 	}
-		// }
+		
 	}
 	break;
 
@@ -95,7 +100,7 @@ void start_Robot(enum Robot_States *state_)
 			  10 steps agadi gayesi state_A flag clear garnaparcha
 			  state_B flag set garnaparcha
 		*/
-		// printf("March");
+		printf("\nMarch");
 		if (go(steps[0], angles[0]) == true)
 		{
 			*state_ = TURN_45;
@@ -116,7 +121,7 @@ void start_Robot(enum Robot_States *state_)
 			  sand dune kateko thapaesi state_B flag clear garnaparcha
 			  state_C flag set garnaparcha			   
 		*/
-		printf("Turn 45");
+		printf("\nTurn 45");
 
 		go(99, angles[1]);
 		if ((HAL_GPIO_ReadPin(Proximity_Front_GPIO_Port, Proximity_Front_Pin) == GPIO_PIN_RESET) || leg[0].get_steps() > steps[1])
@@ -140,7 +145,7 @@ void start_Robot(enum Robot_States *state_)
 			after this seate_C flag needs to be cleared and state_D flag needs to be set
 			sand dune pachi ko ek dui steps wala region
 			*/
-		printf("Sand dune");
+		printf("\nSand dune");
 
 		go(100, angles[2]);
 		if (((HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET) && (leg[0].get_steps() > (steps[2] - 1))) || leg[0].get_steps() > steps[2])
@@ -164,7 +169,7 @@ void start_Robot(enum Robot_States *state_)
 			state_D start vayesi ek dui stpes sidha janaparcha around 90 degrees from the original position 
 			teti steps pugesi 0 angle ma agadi janaparcha 
 			tespachi state d flag clear huncha ani state E flag set huncha*/
-		printf("State D");
+		printf("\nState D");
 		if (go(steps[3], angles[3]) == true)
 		{
 			*state_ = TURN_90;
@@ -183,7 +188,7 @@ void start_Robot(enum Robot_States *state_)
 			no of steps = 
 			no of steps le state_E end vako thahuncha 
 			*/
-		printf("Turn 90");
+		printf("\nTurn 90");
 		if (go(steps[4], angles[4]) == true)
 		{
 			*state_ = TUSSOCK;
@@ -203,7 +208,7 @@ void start_Robot(enum Robot_States *state_)
 			user button thichesi state_F end huncha
 			*/
 		static bool INITIALIZATION_FLAG = false;
-		printf("tussock");
+		printf("\nTussock");
 		if(!INITIALIZATION_FLAG){
 			if (go(steps[5], angles[5]) == true)
 			{
@@ -255,7 +260,7 @@ void start_Robot(enum Robot_States *state_)
 			*/
 		
 		static bool INITIALIZATION_FLAG_2 = false;
-		printf("MOUNTAIN");
+		printf("\nMOUNTAIN");
 		if(!INITIALIZATION_FLAG_2){
 			if (go(steps[6], angles[6]) == true)
 			{
@@ -321,15 +326,15 @@ void zone_select(void)
 	else if (HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET)
 	{
 		printf("\n\n\tZone 45");
-		robo_state = SAND_DUNE;
-		leg[0].steps = steps[1]-1;
-		leg[1].steps = steps[1]-1;
+		robo_state = TURN_45;
+		leg[0].steps = steps[1]-2;
+		leg[1].steps = steps[1]-2;
 		float temp_angle_ = angles[1];
 		for (int i = 0; i < 7; i++)
 		{
 			angles[i] -= temp_angle_;
 		}
-		initial_angle.set_Values(initial_angle.getX(), initial_angle.getY(), initial_angle.getZ() + angles[1]);
+		// initial_angle.set_Values(initial_angle.getX(), initial_angle.getY(), initial_angle.getZ() + angles[1]);
 	}
 	else if (HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET)
 	{
@@ -342,7 +347,7 @@ void zone_select(void)
 		{
 			angles[i] -= temp_angle_;
 		}
-		initial_angle.set_Values(initial_angle.getX(), initial_angle.getY(), initial_angle.getZ() + angles[2]);
+		// initial_angle.set_Values(initial_angle.getX(), initial_angle.getY(), initial_angle.getZ() + angles[2]);
 	}
 	else if (HAL_GPIO_ReadPin(ZONE_MOUNTAIN_GPIO_Port, ZONE_MOUNTAIN_Pin) == GPIO_PIN_RESET)
 	{
