@@ -21,7 +21,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			float leg0_reset_angle = 90*PI/180;
 			float tolerence = 40*PI/180;
 			static int count1 = 0;
-			if(((leg[0].get_angle()>(leg0_reset_angle-tolerence)) && (leg[0].get_angle()<(leg0_reset_angle+tolerence))) || (count1>2)){
+			if(((leg[0].get_angle()>(leg0_reset_angle-tolerence)) && (leg[0].get_angle()<(leg0_reset_angle+tolerence))) || (count1>1)){
                         	leg[0].reset_angle(leg0_reset_angle);
 				int temp = round(leg[0].get_actual_angle()/ (360*PI/180));
 				leg[0].reset_actual_angle((int)(temp)*2*PI + leg0_reset_angle);
@@ -37,7 +37,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			float leg1_reset_angle = 90*PI/180;
 			float tolerence = 40*PI/180;
 			static int count2 = 0;
-			if(((leg[1].get_angle()>(leg1_reset_angle-tolerence)) && (leg[1].get_angle()<(leg1_reset_angle+tolerence))) || (count2>2)){
+			if(((leg[1].get_angle()>(leg1_reset_angle-tolerence)) && (leg[1].get_angle()<(leg1_reset_angle+tolerence))) || (count2>1)){
                         	leg[1].reset_angle(leg1_reset_angle);
 				int temp = round(leg[1].get_actual_angle() / (360*PI/180));
 				leg[1].reset_actual_angle((int)(temp)*2*PI + leg1_reset_angle);

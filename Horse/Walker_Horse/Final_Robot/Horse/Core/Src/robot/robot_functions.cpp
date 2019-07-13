@@ -89,7 +89,7 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step == 100) || (step == 30)) ? robot_speed / 1.3	 : robot_speed;
+	leg_speed = ((step == 100) || (step == 31)) ? robot_speed / 1.3	 : robot_speed;
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
 	del_speed = 3 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
@@ -116,9 +116,9 @@ void move_steering(int step, float angle)
 {
 	if (step == steps[0])
 	{
-		summation_angle += 1.3*robot_angle;
+		summation_angle += robot_angle;
 		angle = -summation_angle;
-		angle /= 300;
+		angle /= 500;
 	}
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
@@ -169,7 +169,7 @@ void set_angle(float angle)
 void correct_steering_angle(float angle)
 {
 	float del_angle = (angle - robot_angle) * 180 / PI;
-	if (fabs(del_angle) <= (steering_angle_limit * 180 / PI))
+	if (fabs(del_angle) <= (2*steering_angle_limit * 180 / PI))
 	{
 		steering.set_angle(0);
 		// printf("center_alligned\t");
@@ -193,10 +193,10 @@ void calculate_robot_angle()
 {
 	if (USE_IMU_FLAG)
 	{
-		if (!leg[0].is_raised_without_deadzone()){
+		// if (!(leg[0].is_raised() == Leg_condition::RAISED)){
 		robot_angle = (initial_angle.getZ() - curr_angle.getZ()) * PI / 180;
 		temp_robot_angle = robot_angle;
-		}
+		// }
 		// printf("\tusing IMU\t");
 	}
 	else
@@ -204,12 +204,12 @@ void calculate_robot_angle()
 		if (leg[0].is_raised_without_deadzone())
 		{
 			robot_angle = steering.get_angle() + temp_robot_angle;
-			printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
+			// printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
 		}
 		else
 		{
 			temp_robot_angle = robot_angle - steering.get_angle();
-			printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
+			// printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
 		}
 		// printf("\tusing ENCODER\t");
 	}

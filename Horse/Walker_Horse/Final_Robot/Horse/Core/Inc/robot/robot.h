@@ -19,31 +19,10 @@ enum Robot_States{
 	TUNE
 };
 
-class Robot
-{
-public:
-	Robot(){};
-	Robot(Robot &&) = default;
-	Robot(const Robot &) = default;
-	Robot &operator=(Robot &&) = default;
-	Robot &operator=(const Robot &) = default;
-	~Robot(){};
-
-	// initialize_position();
-	// move(float step, float angle);
-	// calculate_datas();
-
-	// bool START_FLAG;
-
-private:
-	leg leg_0_, leg_1_;
-	steering steering_;
-};
-
 
 void start_Robot(enum Robot_States *state_);
 bool play(void);
-void delay(uint32_t time_in_ms);
 void zone_select(void);
+void test(void);
 
 #endif // !_ROBOT_H_

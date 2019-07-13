@@ -15,10 +15,8 @@ bool USE_IMU_FLAG = true;
 float omega0 = 0;
 float omega1 = 0;
 
-// float steps[7] = {7, 13, 17, 19, 24, 27, 36}`;        //for 7 rad/sec
-float steps[7] = {5, 9, 13, 16, 21, 23, 30};		//for 9 rad/sec
-float angles[7] = {0, 45, 45, 55, -10, 0, -90};
-
+float steps[7] = {6, 10, 14, 16, 21, 24, 31};
+float angles[7] = {0, 45, 45, 60, -10, 0, -90};
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -37,43 +35,45 @@ void start_Robot(enum Robot_States *state_)
 
 		static bool INITIAL_ANGLE_FLAG = true;
 		printf("\nHOME");
-		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin)==GPIO_PIN_RESET){
+		if (HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin) == GPIO_PIN_RESET)
+		{
 			USE_IMU_FLAG = true;
 		}
-		else{
+		else
+		{
 			USE_IMU_FLAG = false;
 			robot_angle = 0;
 		}
 		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
-		
+
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
 		{
 			initial_angle = curr_angle;
-			initial_angle.setZ(initial_angle.getZ()+5);
+			initial_angle.setZ(initial_angle.getZ());
 			printf("\t%d\t", (int)initial_angle.getZ());
 		}
-		else if(ROBOT_START_FLAG)
+		else if (ROBOT_START_FLAG)
 		{
 			INITIAL_ANGLE_FLAG = false;
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_SET);
 		}
 		printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
 		       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
-		if((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
-		(HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
-		(HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||
-		(HAL_GPIO_ReadPin(ZONE_MOUNTAIN_GPIO_Port, ZONE_MOUNTAIN_Pin) == GPIO_PIN_RESET))
+		if ((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
+		    (HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
+		    (HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||
+		    (HAL_GPIO_ReadPin(ZONE_MOUNTAIN_GPIO_Port, ZONE_MOUNTAIN_Pin) == GPIO_PIN_RESET))
 		{
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_RESET);
 			ROBOT_START_FLAG = true;
 			INITIAL_ANGLE_FLAG = false;
 			initial_angle = curr_angle;
-			if(getup_n_run() == true){
+			if (getup_n_run() == true)
+			{
 				zone_select();
 			}
-			printf("\n\nEntered here!!\n\n");
 		}
-		else if ((HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin)==GPIO_PIN_RESET))
+		else if ((HAL_GPIO_ReadPin(GEREGE_SWITCH_GPIO_Port, GEREGE_SWITCH_Pin) == GPIO_PIN_RESET))
 		{
 
 			HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_RESET);
@@ -82,22 +82,23 @@ void start_Robot(enum Robot_States *state_)
 			HAL_GPIO_WritePin(BlueLED_GPIO_Port, BlueLED_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_RESET);
 			ROBOT_START_FLAG = false;
-			
+
 			static uint32_t init_time = HAL_GetTick();
 			if ((HAL_GetTick() - init_time) >= (uint32_t)(500))
 			{
-				if(getup_n_run() == true){
+				if (getup_n_run() == true)
+				{
 					zone_select();
 				}
 			}
 		}
-		
-		else{
+
+		else
+		{
 			leg[0].set_omega(0);
 			leg[1].set_omega(0);
 			steering.set_angle(0);
 		}
-		
 	}
 	break;
 
@@ -217,13 +218,15 @@ void start_Robot(enum Robot_States *state_)
 			*/
 		static bool INITIALIZATION_FLAG = false;
 		printf("\nTussock");
-		if(!INITIALIZATION_FLAG){
+		if (!INITIALIZATION_FLAG)
+		{
 			if (go(steps[5], angles[5]) == true)
 			{
 				INITIALIZATION_FLAG = true;
 			}
 		}
-		else{
+		else
+		{
 			if (initialize_leg_position() == true)
 			{
 				*state_ = BASE_CAMP;
@@ -246,14 +249,14 @@ void start_Robot(enum Robot_States *state_)
 		leg[0].set_omega(0);
 		leg[1].set_omega(0);
 		steering.set_angle(0);
-		if (((HAL_GPIO_ReadPin(Proximity_Front_GPIO_Port, Proximity_Front_Pin) == GPIO_PIN_RESET) ||
-		    (HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET) ||
-		    (HAL_GPIO_ReadPin(Proximity_Up_GPIO_Port, Proximity_Up_Pin) == GPIO_PIN_RESET)) && ROBOT_START_FLAG)
+		if (((HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET) ||
+		     (HAL_GPIO_ReadPin(Proximity_Up_GPIO_Port, Proximity_Up_Pin) == GPIO_PIN_RESET)) &&
+		    ROBOT_START_FLAG)
 		{
 			*state_ = MOUNTAIN;
 			angles[6] = robot_angle * 180 / PI;
 			ROBOT_START_FLAG = false;
-			
+
 			HAL_GPIO_TogglePin(GreenLED_GPIO_Port, GreenLED_Pin);
 			HAL_GPIO_TogglePin(OrangeLED_GPIO_Port, OrangeLED_Pin);
 			HAL_GPIO_TogglePin(RedLED_GPIO_Port, RedLED_Pin);
@@ -266,16 +269,18 @@ void start_Robot(enum Robot_States *state_)
 		/*state_G flag user button thichesi start huncha
 			uukhai zone ma n no of steps gayesi state_G end huncha
 			*/
-		
+
 		static bool INITIALIZATION_FLAG_2 = false;
 		printf("\nMOUNTAIN");
-		if(!INITIALIZATION_FLAG_2){
+		if (!INITIALIZATION_FLAG_2)
+		{
 			if (go(steps[6], angles[6]) == true)
 			{
 				INITIALIZATION_FLAG_2 = true;
 			}
 		}
-		else{
+		else
+		{
 			if (initialize_leg_position() == true)
 			{
 				*state_ = UUKHAI;
@@ -294,10 +299,10 @@ void start_Robot(enum Robot_States *state_)
 			uukhai zone ma n no of steps gayesi state_G end huncha
 			*/
 		printf("\nUUKHAI\n");
-		leg[0].set_omega(0);  
+		leg[0].set_omega(0);
 		leg[1].set_omega(0);
 		steering.set_omega(0);
-		
+
 		HAL_GPIO_TogglePin(GreenLED_GPIO_Port, GreenLED_Pin);
 		HAL_GPIO_TogglePin(OrangeLED_GPIO_Port, OrangeLED_Pin);
 		HAL_GPIO_TogglePin(RedLED_GPIO_Port, RedLED_Pin);
@@ -335,8 +340,8 @@ void zone_select(void)
 	{
 		printf("\n\n\tZone 45");
 		robo_state = TURN_45;
-		leg[0].steps = steps[1]-2;
-		leg[1].steps = steps[1]-2;
+		leg[0].steps = steps[1] - 2;
+		leg[1].steps = steps[1] - 2;
 		float temp_angle_ = angles[1];
 		for (int i = 0; i < 7; i++)
 		{
@@ -387,11 +392,30 @@ void zone_select(void)
 	{
 		printf("\n\n\tZone BLUE");
 	}
-	else{
+	else
+	{
 		printf("\n\n\tZone Default_RED");
 		for (int i = 0; i < 7; i++)
 		{
 			angles[i] *= -1;
 		}
 	}
+}
+
+void test(void)
+{
+	if(HAL_GPIO_ReadPin(Proximity_Front_GPIO_Port, Proximity_Front_Pin) == GPIO_PIN_RESET){
+		printf("\n FRONT");
+	}
+	if(HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET){
+		printf("\n BACK");
+	}
+	if(HAL_GPIO_ReadPin(Proximity_Up_GPIO_Port, Proximity_Up_Pin) == GPIO_PIN_RESET){
+		printf("\n UP");
+	}
+	leg[0].set_omega(0);
+	leg[1].set_omega(0);
+	steering.set_angle(0);
+	printf("\nleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
+	       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI));
 }
