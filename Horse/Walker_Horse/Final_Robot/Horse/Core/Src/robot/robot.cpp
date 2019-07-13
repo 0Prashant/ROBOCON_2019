@@ -16,8 +16,8 @@ float omega0 = 0;
 float omega1 = 0;
 
 // float steps[7] = {7, 13, 17, 19, 24, 27, 36}`;        //for 7 rad/sec
-float steps[7] = {5, 9, 13, 15, 20, 22, 29};		//for 9 rad/sec
-float angles[7] = {0, 45, 45, 55, -20, 0, -90};
+float steps[7] = {5, 9, 13, 16, 21, 23, 30};		//for 9 rad/sec
+float angles[7] = {0, 45, 45, 55, -10, 0, -90};
 
 
 void start_Robot(enum Robot_States *state_)
@@ -36,21 +36,29 @@ void start_Robot(enum Robot_States *state_)
 			*/
 
 		static bool INITIAL_ANGLE_FLAG = true;
-		// printf("\nHOME");
+		printf("\nHOME");
+		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin)==GPIO_PIN_RESET){
+			USE_IMU_FLAG = true;
+		}
+		else{
+			USE_IMU_FLAG = false;
+			robot_angle = 0;
+		}
 		// printf("steering_angle = %d \t", (int)(steering.get_angle()*1800/PI));
 		
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
 		{
 			initial_angle = curr_angle;
-			initial_angle.setZ(initial_angle.getZ()+2);
+			initial_angle.setZ(initial_angle.getZ()+5);
+			printf("\t%d\t", (int)initial_angle.getZ());
 		}
 		else if(ROBOT_START_FLAG)
 		{
 			INITIAL_ANGLE_FLAG = false;
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_SET);
 		}
-		// printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
-		//        (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
+		printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
+		       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
 		if((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
 		(HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
 		(HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||

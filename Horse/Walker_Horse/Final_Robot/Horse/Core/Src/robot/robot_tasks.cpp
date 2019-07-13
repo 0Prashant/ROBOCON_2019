@@ -57,9 +57,18 @@ void StartRobotTask(void const *argument)
 	{
 		dt = HAL_GetTick();
 		play();
+		// if(HAL_GPIO_ReadPin(Proximity_Front_GPIO_Port, Proximity_Front_Pin) == GPIO_PIN_RESET){
+		// 	printf("\n FRONT");
+		// }
+		// if(HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET){
+		// 	printf("\n BACK");
+		// }
+		// if(HAL_GPIO_ReadPin(Proximity_Up_GPIO_Port, Proximity_Up_Pin) == GPIO_PIN_RESET){
+		// 	printf("\n UP");
+		// }
 		// leg[0].set_omega(0);
 		// leg[1].set_omega(0);
-		// steering.set_angle(8);
+		// steering.set_angle(0);
 		// printf("\nleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
 		//        (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI));
 		

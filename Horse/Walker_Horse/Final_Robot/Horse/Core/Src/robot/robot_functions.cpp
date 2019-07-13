@@ -8,7 +8,7 @@ Vec3<float> curr_angle;
 
 static const float robot_speed = 6;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
-static const float steering_angle_limit = 9 * PI / 180;
+static const float steering_angle_limit = 8.5 * PI / 180;
 
 extern int steps[7];
 extern float angles[7];
@@ -40,7 +40,7 @@ bool go(int step, float angle)
 	move_leg(step, angle);
 	if ((step == 100))
 	{
-		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin)==GPIO_PIN_RESET){}
+		
 		USE_IMU_FLAG = false;
 		steering.set_angle(0);
 	}
@@ -48,6 +48,9 @@ bool go(int step, float angle)
 	{
 		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin)==GPIO_PIN_RESET){
 			USE_IMU_FLAG = true;
+		}
+		else{
+			USE_IMU_FLAG = false;
 		}
 		move_steering(step, angle);
 	}
@@ -86,14 +89,10 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step == 100) || (step == 29)) ? robot_speed / 1.3	 : robot_speed;
-	if (step == steps[6])
-	{
-		leg_speed = 4;
-	}
+	leg_speed = ((step == 100) || (step == 30)) ? robot_speed / 1.3	 : robot_speed;
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
-	del_speed = 2 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
+	del_speed = 3 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	if (fabs(del_speed) >= leg_speed)
 	{
 		del_speed /= fabs(del_speed);
@@ -117,9 +116,9 @@ void move_steering(int step, float angle)
 {
 	if (step == steps[0])
 	{
-		summation_angle += robot_angle;
+		summation_angle += 1.3*robot_angle;
 		angle = -summation_angle;
-		angle /= 500;
+		angle /= 300;
 	}
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
@@ -194,19 +193,25 @@ void calculate_robot_angle()
 {
 	if (USE_IMU_FLAG)
 	{
+		if (!leg[0].is_raised_without_deadzone()){
 		robot_angle = (initial_angle.getZ() - curr_angle.getZ()) * PI / 180;
 		temp_robot_angle = robot_angle;
+		}
+		// printf("\tusing IMU\t");
 	}
 	else
 	{
 		if (leg[0].is_raised_without_deadzone())
 		{
 			robot_angle = steering.get_angle() + temp_robot_angle;
+			printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
 		}
 		else
 		{
 			temp_robot_angle = robot_angle - steering.get_angle();
+			printf("\t%d\t%d", (int)(steering.get_angle()*180/PI), (int)(temp_robot_angle*180/PI));
 		}
+		// printf("\tusing ENCODER\t");
 	}
 }
 
