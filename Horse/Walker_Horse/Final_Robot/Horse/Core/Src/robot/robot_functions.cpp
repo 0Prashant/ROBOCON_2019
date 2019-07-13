@@ -8,7 +8,7 @@ Vec3<float> curr_angle;
 
 static const float robot_speed = 6;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
-static const float steering_angle_limit = 11 * PI / 180;
+static const float steering_angle_limit = 9 * PI / 180;
 
 extern int steps[7];
 extern float angles[7];
