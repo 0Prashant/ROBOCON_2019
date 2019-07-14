@@ -56,8 +56,14 @@ void StartRobotTask(void const *argument)
 	for (;;)
 	{
 		dt = HAL_GetTick();
-		play();
-		
+		if((HAL_GPIO_ReadPin(ZONE_RED_GPIO_Port, ZONE_RED_Pin)==GPIO_PIN_RESET) &&
+		   (HAL_GPIO_ReadPin(ZONE_BLUE_GPIO_Port, ZONE_BLUE_Pin)==GPIO_PIN_RESET)){
+			zone_select();
+		}
+		else{
+			// play();
+			go(31,0);
+		}
 		// leg0_omega = leg[0].get_omega();
 		// leg1_omega = leg[1].get_omega();
 		// leg0_angle = leg[0].get_angle();

@@ -6,7 +6,7 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 6;      //17 is the maximum with safe zone
+static const float robot_speed = 7;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
 static const float steering_angle_limit = 8.5 * PI / 180;
 
@@ -55,7 +55,7 @@ bool go(int step, float angle)
 		move_steering(step, angle);
 	}
 	// printf(" steps = %d\t robot_angle = %d\t curr_angle = %d\t", (int)(leg[0].get_steps()), (int)(robot_angle * 180 / PI), (int)(curr_angle.getZ()));
-	printf(" steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d", (int)(leg[0].get_steps()),
+	printf("\n steps = %d\t robot_angle = %d\t leg_1_angle = %d\t leg_2_angle = %d", (int)(leg[0].get_steps()),
 	       (int)(robot_angle * 180 / PI), (int)(leg[0].get_actual_angle() * 180 / PI), (int)(leg[1].get_actual_angle() * 180 / PI));
 
 	// if ((leg[0].get_steps()   >= step) && (fabs(angle - robot_angle) <= 0.1))
@@ -89,7 +89,9 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step == 100) || (step == 31)) ? robot_speed / 1.3	 : robot_speed;
+	leg_speed = ((step==100)||(step==steps[6])) ? 4 : robot_speed;
+
+	printf("\t%d\t", (int)leg_speed);
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
 	del_speed = 3 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
@@ -119,6 +121,7 @@ void move_steering(int step, float angle)
 		summation_angle += robot_angle;
 		angle = -summation_angle;
 		angle /= 500;
+		printf("\tstep_entered\t");
 	}
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
@@ -397,7 +400,7 @@ float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 {
 	float damping_angle = 30;
 	float speed = 0;
-	min_speed = 1.5;
+	min_speed = 1.1;
 	if (angle_in_degrees > 180)
 	{
 		angle_in_degrees -= 180;
@@ -421,6 +424,5 @@ float motion_profile(float angle_in_degrees, float min_speed, float max_speed)
 		// printf("else");
 	}
 	// printf("\tSpeed = %d", (int)(speed*100));
-
 	return speed;
 }

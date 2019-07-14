@@ -15,8 +15,8 @@ bool USE_IMU_FLAG = true;
 float omega0 = 0;
 float omega1 = 0;
 
-float steps[7] = {6, 10, 14, 16, 21, 24, 31};
-float angles[7] = {0, 45, 45, 60, -10, 0, -90};
+int steps[7] = {6, 10, 15, 17, 22, 24, 31};
+float angles[7] = {0 , 45, 45, 60, -10, 0, -90};
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -49,7 +49,7 @@ void start_Robot(enum Robot_States *state_)
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
 		{
 			initial_angle = curr_angle;
-			initial_angle.setZ(initial_angle.getZ());
+			// initial_angle.setZ(initial_angle.getZ());
 			printf("\t%d\t", (int)initial_angle.getZ());
 		}
 		else if (ROBOT_START_FLAG)
@@ -157,7 +157,7 @@ void start_Robot(enum Robot_States *state_)
 		printf("\nSand dune");
 
 		go(100, angles[2]);
-		if (((HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET) && (leg[0].get_steps() > (steps[2] - 1))) || leg[0].get_steps() > steps[2])
+		if (((HAL_GPIO_ReadPin(Proximity_Back_GPIO_Port, Proximity_Back_Pin) == GPIO_PIN_RESET) && (leg[0].get_steps() > (steps[2] - 2))) || leg[0].get_steps() >= steps[2])
 		{
 			// if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_8) == GPIO_PIN_RESET){
 			*state_ = STATE_D;
@@ -386,11 +386,17 @@ void zone_select(void)
 		for (int i = 0; i < 7; i++)
 		{
 			angles[i] *= -1;
+			angles[i] -= 7.5;
+			// printf("\n\t angles= %d",(int)(angles[i]));
 		}
 	}
 	else if (HAL_GPIO_ReadPin(ZONE_BLUE_GPIO_Port, ZONE_BLUE_Pin) == GPIO_PIN_RESET)
 	{
-		printf("\n\n\tZone BLUE");
+		printf("\n\n\tZone BLUE");for (int i = 0; i < 7; i++)
+		{
+			angles[i] -= 7.5;
+			printf("\n\t angles= %d",(int)(angles[i]));
+		}
 	}
 	else
 	{
@@ -398,6 +404,8 @@ void zone_select(void)
 		for (int i = 0; i < 7; i++)
 		{
 			angles[i] *= -1;
+			angles[i] -= 7.5;
+			printf("\n\t angles= %d",(int)(angles[i]));
 		}
 	}
 }
@@ -418,4 +426,5 @@ void test(void)
 	steering.set_angle(0);
 	printf("\nleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
 	       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI));
+	zone_select();
 }
