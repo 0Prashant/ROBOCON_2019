@@ -1,0 +1,2148 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robo_init.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._ZN12Discrete_PIDD2Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+  18              		.align	1
+  19              		.weak	_ZN12Discrete_PIDD2Ev
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_ZN12Discrete_PIDD2Ev:
+  26              	.LFB396:
+  27              		.file 1 "Core/Inc/utils/pid_algorithms.h"
+   1:Core/Inc/utils/pid_algorithms.h **** #ifndef _PID_ALGORITHMS_H_
+   2:Core/Inc/utils/pid_algorithms.h **** #define _PID_ALGORITHMS_H_
+   3:Core/Inc/utils/pid_algorithms.h **** 
+   4:Core/Inc/utils/pid_algorithms.h **** class PID_Algorithm
+   5:Core/Inc/utils/pid_algorithms.h **** {
+   6:Core/Inc/utils/pid_algorithms.h ****       public:
+   7:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm() { set_PID(0, 0, 0); }
+   8:Core/Inc/utils/pid_algorithms.h ****         PID_Algorithm(float p, float i, float d) { set_PID(p, i, d); }
+   9:Core/Inc/utils/pid_algorithms.h ****         virtual float compute(float error, uint32_t dt_millis) = 0;
+  10:Core/Inc/utils/pid_algorithms.h **** 
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_P(float p) { p_ = p; }
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+  14:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+  15:Core/Inc/utils/pid_algorithms.h ****         {
+  16:Core/Inc/utils/pid_algorithms.h ****                 set_P(p);
+  17:Core/Inc/utils/pid_algorithms.h ****                 set_I(i);
+  18:Core/Inc/utils/pid_algorithms.h ****                 set_D(d);
+  19:Core/Inc/utils/pid_algorithms.h ****         }
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_P() { return p_; }
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  22:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  23:Core/Inc/utils/pid_algorithms.h **** 
+  24:Core/Inc/utils/pid_algorithms.h ****         void set_Limits(float max_out, float min_out)
+  25:Core/Inc/utils/pid_algorithms.h ****         {
+  26:Core/Inc/utils/pid_algorithms.h ****                 max_ = max_out;
+  27:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+  28:Core/Inc/utils/pid_algorithms.h ****         }
+  29:Core/Inc/utils/pid_algorithms.h **** 
+  30:Core/Inc/utils/pid_algorithms.h ****         float get_Upper() { return max_; }
+  31:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 2
+
+
+  32:Core/Inc/utils/pid_algorithms.h **** 
+  33:Core/Inc/utils/pid_algorithms.h ****         virtual ~PID_Algorithm() {}
+  34:Core/Inc/utils/pid_algorithms.h **** 
+  35:Core/Inc/utils/pid_algorithms.h ****       protected:
+  36:Core/Inc/utils/pid_algorithms.h ****         float p_, i_, d_;
+  37:Core/Inc/utils/pid_algorithms.h ****         float max_, min_;
+  38:Core/Inc/utils/pid_algorithms.h **** };
+  39:Core/Inc/utils/pid_algorithms.h **** 
+  40:Core/Inc/utils/pid_algorithms.h **** class Discrete_PID : public PID_Algorithm
+  41:Core/Inc/utils/pid_algorithms.h **** {
+  42:Core/Inc/utils/pid_algorithms.h ****       public:
+  43:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(float p, float i, float d) : PID_Algorithm(p, i, d)
+  44:Core/Inc/utils/pid_algorithms.h ****         {
+  45:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  46:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  47:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  48:Core/Inc/utils/pid_algorithms.h ****         }
+  49:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID()
+  50:Core/Inc/utils/pid_algorithms.h ****         {
+  51:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+  52:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+  53:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+  54:Core/Inc/utils/pid_algorithms.h ****         }
+  55:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(Discrete_PID &&) = default;
+  56:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID(const Discrete_PID &) = default;
+  57:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(Discrete_PID &&) = default;
+  58:Core/Inc/utils/pid_algorithms.h ****         Discrete_PID &operator=(const Discrete_PID &) = default;
+  59:Core/Inc/utils/pid_algorithms.h ****         ~Discrete_PID() {}
+  28              		.loc 1 59 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  34              		.loc 1 59 0
+  35 0000 7047     		bx	lr
+  36              		.cfi_endproc
+  37              	.LFE396:
+  39              		.weak	_ZN12Discrete_PIDD1Ev
+  40              		.thumb_set _ZN12Discrete_PIDD1Ev,_ZN12Discrete_PIDD2Ev
+  41              		.section	.text._ZN12Discrete_PID7computeEfm,"axG",%progbits,_ZN12Discrete_PID7computeEfm,comdat
+  42              		.align	1
+  43              		.weak	_ZN12Discrete_PID7computeEfm
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	_ZN12Discrete_PID7computeEfm:
+  50              	.LFB399:
+  60:Core/Inc/utils/pid_algorithms.h **** 
+  61:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+  62:Core/Inc/utils/pid_algorithms.h ****          * 1) Discrete PID control Algorithm
+  63:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
+  64:Core/Inc/utils/pid_algorithms.h ****          * 3) //! Filtered Derivative not used
+  65:Core/Inc/utils/pid_algorithms.h ****          * 4) Output Limited
+  66:Core/Inc/utils/pid_algorithms.h ****          * 5) Form : Parallel
+  67:Core/Inc/utils/pid_algorithms.h ****          * 6) Compensator Formula : Dz = P + I*Ts/(z-1) + D*(z-1)/(Ts*z)
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 3
+
+
+  68:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
+  69:Core/Inc/utils/pid_algorithms.h ****          *      y(t) - y(t-1) = a*x(t) + b*x(t-1) + c*x(t-2)
+  70:Core/Inc/utils/pid_algorithms.h ****          *      where,
+  71:Core/Inc/utils/pid_algorithms.h ****          *              a = P + D/Ts
+  72:Core/Inc/utils/pid_algorithms.h ****          *              b = -P + I*Ts - 2*D/Ts
+  73:Core/Inc/utils/pid_algorithms.h ****          *              c = D/Ts
+  74:Core/Inc/utils/pid_algorithms.h ****          */
+  75:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis)
+  51              		.loc 1 75 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56              	.LVL1:
+  76:Core/Inc/utils/pid_algorithms.h ****         {
+  77:Core/Inc/utils/pid_algorithms.h ****                 float Ts = (float)dt_millis / 1000.0;
+  57              		.loc 1 77 0
+  58 0000 07EE901A 		vmov	s15, r1	@ int
+  59 0004 F8EE676A 		vcvt.f32.u32	s13, s15
+  60 0008 DFED217A 		vldr.32	s15, .L11
+  61 000c 86EEA77A 		vdiv.f32	s14, s13, s15
+  62              	.LVL2:
+  63              	.LBB322:
+  64              	.LBB323:
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+  65              		.loc 1 20 0
+  66 0010 90ED016A 		vldr.32	s12, [r0, #4]
+  67              	.LVL3:
+  68              	.LBE323:
+  69              	.LBE322:
+  70              	.LBB324:
+  71              	.LBB325:
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+  72              		.loc 1 21 0
+  73 0014 D0ED025A 		vldr.32	s11, [r0, #8]
+  74              	.LVL4:
+  75              	.LBE325:
+  76              	.LBE324:
+  77              	.LBB326:
+  78              	.LBB327:
+  22:Core/Inc/utils/pid_algorithms.h **** 
+  79              		.loc 1 22 0
+  80 0018 D0ED037A 		vldr.32	s15, [r0, #12]
+  81              	.LVL5:
+  82              	.LBE327:
+  83              	.LBE326:
+  78:Core/Inc/utils/pid_algorithms.h **** 
+  79:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+  80:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+  81:Core/Inc/utils/pid_algorithms.h ****                 float D_by_Ts = get_D() / Ts;
+  84              		.loc 1 81 0
+  85 001c C7EE876A 		vdiv.f32	s13, s15, s14
+  86              	.LVL6:
+  82:Core/Inc/utils/pid_algorithms.h **** 
+  83:Core/Inc/utils/pid_algorithms.h ****                 float a = P + D_by_Ts;
+  87              		.loc 1 83 0
+  88 0020 76EE867A 		vadd.f32	s15, s13, s12
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 4
+
+
+  89              	.LVL7:
+  84:Core/Inc/utils/pid_algorithms.h ****                 float b = -P + I * Ts - 2 * D_by_Ts;
+  90              		.loc 1 84 0
+  91 0024 27EE257A 		vmul.f32	s14, s14, s11
+  92              	.LVL8:
+  93 0028 37EE467A 		vsub.f32	s14, s14, s12
+  94 002c 36EEA66A 		vadd.f32	s12, s13, s13
+  95 0030 37EE467A 		vsub.f32	s14, s14, s12
+  96              	.LVL9:
+  85:Core/Inc/utils/pid_algorithms.h ****                 float c = D_by_Ts;
+  86:Core/Inc/utils/pid_algorithms.h **** 
+  87:Core/Inc/utils/pid_algorithms.h ****                 l_output_ += a * error + b * l_err_ + c * ll_err_;
+  97              		.loc 1 87 0
+  98 0034 67EE807A 		vmul.f32	s15, s15, s0
+  99              	.LVL10:
+ 100 0038 90ED076A 		vldr.32	s12, [r0, #28]
+ 101 003c 26EE077A 		vmul.f32	s14, s12, s14
+ 102              	.LVL11:
+ 103 0040 77EE877A 		vadd.f32	s15, s15, s14
+ 104 0044 90ED087A 		vldr.32	s14, [r0, #32]
+ 105 0048 67EE266A 		vmul.f32	s13, s14, s13
+ 106              	.LVL12:
+ 107 004c 77EEA67A 		vadd.f32	s15, s15, s13
+ 108 0050 90ED067A 		vldr.32	s14, [r0, #24]
+ 109 0054 77EE877A 		vadd.f32	s15, s15, s14
+ 110 0058 C0ED067A 		vstr.32	s15, [r0, #24]
+ 111              	.LVL13:
+ 112              	.LBB328:
+ 113              	.LBB329:
+  30:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ 114              		.loc 1 30 0
+ 115 005c 90ED047A 		vldr.32	s14, [r0, #16]
+ 116              	.LVL14:
+ 117              	.LBE329:
+ 118              	.LBE328:
+  88:Core/Inc/utils/pid_algorithms.h **** 
+  89:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper())
+ 119              		.loc 1 89 0
+ 120 0060 F4EEC77A 		vcmpe.f32	s15, s14
+ 121 0064 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 122 0068 09DC     		bgt	.L10
+ 123              	.LVL15:
+ 124              	.LBB330:
+ 125              	.LBB331:
+  31:Core/Inc/utils/pid_algorithms.h **** 
+ 126              		.loc 1 31 0
+ 127 006a 90ED057A 		vldr.32	s14, [r0, #20]
+ 128              	.LVL16:
+ 129              	.LBE331:
+ 130              	.LBE330:
+  90:Core/Inc/utils/pid_algorithms.h ****                 {
+  91:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+  92:Core/Inc/utils/pid_algorithms.h ****                 }
+  93:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower())
+ 131              		.loc 1 93 0
+ 132 006e F4EEC77A 		vcmpe.f32	s15, s14
+ 133 0072 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 5
+
+
+ 134 0076 04D5     		bpl	.L5
+  94:Core/Inc/utils/pid_algorithms.h ****                 {
+  95:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 135              		.loc 1 95 0
+ 136 0078 80ED067A 		vstr.32	s14, [r0, #24]
+ 137 007c 01E0     		b	.L5
+ 138              	.L10:
+  91:Core/Inc/utils/pid_algorithms.h ****                 }
+ 139              		.loc 1 91 0
+ 140 007e 80ED067A 		vstr.32	s14, [r0, #24]
+ 141              	.L5:
+  96:Core/Inc/utils/pid_algorithms.h ****                 }
+  97:Core/Inc/utils/pid_algorithms.h **** 
+  98:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
+ 142              		.loc 1 98 0
+ 143 0082 80ED086A 		vstr.32	s12, [r0, #32]
+  99:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
+ 144              		.loc 1 99 0
+ 145 0086 80ED070A 		vstr.32	s0, [r0, #28]
+ 100:Core/Inc/utils/pid_algorithms.h **** 		
+ 101:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
+ 102:Core/Inc/utils/pid_algorithms.h ****         }
+ 146              		.loc 1 102 0
+ 147 008a 90ED060A 		vldr.32	s0, [r0, #24]
+ 148              	.LVL17:
+ 149 008e 7047     		bx	lr
+ 150              	.L12:
+ 151              		.align	2
+ 152              	.L11:
+ 153 0090 00007A44 		.word	1148846080
+ 154              		.cfi_endproc
+ 155              	.LFE399:
+ 157              		.section	.text._ZN9Angle_PIDD2Ev,"axG",%progbits,_ZN9Angle_PIDD5Ev,comdat
+ 158              		.align	1
+ 159              		.weak	_ZN9Angle_PIDD2Ev
+ 160              		.syntax unified
+ 161              		.thumb
+ 162              		.thumb_func
+ 163              		.fpu fpv4-sp-d16
+ 165              	_ZN9Angle_PIDD2Ev:
+ 166              	.LFB419:
+ 103:Core/Inc/utils/pid_algorithms.h **** 
+ 104:Core/Inc/utils/pid_algorithms.h ****       private:
+ 105:Core/Inc/utils/pid_algorithms.h ****         float l_output_;
+ 106:Core/Inc/utils/pid_algorithms.h ****         float l_err_;
+ 107:Core/Inc/utils/pid_algorithms.h ****         float ll_err_;
+ 108:Core/Inc/utils/pid_algorithms.h **** };
+ 109:Core/Inc/utils/pid_algorithms.h **** 
+ 110:Core/Inc/utils/pid_algorithms.h **** class FilteredDiscrete_PID : public PID_Algorithm
+ 111:Core/Inc/utils/pid_algorithms.h **** {
+ 112:Core/Inc/utils/pid_algorithms.h ****       public:
+ 113:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID(float p, float i, float d, float N = 0) : PID_Algorithm(p, i, d)
+ 114:Core/Inc/utils/pid_algorithms.h ****         {
+ 115:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 116:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 117:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 118:Core/Inc/utils/pid_algorithms.h ****                 set_N(N);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 6
+
+
+ 119:Core/Inc/utils/pid_algorithms.h ****         }
+ 120:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID()
+ 121:Core/Inc/utils/pid_algorithms.h ****         {
+ 122:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 123:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 124:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 125:Core/Inc/utils/pid_algorithms.h ****                 set_N(0);
+ 126:Core/Inc/utils/pid_algorithms.h ****         }
+ 127:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID(FilteredDiscrete_PID &&) = default;
+ 128:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID(const FilteredDiscrete_PID &) = default;
+ 129:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID &operator=(FilteredDiscrete_PID &&) = default;
+ 130:Core/Inc/utils/pid_algorithms.h ****         FilteredDiscrete_PID &operator=(const FilteredDiscrete_PID &) = default;
+ 131:Core/Inc/utils/pid_algorithms.h ****         ~FilteredDiscrete_PID() {}
+ 132:Core/Inc/utils/pid_algorithms.h **** 
+ 133:Core/Inc/utils/pid_algorithms.h ****         void set_N(float N) { N_ = N; }
+ 134:Core/Inc/utils/pid_algorithms.h **** 
+ 135:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+ 136:Core/Inc/utils/pid_algorithms.h ****          * 1) Filtered Discrete PID control Algorithm
+ 137:Core/Inc/utils/pid_algorithms.h ****          * 2) Integrator Method : Forward Euler
+ 138:Core/Inc/utils/pid_algorithms.h ****          * 3) Filtered Derivative used
+ 139:Core/Inc/utils/pid_algorithms.h ****          * 4) Output Limited
+ 140:Core/Inc/utils/pid_algorithms.h ****          * 5) Form : Parallel
+ 141:Core/Inc/utils/pid_algorithms.h ****          * 6) Compensator Formula : Dz = P + I*Ts/(z-1) + D*N*(z-1)/{(z -1) + N*Ts}
+ 142:Core/Inc/utils/pid_algorithms.h ****          * 7) In Time Domain :
+ 143:Core/Inc/utils/pid_algorithms.h ****          *      y(t) = (1 + a)*y(t-1) - a*y(t-2) + alpha*x(t) + beta*x(t-1) + gamma*x(t-2)
+ 144:Core/Inc/utils/pid_algorithms.h ****          *      where,
+ 145:Core/Inc/utils/pid_algorithms.h ****          *              a = 1 - N_*Ts
+ 146:Core/Inc/utils/pid_algorithms.h ****          *              alpha = P + D*N
+ 147:Core/Inc/utils/pid_algorithms.h ****          *              beta = -(1 + a)*P + I*Ts - 2*D*N
+ 148:Core/Inc/utils/pid_algorithms.h ****          *              gamma = a*P - a*I*Ts + D*N
+ 149:Core/Inc/utils/pid_algorithms.h ****          */
+ 150:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis)
+ 151:Core/Inc/utils/pid_algorithms.h ****         {
+ 152:Core/Inc/utils/pid_algorithms.h ****                 float Ts = (float)dt_millis / 1000.0;
+ 153:Core/Inc/utils/pid_algorithms.h **** 
+ 154:Core/Inc/utils/pid_algorithms.h ****                 float a, alpha, beta, gamma;
+ 155:Core/Inc/utils/pid_algorithms.h ****                 float output;
+ 156:Core/Inc/utils/pid_algorithms.h **** 
+ 157:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+ 158:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+ 159:Core/Inc/utils/pid_algorithms.h ****                 float D = get_D();
+ 160:Core/Inc/utils/pid_algorithms.h **** 
+ 161:Core/Inc/utils/pid_algorithms.h ****                 a = 1 - N_ * Ts;
+ 162:Core/Inc/utils/pid_algorithms.h ****                 alpha = P + D * N_;
+ 163:Core/Inc/utils/pid_algorithms.h ****                 beta = -(1 + a) * P + I * Ts - 2 * D * N_;
+ 164:Core/Inc/utils/pid_algorithms.h ****                 gamma = a * P - a * I * Ts + D * N_;
+ 165:Core/Inc/utils/pid_algorithms.h **** 
+ 166:Core/Inc/utils/pid_algorithms.h ****                 output = (1 + a) * l_output_ - a * ll_output_ + alpha * error + beta * l_err_ + gam
+ 167:Core/Inc/utils/pid_algorithms.h **** 
+ 168:Core/Inc/utils/pid_algorithms.h ****                 ll_output_ = l_output_;
+ 169:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = output;
+ 170:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = l_err_;
+ 171:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = error;
+ 172:Core/Inc/utils/pid_algorithms.h **** 
+ 173:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper())
+ 174:Core/Inc/utils/pid_algorithms.h ****                 {
+ 175:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 7
+
+
+ 176:Core/Inc/utils/pid_algorithms.h ****                 }
+ 177:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower())
+ 178:Core/Inc/utils/pid_algorithms.h ****                 {
+ 179:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 180:Core/Inc/utils/pid_algorithms.h ****                 }
+ 181:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
+ 182:Core/Inc/utils/pid_algorithms.h ****         }
+ 183:Core/Inc/utils/pid_algorithms.h **** 
+ 184:Core/Inc/utils/pid_algorithms.h ****       private:
+ 185:Core/Inc/utils/pid_algorithms.h ****         float N_;
+ 186:Core/Inc/utils/pid_algorithms.h **** 
+ 187:Core/Inc/utils/pid_algorithms.h ****         float l_output_;
+ 188:Core/Inc/utils/pid_algorithms.h ****         float ll_output_;
+ 189:Core/Inc/utils/pid_algorithms.h ****         float l_err_;
+ 190:Core/Inc/utils/pid_algorithms.h ****         float ll_err_;
+ 191:Core/Inc/utils/pid_algorithms.h **** };
+ 192:Core/Inc/utils/pid_algorithms.h **** 
+ 193:Core/Inc/utils/pid_algorithms.h **** class Angle_PID : public PID_Algorithm
+ 194:Core/Inc/utils/pid_algorithms.h **** {
+ 195:Core/Inc/utils/pid_algorithms.h ****       public:
+ 196:Core/Inc/utils/pid_algorithms.h ****         Angle_PID(float p, float i, float d) : PID_Algorithm(p, i, d)
+ 197:Core/Inc/utils/pid_algorithms.h ****         {
+ 198:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 199:Core/Inc/utils/pid_algorithms.h ****                 err_sum_ = 0;
+ 200:Core/Inc/utils/pid_algorithms.h ****         }
+ 201:Core/Inc/utils/pid_algorithms.h **** 
+ 202:Core/Inc/utils/pid_algorithms.h ****         Angle_PID()
+ 203:Core/Inc/utils/pid_algorithms.h ****         {
+ 204:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 205:Core/Inc/utils/pid_algorithms.h ****                 err_sum_ = 0;
+ 206:Core/Inc/utils/pid_algorithms.h ****         }
+ 207:Core/Inc/utils/pid_algorithms.h **** 
+ 208:Core/Inc/utils/pid_algorithms.h ****         Angle_PID(Angle_PID &&) = default;
+ 209:Core/Inc/utils/pid_algorithms.h ****         Angle_PID(const Angle_PID &) = default;
+ 210:Core/Inc/utils/pid_algorithms.h ****         Angle_PID &operator=(Angle_PID &&) = default;
+ 211:Core/Inc/utils/pid_algorithms.h ****         Angle_PID &operator=(const Angle_PID &) = default;
+ 212:Core/Inc/utils/pid_algorithms.h ****         ~Angle_PID() { }
+ 167              		.loc 1 212 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171              		@ link register save eliminated.
+ 172              	.LVL18:
+ 173              		.loc 1 212 0
+ 174 0000 7047     		bx	lr
+ 175              		.cfi_endproc
+ 176              	.LFE419:
+ 178              		.weak	_ZN9Angle_PIDD1Ev
+ 179              		.thumb_set _ZN9Angle_PIDD1Ev,_ZN9Angle_PIDD2Ev
+ 180              		.section	.text._ZN9Angle_PID7computeEfm,"axG",%progbits,_ZN9Angle_PID7computeEfm,comdat
+ 181              		.align	1
+ 182              		.weak	_ZN9Angle_PID7computeEfm
+ 183              		.syntax unified
+ 184              		.thumb
+ 185              		.thumb_func
+ 186              		.fpu fpv4-sp-d16
+ 188              	_ZN9Angle_PID7computeEfm:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 8
+
+
+ 189              	.LFB422:
+ 213:Core/Inc/utils/pid_algorithms.h **** 
+ 214:Core/Inc/utils/pid_algorithms.h ****         /* *** PID Algorithm Description ***
+ 215:Core/Inc/utils/pid_algorithms.h ****                 * 1) Angle PID control Algorithm
+ 216:Core/Inc/utils/pid_algorithms.h ****                 * 2) Use of Proportional Controller Only 
+ 217:Core/Inc/utils/pid_algorithms.h ****                 * 3) Output Limited
+ 218:Core/Inc/utils/pid_algorithms.h ****                 * 4) Compensator formula in Time Domain: 
+ 219:Core/Inc/utils/pid_algorithms.h ****                 *              y(t) = P * {(x(t) - x(t-1))/Ts}
+ 220:Core/Inc/utils/pid_algorithms.h ****                 */
+ 221:Core/Inc/utils/pid_algorithms.h **** 
+ 222:Core/Inc/utils/pid_algorithms.h ****         float compute(float error, uint32_t dt_millis)
+ 190              		.loc 1 222 0
+ 191              		.cfi_startproc
+ 192              		@ args = 0, pretend = 0, frame = 0
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194              		@ link register save eliminated.
+ 195              	.LVL19:
+ 196              	.LBB332:
+ 197              	.LBB333:
+  20:Core/Inc/utils/pid_algorithms.h ****         float get_I() { return i_; }
+ 198              		.loc 1 20 0
+ 199 0000 D0ED016A 		vldr.32	s13, [r0, #4]
+ 200              	.LVL20:
+ 201              	.LBE333:
+ 202              	.LBE332:
+ 203              	.LBB334:
+ 204              	.LBB335:
+  21:Core/Inc/utils/pid_algorithms.h ****         float get_D() { return d_; }
+ 205              		.loc 1 21 0
+ 206 0004 90ED027A 		vldr.32	s14, [r0, #8]
+ 207              	.LVL21:
+ 208              	.LBE335:
+ 209              	.LBE334:
+ 223:Core/Inc/utils/pid_algorithms.h ****         {
+ 224:Core/Inc/utils/pid_algorithms.h ****                 // float Ts = (float)dt_millis / 1000.0;
+ 225:Core/Inc/utils/pid_algorithms.h **** 
+ 226:Core/Inc/utils/pid_algorithms.h ****                 float P = get_P();
+ 227:Core/Inc/utils/pid_algorithms.h ****                 float I = get_I();
+ 228:Core/Inc/utils/pid_algorithms.h **** 
+ 229:Core/Inc/utils/pid_algorithms.h ****                 err_sum_ += error;
+ 210              		.loc 1 229 0
+ 211 0008 D0ED077A 		vldr.32	s15, [r0, #28]
+ 212 000c 70EE277A 		vadd.f32	s15, s0, s15
+ 213 0010 C0ED077A 		vstr.32	s15, [r0, #28]
+ 230:Core/Inc/utils/pid_algorithms.h ****                 float i_term = I * err_sum_;
+ 214              		.loc 1 230 0
+ 215 0014 67EE877A 		vmul.f32	s15, s15, s14
+ 216              	.LVL22:
+ 217              	.LBB336:
+ 218              	.LBB337:
+  30:Core/Inc/utils/pid_algorithms.h ****         float get_Lower() { return min_; }
+ 219              		.loc 1 30 0
+ 220 0018 90ED047A 		vldr.32	s14, [r0, #16]
+ 221              	.LVL23:
+ 222              	.LBE337:
+ 223              	.LBE336:
+ 231:Core/Inc/utils/pid_algorithms.h ****                 // Clamping Integral Term
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 9
+
+
+ 232:Core/Inc/utils/pid_algorithms.h ****                 if (i_term > get_Upper()) {
+ 224              		.loc 1 232 0
+ 225 001c F4EEC77A 		vcmpe.f32	s15, s14
+ 226 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 227 0024 18DD     		ble	.L27
+ 228              	.LVL24:
+ 233:Core/Inc/utils/pid_algorithms.h ****                         i_term = get_Upper();
+ 234:Core/Inc/utils/pid_algorithms.h ****                         err_sum_ = 0;
+ 229              		.loc 1 234 0
+ 230 0026 0023     		movs	r3, #0
+ 231 0028 C361     		str	r3, [r0, #28]	@ float
+ 233:Core/Inc/utils/pid_algorithms.h ****                         i_term = get_Upper();
+ 232              		.loc 1 233 0
+ 233 002a F0EE477A 		vmov.f32	s15, s14
+ 234              	.L17:
+ 235              	.LVL25:
+ 235:Core/Inc/utils/pid_algorithms.h ****                 }
+ 236:Core/Inc/utils/pid_algorithms.h ****                 else if (i_term < get_Lower()) {
+ 237:Core/Inc/utils/pid_algorithms.h ****                         i_term = get_Lower();
+ 238:Core/Inc/utils/pid_algorithms.h ****                         err_sum_ = 0;
+ 239:Core/Inc/utils/pid_algorithms.h ****                 }
+ 240:Core/Inc/utils/pid_algorithms.h **** 
+ 241:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = P * error + i_term;
+ 236              		.loc 1 241 0
+ 237 002e 20EE260A 		vmul.f32	s0, s0, s13
+ 238              	.LVL26:
+ 239 0032 70EE277A 		vadd.f32	s15, s0, s15
+ 240              	.LVL27:
+ 241 0036 C0ED067A 		vstr.32	s15, [r0, #24]
+ 242:Core/Inc/utils/pid_algorithms.h **** 
+ 243:Core/Inc/utils/pid_algorithms.h ****                 if (l_output_ > get_Upper())
+ 242              		.loc 1 243 0
+ 243 003a F4EEC77A 		vcmpe.f32	s15, s14
+ 244 003e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 245 0042 15DC     		bgt	.L29
+ 246              	.LVL28:
+ 247              	.LBB338:
+ 248              	.LBB339:
+  31:Core/Inc/utils/pid_algorithms.h **** 
+ 249              		.loc 1 31 0
+ 250 0044 90ED057A 		vldr.32	s14, [r0, #20]
+ 251              	.LVL29:
+ 252              	.LBE339:
+ 253              	.LBE338:
+ 244:Core/Inc/utils/pid_algorithms.h ****                 {
+ 245:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Upper();
+ 246:Core/Inc/utils/pid_algorithms.h ****                 }
+ 247:Core/Inc/utils/pid_algorithms.h **** 
+ 248:Core/Inc/utils/pid_algorithms.h ****                 else if (l_output_ < get_Lower())
+ 254              		.loc 1 248 0
+ 255 0048 F4EEC77A 		vcmpe.f32	s15, s14
+ 256 004c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 257 0050 10D5     		bpl	.L21
+ 249:Core/Inc/utils/pid_algorithms.h ****                 {
+ 250:Core/Inc/utils/pid_algorithms.h ****                         l_output_ = get_Lower();
+ 258              		.loc 1 250 0
+ 259 0052 80ED067A 		vstr.32	s14, [r0, #24]
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 10
+
+
+ 260 0056 0DE0     		b	.L21
+ 261              	.LVL30:
+ 262              	.L27:
+ 263              	.LBB340:
+ 264              	.LBB341:
+  31:Core/Inc/utils/pid_algorithms.h **** 
+ 265              		.loc 1 31 0
+ 266 0058 90ED056A 		vldr.32	s12, [r0, #20]
+ 267              	.LVL31:
+ 268              	.LBE341:
+ 269              	.LBE340:
+ 236:Core/Inc/utils/pid_algorithms.h ****                         i_term = get_Lower();
+ 270              		.loc 1 236 0
+ 271 005c F4EEC67A 		vcmpe.f32	s15, s12
+ 272 0060 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 273 0064 E3D5     		bpl	.L17
+ 274              	.LVL32:
+ 238:Core/Inc/utils/pid_algorithms.h ****                 }
+ 275              		.loc 1 238 0
+ 276 0066 0023     		movs	r3, #0
+ 277 0068 C361     		str	r3, [r0, #28]	@ float
+ 237:Core/Inc/utils/pid_algorithms.h ****                         err_sum_ = 0;
+ 278              		.loc 1 237 0
+ 279 006a F0EE467A 		vmov.f32	s15, s12
+ 280 006e DEE7     		b	.L17
+ 281              	.LVL33:
+ 282              	.L29:
+ 245:Core/Inc/utils/pid_algorithms.h ****                 }
+ 283              		.loc 1 245 0
+ 284 0070 80ED067A 		vstr.32	s14, [r0, #24]
+ 285              	.L21:
+ 251:Core/Inc/utils/pid_algorithms.h ****                 }
+ 252:Core/Inc/utils/pid_algorithms.h **** 
+ 253:Core/Inc/utils/pid_algorithms.h ****                 return l_output_;
+ 254:Core/Inc/utils/pid_algorithms.h ****         }
+ 286              		.loc 1 254 0
+ 287 0074 90ED060A 		vldr.32	s0, [r0, #24]
+ 288 0078 7047     		bx	lr
+ 289              		.cfi_endproc
+ 290              	.LFE422:
+ 292              		.section	.text._ZN8steeringD2Ev,"axG",%progbits,_ZN8steeringD5Ev,comdat
+ 293              		.align	1
+ 294              		.weak	_ZN8steeringD2Ev
+ 295              		.syntax unified
+ 296              		.thumb
+ 297              		.thumb_func
+ 298              		.fpu fpv4-sp-d16
+ 300              	_ZN8steeringD2Ev:
+ 301              	.LFB455:
+ 302              		.file 2 "Core/Inc/devs/steering.h"
+   1:Core/Inc/devs/steering.h **** /**
+   2:Core/Inc/devs/steering.h ****  * steering.h
+   3:Core/Inc/devs/steering.h ****  *
+   4:Core/Inc/devs/steering.h ****  * \brief Provide control over steering of the horse
+   5:Core/Inc/devs/steering.h ****  *
+   6:Core/Inc/devs/steering.h ****  * This file is meant as an wrapper to the elements in the encoder. 
+   7:Core/Inc/devs/steering.h ****  * It uses the functions of other headers (ie motor.h, encoder.h, 
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 11
+
+
+   8:Core/Inc/devs/steering.h ****  * limit_switch.h and pid.h tocontrol all the functions available 
+   9:Core/Inc/devs/steering.h ****  * in the steering.
+  10:Core/Inc/devs/steering.h ****  *
+  11:Core/Inc/devs/steering.h ****  * \author 	$Author 	: Prashant_Bhatta
+  12:Core/Inc/devs/steering.h ****  * \date 	$Date		: 2005/04/14 14:16:20 $
+  13:Core/Inc/devs/steering.h ****  * \contact	$Contact	: 073bex425.prashant@pcampus.edu.np
+  14:Core/Inc/devs/steering.h ****  *
+  15:Core/Inc/devs/steering.h ****  */
+  16:Core/Inc/devs/steering.h **** #ifndef _STEERING_H_
+  17:Core/Inc/devs/steering.h **** #define _STEERING_H_
+  18:Core/Inc/devs/steering.h **** 
+  19:Core/Inc/devs/steering.h **** #include "motor.h"
+  20:Core/Inc/devs/steering.h **** #include "encoder.h"
+  21:Core/Inc/devs/steering.h **** #include "pid.h"
+  22:Core/Inc/devs/steering.h **** #include "limit_switch.h"
+  23:Core/Inc/devs/steering.h **** 
+  24:Core/Inc/devs/steering.h **** class steering
+  25:Core/Inc/devs/steering.h **** {
+  26:Core/Inc/devs/steering.h **** public:
+  27:Core/Inc/devs/steering.h **** 	/// These lines of codes are just for protection of random defination of the objects.
+  28:Core/Inc/devs/steering.h **** 	steering(){}
+  29:Core/Inc/devs/steering.h **** 	steering(steering &&) = default;
+  30:Core/Inc/devs/steering.h **** 	steering(const steering &) = default;
+  31:Core/Inc/devs/steering.h **** 	steering &operator=(steering &&) = default;
+  32:Core/Inc/devs/steering.h **** 	steering &operator=(const steering &) = default;
+  33:Core/Inc/devs/steering.h **** 	~steering(){}
+ 303              		.loc 2 33 0
+ 304              		.cfi_startproc
+ 305              		@ args = 0, pretend = 0, frame = 0
+ 306              		@ frame_needed = 0, uses_anonymous_args = 0
+ 307              		@ link register save eliminated.
+ 308              	.LVL34:
+ 309              		.loc 2 33 0
+ 310 0000 7047     		bx	lr
+ 311              		.cfi_endproc
+ 312              	.LFE455:
+ 314              		.weak	_ZN8steeringD1Ev
+ 315              		.thumb_set _ZN8steeringD1Ev,_ZN8steeringD2Ev
+ 316              		.section	.text._ZL8leg_initv,"ax",%progbits
+ 317              		.align	1
+ 318              		.syntax unified
+ 319              		.thumb
+ 320              		.thumb_func
+ 321              		.fpu fpv4-sp-d16
+ 323              	_ZL8leg_initv:
+ 324              	.LFB493:
+ 325              		.file 3 "Core/Src/robot/robo_init.cpp"
+   1:Core/Src/robot/robo_init.cpp **** #include "robo_init.h"
+   2:Core/Src/robot/robo_init.cpp **** 
+   3:Core/Src/robot/robo_init.cpp **** leg leg[2];
+   4:Core/Src/robot/robo_init.cpp **** steering steering;
+   5:Core/Src/robot/robo_init.cpp **** 
+   6:Core/Src/robot/robo_init.cpp **** static motor_config motor_configurations[3];
+   7:Core/Src/robot/robo_init.cpp **** static  encoder_config encoder_configurations[3];
+   8:Core/Src/robot/robo_init.cpp **** 
+   9:Core/Src/robot/robo_init.cpp **** 
+  10:Core/Src/robot/robo_init.cpp **** static void motor_init();
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 12
+
+
+  11:Core/Src/robot/robo_init.cpp **** static void encoder_init();
+  12:Core/Src/robot/robo_init.cpp **** static void pid_init();
+  13:Core/Src/robot/robo_init.cpp **** static void limit_switch_init(); 
+  14:Core/Src/robot/robo_init.cpp **** static void leg_init();
+  15:Core/Src/robot/robo_init.cpp **** static void steering_init();
+  16:Core/Src/robot/robo_init.cpp **** 
+  17:Core/Src/robot/robo_init.cpp **** void robo_init(){ 
+  18:Core/Src/robot/robo_init.cpp **** 	motor_init();
+  19:Core/Src/robot/robo_init.cpp **** 	encoder_init();	
+  20:Core/Src/robot/robo_init.cpp **** 	pid_init();
+  21:Core/Src/robot/robo_init.cpp **** 	limit_switch_init();
+  22:Core/Src/robot/robo_init.cpp **** 	leg_init();
+  23:Core/Src/robot/robo_init.cpp **** 	steering_init();
+  24:Core/Src/robot/robo_init.cpp **** }
+  25:Core/Src/robot/robo_init.cpp **** 
+  26:Core/Src/robot/robo_init.cpp **** void leg_init(){
+ 326              		.loc 3 26 0
+ 327              		.cfi_startproc
+ 328              		@ args = 0, pretend = 0, frame = 0
+ 329              		@ frame_needed = 0, uses_anonymous_args = 0
+ 330              		@ link register save eliminated.
+ 331              	.LVL35:
+ 332              	.LBB342:
+ 333              	.LBB343:
+ 334              	.LBB344:
+ 335              		.file 4 "Core/Inc/devs/motor.h"
+   1:Core/Inc/devs/motor.h **** #ifndef _MOTOR_H_
+   2:Core/Inc/devs/motor.h **** #define _MOTOR_H_
+   3:Core/Inc/devs/motor.h **** 
+   4:Core/Inc/devs/motor.h **** #include "stm32f4xx_hal.h"
+   5:Core/Inc/devs/motor.h **** #include "tim.h"
+   6:Core/Inc/devs/motor.h **** #include <math.h>
+   7:Core/Inc/devs/motor.h **** 
+   8:Core/Inc/devs/motor.h **** enum Direction{
+   9:Core/Inc/devs/motor.h **** 	CLOCKWISE,
+  10:Core/Inc/devs/motor.h **** 	ANTICLOCKWISE,
+  11:Core/Inc/devs/motor.h **** 	STOP
+  12:Core/Inc/devs/motor.h **** };
+  13:Core/Inc/devs/motor.h **** 
+  14:Core/Inc/devs/motor.h **** struct motor_config{
+  15:Core/Inc/devs/motor.h **** 	float max_omega;
+  16:Core/Inc/devs/motor.h **** 	float tolerance;
+  17:Core/Inc/devs/motor.h **** 
+  18:Core/Inc/devs/motor.h **** 	GPIO_TypeDef *in1_port;	
+  19:Core/Inc/devs/motor.h ****         uint16_t in1_pin;
+  20:Core/Inc/devs/motor.h ****         GPIO_TypeDef *in2_port;
+  21:Core/Inc/devs/motor.h ****         uint16_t in2_pin;
+  22:Core/Inc/devs/motor.h ****         TIM_HandleTypeDef *htim;        // PWM Generating Timer
+  23:Core/Inc/devs/motor.h ****         uint32_t channel;               // PWM Channel
+  24:Core/Inc/devs/motor.h **** };
+  25:Core/Inc/devs/motor.h **** 
+  26:Core/Inc/devs/motor.h **** class motor
+  27:Core/Inc/devs/motor.h **** {
+  28:Core/Inc/devs/motor.h **** public:
+  29:Core/Inc/devs/motor.h **** 	motor(){motor_ = 0;}
+  30:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+  31:Core/Inc/devs/motor.h **** 	motor(motor &&) = default;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 13
+
+
+  32:Core/Inc/devs/motor.h **** 	motor(const motor &) = default;
+  33:Core/Inc/devs/motor.h **** 	motor &operator=(motor &&) = default;
+  34:Core/Inc/devs/motor.h **** 	motor &operator=(const motor &) = default;
+  35:Core/Inc/devs/motor.h **** 	~motor(){}
+  36:Core/Inc/devs/motor.h ****         void set_config(motor_config *motor) { motor_ = motor;}
+ 336              		.loc 4 36 0
+ 337 0000 074B     		ldr	r3, .L32
+ 338 0002 0849     		ldr	r1, .L32+4
+ 339 0004 9963     		str	r1, [r3, #56]
+ 340              	.LVL36:
+ 341              	.LBE344:
+ 342              	.LBE343:
+ 343              	.LBB345:
+ 344              	.LBB346:
+ 345              		.file 5 "Core/Inc/devs/encoder.h"
+   1:Core/Inc/devs/encoder.h **** #ifndef _ENCODER_H_
+   2:Core/Inc/devs/encoder.h **** #define _ENCODER_H_
+   3:Core/Inc/devs/encoder.h **** 
+   4:Core/Inc/devs/encoder.h **** #include "defines.h"
+   5:Core/Inc/devs/encoder.h **** #include "stm32f4xx_hal.h"
+   6:Core/Inc/devs/encoder.h **** #include "tim.h"
+   7:Core/Inc/devs/encoder.h **** #include "math.h"
+   8:Core/Inc/devs/encoder.h **** 
+   9:Core/Inc/devs/encoder.h **** 
+  10:Core/Inc/devs/encoder.h **** struct encoder_config{
+  11:Core/Inc/devs/encoder.h **** 	uint8_t id;
+  12:Core/Inc/devs/encoder.h **** 	TIM_HandleTypeDef *henc;
+  13:Core/Inc/devs/encoder.h **** 	uint16_t ppr;
+  14:Core/Inc/devs/encoder.h **** };
+  15:Core/Inc/devs/encoder.h **** 
+  16:Core/Inc/devs/encoder.h **** class encoder
+  17:Core/Inc/devs/encoder.h **** {
+  18:Core/Inc/devs/encoder.h **** public:
+  19:Core/Inc/devs/encoder.h **** 	encoder(){encoder_ = 0;}
+  20:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+  21:Core/Inc/devs/encoder.h **** 	encoder(encoder &&) = default;
+  22:Core/Inc/devs/encoder.h **** 	encoder(const encoder &) = default;
+  23:Core/Inc/devs/encoder.h **** 	encoder &operator=(encoder &&) = default;
+  24:Core/Inc/devs/encoder.h **** 	encoder &operator=(const encoder &) = default;
+  25:Core/Inc/devs/encoder.h **** 	~encoder(){}
+  26:Core/Inc/devs/encoder.h ****         void set_config(encoder_config *encoder) { encoder_ = encoder; }
+ 346              		.loc 5 26 0
+ 347 0006 084A     		ldr	r2, .L32+8
+ 348 0008 DA63     		str	r2, [r3, #60]
+ 349              	.LVL37:
+ 350              	.LBE346:
+ 351              	.LBE345:
+ 352              	.LBE342:
+ 353              	.LBB347:
+ 354              	.LBB348:
+ 355              	.LBB349:
+ 356              		.loc 4 36 0
+ 357 000a 2031     		adds	r1, r1, #32
+ 358 000c C3F89010 		str	r1, [r3, #144]
+ 359              	.LVL38:
+ 360              	.LBE349:
+ 361              	.LBE348:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 14
+
+
+ 362              	.LBB350:
+ 363              	.LBB351:
+ 364              		.loc 5 26 0
+ 365 0010 0C32     		adds	r2, r2, #12
+ 366 0012 C3F89420 		str	r2, [r3, #148]
+ 367              	.LVL39:
+ 368              	.LBE351:
+ 369              	.LBE350:
+ 370              	.LBE347:
+ 371              	.LBB352:
+ 372              	.LBB353:
+ 373              		.file 6 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kgravity){kg_ = kgravity;}
+ 374              		.loc 6 38 0
+ 375 0016 054A     		ldr	r2, .L32+12
+ 376 0018 5A65     		str	r2, [r3, #84]	@ float
+ 377              	.LVL40:
+ 378              	.LBE353:
+ 379              	.LBE352:
+ 380              	.LBB354:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 15
+
+
+ 381              	.LBB355:
+ 382 001a C3F8AC20 		str	r2, [r3, #172]	@ float
+ 383              	.LVL41:
+ 384              	.LBE355:
+ 385              	.LBE354:
+  27:Core/Src/robot/robo_init.cpp **** 	leg[0].set_config(&motor_configurations[0], &encoder_configurations[0]);
+  28:Core/Src/robot/robo_init.cpp **** 	leg[1].set_config(&motor_configurations[1], &encoder_configurations[1]);
+  29:Core/Src/robot/robo_init.cpp **** 	leg[0].set_gravity_compensator_constant(0.49);
+  30:Core/Src/robot/robo_init.cpp **** 	leg[1].set_gravity_compensator_constant(0.49);
+  31:Core/Src/robot/robo_init.cpp **** }	
+ 386              		.loc 3 31 0
+ 387 001e 7047     		bx	lr
+ 388              	.L33:
+ 389              		.align	2
+ 390              	.L32:
+ 391 0020 00000000 		.word	.LANCHOR0
+ 392 0024 00000000 		.word	.LANCHOR1
+ 393 0028 00000000 		.word	.LANCHOR2
+ 394 002c 48E1FA3E 		.word	1056629064
+ 395              		.cfi_endproc
+ 396              	.LFE493:
+ 398              		.section	.text._ZL13steering_initv,"ax",%progbits
+ 399              		.align	1
+ 400              		.syntax unified
+ 401              		.thumb
+ 402              		.thumb_func
+ 403              		.fpu fpv4-sp-d16
+ 405              	_ZL13steering_initv:
+ 406              	.LFB494:
+  32:Core/Src/robot/robo_init.cpp **** 
+  33:Core/Src/robot/robo_init.cpp **** void steering_init(){
+ 407              		.loc 3 33 0
+ 408              		.cfi_startproc
+ 409              		@ args = 0, pretend = 0, frame = 0
+ 410              		@ frame_needed = 0, uses_anonymous_args = 0
+ 411              		@ link register save eliminated.
+ 412              	.LVL42:
+ 413              	.LBB356:
+ 414              	.LBB357:
+ 415              	.LBB358:
+ 416              		.loc 4 36 0
+ 417 0000 024B     		ldr	r3, .L35
+ 418 0002 034A     		ldr	r2, .L35+4
+ 419 0004 9A60     		str	r2, [r3, #8]
+ 420              	.LVL43:
+ 421              	.LBE358:
+ 422              	.LBE357:
+ 423              	.LBB359:
+ 424              	.LBB360:
+ 425              		.loc 5 26 0
+ 426 0006 034A     		ldr	r2, .L35+8
+ 427 0008 DA60     		str	r2, [r3, #12]
+ 428              	.LVL44:
+ 429              	.LBE360:
+ 430              	.LBE359:
+ 431              	.LBE356:
+  34:Core/Src/robot/robo_init.cpp **** 	steering.set_config(&motor_configurations[2], &encoder_configurations[2]);
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 16
+
+
+  35:Core/Src/robot/robo_init.cpp **** }
+ 432              		.loc 3 35 0
+ 433 000a 7047     		bx	lr
+ 434              	.L36:
+ 435              		.align	2
+ 436              	.L35:
+ 437 000c 00000000 		.word	.LANCHOR3
+ 438 0010 40000000 		.word	.LANCHOR1+64
+ 439 0014 18000000 		.word	.LANCHOR2+24
+ 440              		.cfi_endproc
+ 441              	.LFE494:
+ 443              		.section	.text._ZL8pid_initv,"ax",%progbits
+ 444              		.align	1
+ 445              		.syntax unified
+ 446              		.thumb
+ 447              		.thumb_func
+ 448              		.fpu fpv4-sp-d16
+ 450              	_ZL8pid_initv:
+ 451              	.LFB495:
+  36:Core/Src/robot/robo_init.cpp **** 
+  37:Core/Src/robot/robo_init.cpp **** static void pid_init(){
+ 452              		.loc 3 37 0
+ 453              		.cfi_startproc
+ 454              		@ args = 0, pretend = 0, frame = 0
+ 455              		@ frame_needed = 0, uses_anonymous_args = 0
+ 456              		@ link register save eliminated.
+ 457 0000 10B4     		push	{r4}
+ 458              	.LCFI0:
+ 459              		.cfi_def_cfa_offset 4
+ 460              		.cfi_offset 4, -4
+ 461              	.LVL45:
+ 462              	.LBB361:
+ 463              	.LBB362:
+ 464              	.LBB363:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 465              		.loc 1 11 0
+ 466 0002 154B     		ldr	r3, .L39
+ 467 0004 154A     		ldr	r2, .L39+4
+ 468 0006 9A61     		str	r2, [r3, #24]	@ float
+ 469              	.LVL46:
+ 470              	.LBE363:
+ 471              	.LBE362:
+ 472              	.LBB364:
+ 473              	.LBB365:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 474              		.loc 1 12 0
+ 475 0008 154A     		ldr	r2, .L39+8
+ 476 000a DA61     		str	r2, [r3, #28]	@ float
+ 477              	.LVL47:
+ 478              	.LBE365:
+ 479              	.LBE364:
+ 480              	.LBB366:
+ 481              	.LBB367:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 482              		.loc 1 13 0
+ 483 000c 0022     		movs	r2, #0
+ 484 000e 1A62     		str	r2, [r3, #32]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 17
+
+
+ 485              	.LVL48:
+ 486              	.LBE367:
+ 487              	.LBE366:
+ 488              	.LBB368:
+ 489              	.LBB369:
+  26:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 490              		.loc 1 26 0
+ 491 0010 1448     		ldr	r0, .L39+12
+ 492 0012 5862     		str	r0, [r3, #36]	@ float
+  27:Core/Inc/utils/pid_algorithms.h ****         }
+ 493              		.loc 1 27 0
+ 494 0014 1449     		ldr	r1, .L39+16
+ 495 0016 9962     		str	r1, [r3, #40]	@ float
+ 496              	.LVL49:
+ 497              	.LBE369:
+ 498              	.LBE368:
+ 499              	.LBE361:
+ 500              	.LBB370:
+ 501              	.LBB371:
+ 502              	.LBB372:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 503              		.loc 1 11 0
+ 504 0018 4FF07E54 		mov	r4, #1065353216
+ 505 001c 1C67     		str	r4, [r3, #112]	@ float
+ 506              	.LVL50:
+ 507              	.LBE372:
+ 508              	.LBE371:
+ 509              	.LBB373:
+ 510              	.LBB374:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 511              		.loc 1 12 0
+ 512 001e 134C     		ldr	r4, .L39+20
+ 513 0020 5C67     		str	r4, [r3, #116]	@ float
+ 514              	.LVL51:
+ 515              	.LBE374:
+ 516              	.LBE373:
+ 517              	.LBB375:
+ 518              	.LBB376:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 519              		.loc 1 13 0
+ 520 0022 9A67     		str	r2, [r3, #120]	@ float
+ 521              	.LVL52:
+ 522              	.LBE376:
+ 523              	.LBE375:
+ 524              	.LBB377:
+ 525              	.LBB378:
+  26:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 526              		.loc 1 26 0
+ 527 0024 D867     		str	r0, [r3, #124]	@ float
+  27:Core/Inc/utils/pid_algorithms.h ****         }
+ 528              		.loc 1 27 0
+ 529 0026 C3F88010 		str	r1, [r3, #128]	@ float
+ 530              	.LVL53:
+ 531              	.LBE378:
+ 532              	.LBE377:
+ 533              	.LBE370:
+ 534              	.LBB379:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 18
+
+
+ 535              	.LBB380:
+ 536              	.LBB381:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 537              		.loc 1 11 0
+ 538 002a 114B     		ldr	r3, .L39+24
+ 539 002c 1149     		ldr	r1, .L39+28
+ 540 002e 9962     		str	r1, [r3, #40]	@ float
+ 541              	.LVL54:
+ 542              	.LBE381:
+ 543              	.LBE380:
+ 544              	.LBB382:
+ 545              	.LBB383:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 546              		.loc 1 12 0
+ 547 0030 1149     		ldr	r1, .L39+32
+ 548 0032 D962     		str	r1, [r3, #44]	@ float
+ 549              	.LVL55:
+ 550              	.LBE383:
+ 551              	.LBE382:
+ 552              	.LBB384:
+ 553              	.LBB385:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 554              		.loc 1 13 0
+ 555 0034 1A63     		str	r2, [r3, #48]	@ float
+ 556              	.LVL56:
+ 557              	.LBE385:
+ 558              	.LBE384:
+ 559              	.LBB386:
+ 560              	.LBB387:
+  26:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 561              		.loc 1 26 0
+ 562 0036 1149     		ldr	r1, .L39+36
+ 563 0038 5963     		str	r1, [r3, #52]	@ float
+  27:Core/Inc/utils/pid_algorithms.h ****         }
+ 564              		.loc 1 27 0
+ 565 003a 1149     		ldr	r1, .L39+40
+ 566 003c 9963     		str	r1, [r3, #56]	@ float
+ 567              	.LVL57:
+ 568              	.LBE387:
+ 569              	.LBE386:
+ 570              	.LBE379:
+ 571              	.LBB388:
+ 572              	.LBB389:
+ 573              	.LBB390:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 574              		.loc 1 11 0
+ 575 003e 1149     		ldr	r1, .L39+44
+ 576 0040 D964     		str	r1, [r3, #76]	@ float
+ 577              	.LVL58:
+ 578              	.LBE390:
+ 579              	.LBE389:
+ 580              	.LBB391:
+ 581              	.LBB392:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 582              		.loc 1 12 0
+ 583 0042 1149     		ldr	r1, .L39+48
+ 584 0044 1965     		str	r1, [r3, #80]	@ float
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 19
+
+
+ 585              	.LVL59:
+ 586              	.LBE392:
+ 587              	.LBE391:
+ 588              	.LBB393:
+ 589              	.LBB394:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 590              		.loc 1 13 0
+ 591 0046 5A65     		str	r2, [r3, #84]	@ float
+ 592              	.LVL60:
+ 593              	.LBE394:
+ 594              	.LBE393:
+ 595              	.LBB395:
+ 596              	.LBB396:
+  26:Core/Inc/utils/pid_algorithms.h ****                 min_ = min_out;
+ 597              		.loc 1 26 0
+ 598 0048 104A     		ldr	r2, .L39+52
+ 599 004a 9A65     		str	r2, [r3, #88]	@ float
+  27:Core/Inc/utils/pid_algorithms.h ****         }
+ 600              		.loc 1 27 0
+ 601 004c 104A     		ldr	r2, .L39+56
+ 602 004e DA65     		str	r2, [r3, #92]	@ float
+ 603              	.LVL61:
+ 604              	.LBE396:
+ 605              	.LBE395:
+ 606              	.LBE388:
+  38:Core/Src/robot/robo_init.cpp **** 
+  39:Core/Src/robot/robo_init.cpp **** 	leg[0].set_PID_constants( 1.8, 30, 0, -17.5, 17.5);		//1.8, 30
+  40:Core/Src/robot/robo_init.cpp **** 	leg[1].set_PID_constants( 1, 25, 0, -17.5, 17.5);
+  41:Core/Src/robot/robo_init.cpp **** 	steering.set_PID_constants( 2.3	, 50, 0, -8.75, 8.75);		//2.3, 50
+  42:Core/Src/robot/robo_init.cpp **** 	steering.set_angle_PID_constants( 0.164, 0.0002, 0, -3, 3);	//0.164, 0.0002
+  43:Core/Src/robot/robo_init.cpp **** }
+ 607              		.loc 3 43 0
+ 608 0050 5DF8044B 		ldr	r4, [sp], #4
+ 609              	.LCFI1:
+ 610              		.cfi_restore 4
+ 611              		.cfi_def_cfa_offset 0
+ 612 0054 7047     		bx	lr
+ 613              	.L40:
+ 614 0056 00BF     		.align	2
+ 615              	.L39:
+ 616 0058 00000000 		.word	.LANCHOR0
+ 617 005c 6666E63F 		.word	1072064102
+ 618 0060 0000F041 		.word	1106247680
+ 619 0064 00008C41 		.word	1099694080
+ 620 0068 00008CC1 		.word	-1047789568
+ 621 006c 0000C841 		.word	1103626240
+ 622 0070 00000000 		.word	.LANCHOR3
+ 623 0074 33331340 		.word	1075000115
+ 624 0078 00004842 		.word	1112014848
+ 625 007c 00000C41 		.word	1091305472
+ 626 0080 00000CC1 		.word	-1056178176
+ 627 0084 9EEF273E 		.word	1042804638
+ 628 0088 17B75139 		.word	961656599
+ 629 008c 00004040 		.word	1077936128
+ 630 0090 000040C0 		.word	-1069547520
+ 631              		.cfi_endproc
+ 632              	.LFE495:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 20
+
+
+ 634              		.section	.text._ZL17limit_switch_initv,"ax",%progbits
+ 635              		.align	1
+ 636              		.syntax unified
+ 637              		.thumb
+ 638              		.thumb_func
+ 639              		.fpu fpv4-sp-d16
+ 641              	_ZL17limit_switch_initv:
+ 642              	.LFB496:
+  44:Core/Src/robot/robo_init.cpp **** 
+  45:Core/Src/robot/robo_init.cpp **** static void limit_switch_init(){
+ 643              		.loc 3 45 0
+ 644              		.cfi_startproc
+ 645              		@ args = 0, pretend = 0, frame = 0
+ 646              		@ frame_needed = 0, uses_anonymous_args = 0
+ 647              		@ link register save eliminated.
+  46:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[0].int_port = GPIOC;
+ 648              		.loc 3 46 0
+ 649 0000 044B     		ldr	r3, .L42
+ 650 0002 054A     		ldr	r2, .L42+4
+ 651 0004 1A60     		str	r2, [r3]
+  47:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[0].int_pin = GPIO_PIN_0;
+ 652              		.loc 3 47 0
+ 653 0006 0122     		movs	r2, #1
+ 654 0008 9A80     		strh	r2, [r3, #4]	@ movhi
+  48:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[1].int_port = GPIOA;
+ 655              		.loc 3 48 0
+ 656 000a 044A     		ldr	r2, .L42+8
+ 657 000c 9A60     		str	r2, [r3, #8]
+  49:Core/Src/robot/robo_init.cpp **** 	leg[0].limit_switch__[1].int_pin = GPIO_PIN_2;
+ 658              		.loc 3 49 0
+ 659 000e 0422     		movs	r2, #4
+ 660 0010 9A81     		strh	r2, [r3, #12]	@ movhi
+  50:Core/Src/robot/robo_init.cpp **** }
+ 661              		.loc 3 50 0
+ 662 0012 7047     		bx	lr
+ 663              	.L43:
+ 664              		.align	2
+ 665              	.L42:
+ 666 0014 00000000 		.word	.LANCHOR0
+ 667 0018 00080240 		.word	1073874944
+ 668 001c 00000240 		.word	1073872896
+ 669              		.cfi_endproc
+ 670              	.LFE496:
+ 672              		.section	.text.__tcf_0,"ax",%progbits
+ 673              		.align	1
+ 674              		.syntax unified
+ 675              		.thumb
+ 676              		.thumb_func
+ 677              		.fpu fpv4-sp-d16
+ 679              	__tcf_0:
+ 680              	.LFB500:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 681              		.loc 3 3 0
+ 682              		.cfi_startproc
+ 683              		@ args = 0, pretend = 0, frame = 0
+ 684              		@ frame_needed = 0, uses_anonymous_args = 0
+ 685              		@ link register save eliminated.
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 21
+
+
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 686              		.loc 3 3 0
+ 687 0000 034B     		ldr	r3, .L47
+ 688              	.L46:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 689              		.loc 3 3 0 is_stmt 0 discriminator 5
+ 690 0002 044A     		ldr	r2, .L47+4
+ 691 0004 9342     		cmp	r3, r2
+ 692 0006 01D0     		beq	.L44
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 693              		.loc 3 3 0 discriminator 4
+ 694 0008 583B     		subs	r3, r3, #88
+ 695              	.LVL62:
+ 696 000a FAE7     		b	.L46
+ 697              	.LVL63:
+ 698              	.L44:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 699              		.loc 3 3 0
+ 700 000c 7047     		bx	lr
+ 701              	.L48:
+ 702 000e 00BF     		.align	2
+ 703              	.L47:
+ 704 0010 B0000000 		.word	.LANCHOR0+176
+ 705 0014 00000000 		.word	.LANCHOR0
+ 706              		.cfi_endproc
+ 707              	.LFE500:
+ 709              		.section	.text._ZL10motor_initv,"ax",%progbits
+ 710              		.align	1
+ 711              		.syntax unified
+ 712              		.thumb
+ 713              		.thumb_func
+ 714              		.fpu fpv4-sp-d16
+ 716              	_ZL10motor_initv:
+ 717              	.LFB497:
+  51:Core/Src/robot/robo_init.cpp **** 
+  52:Core/Src/robot/robo_init.cpp **** void motor_init(){
+ 718              		.loc 3 52 0 is_stmt 1
+ 719              		.cfi_startproc
+ 720              		@ args = 0, pretend = 0, frame = 0
+ 721              		@ frame_needed = 0, uses_anonymous_args = 0
+ 722 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 723              	.LCFI2:
+ 724              		.cfi_def_cfa_offset 24
+ 725              		.cfi_offset 3, -24
+ 726              		.cfi_offset 4, -20
+ 727              		.cfi_offset 5, -16
+ 728              		.cfi_offset 6, -12
+ 729              		.cfi_offset 7, -8
+ 730              		.cfi_offset 14, -4
+  53:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].htim = &htim8;
+ 731              		.loc 3 53 0
+ 732 0002 1E4C     		ldr	r4, .L51
+ 733 0004 1E48     		ldr	r0, .L51+4
+ 734 0006 A061     		str	r0, [r4, #24]
+  54:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in1_port = GPIOA;
+ 735              		.loc 3 54 0
+ 736 0008 1E4A     		ldr	r2, .L51+8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 22
+
+
+ 737 000a A260     		str	r2, [r4, #8]
+  55:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in1_pin = GPIO_PIN_10; 
+ 738              		.loc 3 55 0
+ 739 000c 4FF48063 		mov	r3, #1024
+ 740 0010 A381     		strh	r3, [r4, #12]	@ movhi
+  56:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in2_port = GPIOA;
+ 741              		.loc 3 56 0
+ 742 0012 2261     		str	r2, [r4, #16]
+  57:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].in2_pin = GPIO_PIN_8;
+ 743              		.loc 3 57 0
+ 744 0014 4FF48073 		mov	r3, #256
+ 745 0018 A382     		strh	r3, [r4, #20]	@ movhi
+  58:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].channel = TIM_CHANNEL_4;
+ 746              		.loc 3 58 0
+ 747 001a 0C27     		movs	r7, #12
+ 748 001c E761     		str	r7, [r4, #28]
+  59:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].max_omega = 17.5;
+ 749              		.loc 3 59 0
+ 750 001e 1A49     		ldr	r1, .L51+12
+ 751 0020 2160     		str	r1, [r4]	@ float
+  60:Core/Src/robot/robo_init.cpp ****         motor_configurations[0].tolerance = 0.1;
+ 752              		.loc 3 60 0
+ 753 0022 1A4B     		ldr	r3, .L51+16
+ 754 0024 6360     		str	r3, [r4, #4]	@ float
+  61:Core/Src/robot/robo_init.cpp **** 
+  62:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].htim = &htim8;
+ 755              		.loc 3 62 0
+ 756 0026 A063     		str	r0, [r4, #56]
+  63:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in1_port = GPIOC;
+ 757              		.loc 3 63 0
+ 758 0028 194D     		ldr	r5, .L51+20
+ 759 002a A562     		str	r5, [r4, #40]
+  64:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in1_pin = GPIO_PIN_11;
+ 760              		.loc 3 64 0
+ 761 002c 4FF40065 		mov	r5, #2048
+ 762 0030 A585     		strh	r5, [r4, #44]	@ movhi
+  65:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in2_port = GPIOA;
+ 763              		.loc 3 65 0
+ 764 0032 2263     		str	r2, [r4, #48]
+  66:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].in2_pin = GPIO_PIN_15;
+ 765              		.loc 3 66 0
+ 766 0034 4FF40042 		mov	r2, #32768
+ 767 0038 A286     		strh	r2, [r4, #52]	@ movhi
+  67:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].channel = TIM_CHANNEL_2;
+ 768              		.loc 3 67 0
+ 769 003a 0425     		movs	r5, #4
+ 770 003c E563     		str	r5, [r4, #60]
+  68:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].max_omega = 17.5;
+ 771              		.loc 3 68 0
+ 772 003e 2162     		str	r1, [r4, #32]	@ float
+  69:Core/Src/robot/robo_init.cpp ****         motor_configurations[1].tolerance = 0.1;
+ 773              		.loc 3 69 0
+ 774 0040 6362     		str	r3, [r4, #36]	@ float
+  70:Core/Src/robot/robo_init.cpp ****         
+  71:Core/Src/robot/robo_init.cpp **** 
+  72:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].htim = &htim8;
+ 775              		.loc 3 72 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 23
+
+
+ 776 0042 A065     		str	r0, [r4, #88]
+  73:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in1_port = GPIOD;
+ 777              		.loc 3 73 0
+ 778 0044 134A     		ldr	r2, .L51+24
+ 779 0046 A264     		str	r2, [r4, #72]
+  74:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in1_pin = GPIO_PIN_2;
+ 780              		.loc 3 74 0
+ 781 0048 A4F84C50 		strh	r5, [r4, #76]	@ movhi
+  75:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in2_port = GPIOD;
+ 782              		.loc 3 75 0
+ 783 004c 2265     		str	r2, [r4, #80]
+  76:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].in2_pin = GPIO_PIN_0;
+ 784              		.loc 3 76 0
+ 785 004e 0122     		movs	r2, #1
+ 786 0050 A4F85420 		strh	r2, [r4, #84]	@ movhi
+  77:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].channel = TIM_CHANNEL_3;
+ 787              		.loc 3 77 0
+ 788 0054 0826     		movs	r6, #8
+ 789 0056 E665     		str	r6, [r4, #92]
+  78:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].max_omega = 8.86;
+ 790              		.loc 3 78 0
+ 791 0058 0F4A     		ldr	r2, .L51+28
+ 792 005a 2264     		str	r2, [r4, #64]	@ float
+  79:Core/Src/robot/robo_init.cpp **** 	motor_configurations[2].tolerance = 0.1;
+ 793              		.loc 3 79 0
+ 794 005c 6364     		str	r3, [r4, #68]	@ float
+  80:Core/Src/robot/robo_init.cpp **** 
+  81:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Base_Start(&htim8);
+ 795              		.loc 3 81 0
+ 796 005e FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 797              	.LVL64:
+  82:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_PWM_Start(motor_configurations[0].htim, TIM_CHANNEL_2);
+ 798              		.loc 3 82 0
+ 799 0062 2946     		mov	r1, r5
+ 800 0064 A069     		ldr	r0, [r4, #24]
+ 801 0066 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 802              	.LVL65:
+  83:Core/Src/robot/robo_init.cpp ****         HAL_TIM_PWM_Start(motor_configurations[1].htim, TIM_CHANNEL_4);
+ 803              		.loc 3 83 0
+ 804 006a 3946     		mov	r1, r7
+ 805 006c A06B     		ldr	r0, [r4, #56]
+ 806 006e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 807              	.LVL66:
+  84:Core/Src/robot/robo_init.cpp ****         HAL_TIM_PWM_Start(motor_configurations[2].htim, TIM_CHANNEL_3);
+ 808              		.loc 3 84 0
+ 809 0072 3146     		mov	r1, r6
+ 810 0074 A06D     		ldr	r0, [r4, #88]
+ 811 0076 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 812              	.LVL67:
+  85:Core/Src/robot/robo_init.cpp **** }
+ 813              		.loc 3 85 0
+ 814 007a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 815              	.L52:
+ 816              		.align	2
+ 817              	.L51:
+ 818 007c 00000000 		.word	.LANCHOR1
+ 819 0080 00000000 		.word	htim8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 24
+
+
+ 820 0084 00000240 		.word	1073872896
+ 821 0088 00008C41 		.word	1099694080
+ 822 008c CDCCCC3D 		.word	1036831949
+ 823 0090 00080240 		.word	1073874944
+ 824 0094 000C0240 		.word	1073875968
+ 825 0098 8FC20D41 		.word	1091420815
+ 826              		.cfi_endproc
+ 827              	.LFE497:
+ 829              		.section	.text._ZL12encoder_initv,"ax",%progbits
+ 830              		.align	1
+ 831              		.syntax unified
+ 832              		.thumb
+ 833              		.thumb_func
+ 834              		.fpu fpv4-sp-d16
+ 836              	_ZL12encoder_initv:
+ 837              	.LFB498:
+  86:Core/Src/robot/robo_init.cpp **** 
+  87:Core/Src/robot/robo_init.cpp **** void encoder_init(){
+ 838              		.loc 3 87 0
+ 839              		.cfi_startproc
+ 840              		@ args = 0, pretend = 0, frame = 0
+ 841              		@ frame_needed = 0, uses_anonymous_args = 0
+ 842 0000 38B5     		push	{r3, r4, r5, lr}
+ 843              	.LCFI3:
+ 844              		.cfi_def_cfa_offset 16
+ 845              		.cfi_offset 3, -16
+ 846              		.cfi_offset 4, -12
+ 847              		.cfi_offset 5, -8
+ 848              		.cfi_offset 14, -4
+  88:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[0].id = 0;
+ 849              		.loc 3 88 0
+ 850 0002 0F4C     		ldr	r4, .L55
+ 851 0004 0023     		movs	r3, #0
+ 852 0006 2370     		strb	r3, [r4]
+  89:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[0].ppr = 250*LEG_TO_ENCODER_RATIO*4;
+ 853              		.loc 3 89 0
+ 854 0008 4FF47A65 		mov	r5, #4000
+ 855 000c 2581     		strh	r5, [r4, #8]	@ movhi
+  90:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[0].henc = &htim1;
+ 856              		.loc 3 90 0
+ 857 000e 0D48     		ldr	r0, .L55+4
+ 858 0010 6060     		str	r0, [r4, #4]
+  91:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Encoder_Start(encoder_configurations[0].henc, TIM_CHANNEL_ALL);
+ 859              		.loc 3 91 0
+ 860 0012 1821     		movs	r1, #24
+ 861 0014 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 862              	.LVL68:
+  92:Core/Src/robot/robo_init.cpp **** 
+  93:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[1].id = 1;
+ 863              		.loc 3 93 0
+ 864 0018 0123     		movs	r3, #1
+ 865 001a 2373     		strb	r3, [r4, #12]
+  94:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[1].ppr = 250*LEG_TO_ENCODER_RATIO*4;
+ 866              		.loc 3 94 0
+ 867 001c A582     		strh	r5, [r4, #20]	@ movhi
+  95:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[1].henc = &htim2;
+ 868              		.loc 3 95 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 25
+
+
+ 869 001e 0A48     		ldr	r0, .L55+8
+ 870 0020 2061     		str	r0, [r4, #16]
+  96:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Encoder_Start(encoder_configurations[1].henc, TIM_CHANNEL_ALL);
+ 871              		.loc 3 96 0
+ 872 0022 1821     		movs	r1, #24
+ 873 0024 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 874              	.LVL69:
+  97:Core/Src/robot/robo_init.cpp **** 	
+  98:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[2].id = 2;
+ 875              		.loc 3 98 0
+ 876 0028 0223     		movs	r3, #2
+ 877 002a 2376     		strb	r3, [r4, #24]
+  99:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[2].ppr = 250 *BEARING_TO_STEERING_RATIO*4;
+ 878              		.loc 3 99 0
+ 879 002c 41F60E73 		movw	r3, #7950
+ 880 0030 2384     		strh	r3, [r4, #32]	@ movhi
+ 100:Core/Src/robot/robo_init.cpp **** 	encoder_configurations[2].henc = &htim3;
+ 881              		.loc 3 100 0
+ 882 0032 0648     		ldr	r0, .L55+12
+ 883 0034 E061     		str	r0, [r4, #28]
+ 101:Core/Src/robot/robo_init.cpp **** 	HAL_TIM_Encoder_Start(encoder_configurations[2].henc, TIM_CHANNEL_ALL);
+ 884              		.loc 3 101 0
+ 885 0036 1821     		movs	r1, #24
+ 886 0038 FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 887              	.LVL70:
+ 102:Core/Src/robot/robo_init.cpp **** }
+ 888              		.loc 3 102 0
+ 889 003c 38BD     		pop	{r3, r4, r5, pc}
+ 890              	.L56:
+ 891 003e 00BF     		.align	2
+ 892              	.L55:
+ 893 0040 00000000 		.word	.LANCHOR2
+ 894 0044 00000000 		.word	htim1
+ 895 0048 00000000 		.word	htim2
+ 896 004c 00000000 		.word	htim3
+ 897              		.cfi_endproc
+ 898              	.LFE498:
+ 900              		.section	.text._Z41__static_initialization_and_destruction_0ii,"ax",%progbits
+ 901              		.align	1
+ 902              		.syntax unified
+ 903              		.thumb
+ 904              		.thumb_func
+ 905              		.fpu fpv4-sp-d16
+ 907              	_Z41__static_initialization_and_destruction_0ii:
+ 908              	.LFB499:
+ 909              		.loc 3 102 0
+ 910              		.cfi_startproc
+ 911              		@ args = 0, pretend = 0, frame = 0
+ 912              		@ frame_needed = 0, uses_anonymous_args = 0
+ 913              	.LVL71:
+ 914 0000 0128     		cmp	r0, #1
+ 915 0002 00D0     		beq	.L65
+ 916              	.L62:
+ 917 0004 7047     		bx	lr
+ 918              	.L65:
+ 919              		.loc 3 102 0 is_stmt 0 discriminator 1
+ 920 0006 4FF6FF73 		movw	r3, #65535
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 26
+
+
+ 921 000a 9942     		cmp	r1, r3
+ 922 000c FAD1     		bne	.L62
+ 923              		.loc 3 102 0
+ 924 000e 10B5     		push	{r4, lr}
+ 925              	.LCFI4:
+ 926              		.cfi_def_cfa_offset 8
+ 927              		.cfi_offset 4, -8
+ 928              		.cfi_offset 14, -4
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 929              		.loc 3 3 0 is_stmt 1
+ 930 0010 1E4B     		ldr	r3, .L66
+ 931              	.LVL72:
+ 932              	.L60:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 933              		.loc 3 3 0 is_stmt 0 discriminator 4
+ 934 0012 0028     		cmp	r0, #0
+ 935 0014 15DB     		blt	.L59
+ 936              	.LVL73:
+ 937              	.LBB397:
+ 938              	.LBB398:
+  18:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+ 939              		.loc 6 18 0 is_stmt 1
+ 940 0016 0021     		movs	r1, #0
+ 941 0018 1961     		str	r1, [r3, #16]
+ 942              	.LVL74:
+ 943              	.LBB399:
+ 944              	.LBB400:
+ 945              	.LBB401:
+ 946              	.LBB402:
+ 947              	.LBB403:
+ 948              	.LBB404:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 949              		.loc 1 11 0
+ 950 001a 0022     		movs	r2, #0
+ 951 001c 9A61     		str	r2, [r3, #24]	@ float
+ 952              	.LVL75:
+ 953              	.LBE404:
+ 954              	.LBE403:
+ 955              	.LBB405:
+ 956              	.LBB406:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 957              		.loc 1 12 0
+ 958 001e DA61     		str	r2, [r3, #28]	@ float
+ 959              	.LVL76:
+ 960              	.LBE406:
+ 961              	.LBE405:
+ 962              	.LBB407:
+ 963              	.LBB408:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 964              		.loc 1 13 0
+ 965 0020 1A62     		str	r2, [r3, #32]	@ float
+ 966              	.LVL77:
+ 967              	.LBE408:
+ 968              	.LBE407:
+ 969              	.LBE402:
+ 970              	.LBE401:
+  50:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 27
+
+
+ 971              		.loc 1 50 0
+ 972 0022 1B4C     		ldr	r4, .L66+4
+ 973 0024 5C61     		str	r4, [r3, #20]
+  51:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 974              		.loc 1 51 0
+ 975 0026 DA62     		str	r2, [r3, #44]	@ float
+  52:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 976              		.loc 1 52 0
+ 977 0028 1A63     		str	r2, [r3, #48]	@ float
+  53:Core/Inc/utils/pid_algorithms.h ****         }
+ 978              		.loc 1 53 0
+ 979 002a 5A63     		str	r2, [r3, #52]	@ float
+ 980              	.LVL78:
+ 981              	.LBE400:
+ 982              	.LBE399:
+ 983              	.LBB409:
+ 984              	.LBB410:
+  29:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+ 985              		.loc 4 29 0
+ 986 002c 9963     		str	r1, [r3, #56]
+ 987              	.LVL79:
+ 988              	.LBE410:
+ 989              	.LBE409:
+ 990              	.LBB411:
+ 991              	.LBB412:
+  19:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+ 992              		.loc 5 19 0
+ 993 002e 1964     		str	r1, [r3, #64]
+ 994 0030 5A64     		str	r2, [r3, #68]	@ float
+ 995 0032 9A64     		str	r2, [r3, #72]	@ float
+ 996 0034 DA64     		str	r2, [r3, #76]	@ float
+ 997 0036 1965     		str	r1, [r3, #80]
+ 998 0038 D963     		str	r1, [r3, #60]
+ 999              	.LVL80:
+ 1000              	.LBE412:
+ 1001              	.LBE411:
+  18:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+ 1002              		.loc 6 18 0
+ 1003 003a 5A65     		str	r2, [r3, #84]	@ float
+ 1004              	.LVL81:
+ 1005              	.LBE398:
+ 1006              	.LBE397:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 1007              		.loc 3 3 0
+ 1008 003c 5833     		adds	r3, r3, #88
+ 1009 003e 0138     		subs	r0, r0, #1
+ 1010 0040 E7E7     		b	.L60
+ 1011              	.L59:
+   3:Core/Src/robot/robo_init.cpp **** steering steering;
+ 1012              		.loc 3 3 0 is_stmt 0 discriminator 2
+ 1013 0042 144C     		ldr	r4, .L66+8
+ 1014 0044 2246     		mov	r2, r4
+ 1015 0046 1449     		ldr	r1, .L66+12
+ 1016 0048 0020     		movs	r0, #0
+ 1017 004a FFF7FEFF 		bl	__aeabi_atexit
+ 1018              	.LVL82:
+ 1019              	.LBB413:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 28
+
+
+ 1020              	.LBB414:
+ 1021              	.LBB415:
+ 1022              	.LBB416:
+ 1023              	.LBB417:
+  29:Core/Inc/devs/motor.h ****         motor(motor_config *motor) { motor_ = motor; }
+ 1024              		.loc 4 29 0 is_stmt 1 discriminator 2
+ 1025 004e 1348     		ldr	r0, .L66+16
+ 1026 0050 0022     		movs	r2, #0
+ 1027 0052 8260     		str	r2, [r0, #8]
+ 1028              	.LVL83:
+ 1029              	.LBE417:
+ 1030              	.LBE416:
+ 1031              	.LBE415:
+ 1032              	.LBB418:
+ 1033              	.LBB419:
+ 1034              	.LBB420:
+  19:Core/Inc/devs/encoder.h **** 	encoder(encoder_config *encoder){encoder_ = encoder;}
+ 1035              		.loc 5 19 0 discriminator 2
+ 1036 0054 0261     		str	r2, [r0, #16]
+ 1037 0056 0023     		movs	r3, #0
+ 1038 0058 4361     		str	r3, [r0, #20]	@ float
+ 1039 005a 8361     		str	r3, [r0, #24]	@ float
+ 1040 005c C361     		str	r3, [r0, #28]	@ float
+ 1041 005e 0262     		str	r2, [r0, #32]
+ 1042 0060 C260     		str	r2, [r0, #12]
+ 1043              	.LVL84:
+ 1044              	.LBE420:
+ 1045              	.LBE419:
+ 1046              	.LBE418:
+ 1047              	.LBB421:
+ 1048              	.LBB422:
+ 1049              	.LBB423:
+ 1050              	.LBB424:
+ 1051              	.LBB425:
+ 1052              	.LBB426:
+ 1053              	.LBB427:
+ 1054              	.LBB428:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 1055              		.loc 1 11 0 discriminator 2
+ 1056 0062 8362     		str	r3, [r0, #40]	@ float
+ 1057              	.LVL85:
+ 1058              	.LBE428:
+ 1059              	.LBE427:
+ 1060              	.LBB429:
+ 1061              	.LBB430:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 1062              		.loc 1 12 0 discriminator 2
+ 1063 0064 C362     		str	r3, [r0, #44]	@ float
+ 1064              	.LVL86:
+ 1065              	.LBE430:
+ 1066              	.LBE429:
+ 1067              	.LBB431:
+ 1068              	.LBB432:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 1069              		.loc 1 13 0 discriminator 2
+ 1070 0066 0363     		str	r3, [r0, #48]	@ float
+ 1071              	.LVL87:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 29
+
+
+ 1072              	.LBE432:
+ 1073              	.LBE431:
+ 1074              	.LBE426:
+ 1075              	.LBE425:
+ 1076              	.LBE424:
+  50:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 1077              		.loc 1 50 0 discriminator 2
+ 1078 0068 094A     		ldr	r2, .L66+4
+ 1079 006a 4262     		str	r2, [r0, #36]
+  51:Core/Inc/utils/pid_algorithms.h ****                 l_err_ = 0;
+ 1080              		.loc 1 51 0 discriminator 2
+ 1081 006c C363     		str	r3, [r0, #60]	@ float
+  52:Core/Inc/utils/pid_algorithms.h ****                 ll_err_ = 0;
+ 1082              		.loc 1 52 0 discriminator 2
+ 1083 006e 0364     		str	r3, [r0, #64]	@ float
+  53:Core/Inc/utils/pid_algorithms.h ****         }
+ 1084              		.loc 1 53 0 discriminator 2
+ 1085 0070 4364     		str	r3, [r0, #68]	@ float
+ 1086              	.LVL88:
+ 1087              	.LBE423:
+ 1088              	.LBE422:
+ 1089              	.LBE421:
+ 1090              	.LBB433:
+ 1091              	.LBB434:
+ 1092              	.LBB435:
+ 1093              	.LBB436:
+ 1094              	.LBB437:
+ 1095              	.LBB438:
+ 1096              	.LBB439:
+ 1097              	.LBB440:
+  11:Core/Inc/utils/pid_algorithms.h ****         void set_I(float i) { i_ = i; }
+ 1098              		.loc 1 11 0 discriminator 2
+ 1099 0072 C364     		str	r3, [r0, #76]	@ float
+ 1100              	.LVL89:
+ 1101              	.LBE440:
+ 1102              	.LBE439:
+ 1103              	.LBB441:
+ 1104              	.LBB442:
+  12:Core/Inc/utils/pid_algorithms.h ****         void set_D(float d) { d_ = d; }
+ 1105              		.loc 1 12 0 discriminator 2
+ 1106 0074 0365     		str	r3, [r0, #80]	@ float
+ 1107              	.LVL90:
+ 1108              	.LBE442:
+ 1109              	.LBE441:
+ 1110              	.LBB443:
+ 1111              	.LBB444:
+  13:Core/Inc/utils/pid_algorithms.h ****         void set_PID(float p, float i, float d)
+ 1112              		.loc 1 13 0 discriminator 2
+ 1113 0076 4365     		str	r3, [r0, #84]	@ float
+ 1114              	.LVL91:
+ 1115              	.LBE444:
+ 1116              	.LBE443:
+ 1117              	.LBE438:
+ 1118              	.LBE437:
+ 1119              	.LBE436:
+ 203:Core/Inc/utils/pid_algorithms.h ****                 l_output_ = 0;
+ 1120              		.loc 1 203 0 discriminator 2
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 30
+
+
+ 1121 0078 094A     		ldr	r2, .L66+20
+ 1122 007a 8264     		str	r2, [r0, #72]
+ 204:Core/Inc/utils/pid_algorithms.h ****                 err_sum_ = 0;
+ 1123              		.loc 1 204 0 discriminator 2
+ 1124 007c 0366     		str	r3, [r0, #96]	@ float
+ 205:Core/Inc/utils/pid_algorithms.h ****         }
+ 1125              		.loc 1 205 0 discriminator 2
+ 1126 007e 4366     		str	r3, [r0, #100]	@ float
+ 1127              	.LVL92:
+ 1128              	.LBE435:
+ 1129              	.LBE434:
+ 1130              	.LBE433:
+ 1131              	.LBE414:
+ 1132              	.LBE413:
+   4:Core/Src/robot/robo_init.cpp **** 
+ 1133              		.loc 3 4 0 discriminator 2
+ 1134 0080 2246     		mov	r2, r4
+ 1135 0082 0849     		ldr	r1, .L66+24
+ 1136 0084 FFF7FEFF 		bl	__aeabi_atexit
+ 1137              	.LVL93:
+ 1138              		.loc 3 102 0 discriminator 2
+ 1139 0088 10BD     		pop	{r4, pc}
+ 1140              	.L67:
+ 1141 008a 00BF     		.align	2
+ 1142              	.L66:
+ 1143 008c 00000000 		.word	.LANCHOR0
+ 1144 0090 08000000 		.word	_ZTV12Discrete_PID+8
+ 1145 0094 00000000 		.word	__dso_handle
+ 1146 0098 00000000 		.word	__tcf_0
+ 1147 009c 00000000 		.word	.LANCHOR3
+ 1148 00a0 08000000 		.word	_ZTV9Angle_PID+8
+ 1149 00a4 00000000 		.word	_ZN8steeringD1Ev
+ 1150              		.cfi_endproc
+ 1151              	.LFE499:
+ 1153              		.section	.text._ZN9Angle_PIDD0Ev,"axG",%progbits,_ZN9Angle_PIDD5Ev,comdat
+ 1154              		.align	1
+ 1155              		.weak	_ZN9Angle_PIDD0Ev
+ 1156              		.syntax unified
+ 1157              		.thumb
+ 1158              		.thumb_func
+ 1159              		.fpu fpv4-sp-d16
+ 1161              	_ZN9Angle_PIDD0Ev:
+ 1162              	.LFB421:
+ 212:Core/Inc/utils/pid_algorithms.h **** 
+ 1163              		.loc 1 212 0
+ 1164              		.cfi_startproc
+ 1165              		@ args = 0, pretend = 0, frame = 0
+ 1166              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1167              	.LVL94:
+ 1168 0000 10B5     		push	{r4, lr}
+ 1169              	.LCFI5:
+ 1170              		.cfi_def_cfa_offset 8
+ 1171              		.cfi_offset 4, -8
+ 1172              		.cfi_offset 14, -4
+ 1173 0002 0446     		mov	r4, r0
+ 212:Core/Inc/utils/pid_algorithms.h **** 
+ 1174              		.loc 1 212 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 31
+
+
+ 1175 0004 2021     		movs	r1, #32
+ 1176 0006 FFF7FEFF 		bl	_ZdlPvj
+ 1177              	.LVL95:
+ 1178 000a 2046     		mov	r0, r4
+ 1179 000c 10BD     		pop	{r4, pc}
+ 1180              		.cfi_endproc
+ 1181              	.LFE421:
+ 1183              		.section	.text._ZN12Discrete_PIDD0Ev,"axG",%progbits,_ZN12Discrete_PIDD5Ev,comdat
+ 1184              		.align	1
+ 1185              		.weak	_ZN12Discrete_PIDD0Ev
+ 1186              		.syntax unified
+ 1187              		.thumb
+ 1188              		.thumb_func
+ 1189              		.fpu fpv4-sp-d16
+ 1191              	_ZN12Discrete_PIDD0Ev:
+ 1192              	.LFB398:
+  59:Core/Inc/utils/pid_algorithms.h **** 
+ 1193              		.loc 1 59 0
+ 1194              		.cfi_startproc
+ 1195              		@ args = 0, pretend = 0, frame = 0
+ 1196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1197              	.LVL96:
+ 1198 0000 10B5     		push	{r4, lr}
+ 1199              	.LCFI6:
+ 1200              		.cfi_def_cfa_offset 8
+ 1201              		.cfi_offset 4, -8
+ 1202              		.cfi_offset 14, -4
+ 1203 0002 0446     		mov	r4, r0
+  59:Core/Inc/utils/pid_algorithms.h **** 
+ 1204              		.loc 1 59 0
+ 1205 0004 2421     		movs	r1, #36
+ 1206 0006 FFF7FEFF 		bl	_ZdlPvj
+ 1207              	.LVL97:
+ 1208 000a 2046     		mov	r0, r4
+ 1209 000c 10BD     		pop	{r4, pc}
+ 1210              		.cfi_endproc
+ 1211              	.LFE398:
+ 1213              		.section	.text._Z9robo_initv,"ax",%progbits
+ 1214              		.align	1
+ 1215              		.global	_Z9robo_initv
+ 1216              		.syntax unified
+ 1217              		.thumb
+ 1218              		.thumb_func
+ 1219              		.fpu fpv4-sp-d16
+ 1221              	_Z9robo_initv:
+ 1222              	.LFB492:
+  17:Core/Src/robot/robo_init.cpp **** 	motor_init();
+ 1223              		.loc 3 17 0
+ 1224              		.cfi_startproc
+ 1225              		@ args = 0, pretend = 0, frame = 0
+ 1226              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1227 0000 08B5     		push	{r3, lr}
+ 1228              	.LCFI7:
+ 1229              		.cfi_def_cfa_offset 8
+ 1230              		.cfi_offset 3, -8
+ 1231              		.cfi_offset 14, -4
+  18:Core/Src/robot/robo_init.cpp **** 	encoder_init();	
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 32
+
+
+ 1232              		.loc 3 18 0
+ 1233 0002 FFF7FEFF 		bl	_ZL10motor_initv
+ 1234              	.LVL98:
+  19:Core/Src/robot/robo_init.cpp **** 	pid_init();
+ 1235              		.loc 3 19 0
+ 1236 0006 FFF7FEFF 		bl	_ZL12encoder_initv
+ 1237              	.LVL99:
+  20:Core/Src/robot/robo_init.cpp **** 	limit_switch_init();
+ 1238              		.loc 3 20 0
+ 1239 000a FFF7FEFF 		bl	_ZL8pid_initv
+ 1240              	.LVL100:
+  21:Core/Src/robot/robo_init.cpp **** 	leg_init();
+ 1241              		.loc 3 21 0
+ 1242 000e FFF7FEFF 		bl	_ZL17limit_switch_initv
+ 1243              	.LVL101:
+  22:Core/Src/robot/robo_init.cpp **** 	steering_init();
+ 1244              		.loc 3 22 0
+ 1245 0012 FFF7FEFF 		bl	_ZL8leg_initv
+ 1246              	.LVL102:
+  23:Core/Src/robot/robo_init.cpp **** }
+ 1247              		.loc 3 23 0
+ 1248 0016 FFF7FEFF 		bl	_ZL13steering_initv
+ 1249              	.LVL103:
+  24:Core/Src/robot/robo_init.cpp **** 
+ 1250              		.loc 3 24 0
+ 1251 001a 08BD     		pop	{r3, pc}
+ 1252              		.cfi_endproc
+ 1253              	.LFE492:
+ 1255              		.section	.text._GLOBAL__sub_I_leg,"ax",%progbits
+ 1256              		.align	1
+ 1257              		.syntax unified
+ 1258              		.thumb
+ 1259              		.thumb_func
+ 1260              		.fpu fpv4-sp-d16
+ 1262              	_GLOBAL__sub_I_leg:
+ 1263              	.LFB501:
+ 1264              		.loc 3 102 0
+ 1265              		.cfi_startproc
+ 1266              		@ args = 0, pretend = 0, frame = 0
+ 1267              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1268 0000 08B5     		push	{r3, lr}
+ 1269              	.LCFI8:
+ 1270              		.cfi_def_cfa_offset 8
+ 1271              		.cfi_offset 3, -8
+ 1272              		.cfi_offset 14, -4
+ 1273              		.loc 3 102 0
+ 1274 0002 4FF6FF71 		movw	r1, #65535
+ 1275 0006 0120     		movs	r0, #1
+ 1276 0008 FFF7FEFF 		bl	_Z41__static_initialization_and_destruction_0ii
+ 1277              	.LVL104:
+ 1278 000c 08BD     		pop	{r3, pc}
+ 1279              		.cfi_endproc
+ 1280              	.LFE501:
+ 1282              		.section	.init_array,"aw",%init_array
+ 1283              		.align	2
+ 1284 0000 00000000 		.word	_GLOBAL__sub_I_leg(target1)
+ 1285              		.weak	_ZTS13PID_Algorithm
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 33
+
+
+ 1286              		.section	.rodata._ZTS13PID_Algorithm,"aG",%progbits,_ZTS13PID_Algorithm,comdat
+ 1287              		.align	2
+ 1290              	_ZTS13PID_Algorithm:
+ 1291 0000 31335049 		.ascii	"13PID_Algorithm\000"
+ 1291      445F416C 
+ 1291      676F7269 
+ 1291      74686D00 
+ 1292              		.weak	_ZTI13PID_Algorithm
+ 1293              		.section	.rodata._ZTI13PID_Algorithm,"aG",%progbits,_ZTI13PID_Algorithm,comdat
+ 1294              		.align	2
+ 1297              	_ZTI13PID_Algorithm:
+ 1298 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 1299 0004 00000000 		.word	_ZTS13PID_Algorithm
+ 1300              		.weak	_ZTS12Discrete_PID
+ 1301              		.section	.rodata._ZTS12Discrete_PID,"aG",%progbits,_ZTS12Discrete_PID,comdat
+ 1302              		.align	2
+ 1305              	_ZTS12Discrete_PID:
+ 1306 0000 31324469 		.ascii	"12Discrete_PID\000"
+ 1306      73637265 
+ 1306      74655F50 
+ 1306      494400
+ 1307              		.weak	_ZTI12Discrete_PID
+ 1308              		.section	.rodata._ZTI12Discrete_PID,"aG",%progbits,_ZTI12Discrete_PID,comdat
+ 1309              		.align	2
+ 1312              	_ZTI12Discrete_PID:
+ 1313 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1314 0004 00000000 		.word	_ZTS12Discrete_PID
+ 1315 0008 00000000 		.word	_ZTI13PID_Algorithm
+ 1316              		.weak	_ZTS9Angle_PID
+ 1317              		.section	.rodata._ZTS9Angle_PID,"aG",%progbits,_ZTS9Angle_PID,comdat
+ 1318              		.align	2
+ 1321              	_ZTS9Angle_PID:
+ 1322 0000 39416E67 		.ascii	"9Angle_PID\000"
+ 1322      6C655F50 
+ 1322      494400
+ 1323              		.weak	_ZTI9Angle_PID
+ 1324              		.section	.rodata._ZTI9Angle_PID,"aG",%progbits,_ZTI9Angle_PID,comdat
+ 1325              		.align	2
+ 1328              	_ZTI9Angle_PID:
+ 1329 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1330 0004 00000000 		.word	_ZTS9Angle_PID
+ 1331 0008 00000000 		.word	_ZTI13PID_Algorithm
+ 1332              		.weak	_ZTV12Discrete_PID
+ 1333              		.section	.rodata._ZTV12Discrete_PID,"aG",%progbits,_ZTV12Discrete_PID,comdat
+ 1334              		.align	2
+ 1337              	_ZTV12Discrete_PID:
+ 1338 0000 00000000 		.word	0
+ 1339 0004 00000000 		.word	_ZTI12Discrete_PID
+ 1340 0008 00000000 		.word	_ZN12Discrete_PID7computeEfm
+ 1341 000c 00000000 		.word	_ZN12Discrete_PIDD1Ev
+ 1342 0010 00000000 		.word	_ZN12Discrete_PIDD0Ev
+ 1343              		.weak	_ZTV9Angle_PID
+ 1344              		.section	.rodata._ZTV9Angle_PID,"aG",%progbits,_ZTV9Angle_PID,comdat
+ 1345              		.align	2
+ 1348              	_ZTV9Angle_PID:
+ 1349 0000 00000000 		.word	0
+ 1350 0004 00000000 		.word	_ZTI9Angle_PID
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 34
+
+
+ 1351 0008 00000000 		.word	_ZN9Angle_PID7computeEfm
+ 1352 000c 00000000 		.word	_ZN9Angle_PIDD1Ev
+ 1353 0010 00000000 		.word	_ZN9Angle_PIDD0Ev
+ 1354              		.global	steering
+ 1355              		.global	leg
+ 1356              		.section	.bss._ZL20motor_configurations,"aw",%nobits
+ 1357              		.align	2
+ 1358              		.set	.LANCHOR1,. + 0
+ 1361              	_ZL20motor_configurations:
+ 1362 0000 00000000 		.space	96
+ 1362      00000000 
+ 1362      00000000 
+ 1362      00000000 
+ 1362      00000000 
+ 1363              		.section	.bss._ZL22encoder_configurations,"aw",%nobits
+ 1364              		.align	2
+ 1365              		.set	.LANCHOR2,. + 0
+ 1368              	_ZL22encoder_configurations:
+ 1369 0000 00000000 		.space	36
+ 1369      00000000 
+ 1369      00000000 
+ 1369      00000000 
+ 1369      00000000 
+ 1370              		.section	.bss.leg,"aw",%nobits
+ 1371              		.align	2
+ 1372              		.set	.LANCHOR0,. + 0
+ 1375              	leg:
+ 1376 0000 00000000 		.space	176
+ 1376      00000000 
+ 1376      00000000 
+ 1376      00000000 
+ 1376      00000000 
+ 1377              		.section	.bss.steering,"aw",%nobits
+ 1378              		.align	2
+ 1379              		.set	.LANCHOR3,. + 0
+ 1382              	steering:
+ 1383 0000 00000000 		.space	104
+ 1383      00000000 
+ 1383      00000000 
+ 1383      00000000 
+ 1383      00000000 
+ 1384              		.text
+ 1385              	.Letext0:
+ 1386              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1387              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 1388              		.file 9 "Drivers/CMSIS/Include/core_cm4.h"
+ 1389              		.file 10 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1390              		.file 11 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1391              		.file 12 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 1392              		.file 13 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1393              		.file 14 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1394              		.file 15 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 1395              		.file 16 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1396              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1397              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1398              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1399              		.file 20 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 35
+
+
+ 1400              		.file 21 "Core/Inc/periphs/tim.h"
+ 1401              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1402              		.file 23 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1403              		.file 24 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1404              		.file 25 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1405              		.file 26 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1406              		.file 27 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 1407              		.file 28 "Core/Inc/devs/limit_switch.h"
+ 1408              		.file 29 "<built-in>"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 36
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robo_init.cpp
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:18     .text._ZN12Discrete_PIDD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:25     .text._ZN12Discrete_PIDD2Ev:00000000 _ZN12Discrete_PIDD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:42     .text._ZN12Discrete_PID7computeEfm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:49     .text._ZN12Discrete_PID7computeEfm:00000000 _ZN12Discrete_PID7computeEfm
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:153    .text._ZN12Discrete_PID7computeEfm:00000090 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:158    .text._ZN9Angle_PIDD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:165    .text._ZN9Angle_PIDD2Ev:00000000 _ZN9Angle_PIDD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:165    .text._ZN9Angle_PIDD2Ev:00000000 _ZN9Angle_PIDD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:181    .text._ZN9Angle_PID7computeEfm:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:188    .text._ZN9Angle_PID7computeEfm:00000000 _ZN9Angle_PID7computeEfm
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:293    .text._ZN8steeringD2Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:300    .text._ZN8steeringD2Ev:00000000 _ZN8steeringD2Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:300    .text._ZN8steeringD2Ev:00000000 _ZN8steeringD1Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:317    .text._ZL8leg_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:323    .text._ZL8leg_initv:00000000 _ZL8leg_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:391    .text._ZL8leg_initv:00000020 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:399    .text._ZL13steering_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:405    .text._ZL13steering_initv:00000000 _ZL13steering_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:437    .text._ZL13steering_initv:0000000c $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:444    .text._ZL8pid_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:450    .text._ZL8pid_initv:00000000 _ZL8pid_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:616    .text._ZL8pid_initv:00000058 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:635    .text._ZL17limit_switch_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:641    .text._ZL17limit_switch_initv:00000000 _ZL17limit_switch_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:666    .text._ZL17limit_switch_initv:00000014 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:673    .text.__tcf_0:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:679    .text.__tcf_0:00000000 __tcf_0
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:704    .text.__tcf_0:00000010 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:710    .text._ZL10motor_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:716    .text._ZL10motor_initv:00000000 _ZL10motor_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:818    .text._ZL10motor_initv:0000007c $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:830    .text._ZL12encoder_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:836    .text._ZL12encoder_initv:00000000 _ZL12encoder_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:893    .text._ZL12encoder_initv:00000040 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:901    .text._Z41__static_initialization_and_destruction_0ii:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:907    .text._Z41__static_initialization_and_destruction_0ii:00000000 _Z41__static_initialization_and_destruction_0ii
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1143   .text._Z41__static_initialization_and_destruction_0ii:0000008c $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1337   .rodata._ZTV12Discrete_PID:00000000 _ZTV12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1348   .rodata._ZTV9Angle_PID:00000000 _ZTV9Angle_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1154   .text._ZN9Angle_PIDD0Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1161   .text._ZN9Angle_PIDD0Ev:00000000 _ZN9Angle_PIDD0Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1184   .text._ZN12Discrete_PIDD0Ev:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1191   .text._ZN12Discrete_PIDD0Ev:00000000 _ZN12Discrete_PIDD0Ev
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1214   .text._Z9robo_initv:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1221   .text._Z9robo_initv:00000000 _Z9robo_initv
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1256   .text._GLOBAL__sub_I_leg:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1262   .text._GLOBAL__sub_I_leg:00000000 _GLOBAL__sub_I_leg
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1283   .init_array:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1290   .rodata._ZTS13PID_Algorithm:00000000 _ZTS13PID_Algorithm
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1287   .rodata._ZTS13PID_Algorithm:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1297   .rodata._ZTI13PID_Algorithm:00000000 _ZTI13PID_Algorithm
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1294   .rodata._ZTI13PID_Algorithm:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1305   .rodata._ZTS12Discrete_PID:00000000 _ZTS12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1302   .rodata._ZTS12Discrete_PID:00000000 $d
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s 			page 37
+
+
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1312   .rodata._ZTI12Discrete_PID:00000000 _ZTI12Discrete_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1309   .rodata._ZTI12Discrete_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1321   .rodata._ZTS9Angle_PID:00000000 _ZTS9Angle_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1318   .rodata._ZTS9Angle_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1328   .rodata._ZTI9Angle_PID:00000000 _ZTI9Angle_PID
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1325   .rodata._ZTI9Angle_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1334   .rodata._ZTV12Discrete_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1345   .rodata._ZTV9Angle_PID:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1382   .bss.steering:00000000 steering
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1375   .bss.leg:00000000 leg
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1357   .bss._ZL20motor_configurations:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1361   .bss._ZL20motor_configurations:00000000 _ZL20motor_configurations
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1364   .bss._ZL22encoder_configurations:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1368   .bss._ZL22encoder_configurations:00000000 _ZL22encoder_configurations
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1371   .bss.leg:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc4tnLm2.s:1378   .bss.steering:00000000 $d
+                           .group:00000000 _ZN12Discrete_PIDD5Ev
+                           .group:00000000 _ZN9Angle_PIDD5Ev
+                           .group:00000000 _ZN8steeringD5Ev
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Start
+HAL_TIM_PWM_Start
+htim8
+HAL_TIM_Encoder_Start
+htim1
+htim2
+htim3
+__aeabi_atexit
+__dso_handle
+_ZdlPvj
+_ZTVN10__cxxabiv117__class_type_infoE
+_ZTVN10__cxxabiv120__si_class_type_infoE
