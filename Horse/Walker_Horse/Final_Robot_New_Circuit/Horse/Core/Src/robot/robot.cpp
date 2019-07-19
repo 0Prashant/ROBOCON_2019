@@ -15,8 +15,8 @@ bool USE_IMU_FLAG = false;
 float omega0 = 0;
 float omega1 = 0;
 
-float steps[7] = {6, 10, 15, 17, 22, 24, 31};
-float angles[7] = {0 , 45, 45, 60, -10, 0, -90};
+float steps[7] = {6, 10, 15, 17, 21, 24, 31};
+float angles[7] = {0 , 45, 45, 65, 10, 0, -90};
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -49,12 +49,14 @@ void start_Robot(enum Robot_States *state_)
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
 		{
 			initial_angle = curr_angle;
+			printf("not set");
 			// initial_angle.setZ(initial_angle.getZ());
 			// printf("\t%d\t", (int)initial_angle.getZ());
 		}
 		else if (ROBOT_START_FLAG)
 		{
 			INITIAL_ANGLE_FLAG = false;
+			printf("\n\nset\n\n");
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_SET);
 		}
 		printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
@@ -220,7 +222,7 @@ void start_Robot(enum Robot_States *state_)
 		printf("\nTussock");
 		if (!INITIALIZATION_FLAG)
 		{
-			if (go(steps[5], angles[5]) == true)
+			if (go(steps[5], angles[5]) == true) 
 			{
 				INITIALIZATION_FLAG = true;
 			}
@@ -256,7 +258,8 @@ void start_Robot(enum Robot_States *state_)
 			*state_ = MOUNTAIN;
 			angles[6] = robot_angle * 180 / PI;
 			ROBOT_START_FLAG = false;
-
+			leg[0].steps = steps[5];
+			leg[1].steps = steps[5];
 			HAL_GPIO_TogglePin(GreenLED_GPIO_Port, GreenLED_Pin);
 			HAL_GPIO_TogglePin(OrangeLED_GPIO_Port, OrangeLED_Pin);
 			HAL_GPIO_TogglePin(RedLED_GPIO_Port, RedLED_Pin);
@@ -277,6 +280,8 @@ void start_Robot(enum Robot_States *state_)
 			if (go(steps[6], angles[6]) == true)
 			{
 				INITIALIZATION_FLAG_2 = true;
+				leg[0].steps = steps[5];
+				leg[1].steps = steps[5];
 			}
 		}
 		else
@@ -424,7 +429,7 @@ void test(void)
 	leg[0].set_omega(0);
 	leg[1].set_omega(0);
 	steering.set_angle(0);
-	printf("\nleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
+	printf("\tleg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d", (int)(leg[0].get_actual_angle() * 180 / PI),
 	       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI));
 	zone_select();
 }

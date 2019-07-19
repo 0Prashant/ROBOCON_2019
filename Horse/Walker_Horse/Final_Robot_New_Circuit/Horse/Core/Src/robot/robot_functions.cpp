@@ -6,9 +6,9 @@ extern bool USE_IMU_FLAG;
 Vec3<float> initial_angle;
 Vec3<float> curr_angle;
 
-static const float robot_speed = 7;      //17 is the maximum with safe zone
+static const float robot_speed = 6;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
-static const float steering_angle_limit = 7 * PI / 180;
+static const float steering_angle_limit = 9 * PI / 180;
 
 extern float steps[7];
 extern float angles[7];
@@ -83,9 +83,10 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step==100)||(step== (int)steps[6])) ? 4 : robot_speed;
+	leg_speed = ((step==100)||(step== (int)steps[6])) ? 5.25 : robot_speed;
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
+
 	del_speed = 3 * (leg[0].get_actual_angle() - leg[1].get_actual_angle()) * leg_speed;
 	if (fabs(del_speed) >= leg_speed)
 	{
@@ -112,7 +113,7 @@ void move_steering(int step, float angle)
 	{
 		summation_angle += 1.3*robot_angle;
 		angle = -summation_angle;
-		angle /= 50;
+		angle /= 100;
 	}
 	if (leg[0].is_raised() == Leg_condition::RAISED)
 	{
@@ -271,7 +272,7 @@ void initialize_position(void)
  */
 bool initialize_leg_position(void)
 {
-	float initial_tolerance = 4;
+	float initial_tolerance = 8;
 	float leg_initial_position = 90;
 	static bool leg0_flag = false;
 	static bool leg1_flag = false;

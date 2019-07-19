@@ -14,7 +14,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         switch (GPIO_Pin) {
 		case GPIO_PIN_0 : {
 			ROBOT_START_FLAG = true;
-			// printf("\n\n\t\t\t !!start_pressed!!\n\n");
+			printf("\n\n\t\t\t !!start_pressed!!\n\n");
 		}break;
 
                 case GPIO_PIN_15 : {

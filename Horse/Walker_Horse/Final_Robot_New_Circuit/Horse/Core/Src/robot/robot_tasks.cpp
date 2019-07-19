@@ -65,7 +65,9 @@ void StartRobotTask(void const *argument)
 		}
 		else{
 			play();
+			// test();
 		}
+
 		// leg[1].set_omega(10);
 		// leg0_omega = leg[0].get_omega();
 		// leg1_omega = leg[1].get_omega();

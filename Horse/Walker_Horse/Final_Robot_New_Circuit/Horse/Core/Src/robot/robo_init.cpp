@@ -39,7 +39,7 @@ static void pid_init(){
 	leg[0].set_PID_constants( 1.8, 30, 0, -17.5, 17.5);		//1.8, 30
 	leg[1].set_PID_constants( 1, 25, 0, -17.5, 17.5);
 	steering.set_PID_constants( 2.3	, 50, 0, -8.75, 8.75);		//2.3, 50
-	steering.set_angle_PID_constants( 0.164, 0.0002, 0, -3, 3);	//0.164, 0.0002
+	steering.set_angle_PID_constants( 0.164, 0.0002, 0, -2.4, 2.4);	//0.164, 0.0002
 }
 
 static void limit_switch_init(){
