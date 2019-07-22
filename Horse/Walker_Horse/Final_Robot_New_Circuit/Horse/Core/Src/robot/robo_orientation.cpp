@@ -127,7 +127,7 @@ Vec3<float> read_Orientation(uint32_t dt_millis)
 		blue_start => -39.5, 15.4, 80
 		blue_mid => -18.1, 10.45, 76.81
 	 */
-	Vec3<float> mag_offset(81,-36,-150.1);	// Directly add the offset here 
+	Vec3<float> mag_offset(-18.0541,51.25, -69);	// Directly add the offset here 
 	//! Don't confuse with -ve sign 	
         Vec3<float> angles;
 

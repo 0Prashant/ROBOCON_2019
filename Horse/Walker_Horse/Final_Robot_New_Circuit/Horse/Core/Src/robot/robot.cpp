@@ -12,11 +12,10 @@ Robot_States robo_state;
 bool ROBOT_START_FLAG = false;
 bool GEREGE_FLAG = false;
 bool USE_IMU_FLAG = false;
-float omega0 = 0;
-float omega1 = 0;
+float angle_offset = -1;
 
-float steps[7] = {6, 10, 15, 17, 21, 24, 31};
-float angles[7] = {0 , 45, 45, 65, 10, 0, -90};
+float steps[7] = {6, 10, 15, 17, 21, 25, 32};
+float angles[7] = {0 , 45, 45, 70, 10, 0, -90};
 
 void start_Robot(enum Robot_States *state_)
 {
@@ -49,7 +48,7 @@ void start_Robot(enum Robot_States *state_)
 		if (!ROBOT_START_FLAG && INITIAL_ANGLE_FLAG)
 		{
 			initial_angle = curr_angle;
-			printf("not set");
+			printf("  not set  ");
 			// initial_angle.setZ(initial_angle.getZ());
 			// printf("\t%d\t", (int)initial_angle.getZ());
 		}
@@ -59,8 +58,8 @@ void start_Robot(enum Robot_States *state_)
 			printf("\n\nset\n\n");
 			HAL_GPIO_WritePin(Grip_Pneumatic_GPIO_Port, Grip_Pneumatic_Pin, GPIO_PIN_SET);
 		}
-		printf("leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
-		       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle * 180 / PI));
+		printf("  leg0_angle = %d\tleg1_angle = %d\tsteering_angle = %d\trobot_angle = %d\t", (int)(leg[0].get_angle() * 180 / PI),
+		       (int)(leg[1].get_actual_angle() * 180 / PI), (int)(steering.get_angle() * 180 / PI), (int)(robot_angle*180/PI));
 		if ((HAL_GPIO_ReadPin(ZONE_INIT_GPIO_Port, ZONE_INIT_Pin) == GPIO_PIN_RESET) ||
 		    (HAL_GPIO_ReadPin(ZONE_45_GPIO_Port, ZONE_45_Pin) == GPIO_PIN_RESET) ||
 		    (HAL_GPIO_ReadPin(ZONE_SAND_GPIO_Port, ZONE_SAND_Pin) == GPIO_PIN_RESET) ||
@@ -327,8 +326,6 @@ void start_Robot(enum Robot_States *state_)
 bool play()
 {
 	start_Robot(&robo_state);
-	omega0 = leg[0].get_omega();
-	omega1 = leg[1].get_omega();
 	return true;
 }
 
@@ -394,6 +391,8 @@ void zone_select(void)
 			// angles[i] -= 7.5;
 			// printf("\n\t angles= %d",(int)(angles[i]));
 		}
+		angles[1] -= angle_offset;
+		angles[2] -= angle_offset; 
 	}
 	else if (HAL_GPIO_ReadPin(ZONE_BLUE_GPIO_Port, ZONE_BLUE_Pin) == GPIO_PIN_RESET)
 	{
@@ -402,6 +401,8 @@ void zone_select(void)
 			// angles[i] -= 7.5;
 			printf("\n\t angles= %d",(int)(angles[i]));
 		}
+		angles[1] -= angle_offset;
+		angles[2] -= angle_offset;
 	}
 	else
 	{
@@ -412,6 +413,8 @@ void zone_select(void)
 			// angles[i] -= 7.5;
 			printf("\n\t angles= %d",(int)(angles[i]));
 		}
+		angles[1] -= angle_offset;
+		angles[2] -= angle_offset;
 	}
 }
 

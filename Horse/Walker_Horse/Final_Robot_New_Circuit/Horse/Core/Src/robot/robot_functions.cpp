@@ -8,7 +8,7 @@ Vec3<float> curr_angle;
 
 static const float robot_speed = 6;      //17 is the maximum with safe zone
 static const float steering_speed = 0.8; // 0.875 is the 100%
-static const float steering_angle_limit = 9 * PI / 180;
+static const float steering_angle_limit = 8 * PI / 180;
 
 extern float steps[7];
 extern float angles[7];
@@ -83,7 +83,7 @@ void move_leg(int step, float angle)
 	float leg_speed = robot_speed;
 
 	//Setting the slow speed in sand dune and tussok
-	leg_speed = ((step==100)||(step== (int)steps[6])) ? 5.25 : robot_speed;
+	leg_speed = ((step==100)||(step== (int)steps[6])) ? 4.3 : robot_speed;
 
 	leg_speed = motion_profile(leg[0].get_angle() * 180 / PI, 1, leg_speed);
 
@@ -109,6 +109,7 @@ void move_leg(int step, float angle)
 */
 void move_steering(int step, float angle)
 {
+	// if ((step == steps[0]) && (leg[0].is_raised() != Leg_condition::RAISED)) 
 	if (step == steps[0])
 	{
 		summation_angle += 1.3*robot_angle;
@@ -144,7 +145,7 @@ void set_angle(float angle)
 {
 	float del_angle = (angle - robot_angle) * 180 / PI;
 	// printf("\tdel_angle = %d\t", (int)(del_angle));
-	if(abs(del_angle) >= 0.35){
+	if(abs(del_angle) >= 0.5){
 		if (del_angle >= 0)
 		{
 			steering.set_angle((del_angle > (steering_angle_limit * 180 / PI)) ? (steering_angle_limit * 180 / PI) : del_angle);
@@ -190,10 +191,8 @@ void calculate_robot_angle()
 {
 	if (USE_IMU_FLAG)
 	{
-		// if (!(leg[0].is_raised() == Leg_condition::RAISED)){
 		robot_angle = (initial_angle.getZ() - curr_angle.getZ()) * PI / 180;
 		temp_robot_angle = robot_angle;
-		// }
 		// printf("\tusing IMU\t");
 	}
 	else
