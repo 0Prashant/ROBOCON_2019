@@ -1,0 +1,526 @@
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"robot_tasks.cpp"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.StartDefaultTask,"ax",%progbits
+  18              		.align	1
+  19              		.global	StartDefaultTask
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	StartDefaultTask:
+  26              	.LFB497:
+  27              		.file 1 "Core/Src/robot/robot_tasks.cpp"
+   1:Core/Src/robot/robot_tasks.cpp **** #include "FreeRTOS.h"
+   2:Core/Src/robot/robot_tasks.cpp **** #include "task.h"
+   3:Core/Src/robot/robot_tasks.cpp **** #include "main.h"
+   4:Core/Src/robot/robot_tasks.cpp **** #include "cmsis_os.h"
+   5:Core/Src/robot/robot_tasks.cpp **** #include "robot.h"
+   6:Core/Src/robot/robot_tasks.cpp **** #include "robot_functions.h"
+   7:Core/Src/robot/robot_tasks.cpp **** 
+   8:Core/Src/robot/robot_tasks.cpp **** extern bool ROBOT_START_FLAG;
+   9:Core/Src/robot/robot_tasks.cpp **** extern Robot_States robo_state;
+  10:Core/Src/robot/robot_tasks.cpp **** extern float angles[7];
+  11:Core/Src/robot/robot_tasks.cpp **** extern leg leg[2];
+  12:Core/Src/robot/robot_tasks.cpp **** extern steering steering;
+  13:Core/Src/robot/robot_tasks.cpp **** extern bool USE_IMU_FLAG;
+  14:Core/Src/robot/robot_tasks.cpp **** extern "C" void StartDefaultTask(void const *argument);
+  15:Core/Src/robot/robot_tasks.cpp **** extern "C" void StartRobotTask(void const *argument);
+  16:Core/Src/robot/robot_tasks.cpp **** extern "C" void StartLoggerTask(void const *argument);
+  17:Core/Src/robot/robot_tasks.cpp **** extern "C" void StartCalculationTask(void const *argument);
+  18:Core/Src/robot/robot_tasks.cpp **** 
+  19:Core/Src/robot/robot_tasks.cpp **** float leg0_omega, leg1_omega, leg0_angle, leg1_angle;
+  20:Core/Src/robot/robot_tasks.cpp **** 
+  21:Core/Src/robot/robot_tasks.cpp **** 
+  22:Core/Src/robot/robot_tasks.cpp **** /* USER CODE BEGIN Header_StartDefaultTask */
+  23:Core/Src/robot/robot_tasks.cpp **** /**
+  24:Core/Src/robot/robot_tasks.cpp ****   * @brief  Function implementing the defaultTask thread.
+  25:Core/Src/robot/robot_tasks.cpp ****   * @param  argument: Not used 
+  26:Core/Src/robot/robot_tasks.cpp ****   * @retval None
+  27:Core/Src/robot/robot_tasks.cpp ****   */
+  28:Core/Src/robot/robot_tasks.cpp **** /* USER CODE END Header_StartDefaultTask */
+  29:Core/Src/robot/robot_tasks.cpp **** void StartDefaultTask(void const *argument)
+  30:Core/Src/robot/robot_tasks.cpp **** {
+  28              		.loc 1 30 0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 2
+
+
+  29              		.cfi_startproc
+  30              		@ Volatile: function does not return.
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              	.LVL0:
+  34 0000 08B5     		push	{r3, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+  39              	.LVL1:
+  40              	.L2:
+  31:Core/Src/robot/robot_tasks.cpp **** 
+  32:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE BEGIN StartDefaultTask */
+  33:Core/Src/robot/robot_tasks.cpp **** 	/* Infinite loop */
+  34:Core/Src/robot/robot_tasks.cpp **** 	for (;;)
+  35:Core/Src/robot/robot_tasks.cpp **** 	{
+  36:Core/Src/robot/robot_tasks.cpp **** 		osDelay(1);
+  41              		.loc 1 36 0 discriminator 1
+  42 0002 0120     		movs	r0, #1
+  43 0004 FFF7FEFF 		bl	osDelay
+  44              	.LVL2:
+  45 0008 FBE7     		b	.L2
+  46              		.cfi_endproc
+  47              	.LFE497:
+  49              		.section	.text.StartRobotTask,"ax",%progbits
+  50              		.align	1
+  51              		.global	StartRobotTask
+  52              		.syntax unified
+  53              		.thumb
+  54              		.thumb_func
+  55              		.fpu fpv4-sp-d16
+  57              	StartRobotTask:
+  58              	.LFB498:
+  37:Core/Src/robot/robot_tasks.cpp **** 	}
+  38:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE END StartDefaultTask */
+  39:Core/Src/robot/robot_tasks.cpp **** }
+  40:Core/Src/robot/robot_tasks.cpp **** 
+  41:Core/Src/robot/robot_tasks.cpp **** /* USER CODE BEGIN Header_StartRobotTask */
+  42:Core/Src/robot/robot_tasks.cpp **** /**
+  43:Core/Src/robot/robot_tasks.cpp **** * @brief Function implementing the RobotTask thread.
+  44:Core/Src/robot/robot_tasks.cpp **** * @param argument: Not used
+  45:Core/Src/robot/robot_tasks.cpp **** * @retval None
+  46:Core/Src/robot/robot_tasks.cpp **** */
+  47:Core/Src/robot/robot_tasks.cpp **** /* USER CODE END Header_StartRobotTask */
+  48:Core/Src/robot/robot_tasks.cpp **** void StartRobotTask(void const *argument)
+  49:Core/Src/robot/robot_tasks.cpp **** {
+  59              		.loc 1 49 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              	.LVL3:
+  64 0000 10B5     		push	{r4, lr}
+  65              	.LCFI1:
+  66              		.cfi_def_cfa_offset 8
+  67              		.cfi_offset 4, -8
+  68              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 3
+
+
+  69 0002 2DED028B 		vpush.64	{d8}
+  70              	.LCFI2:
+  71              		.cfi_def_cfa_offset 16
+  72              		.cfi_offset 80, -16
+  73              		.cfi_offset 81, -12
+  74              	.LVL4:
+  50:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE BEGIN StartRobotTask */
+  51:Core/Src/robot/robot_tasks.cpp **** 	uint8_t sample_time = 100;
+  52:Core/Src/robot/robot_tasks.cpp **** 	uint32_t dt = HAL_GetTick();
+  75              		.loc 1 52 0
+  76 0006 FFF7FEFF 		bl	HAL_GetTick
+  77              	.LVL5:
+  53:Core/Src/robot/robot_tasks.cpp **** 	robo_state = HOME;
+  78              		.loc 1 53 0
+  79 000a 154B     		ldr	r3, .L7
+  80 000c 0022     		movs	r2, #0
+  81 000e 1A70     		strb	r2, [r3]
+  54:Core/Src/robot/robot_tasks.cpp **** 	leg[0].reset_angle(90 * PI / 180);
+  82              		.loc 1 54 0
+  83 0010 DFED148A 		vldr.32	s17, .L7+4
+  84 0014 144C     		ldr	r4, .L7+8
+  85 0016 B0EE680A 		vmov.f32	s0, s17
+  86 001a 2046     		mov	r0, r4
+  87 001c FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+  88              	.LVL6:
+  55:Core/Src/robot/robot_tasks.cpp **** 	leg[1].reset_angle(270 * PI / 180);
+  89              		.loc 1 55 0
+  90 0020 9FED128A 		vldr.32	s16, .L7+12
+  91 0024 B0EE480A 		vmov.f32	s0, s16
+  92 0028 04F15800 		add	r0, r4, #88
+  93 002c FFF7FEFF 		bl	_ZN3leg11reset_angleEf
+  94              	.LVL7:
+  95              	.LBB6:
+  96              	.LBB7:
+  97              		.file 2 "Core/Inc/devs/leg.h"
+   1:Core/Inc/devs/leg.h **** #ifndef _LEG_H_
+   2:Core/Inc/devs/leg.h **** #define _LEG_H_
+   3:Core/Inc/devs/leg.h **** 
+   4:Core/Inc/devs/leg.h **** #include "motor.h"
+   5:Core/Inc/devs/leg.h **** #include "encoder.h"
+   6:Core/Inc/devs/leg.h **** #include "pid.h"
+   7:Core/Inc/devs/leg.h **** #include "limit_switch.h"
+   8:Core/Inc/devs/leg.h **** #include "defines.h"
+   9:Core/Inc/devs/leg.h **** #include "pid_algorithms.h"
+  10:Core/Inc/devs/leg.h **** 
+  11:Core/Inc/devs/leg.h **** enum Leg_condition{	RAISED, 
+  12:Core/Inc/devs/leg.h **** 			FALLEN, 
+  13:Core/Inc/devs/leg.h **** 			UNDEFINED};
+  14:Core/Inc/devs/leg.h **** 
+  15:Core/Inc/devs/leg.h **** class leg
+  16:Core/Inc/devs/leg.h **** {
+  17:Core/Inc/devs/leg.h **** public:
+  18:Core/Inc/devs/leg.h **** 	leg() {}
+  19:Core/Inc/devs/leg.h **** 	leg(leg &&) = default;
+  20:Core/Inc/devs/leg.h **** 	leg(const leg &) = default;
+  21:Core/Inc/devs/leg.h **** 	leg &operator=(leg &&) = default;
+  22:Core/Inc/devs/leg.h **** 	leg &operator=(const leg &) = default;
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 4
+
+
+  23:Core/Inc/devs/leg.h **** 	~leg(){}
+  24:Core/Inc/devs/leg.h ****         void set_config(motor_config *motor, encoder_config *encoder) { 
+  25:Core/Inc/devs/leg.h **** 		motor__.set_config(motor);
+  26:Core/Inc/devs/leg.h **** 		encoder__.set_config(encoder);
+  27:Core/Inc/devs/leg.h **** 	}
+  28:Core/Inc/devs/leg.h **** 	void set_PID_constants(float kp, float ki, float kd, float lower_limit, float upper_limit) {
+  29:Core/Inc/devs/leg.h **** 		dpid_.set_P(kp);
+  30:Core/Inc/devs/leg.h **** 		dpid_.set_I(ki);
+  31:Core/Inc/devs/leg.h **** 		dpid_.set_D(kd);
+  32:Core/Inc/devs/leg.h **** 		dpid_.set_Limits(upper_limit, lower_limit);
+  33:Core/Inc/devs/leg.h **** 	}
+  34:Core/Inc/devs/leg.h **** 
+  35:Core/Inc/devs/leg.h **** 	
+  36:Core/Inc/devs/leg.h **** 	void set_omega(float omega);
+  37:Core/Inc/devs/leg.h **** 	float ramp(float omega);
+  38:Core/Inc/devs/leg.h **** 	void set_gravity_compensator_constant(float kgravity){kg_ = kgravity;}
+  39:Core/Inc/devs/leg.h **** 	void reset_angle(float angle_in_radians);
+  40:Core/Inc/devs/leg.h **** 	void reset_actual_angle(float angle_in_radians){encoder__.reset_actual_angle(angle_in_radians);}
+  98              		.loc 2 40 0
+  99 0030 B0EE680A 		vmov.f32	s0, s17
+ 100 0034 04F13C00 		add	r0, r4, #60
+ 101 0038 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 102              	.LVL8:
+ 103              	.LBE7:
+ 104              	.LBE6:
+ 105              	.LBB8:
+ 106              	.LBB9:
+ 107 003c B0EE480A 		vmov.f32	s0, s16
+ 108 0040 04F19400 		add	r0, r4, #148
+ 109 0044 FFF7FEFF 		bl	_ZN7encoder18reset_actual_angleEf
+ 110              	.LVL9:
+ 111              	.L5:
+ 112              	.LBE9:
+ 113              	.LBE8:
+  56:Core/Src/robot/robot_tasks.cpp **** 	leg[0].reset_actual_angle(90 * PI / 180);
+  57:Core/Src/robot/robot_tasks.cpp **** 	leg[1].reset_actual_angle(270 * PI / 180);
+  58:Core/Src/robot/robot_tasks.cpp **** 	/* Infinite loop */
+  59:Core/Src/robot/robot_tasks.cpp **** 	for (;;)
+  60:Core/Src/robot/robot_tasks.cpp **** 	{
+  61:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick();
+ 114              		.loc 1 61 0 discriminator 1
+ 115 0048 FFF7FEFF 		bl	HAL_GetTick
+ 116              	.LVL10:
+ 117 004c 0446     		mov	r4, r0
+ 118              	.LVL11:
+  62:Core/Src/robot/robot_tasks.cpp **** 		//play();
+  63:Core/Src/robot/robot_tasks.cpp **** 		// test();
+  64:Core/Src/robot/robot_tasks.cpp **** 
+  65:Core/Src/robot/robot_tasks.cpp **** 		// leg[1].set_omega(10);
+  66:Core/Src/robot/robot_tasks.cpp **** 		// leg0_omega = leg[0].get_omega();
+  67:Core/Src/robot/robot_tasks.cpp **** 		// leg1_omega = leg[1].get_omega();
+  68:Core/Src/robot/robot_tasks.cpp **** 		// leg0_angle = leg[0].get_angle();
+  69:Core/Src/robot/robot_tasks.cpp **** 		// leg1_angle = leg[1].get_angle();
+  70:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick() - dt;
+ 119              		.loc 1 70 0 discriminator 1
+ 120 004e FFF7FEFF 		bl	HAL_GetTick
+ 121              	.LVL12:
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 5
+
+
+ 122 0052 001B     		subs	r0, r0, r4
+ 123              	.LVL13:
+  71:Core/Src/robot/robot_tasks.cpp **** 		osDelay(sample_time - dt);
+ 124              		.loc 1 71 0 discriminator 1
+ 125 0054 C0F16400 		rsb	r0, r0, #100
+ 126              	.LVL14:
+ 127 0058 FFF7FEFF 		bl	osDelay
+ 128              	.LVL15:
+ 129 005c F4E7     		b	.L5
+ 130              	.L8:
+ 131 005e 00BF     		.align	2
+ 132              	.L7:
+ 133 0060 00000000 		.word	robo_state
+ 134 0064 DB0FC93F 		.word	1070141403
+ 135 0068 00000000 		.word	leg
+ 136 006c E4CB9640 		.word	1083624420
+ 137              		.cfi_endproc
+ 138              	.LFE498:
+ 140              		.section	.text.StartLoggerTask,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	StartLoggerTask
+ 143              		.syntax unified
+ 144              		.thumb
+ 145              		.thumb_func
+ 146              		.fpu fpv4-sp-d16
+ 148              	StartLoggerTask:
+ 149              	.LFB499:
+  72:Core/Src/robot/robot_tasks.cpp **** 	}
+  73:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE END StartRobotTask */
+  74:Core/Src/robot/robot_tasks.cpp **** }
+  75:Core/Src/robot/robot_tasks.cpp **** 
+  76:Core/Src/robot/robot_tasks.cpp **** /* USER CODE BEGIN Header_StartLoggerTask */
+  77:Core/Src/robot/robot_tasks.cpp **** /**
+  78:Core/Src/robot/robot_tasks.cpp **** * @brief Function implementing the LoggerTask thread.
+  79:Core/Src/robot/robot_tasks.cpp **** * @param argument: Not used
+  80:Core/Src/robot/robot_tasks.cpp **** * @retval None
+  81:Core/Src/robot/robot_tasks.cpp **** */
+  82:Core/Src/robot/robot_tasks.cpp **** /* USER CODE END Header_StartLoggerTask */
+  83:Core/Src/robot/robot_tasks.cpp **** void StartLoggerTask(void const *argument)
+  84:Core/Src/robot/robot_tasks.cpp **** {
+ 150              		.loc 1 84 0
+ 151              		.cfi_startproc
+ 152              		@ args = 0, pretend = 0, frame = 0
+ 153              		@ frame_needed = 0, uses_anonymous_args = 0
+ 154              	.LVL16:
+ 155 0000 10B5     		push	{r4, lr}
+ 156              	.LCFI3:
+ 157              		.cfi_def_cfa_offset 8
+ 158              		.cfi_offset 4, -8
+ 159              		.cfi_offset 14, -4
+ 160              	.LVL17:
+  85:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE BEGIN StartLoggerTask */
+  86:Core/Src/robot/robot_tasks.cpp **** 	/* Infinite loop */
+  87:Core/Src/robot/robot_tasks.cpp **** 	uint8_t sample_time = 50;
+  88:Core/Src/robot/robot_tasks.cpp **** 	uint32_t dt = HAL_GetTick();
+ 161              		.loc 1 88 0
+ 162 0002 FFF7FEFF 		bl	HAL_GetTick
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 6
+
+
+ 163              	.LVL18:
+ 164              	.L10:
+  89:Core/Src/robot/robot_tasks.cpp **** 	for (;;)
+  90:Core/Src/robot/robot_tasks.cpp **** 	{
+  91:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick();
+ 165              		.loc 1 91 0 discriminator 1
+ 166 0006 FFF7FEFF 		bl	HAL_GetTick
+ 167              	.LVL19:
+ 168 000a 0446     		mov	r4, r0
+ 169              	.LVL20:
+  92:Core/Src/robot/robot_tasks.cpp **** 
+  93:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick() - dt;
+ 170              		.loc 1 93 0 discriminator 1
+ 171 000c FFF7FEFF 		bl	HAL_GetTick
+ 172              	.LVL21:
+ 173 0010 001B     		subs	r0, r0, r4
+ 174              	.LVL22:
+  94:Core/Src/robot/robot_tasks.cpp **** 		osDelay(sample_time - dt);
+ 175              		.loc 1 94 0 discriminator 1
+ 176 0012 C0F13200 		rsb	r0, r0, #50
+ 177              	.LVL23:
+ 178 0016 FFF7FEFF 		bl	osDelay
+ 179              	.LVL24:
+ 180 001a F4E7     		b	.L10
+ 181              		.cfi_endproc
+ 182              	.LFE499:
+ 184              		.section	.text.StartCalculationTask,"ax",%progbits
+ 185              		.align	1
+ 186              		.global	StartCalculationTask
+ 187              		.syntax unified
+ 188              		.thumb
+ 189              		.thumb_func
+ 190              		.fpu fpv4-sp-d16
+ 192              	StartCalculationTask:
+ 193              	.LFB500:
+  95:Core/Src/robot/robot_tasks.cpp **** 	}
+  96:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE END StartLoggerTask */
+  97:Core/Src/robot/robot_tasks.cpp **** }
+  98:Core/Src/robot/robot_tasks.cpp **** 
+  99:Core/Src/robot/robot_tasks.cpp **** /* USER CODE BEGIN Header_StartCalculationTask */
+ 100:Core/Src/robot/robot_tasks.cpp **** /**
+ 101:Core/Src/robot/robot_tasks.cpp **** * @brief Function implementing the CalculationTask thread.
+ 102:Core/Src/robot/robot_tasks.cpp **** * @param argument: Not used
+ 103:Core/Src/robot/robot_tasks.cpp **** * @retval None
+ 104:Core/Src/robot/robot_tasks.cpp **** */
+ 105:Core/Src/robot/robot_tasks.cpp **** /* USER CODE END Header_StartCalculationTask */
+ 106:Core/Src/robot/robot_tasks.cpp **** void StartCalculationTask(void const *argument)
+ 107:Core/Src/robot/robot_tasks.cpp **** {
+ 194              		.loc 1 107 0
+ 195              		.cfi_startproc
+ 196              		@ args = 0, pretend = 0, frame = 0
+ 197              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198              	.LVL25:
+ 199 0000 10B5     		push	{r4, lr}
+ 200              	.LCFI4:
+ 201              		.cfi_def_cfa_offset 8
+ 202              		.cfi_offset 4, -8
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 7
+
+
+ 203              		.cfi_offset 14, -4
+ 204              	.LVL26:
+ 108:Core/Src/robot/robot_tasks.cpp **** 	/* USER CODE BEGIN StartCalculationTask */
+ 109:Core/Src/robot/robot_tasks.cpp **** 	/* Infinite loop */
+ 110:Core/Src/robot/robot_tasks.cpp **** 	uint8_t sample_time = 10;
+ 111:Core/Src/robot/robot_tasks.cpp **** 	uint32_t dt = HAL_GetTick();
+ 205              		.loc 1 111 0
+ 206 0002 FFF7FEFF 		bl	HAL_GetTick
+ 207              	.LVL27:
+ 208 0006 0BE0     		b	.L15
+ 209              	.LVL28:
+ 210              	.L13:
+ 112:Core/Src/robot/robot_tasks.cpp **** 	for (;;)
+ 113:Core/Src/robot/robot_tasks.cpp **** 	{
+ 114:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick();
+ 115:Core/Src/robot/robot_tasks.cpp **** 		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin) == GPIO_PIN_RESET){
+ 116:Core/Src/robot/robot_tasks.cpp **** 			USE_IMU_FLAG = true;
+ 117:Core/Src/robot/robot_tasks.cpp **** 		}
+ 118:Core/Src/robot/robot_tasks.cpp **** 		else{
+ 119:Core/Src/robot/robot_tasks.cpp **** 			USE_IMU_FLAG = false;
+ 211              		.loc 1 119 0
+ 212 0008 0C4B     		ldr	r3, .L17
+ 213 000a 0022     		movs	r2, #0
+ 214 000c 1A70     		strb	r2, [r3]
+ 215              	.L14:
+ 120:Core/Src/robot/robot_tasks.cpp **** 		}
+ 121:Core/Src/robot/robot_tasks.cpp **** 		calculate_datas();
+ 216              		.loc 1 121 0
+ 217 000e FFF7FEFF 		bl	_Z15calculate_datasv
+ 218              	.LVL29:
+ 122:Core/Src/robot/robot_tasks.cpp **** 		dt = HAL_GetTick() - dt;
+ 219              		.loc 1 122 0
+ 220 0012 FFF7FEFF 		bl	HAL_GetTick
+ 221              	.LVL30:
+ 222 0016 001B     		subs	r0, r0, r4
+ 223              	.LVL31:
+ 123:Core/Src/robot/robot_tasks.cpp **** 		osDelay(sample_time - dt);
+ 224              		.loc 1 123 0
+ 225 0018 C0F10A00 		rsb	r0, r0, #10
+ 226              	.LVL32:
+ 227 001c FFF7FEFF 		bl	osDelay
+ 228              	.LVL33:
+ 229              	.L15:
+ 114:Core/Src/robot/robot_tasks.cpp **** 		if(HAL_GPIO_ReadPin(IMU_Detect_GPIO_Port, IMU_Detect_Pin) == GPIO_PIN_RESET){
+ 230              		.loc 1 114 0
+ 231 0020 FFF7FEFF 		bl	HAL_GetTick
+ 232              	.LVL34:
+ 233 0024 0446     		mov	r4, r0
+ 234              	.LVL35:
+ 115:Core/Src/robot/robot_tasks.cpp **** 			USE_IMU_FLAG = true;
+ 235              		.loc 1 115 0
+ 236 0026 4021     		movs	r1, #64
+ 237 0028 0548     		ldr	r0, .L17+4
+ 238              	.LVL36:
+ 239 002a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 240              	.LVL37:
+ 241 002e 0028     		cmp	r0, #0
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 8
+
+
+ 242 0030 EAD1     		bne	.L13
+ 116:Core/Src/robot/robot_tasks.cpp **** 		}
+ 243              		.loc 1 116 0
+ 244 0032 024B     		ldr	r3, .L17
+ 245 0034 0122     		movs	r2, #1
+ 246 0036 1A70     		strb	r2, [r3]
+ 247 0038 E9E7     		b	.L14
+ 248              	.L18:
+ 249 003a 00BF     		.align	2
+ 250              	.L17:
+ 251 003c 00000000 		.word	USE_IMU_FLAG
+ 252 0040 00100240 		.word	1073876992
+ 253              		.cfi_endproc
+ 254              	.LFE500:
+ 256              		.global	leg1_angle
+ 257              		.global	leg0_angle
+ 258              		.global	leg1_omega
+ 259              		.global	leg0_omega
+ 260              		.section	.bss.leg0_angle,"aw",%nobits
+ 261              		.align	2
+ 264              	leg0_angle:
+ 265 0000 00000000 		.space	4
+ 266              		.section	.bss.leg0_omega,"aw",%nobits
+ 267              		.align	2
+ 270              	leg0_omega:
+ 271 0000 00000000 		.space	4
+ 272              		.section	.bss.leg1_angle,"aw",%nobits
+ 273              		.align	2
+ 276              	leg1_angle:
+ 277 0000 00000000 		.space	4
+ 278              		.section	.bss.leg1_omega,"aw",%nobits
+ 279              		.align	2
+ 282              	leg1_omega:
+ 283 0000 00000000 		.space	4
+ 284              		.text
+ 285              	.Letext0:
+ 286              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 287              		.file 4 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 288              		.file 5 "Core/Inc/sys/FreeRTOSConfig.h"
+ 289              		.file 6 "Drivers/CMSIS/Include/core_cm4.h"
+ 290              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 291              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 292              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include\
+ 293              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 294              		.file 11 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\lib\\gcc\\arm-none-eab
+ 295              		.file 12 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 296              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 297              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 298              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 299              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 300              		.file 17 "Core/Inc/periphs/tim.h"
+ 301              		.file 18 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 302              		.file 19 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 303              		.file 20 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 304              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 305              		.file 22 "c:\\program files (x86)\\gnu tools arm embedded\\7 2017-q4-major\\arm-none-eabi\\include
+ 306              		.file 23 "Core/Inc/devs/motor.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 9
+
+
+ 307              		.file 24 "Core/Inc/devs/encoder.h"
+ 308              		.file 25 "Core/Inc/utils/pid_algorithms.h"
+ 309              		.file 26 "Core/Inc/devs/limit_switch.h"
+ 310              		.file 27 "Core/Inc/devs/steering.h"
+ 311              		.file 28 "Core/Inc/robot/robot.h"
+ 312              		.file 29 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 313              		.file 30 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 314              		.file 31 "<built-in>"
+ 315              		.file 32 "Core/Inc/robot/robot_functions.h"
+ARM GAS  C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 robot_tasks.cpp
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:18     .text.StartDefaultTask:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:25     .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:50     .text.StartRobotTask:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:57     .text.StartRobotTask:00000000 StartRobotTask
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:133    .text.StartRobotTask:00000060 $d
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:141    .text.StartLoggerTask:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:148    .text.StartLoggerTask:00000000 StartLoggerTask
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:185    .text.StartCalculationTask:00000000 $t
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:192    .text.StartCalculationTask:00000000 StartCalculationTask
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:251    .text.StartCalculationTask:0000003c $d
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:276    .bss.leg1_angle:00000000 leg1_angle
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:264    .bss.leg0_angle:00000000 leg0_angle
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:282    .bss.leg1_omega:00000000 leg1_omega
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:270    .bss.leg0_omega:00000000 leg0_omega
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:261    .bss.leg0_angle:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:267    .bss.leg0_omega:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:273    .bss.leg1_angle:00000000 $d
+C:\Users\Prashant\AppData\Local\Temp\cc5C6U40.s:279    .bss.leg1_omega:00000000 $d
+
+UNDEFINED SYMBOLS
+osDelay
+HAL_GetTick
+_ZN3leg11reset_angleEf
+_ZN7encoder18reset_actual_angleEf
+robo_state
+leg
+_Z15calculate_datasv
+HAL_GPIO_ReadPin
+USE_IMU_FLAG
